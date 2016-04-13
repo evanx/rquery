@@ -13,7 +13,7 @@ DESIGN STAGE - UNIMPLEMENTED
 
 ### Configuration
 
-Upon startup, the service publishes its availability via Redis, and awaits for configuration `props` via Redis.
+Upon startup, the service gets its `config` from Redis.
 
 ```shell
 redis='redis://localhost:6379/14' npm start
@@ -47,4 +47,3 @@ npm run demo
 ### Further reading
 
 Related projects and further plans: https://github.com/evanx/mpush-redis/blob/master/related.md
-

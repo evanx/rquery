@@ -1,0 +1,13 @@
+spec: 'component-validator/supervisor#0.1.2',
+config:
+   redisUrl:
+      type: 'string'
+   redisKeyspace:
+      type: 'string'
+state:
+   requiredComponents:
+      express: './src/ExpressComponent'      
+   initedComponents: []
+   components: {}
+   startTimestamp: {}
+   ended: false

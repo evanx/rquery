@@ -1,13 +1,15 @@
 
-// global dependencies
-
 global.assert = require('assert');
 global.bluebird = require('bluebird');
 global.bunyan = require('bunyan');
+global.crypto = require('crypto');
+global.fs = require('fs');
+global.http = require('http');
 global.lodash = require('lodash');
+global.os = require('os');
 global.redisl = require('redis');
 
-global.ServiceError = function() {
+global.ApplicationError = function() {
   this.constructor.prototype.__proto__ = Error.prototype;
   Error.captureStackTrace(this, this.constructor);
   this.name = this.constructor.name;
@@ -25,16 +27,20 @@ global.ValidationError = function() {
 
 // logging
 
-global.loggerLevel = 'info';
+var config = {
+   loggerLevel: 'info'
+};
 if (process.env.loggerLevel) {
-   global.loggerLevel = process.env.loggerLevel;
+   config.loggerLevel = process.env.loggerLevel;
 } else if (process.env.NODE_ENV === 'development') {
-   global.loggerLevel = 'debug';
+   config.loggerLevel = 'debug';
 }
 
-var logger = global.bunyan.createLogger({name: 'service', level: global.loggerLevel});
+global.loggerLevel = config.loggerLevel;
 
-// promisify redis
+var logger = global.bunyan.createLogger({name: 'hbridge', level: global.loggerLevel})
+
+// redis
 
 bluebird.promisifyAll(redisl.RedisClient.prototype);
 bluebird.promisifyAll(redisl.Multi.prototype);
@@ -44,85 +50,38 @@ redisl.RedisClient.prototype.multiExecAsync = function(fn) {
    return multi.execAsync();
 };
 
-// load default service props
+// babel
 
 require('babel-polyfill');
 require('babel-core/register');
 logger.debug('babel registered');
 
-// lib
+// dependencies
 
-global.Asserts = require('./lib/Asserts');
 global.Loggers = require('./lib/Loggers');
-global.Metas = require('./lib/Metas');
+global.Asserts = require('./lib/Asserts');
+global.CsonFiles = require('./lib/CsonFiles');
+global.Metas = require('./lib/Metas')
+global.ClassPreprocessor = require('./lib/ClassPreprocessor');
 
-// service props
+// supervisor
 
-var CsonFiles = require('./lib/CsonFiles');
-var serviceMeta = CsonFiles.readFileSync('./src/Service.cson');
-logger.debug('serviceMeta', serviceMeta);
-var servicePropsEnv = Metas.pickEnv(serviceMeta, process.env);
-if (!Object.keys(servicePropsEnv).length) {
-   console.error('Insufficient params');
-   console.info('Declared props:', serviceMeta.props);
-   console.info('Try: npm run demo');
-   process.exit(1);
-}
-logger.debug('serviceProps env', servicePropsEnv);
-serviceProps = Object.assign(Metas.getDefault(serviceMeta.props), servicePropsEnv);
-var errorProps = Metas.getErrorKeys(serviceMeta, serviceProps);
-if (errorProps.length) {
-   errorProps.forEach(function(key) {
-      console.error('Prop error', {key: key, value: serviceProps[key]});
+// TODO babel class transform, rather than fragile regex transformation
+var supervisorMeta = CsonFiles.readFileSync('./lib/Supervisor.cson');
+ClassPreprocessor.buildSync('./lib/Supervisor.js', ['logger', 'context', 'config'].concat(Object.keys(supervisorMeta.state)));
+
+var Supervisor = require('./build/Supervisor').default;
+var supervisor = new Supervisor();
+Object.assign(supervisor, Object.assign({logger: logger, config: config}, supervisorMeta.state));
+supervisor.init().then(function() {
+   logger.info('started pid', process.pid);
+   process.on('SIGTERM', function() {
+      logger.info('SIGTERM')
+      supervisor.end();
    });
-   process.exit(1);
-}
-logger.debug('serviceProps ready', serviceProps);
-
-// optional require hook
-
-if (serviceProps.requireHook) {
-   require(serviceProps.requireHook);
-}
-
-// service context
-
-var os = require('os');
-
-if (!process.env.memo) {
-   console.error('Missing: memo', servicePropsEnv);
-   process.exit(1);
-}
-
-var context = {
-   sourceModule: require(serviceProps.sourceModule),
-   audit: {
-      memo: process.env.memo,
-      clientDate: new Date().toISOString(),
-      hostname: os.hostname(),
-      pid: process.pid,
-   }
-};
-
-// create service instance
-
-var Service = require('./src/Service').default;
-
-global.service = new Service();
-
-global.service.start({props: serviceProps, logger: logger, context: context}).then(function() {
-   if (true) {
-      return global.service.end();
-   } else {
-      logger.info('started pid', process.pid);
-      process.on('SIGTERM', function() {
-         logger.info('SIGTERM')
-         global.service.end();
-      });
-   }
 }).catch(function(err) {
    logger.error(err);
    setTimeout(function() {
-      global.service.end();
-   }, 2000);
+      supervisor.end();
+   }, 4000);
 });
