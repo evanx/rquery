@@ -1,0 +1,9 @@
+spec: 'component-validator/icp#0.1.2',
+config:
+   redisUrl:
+      type: 'string'
+   redisKeyspace:
+      type: 'string'
+state:
+   startTimestamp: 0
+   ended: false

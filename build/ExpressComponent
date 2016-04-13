@@ -1,0 +1,25 @@
+
+export default class {
+
+   constructor() {
+   }
+
+   async init() {
+      this.logger.info('start');
+   }
+
+   async start() {
+      this.logger.info('start');
+   }
+
+   async end() {
+      if (this.ended) {
+         this.logger.warn('end: ended');
+         return;
+      }
+      if (this.redisClient) {
+         await this.redisClient.quitAsync();
+      }
+      this.logger.info('ended');
+   }
+}
