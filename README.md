@@ -16,6 +16,33 @@ We use a supervisor implementation for such components via the `lib` submodule:
 
 WORK IN PROGRESS
 
+### Demo
+
+The demo has no authentication, and expires keys in 2 minutes.
+
+```shell
+curl -s demo.ibhala.com/rquery/$USER/set/name/evanx
+curl -s demo.ibhala.com/rquery/$USER/get/name
+```
+where we specify a "keyspace" as own username via `$USER.` This is prefixed to `key.`
+
+Only a subset of Redis commands is supported for this demo:
+- type
+- set
+- get
+- sadd
+- smembers
+- scard
+- lpush
+- lpop
+- rpop
+- llen
+- lrange
+- info
+
+Note that the `info` command is for the whole Redis instance, and so does not require a keyspace like the others.
+
+You can try `http://demo.ibhala.com/rquery` in your browser. It should report the available "routes" defined for the ExpressJS webserver.
 
 ### Installation
 
