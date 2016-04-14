@@ -9,7 +9,7 @@ module.exports = {
    rquery: {
       redisUrl,
       redisKeyspace: 'demo:rquery:server',
-      scheduledTimeout: 2000
+      scheduledTimeout: 8000
    },
    express: {
       redisUrl,

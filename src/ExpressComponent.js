@@ -1,29 +1,46 @@
 
-import express from 'express';
+import expressl from 'express';
+import marked from 'marked';
 
-export default class {
+import * as Files from '../lib/Files';
+import * as Express from '../lib/Express';
+
+export default class ExpressComponent {
 
    async start() {
       logger.info('start');
       redisClient = redisl.createClient(config.redisUrl);
-      this.app = express();
-      this.app.get(config.location, async (req, res) => {
+      expressApp = expressl();
+      expressApp.get(config.location + 'help', async (req, res) => {
+         let content = await Files.readFile('README.md');
+         res.set('Content-Type', 'text/html');
+         res.send(marked(content.toString()));
+      });
+      expressApp.get(config.location + 'routes', async (req, res) => {
+         res.json(Express.mapRoutes(expressApp));
+      });
+      expressApp.get(config.location + 'query', async (req, res) => {
          try {
-            res.json({message: 'hello'});
+            await this.query(req, res);
          } catch (err) {
             res.status(500).send(err);
          }
       });
+      logger.info('listen', config.port, Express.mapRoutes(expressApp));
+      expressServer = expressApp.listen(config.port);
+   }
+
+   async query(req, res) {
+      throw new ApplicationError('unimplemented');
    }
 
    async end() {
-      if (this.ended) {
-         logger.warn('already ended');
-         return;
-      }
       logger.info('end');
       if (redisClient) {
          await redisClient.quitAsync();
+      }
+      if (expressServer) {
+         expressServer.close();
       }
    }
 }

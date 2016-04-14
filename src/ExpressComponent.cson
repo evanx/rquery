@@ -10,5 +10,7 @@ config:
       defaultValue: 8080
 state:
    redisClient: {}
+   expressApp: {}
+   expressServer: {}
    startTimestamp: 0
    ended: false
