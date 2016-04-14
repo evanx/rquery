@@ -34,18 +34,38 @@ export default class ExpressComponent {
             res.status(500).send(err);
          }
       });
-      expressApp.get(config.location + 'set/:key/:value', async (req, res) => {
-         const {key, value} = req.params;
+      expressApp.get(config.location + ':keyspace/set/:key/:value', async (req, res) => {
+         const {keyspace, key, value} = req.params;
+         const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
-            res.json(await redisClient.setAsync(config.redisKeyspace + ':' + key, value));
+            res.json(await redisClient.setAsync(redisKey, value));
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
       });
-      expressApp.get(config.location + 'get/:key', async (req, res) => {
-         const {key} = req.params;
+      expressApp.get(config.location + ':keyspace/get/:key', async (req, res) => {
+         const {keyspace, key} = req.params;
+         const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
-            res.json(await redisClient.getAsync(config.redisKeyspace + ':' + key));
+            res.json(await redisClient.getAsync(redisKey));
+         } catch (err) {
+            res.status(500).send({err, params: req.params});
+         }
+      });
+      expressApp.get(config.location + ':keyspace/sadd/:key/:value', async (req, res) => {
+         const {keyspace, key, value} = req.params;
+         const redisKey = [config.redisKeyspace, keyspace, key].join(':');
+         try {
+            res.json(await redisClient.saddAsync(redisKey, value));
+         } catch (err) {
+            res.status(500).send({err, params: req.params});
+         }
+      });
+      expressApp.get(config.location + ':keyspace/smembers/:key', async (req, res) => {
+         const {keyspace, key} = req.params;
+         const redisKey = [config.redisKeyspace, keyspace, key].join(':');
+         try {
+            res.json(await redisClient.smembersAsync(redisKey));
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }

@@ -34,18 +34,20 @@ export default class ExpressComponent {
             res.status(500).send(err);
          }
       });
-      this.expressApp.get(this.config.location + 'set/:key/:value', async (req, res) => {
-         const {key, value} = req.params;
+      this.expressApp.get(this.config.location + ':keyspace/set/:key/:value', async (req, res) => {
+         const {keyspace, key, value} = req.params;
+         const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
-            res.json(await this.redisClient.setAsync(this.config.redisKeyspace + ':' + key, value));
+            res.json(await this.redisClient.setAsync(redisKey, value));
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
       });
-      this.expressApp.get(this.config.location + 'get/:key', async (req, res) => {
-         const {key} = req.params;
+      this.expressApp.get(this.config.location + ':keyspace/get/:key', async (req, res) => {
+         const {keyspace, key} = req.params;
+         const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
-            res.json(await this.redisClient.getAsync(this.config.redisKeyspace + ':' + key));
+            res.json(await this.redisClient.getAsync(redisKey));
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }

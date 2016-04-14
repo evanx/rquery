@@ -20,7 +20,7 @@ WORK IN PROGRESS
 ### Installation
 
 ```shell
-git clone git@github.com:evanx/rquery.git --recursive && cd rquery && npm install
+git clone https://github.com/evanx/rquery.git --recursive && cd rquery && npm install
 ```
 
 Let's run the demo
