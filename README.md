@@ -46,7 +46,7 @@ The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces
 The following subset of Redis commands is supported for this demo:
 - keys: set, get, type, ttl, incr
 - sets: sadd, sismember, smembers, scard
-- lists: lpush, rpop, llen, lrange
+- lists: lpush, rpop, brpop, brpoplpush, llen, lrange
 - hashes: hset, hincrby, hget, hlen, hkeys, hgetall
 - other: info, keyspaces
 
