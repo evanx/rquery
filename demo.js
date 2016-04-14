@@ -1,22 +1,10 @@
 
-const redisUrl = 'redis://localhost:6379/13';
-
-const Seconds = {
-  toMillis: seconds => seconds*1000
-};
-
 module.exports = {
    rquery: {
-      redisUrl,
-      redisKeyspace: 'demo:rquery:server',
-      //scheduledTimeout: 8000
-   },
-   express: {
-      redisUrl,
-      redisKeyspace: 'demo:rquery:express',
+      redisUrl: 'redis://localhost:6379/13',
+      redisKeyspace: 'demo:rquery',
       port: 8765,
       location: '/rquery/',
-      expire: 120,
-      timeout: Seconds.toMillis(8)
+      expire: 120
    }
 };

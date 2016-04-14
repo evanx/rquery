@@ -1,3 +1,3 @@
 spec: 'component-validator/components#0.1.2'
 components:
-   express: './src/ExpressComponent'
+   rquery: './src/rquery'
