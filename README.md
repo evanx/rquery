@@ -8,7 +8,7 @@
 We use the component model specified in:
 - https://github.com/evanx/component-validator
 
-We use the supervisor implementation:
+We use a supervisor implementation for such components via the `lib` submodule:
 - https://github.com/evanx/libv
 
 
