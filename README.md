@@ -21,10 +21,10 @@ WORK IN PROGRESS
 The demo has no authentication, and expires keys in 2 minutes.
 
 ```shell
-curl -s demo.ibhala.com/rquery/$USER/set/name/evanx
-curl -s demo.ibhala.com/rquery/$USER/get/name
-curl -s demo.ibhala.com/rquery/$USER/ttl/name
-curl -s demo.ibhala.com/rquery/keyspaces
+curl -s demo.ibhala.com/rquery/$USER/set/name/evanx; echo
+curl -s demo.ibhala.com/rquery/$USER/get/name; echo
+curl -s demo.ibhala.com/rquery/$USER/ttl/name; echo
+curl -s demo.ibhala.com/rquery/keyspaces; echo
 ```
 where we specify a "keyspace" as own username via `$USER.` This is prefixed to `key.`
 
