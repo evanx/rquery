@@ -2,7 +2,6 @@
 ## rquery
 
 
-
 ### Status
 
 DESIGN STAGE - UNIMPLEMENTED

@@ -1,4 +1,3 @@
-
 [alias]
     # the acronym stands for "subtree add"
     add-subtree = "!f() { git subtree add --prefix $2 $1 master --squash; }; f"
