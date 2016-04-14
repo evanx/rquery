@@ -296,12 +296,12 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/hexists/:key', async (req, res) => {
-         const {keyspace, key} = req.params;
+      expressApp.get(config.location + ':keyspace/hexists/:key/:field', async (req, res) => {
+         const {keyspace, key, field} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
             await this.validateKeyspaceRequest(req);
-            res.json(await redisClient.hexistsAsync(redisKey));
+            res.json(await redisClient.hexistsAsync(redisKey, field));
             redisClient.expire(redisKey, config.expire);
          } catch (err) {
             res.status(500).send({err: err.message, params: req.params});
