@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js | ./node_modules/.bin/bunyan -o short",
-    "demo": "memo='demo' sourceModule=./demo/Demo.props.js redisUrl='redis://localhost:6379/13' redisKeyspace='demo:hmsetprops' npm start | ./node_modules/.bin/bunyan -o short"
+    "demo": "NODE_ENV=development configModule=./demo/config.js redisUrl='redis://localhost:6379/13' npm start | ./node_modules/.bin/bunyan -o short"
   },
   "author": "@evanxsummers",
   "license": "ISC",

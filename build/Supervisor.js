@@ -4,36 +4,52 @@ export default class Supervisor {
    constructor() {
    }
 
-   async initComponent(componentName, componentModule) {
+   async init() {
+      this.logger.info('config.components', this.config.components.length);
+      for (const componentName in this.config.components) {
+         const componentConfig = this.config.components[componentName];
+         if (componentConfig) {
+            const componentModule = this.config.availableComponents[componentName];
+            assert(componentModule, 'componentModule: ' + componentName);
+            await this.initComponent(componentName, componentModule, componentConfig);
+         } else {
+            this.logger.warn('config.component', componentName);
+         }
+      }
+      this.logger.info('initedComponents', this.initedComponents.length);
+      for (const component of [... this.initedComponents]) {
+         if (component.start) {
+            assert(lodash.isFunction(component.start), 'start function: ' + component.name);
+            this.logger.debug('start', component.name);
+            await component.start();
+         }
+      }
+      this.logger.info('components', Object.keys(this.components));
+      this.logger.info('inited');
+   }
+
+   async initComponent(componentName, componentModule, componentConfig) { // TODO support external modules
       assert(typeof componentName === 'string', 'component name');
-      this.logger.info('initComponent', componentName, componentModule);
-      const meta = CsonFiles.readFileSync(componentModule + '.cson');
-      const componentConfig = Metas.getDefault(meta.config);
-      const componentState = {
+      this.logger.info('initComponent', componentName, componentModule, componentConfig);
+      const meta = CsonFiles.readFileSync(componentModule + '.cson'); // TODO support external modules
+      componentConfig = Object.assign(Metas.getDefault(meta.config), componentConfig);
+      const componentState = Object.assign({
          components: this.components,
          config: componentConfig,
          logger: Loggers.createLogger(componentName, componentConfig.loggerLevel || this.config.loggerLevel)
-      };
-      componentModule = ClassPreprocessor.buildSync(componentModule, Object.keys(componentState));
-      const componentClass = require('.' + componentModule).default;
+      }, meta.state);
+      componentModule = ClassPreprocessor.buildSync(componentModule + '.js', Object.keys(componentState));
+      const componentClass = require('.' + componentModule).default; // TODO support external modules
       const component = new componentClass();
       this.logger.info('initComponents state', componentName, Object.keys(componentState));
       Object.assign(component, {name: componentName}, componentState);
-      await component.init();
+      if (component.init) {
+         assert(lodash.isFunction(component.init), 'init function: ' + componentName);
+         await component.init();
+      }
       this.initedComponents.push(component);
       this.components[componentName] = component;
       this.logger.info('initComponents components', componentName, Object.keys(this.components));
-   }
-
-   async init() {
-      this.logger.info('requiredComponents', this.requiredComponents.length);
-      for (const componentName in this.requiredComponents) {
-         this.logger.info('initedComponent', componentName, this.requiredComponents[componentName]);
-         await this.initComponent(componentName, this.requiredComponents[componentName]);
-      }
-      this.logger.info('initedComponents', this.initedComponents.length);
-      this.logger.info('components', Object.keys(this.components));
-      this.logger.info('inited');
    }
 
    async start() {
@@ -69,7 +85,7 @@ export default class Supervisor {
                await component.end();
                this.logger.info('end component', component.name);
             } catch (err) {
-               this.logger.error('end component', component.name, err);
+               this.logger.error('end component', component.name, err.stack);
             }
          }
       }

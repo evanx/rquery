@@ -1,9 +1,13 @@
 
 export default class {
 
-   async start() {
-      logger.info('start');
+   async init() {
+      logger.info('init');
       redisClient = redisl.createClient(config.redisUrl);
+   }
+
+   async start() {
+      logger.info('start', config);
    }
 
    async end() {
