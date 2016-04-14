@@ -5,7 +5,7 @@ config:
    redisKeyspace:
       type: 'string'
    location:
-      type: 'string'
+      defaultValue: '/'
    port:
       defaultValue: 8080
 state:
