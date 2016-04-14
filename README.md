@@ -34,10 +34,10 @@ Note that keys are expired in 2 minutes.
 
 We try `curl` too:
 ```shell
-curl -s demo.ibhala.com/rquery/$USER/set/mykey/myvalue; echo
-curl -s demo.ibhala.com/rquery/$USER/get/mykey; echo
-curl -s demo.ibhala.com/rquery/$USER/ttl/mykey; echo
-curl -s demo.ibhala.com/rquery/keyspaces; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/set/mykey/myvalue; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/get/mykey; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/ttl/mykey; echo
+curl -s demo.ibhala.com/rquery/ks/keyspaces; echo
 ```
 where we specify a "keyspace" as our username via `$USER.` (This is prefixed to the key by rquery.)
 

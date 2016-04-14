@@ -42,7 +42,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/type/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/type/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -53,7 +53,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/ttl/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/ttl/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -63,7 +63,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/set/:key/:value', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/set/:key/:value', async (req, res) => {
          const {keyspace, key, value} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -74,7 +74,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/get/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/get/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -85,7 +85,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/incr/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/incr/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -96,7 +96,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/exists/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/exists/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -107,7 +107,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/del/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/del/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -118,7 +118,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/sadd/:key/:member', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/sadd/:key/:member', async (req, res) => {
          const {keyspace, key, member} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -129,7 +129,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/smembers/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/smembers/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -140,7 +140,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/sismember/:key/:member', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/sismember/:key/:member', async (req, res) => {
          const {keyspace, key, member} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -151,7 +151,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/scard/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/scard/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -162,7 +162,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/lpush/:key/:value', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/lpush/:key/:value', async (req, res) => {
          const {keyspace, key, value} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -173,7 +173,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/rpush/:key/:value', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/rpush/:key/:value', async (req, res) => {
          const {keyspace, key, value} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -184,7 +184,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/lpop/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/lpop/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -195,7 +195,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/blpop/:key/:timeout', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/blpop/:key/:timeout', async (req, res) => {
          const {keyspace, key, timeout} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -206,7 +206,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/brpop/:key/:timeout', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/brpop/:key/:timeout', async (req, res) => {
          const {keyspace, key, timeout} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -217,7 +217,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/rpop/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/rpop/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -228,7 +228,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/brpoplpush/:key/:dest/:timeout', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/brpoplpush/:key/:dest/:timeout', async (req, res) => {
          const {keyspace, key, dest, timeout} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          const destKey = [config.redisKeyspace, keyspace, dest].join(':');
@@ -241,7 +241,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/llen/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/llen/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -252,7 +252,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/lrange/:key/:start/:stop', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/lrange/:key/:start/:stop', async (req, res) => {
          const {keyspace, key, start, stop} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -263,7 +263,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/hset/:key/:field/:value', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/hset/:key/:field/:value', async (req, res) => {
          const {keyspace, key, field, value} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -274,7 +274,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/hget/:key/:field', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/hget/:key/:field', async (req, res) => {
          const {keyspace, key, field} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -285,7 +285,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/hincrby/:key/:increment', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/hincrby/:key/:increment', async (req, res) => {
          const {keyspace, key, increment} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -296,7 +296,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/hexists/:key/:field', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/hexists/:key/:field', async (req, res) => {
          const {keyspace, key, field} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -307,7 +307,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/hlen/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/hlen/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -318,7 +318,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/hkeys/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/hkeys/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
@@ -329,7 +329,7 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + ':keyspace/hgetall/:key', async (req, res) => {
+      expressApp.get(config.location + 'ks/:keyspace/hgetall/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
