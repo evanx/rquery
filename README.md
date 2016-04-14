@@ -20,9 +20,9 @@ UNSTABLE, INCOMPLETE
 
 Try: http://demo.ibhala.com/rquery
 
-The demo has no authentication but choose a "keyspace" e.g. your username.
-
 <img src="http://evanx.github.io/images/rquery/rquery-routes.png">
+
+The demo has no authentication but choose a "keyspace" e.g. your username.
 
 Note that keys are expired in 2 minutes.
 
