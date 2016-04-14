@@ -44,9 +44,10 @@ where we specify a "keyspace" as our username via `$USER.` (This is prefixed to 
 The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your `$USER` should appear therein.
 
 The following subset of Redis commands is supported for this demo:
-- keys: set, get, type, ttl
-- sets: sadd, smembers, scard
+- keys: set, get, type, ttl, incr
+- sets: sadd, sismember, smembers, scard
 - lists: lpush, rpop, llen, lrange
+- hashes: hset, hincrby, hget, hlen, hkeys, hgetall
 - other: info, keyspaces
 
 Note that the `info` command is for the whole Redis instance, and so does not require a keyspace like the others.

@@ -285,12 +285,12 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
-      expressApp.get(config.location + 'ks/:keyspace/hincrby/:key/:increment', async (req, res) => {
-         const {keyspace, key, increment} = req.params;
+      expressApp.get(config.location + 'ks/:keyspace/hincrby/:key/:field/:increment', async (req, res) => {
+         const {keyspace, key, field, increment} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
             await this.validateKeyspaceRequest(req);
-            res.json(await redisClient.hincrbyAsync(redisKey, increment));
+            res.json(await redisClient.hincrbyAsync(redisKey, field, increment));
             redisClient.expire(redisKey, config.expire);
          } catch (err) {
             res.status(500).send({err: err.message, params: req.params});
