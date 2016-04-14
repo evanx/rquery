@@ -9,7 +9,7 @@ export default class {
       this.app = express();
       this.app.get(config.location, async (req, res) => {
          try {
-            res.json(await getReport());
+            res.json({message: 'hello'});
          } catch (err) {
             res.status(500).send(err);
          }
