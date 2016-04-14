@@ -3,6 +3,14 @@
 
 - HTTP API for Redis queries
 
+### Implementation
+
+We use the component model specified in:
+- https://github.com/evanx/component-validator
+
+We use the supervisor implementation:
+- https://github.com/evanx/libv
+
 
 ### Status
 
