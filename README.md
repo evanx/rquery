@@ -39,7 +39,7 @@ curl -s demo.ibhala.com/rquery/$USER/get/mykey; echo
 curl -s demo.ibhala.com/rquery/$USER/ttl/mykey; echo
 curl -s demo.ibhala.com/rquery/keyspaces; echo
 ```
-where we specify a "keyspace" as our username via `$USER.` (This is prefixed to the key by `rquery.`)
+where we specify a "keyspace" as our username via `$USER.` (This is prefixed to the key by rquery.)
 
 The `keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your `$USER` should appear therein.
 
