@@ -175,7 +175,7 @@ export default class ExpressComponent {
          }
       });
       expressApp.get(config.location + ':keyspace/brpoplpush/:key/:dest/:timeout', async (req, res) => {
-         const {keyspace, key, timeout} = req.params;
+         const {keyspace, key, dest, timeout} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          const destKey = [config.redisKeyspace, keyspace, dest].join(':');
          try {
