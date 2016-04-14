@@ -52,6 +52,24 @@ export default class ExpressComponent {
             res.status(500).send({err, params: req.params});
          }
       });
+      this.expressApp.get(this.config.location + ':keyspace/sadd/:key/:value', async (req, res) => {
+         const {keyspace, key, value} = req.params;
+         const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
+         try {
+            res.json(await this.redisClient.saddAsync(redisKey, value));
+         } catch (err) {
+            res.status(500).send({err, params: req.params});
+         }
+      });
+      this.expressApp.get(this.config.location + ':keyspace/smembers/:key', async (req, res) => {
+         const {keyspace, key} = req.params;
+         const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
+         try {
+            res.json(await this.redisClient.smembersAsync(redisKey));
+         } catch (err) {
+            res.status(500).send({err, params: req.params});
+         }
+      });
       this.logger.info('listen', this.config.port, Express.getRoutes(this.expressApp));
       this.expressServer = this.expressApp.listen(this.config.port);
    }
