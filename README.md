@@ -7,8 +7,14 @@
 DESIGN STAGE - UNIMPLEMENTED
 
 
-### Implementation
+### Installation
 
+```shell
+git clone git@github.com:evanx/rquery.git --recursive && 
+cd rquery && 
+npm install && 
+npm run demo
+```
 
 ### Configuration
 

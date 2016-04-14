@@ -8,7 +8,8 @@ const Seconds = {
 module.exports = {
    rquery: {
       redisUrl,
-      redisKeyspace: 'demo:rquery:server'
+      redisKeyspace: 'demo:rquery:server',
+      scheduledTimeout: 2000
    },
    express: {
       redisUrl,
@@ -18,4 +19,3 @@ module.exports = {
       timeout: Seconds.toMillis(8)
    }
 };
-

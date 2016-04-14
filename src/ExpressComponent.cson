@@ -4,6 +4,10 @@ config:
       type: 'string'
    redisKeyspace:
       type: 'string'
+   location:
+      type: 'string'
+   port:
+      defaultValue: 8080
 state:
    redisClient: {}
    startTimestamp: 0

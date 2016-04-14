@@ -10,6 +10,11 @@ export default class {
       this.logger.info('start', this.config);
    }
 
+   async scheduledTimeout() {
+      this.logger.info('scheduledTimeout', this.config.scheduledTimeout);
+      this.supervisor.end();
+   }
+
    async end() {
       if (this.ended) {
          this.logger.warn('already ended');

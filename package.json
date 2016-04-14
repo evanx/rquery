@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js | ./node_modules/.bin/bunyan -o short",
-    "demo": "NODE_ENV=development configModule=./demo/config.js redisUrl='redis://localhost:6379/13' npm start | ./node_modules/.bin/bunyan -o short"
+    "start": "node index.js",
+    "demo": "NODE_ENV=development configModule=./demo.js redisUrl='redis://localhost:6379/13' npm start | ./node_modules/.bin/bunyan -o short"
   },
   "author": "@evanxsummers",
   "license": "ISC",
@@ -18,9 +18,9 @@
     "bluebird": "^3.3.4",
     "bunyan": "^1.8.0",
     "cson": "^3.0.2",
+    "express": "^4.13.4",
     "lodash": "^4.6.1",
     "redis": "^2.5.2",
     "season": "^5.3.0"
   }
 }
-
