@@ -198,12 +198,19 @@ export default class ExpressComponent {
             res.status(500).send({err, params: req.params});
          }
       });
+      expressApp.get(config.location + 'keyspaces', async (req, res) => {
+         try {
+            res.json(await redisClient.smembers([config.redisKeyspace, 'keyspaces'].join(':'));
+         } catch (err) {
+            res.status(500).send({err, params: req.params});
+         }
+      });
       logger.info('listen', config.port, Express.getRoutes(expressApp));
       expressServer = expressApp.listen(config.port);
    }
 
    async registerRequest(req, keyspace) {
-      await redisClient.sadd([config.redisKeyspace, 'keyspaces'].join(':'), keyspace);  
+      await redisClient.sadd([config.redisKeyspace, 'keyspaces'].join(':'), keyspace);
    }
 
    async query(req, res) {
