@@ -160,6 +160,15 @@ export default class ExpressComponent {
             res.status(500).send({err, params: req.params});
          }
       });
+      this.expressApp.get(this.config.location + ':keyspace/lrange/:key/:start/:stop', async (req, res) => {
+         const {keyspace, key, start, stop} = req.params;
+         const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
+         try {
+            res.json(await this.redisClient.lrangeAsync(redisKey, start, stop));
+         } catch (err) {
+            res.status(500).send({err, params: req.params});
+         }
+      });
       this.logger.info('listen', this.config.port, Express.getRoutes(this.expressApp));
       this.expressServer = this.expressApp.listen(this.config.port);
    }
