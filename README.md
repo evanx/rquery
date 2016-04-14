@@ -41,7 +41,7 @@ curl -s demo.ibhala.com/rquery/keyspaces; echo
 ```
 where we specify a "keyspace" as our username via `$USER.` (This is prefixed to the key by rquery.)
 
-The `keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your `$USER` should appear therein.
+The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your `$USER` should appear therein.
 
 The following subset of Redis commands is supported for this demo:
 - keys: set, get, type, ttl
