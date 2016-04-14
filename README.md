@@ -1,10 +1,12 @@
 
 ## rquery
 
+- HTTP API for Redis queries
+
 
 ### Status
 
-DESIGN STAGE - UNIMPLEMENTED
+UNSTABLE, WORK IN PROGRESS
 
 
 ### Installation
@@ -12,36 +14,7 @@ DESIGN STAGE - UNIMPLEMENTED
 ```shell
 git clone git@github.com:evanx/rquery.git --recursive && 
 cd rquery && 
-npm install && 
-npm run demo
-```
-
-### Configuration
-
-Upon startup, the service gets its `config` from Redis.
-
-```shell
-redis='redis://localhost:6379/14' npm start
-redis-cli -n 14 hset demo:hbridge:service:1:props port 8000
-redis-cli -n 14 lpush demo:hbridge:service:1:command start
-```
-where its `props` must include the port number for its ExpressJS server.
-
-Upon receiving props via Redis, it starts an ExpressJS server.
-
-### Logging
-
-The service
-
-
-
-
-### Installation
-
-```shell
-git clone https://github.com/evanx/rquery &&
-  cd rquery &&
-  npm install
+npm install 
 ```
 
 Let's run the demo.
