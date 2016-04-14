@@ -16,13 +16,17 @@ We use a supervisor implementation for such components via the `lib` submodule:
 
 UNSTABLE, INCOMPLETE
 
-### Demo
+### Live demo
+
+Try: http://demo.ibhala.com/rquery
 
 The demo has no authentication but choose a "keyspace" e.g. your username.
 
 <img src="http://evanx.github.io/images/rquery/rquery-routes.png">
 
-Keys are expired in 2 minutes.
+Note that keys are expired in 2 minutes.
+
+#### curl
 
 ```shell
 curl -s demo.ibhala.com/rquery/$USER/set/name/evanx; echo
