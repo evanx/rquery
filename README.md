@@ -27,6 +27,7 @@ Let's run the demo.
 ```shell
 npm run demo
 ```
+The configuration module for this demo: https://github.com/evanx/rquery/blob/master/demo.js
 
 ### Further reading
 
