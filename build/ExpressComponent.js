@@ -1,5 +1,5 @@
 
-import expressl from 'express';
+import expressLib from 'express';
 import marked from 'marked';
 
 import * as Files from '../lib/Files';
@@ -9,15 +9,15 @@ export default class ExpressComponent {
 
    async start() {
       this.logger.info('start');
-      this.redisClient = redisl.createClient(this.config.redisUrl);
-      this.expressApp = expressl();
+      this.redisClient = redisLib.createClient(this.config.redisUrl);
+      this.expressApp = expressLib();
       this.expressApp.get(this.config.location + 'help', async (req, res) => {
          let content = await Files.readFile('README.md');
          res.set('Content-Type', 'text/html');
          res.send(marked(content.toString()));
       });
       this.expressApp.get(this.config.location + 'routes', async (req, res) => {
-         res.json(Express.mapRoutes(this.expressApp));
+         res.json(Express.getRoutes(this.expressApp));
       });
       this.expressApp.get(this.config.location + 'query', async (req, res) => {
          try {
@@ -26,7 +26,7 @@ export default class ExpressComponent {
             res.status(500).send(err);
          }
       });
-      this.logger.info('listen', this.config.port, Express.mapRoutes(this.expressApp));
+      this.logger.info('listen', this.config.port, Express.getRoutes(this.expressApp));
       this.expressServer = this.expressApp.listen(this.config.port);
    }
 
