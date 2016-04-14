@@ -23,6 +23,7 @@ The demo has no authentication, and expires keys in 2 minutes.
 ```shell
 curl -s demo.ibhala.com/rquery/$USER/set/name/evanx
 curl -s demo.ibhala.com/rquery/$USER/get/name
+curl -s demo.ibhala.com/rquery/$USER/ttl/name
 curl -s demo.ibhala.com/rquery/keyspaces
 ```
 where we specify a "keyspace" as own username via `$USER.` This is prefixed to `key.`
