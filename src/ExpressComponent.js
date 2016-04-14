@@ -42,6 +42,27 @@ export default class ExpressComponent {
             res.status(500).send({err, params: req.params});
          }
       });
+      expressApp.get(config.location + ':keyspace/type/:key', async (req, res) => {
+         const {keyspace, key} = req.params;
+         const redisKey = [config.redisKeyspace, keyspace, key].join(':');
+         try {
+            res.json(await redisClient.typeAsync(redisKey));
+            redisClient.expire(redisKey, config.expire);
+            this.registerRequest(req, keyspace);
+         } catch (err) {
+            res.status(500).send({err, params: req.params});
+         }
+      });
+      expressApp.get(config.location + ':keyspace/ttl/:key', async (req, res) => {
+         const {keyspace, key} = req.params;
+         const redisKey = [config.redisKeyspace, keyspace, key].join(':');
+         try {
+            res.json(await redisClient.ttlAsync(redisKey));
+            this.registerRequest(req, keyspace);
+         } catch (err) {
+            res.status(500).send({err, params: req.params});
+         }
+      });
       expressApp.get(config.location + ':keyspace/set/:key/:value', async (req, res) => {
          const {keyspace, key, value} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
@@ -91,17 +112,6 @@ export default class ExpressComponent {
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await redisClient.scardAsync(redisKey));
-            redisClient.expire(redisKey, config.expire);
-            this.registerRequest(req, keyspace);
-         } catch (err) {
-            res.status(500).send({err, params: req.params});
-         }
-      });
-      expressApp.get(config.location + ':keyspace/type/:key', async (req, res) => {
-         const {keyspace, key} = req.params;
-         const redisKey = [config.redisKeyspace, keyspace, key].join(':');
-         try {
-            res.json(await redisClient.typeAsync(redisKey));
             redisClient.expire(redisKey, config.expire);
             this.registerRequest(req, keyspace);
          } catch (err) {

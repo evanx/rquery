@@ -23,18 +23,22 @@ The demo has no authentication, and expires keys in 2 minutes.
 ```shell
 curl -s demo.ibhala.com/rquery/$USER/set/name/evanx
 curl -s demo.ibhala.com/rquery/$USER/get/name
+curl -s demo.ibhala.com/rquery/keyspaces
 ```
 where we specify a "keyspace" as own username via `$USER.` This is prefixed to `key.`
 
+The `keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your `$USER` should appear therein.
+
 The following subset of Redis commands is supported for this demo:
-- keys: set, get, type
+- keys: set, get, type, ttl
 - sets: sadd, smembers, scard
 - lists: lpush, rpop, llen, lrange
-- other: info
+- other: info, keyspaces
 
 Note that the `info` command is for the whole Redis instance, and so does not require a keyspace like the others.
 
 You can try `http://demo.ibhala.com/rquery` in your browser. It should report the available "routes" defined for the ExpressJS webserver.
+
 
 ### Installation
 
