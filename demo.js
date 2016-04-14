@@ -1,5 +1,5 @@
 
-const redisUrl = 'redis://localhost:6379/0';
+const redisUrl = 'redis://localhost:6379/13';
 
 const Seconds = {
   toMillis: seconds => seconds*1000
