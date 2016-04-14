@@ -202,7 +202,7 @@ export default class ExpressComponent {
          const {keyspace, key, start, stop} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');
          try {
-            await this.validateRequest(req);
+            await this.validateKeyspaceRequest(req);
             res.json(await redisClient.lrangeAsync(redisKey, start, stop));
             redisClient.expire(redisKey, config.expire);
          } catch (err) {
