@@ -28,7 +28,7 @@ It should report the available "routes" defined for the ExpressJS webserver:
 
 The demo has no authentication but choose a "keyspace" e.g. your username.
 
-Note that keys are expired in 2 minutes.
+Note that keys are expired after an idle duration 3 minutes.
 
 #### curl
 

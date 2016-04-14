@@ -5,6 +5,6 @@ module.exports = {
       redisKeyspace: 'demo:rquery',
       port: 8765,
       location: '/rquery/',
-      expire: 120
+      expire: 180
    }
 };
