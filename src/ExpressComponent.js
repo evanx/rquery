@@ -200,7 +200,7 @@ export default class ExpressComponent {
       });
       expressApp.get(config.location + 'keyspaces', async (req, res) => {
          try {
-            res.json(await redisClient.smembers([config.redisKeyspace, 'keyspaces'].join(':'));
+            res.json(await redisClient.smembers([config.redisKeyspace, 'keyspaces'].join(':')));
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }

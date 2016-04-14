@@ -198,12 +198,19 @@ export default class ExpressComponent {
             res.status(500).send({err, params: req.params});
          }
       });
+      this.expressApp.get(this.config.location + 'keyspaces', async (req, res) => {
+         try {
+            res.json(await this.redisClient.smembers([this.config.redisKeyspace, 'keyspaces'].join(':')));
+         } catch (err) {
+            res.status(500).send({err, params: req.params});
+         }
+      });
       this.logger.info('listen', this.config.port, Express.getRoutes(this.expressApp));
       this.expressServer = this.expressApp.listen(this.config.port);
    }
 
    async registerRequest(req, keyspace) {
-      await this.redisClient.sadd([this.config.redisKeyspace, 'keyspaces'].join(':'), keyspace);  
+      await this.redisClient.sadd([this.config.redisKeyspace, 'keyspaces'].join(':'), keyspace);
    }
 
    async query(req, res) {
