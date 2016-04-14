@@ -47,6 +47,8 @@ export default class ExpressComponent {
          const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await this.redisClient.setAsync(redisKey, value));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
@@ -56,6 +58,8 @@ export default class ExpressComponent {
          const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await this.redisClient.getAsync(redisKey));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
@@ -65,6 +69,8 @@ export default class ExpressComponent {
          const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await this.redisClient.saddAsync(redisKey, value));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
@@ -74,6 +80,8 @@ export default class ExpressComponent {
          const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await this.redisClient.smembersAsync(redisKey));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
@@ -83,6 +91,8 @@ export default class ExpressComponent {
          const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await this.redisClient.scardAsync(redisKey));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
@@ -92,6 +102,8 @@ export default class ExpressComponent {
          const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await this.redisClient.typeAsync(redisKey));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
@@ -101,6 +113,8 @@ export default class ExpressComponent {
          const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await this.redisClient.lpushAsync(redisKey, value));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
@@ -110,6 +124,8 @@ export default class ExpressComponent {
          const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await this.redisClient.rpushAsync(redisKey, value));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
@@ -119,6 +135,8 @@ export default class ExpressComponent {
          const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await this.redisClient.lpopAsync(redisKey));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
@@ -128,6 +146,8 @@ export default class ExpressComponent {
          const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await this.redisClient.brpopAsync(redisKey, timeout));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
@@ -137,6 +157,8 @@ export default class ExpressComponent {
          const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await this.redisClient.rpopAsync(redisKey));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
@@ -147,6 +169,9 @@ export default class ExpressComponent {
          const destKey = [this.config.redisKeyspace, keyspace, dest].join(':');
          try {
             res.json(await this.redisClient.brpoplpushAsync(redisKey, destKey, timeout));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.redisClient.expire(destKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
@@ -156,6 +181,8 @@ export default class ExpressComponent {
          const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await this.redisClient.llenAsync(redisKey));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
@@ -165,12 +192,18 @@ export default class ExpressComponent {
          const redisKey = [this.config.redisKeyspace, keyspace, key].join(':');
          try {
             res.json(await this.redisClient.lrangeAsync(redisKey, start, stop));
+            this.redisClient.expire(redisKey, this.config.expire);
+            this.registerRequest(req, keyspace);
          } catch (err) {
             res.status(500).send({err, params: req.params});
          }
       });
       this.logger.info('listen', this.config.port, Express.getRoutes(this.expressApp));
       this.expressServer = this.expressApp.listen(this.config.port);
+   }
+
+   async registerRequest(req, keyspace) {
+      await this.redisClient.sadd([this.config.redisKeyspace, 'keyspaces'].join(':'), keyspace);  
    }
 
    async query(req, res) {

@@ -8,6 +8,9 @@ config:
       defaultValue: '/'
    port:
       defaultValue: 8080
+   expire:
+      type: 'integer'
+      max: 9999
 state:
    redisClient: {}
    expressApp: {}

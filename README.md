@@ -26,19 +26,11 @@ curl -s demo.ibhala.com/rquery/$USER/get/name
 ```
 where we specify a "keyspace" as own username via `$USER.` This is prefixed to `key.`
 
-Only a subset of Redis commands is supported for this demo:
-- type
-- set
-- get
-- sadd
-- smembers
-- scard
-- lpush
-- lpop
-- rpop
-- llen
-- lrange
-- info
+The following subset of Redis commands is supported for this demo:
+- keys: set, get, type
+- sets: sadd, smembers, scard
+- lists: lpush, rpop, llen, lrange
+- other: info
 
 Note that the `info` command is for the whole Redis instance, and so does not require a keyspace like the others.
 
