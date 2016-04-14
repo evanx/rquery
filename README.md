@@ -20,6 +20,10 @@ UNSTABLE, INCOMPLETE
 
 Try: http://demo.ibhala.com/rquery
 
+However be sure to have a JSON Viewer extension installed in your browser.
+
+It should report the available "routes" defined for the ExpressJS webserver:
+
 <img src="http://evanx.github.io/images/rquery/rquery-routes.png">
 
 The demo has no authentication but choose a "keyspace" e.g. your username.
@@ -28,10 +32,11 @@ Note that keys are expired in 2 minutes.
 
 #### curl
 
+We try `curl` too:
 ```shell
-curl -s demo.ibhala.com/rquery/$USER/set/name/evanx; echo
-curl -s demo.ibhala.com/rquery/$USER/get/name; echo
-curl -s demo.ibhala.com/rquery/$USER/ttl/name; echo
+curl -s demo.ibhala.com/rquery/$USER/set/mykey/myvalue; echo
+curl -s demo.ibhala.com/rquery/$USER/get/mykey; echo
+curl -s demo.ibhala.com/rquery/$USER/ttl/mykey; echo
 curl -s demo.ibhala.com/rquery/keyspaces; echo
 ```
 where we specify a "keyspace" as own username via `$USER.` This is prefixed to `key.`
@@ -45,8 +50,6 @@ The following subset of Redis commands is supported for this demo:
 - other: info, keyspaces
 
 Note that the `info` command is for the whole Redis instance, and so does not require a keyspace like the others.
-
-You can try `http://demo.ibhala.com/rquery` in your browser. It should report the available "routes" defined for the ExpressJS webserver.
 
 
 ### Installation
