@@ -42,6 +42,17 @@ export default class ExpressComponent {
             res.status(500).send({err: err.message, params: req.params});
          }
       });
+      expressApp.get(config.location + 'ks/:keyspace/keys', async (req, res) => {
+         const {keyspace} = req.params;
+         const redisKey = [config.redisKeyspace, keyspace, key].join(':');
+         try {
+            await this.validateKeyspaceRequest(req);
+            res.json(await redisClient.keysAsync(redisKey, keyspace + ':*'));
+            redisClient.expire(redisKey, config.expire);
+         } catch (err) {
+            res.status(500).send({err: err.message, params: req.params});
+         }
+      });
       expressApp.get(config.location + 'ks/:keyspace/type/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = [config.redisKeyspace, keyspace, key].join(':');

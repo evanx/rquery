@@ -5,6 +5,8 @@
 
 ### Implementation
 
+See: https://github.com/evanx/rquery/tree/master/src
+
 We use the component model specified in:
 - https://github.com/evanx/component-validator
 
@@ -44,7 +46,7 @@ where we specify a "keyspace" as our username via `$USER.` (This is prefixed to 
 The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your `$USER` should appear therein.
 
 The following subset of Redis commands is supported for this demo:
-- keys: `exists` `set` `get` `type` `ttl` `incr`
+- keys: `keys` `exists` `set` `get` `type` `ttl` `incr`
 - sets: `sadd` `sismember` `smembers` `scard`
 - lists: `lpush` `rpop` `brpop` `brpoplpush` `llen` `lrange`
 - hashes: `hexists` `hset` `hincrby` `hget` `hlen` `hkeys` `hgetall`
