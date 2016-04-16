@@ -276,17 +276,21 @@ export default class {
    async addKeyspaceRoute(uri, fn) {
       expressApp.get(config.location + uri, async (req, res) => {
          try {
-            const {keyspace, timeout} = req.params;
+            const {keyspace, key, timeout} = req.params;
             if (!keyspace) {
                throw new ValidationError('keyspace: ' + req.path);
             }
-            await redisClient.saddAsync([config.redisKeyspace, 'keyspaces'].join(':'), keyspace);
             if (timeout) {
                if (timeout < 1 || timeout > 10) {
                   throw new ValidationError('timeout range 1 to 10 seconds: ' + timeout);
                }
             }
+            await redisClient.saddAsync([config.redisKeyspace, 'keyspaces'].join(':'), keyspace);
             await fn(req, res);
+            if (key) {
+               const redisKey = this.redisKey(keyspace, key);
+               redisClient.expire(redisKey, config.expire);
+            }
          } catch (err) {
             this.handleError(err, req, res);
          }
