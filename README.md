@@ -89,15 +89,23 @@ curl -s demo.ibhala.com/rquery/ks/$USER/hgetall/myhashes | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item2 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/lrange/mylist/0/-1 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/llen/mylist | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/rpop/mylist | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/brpop/mylist/4 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/llen/mylist | python -mjson.tool
 ```
 
-##### keys
+##### keyspace
 
+We can check the keys and their TTL in the specified `keyspace` as follows:
 ```shell
 curl -s demo.ibhala.com/rquery/ks/$USER/keys | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/ttl | python -mjson.tool
+```
+
+We can check the keys and their TTL in the specified `keyspace` as follows:
+```shell
+```
 curl -s demo.ibhala.com/rquery/keyspaces | python -mjson.tool
 ```
 

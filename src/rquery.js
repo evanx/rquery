@@ -141,13 +141,15 @@ export default class ExpressComponent {
       this.addKeyspaceRoute('ks/:keyspace/blpop/:key/:timeout', async (req, res) => {
          const {keyspace, key, timeout} = req.params;
          const redisKey = this.redisKey(keyspace, key);
-         res.json(await redisClient.blpopAsync(redisKey, timeout));
+         const reply = await redisClient.blpopAsync(redisKey, timeout);
+         res.json(reply[1]);
          redisClient.expire(redisKey, config.expire);
       });
       this.addKeyspaceRoute('ks/:keyspace/brpop/:key/:timeout', async (req, res) => {
          const {keyspace, key, timeout} = req.params;
          const redisKey = this.redisKey(keyspace, key);
-         res.json(await redisClient.brpopAsync(redisKey, timeout));
+         const reply = await redisClient.brpopAsync(redisKey, timeout);
+         res.json(reply[1]);
          redisClient.expire(redisKey, config.expire);
       });
       this.addKeyspaceRoute('ks/:keyspace/rpop/:key', async (req, res) => {
