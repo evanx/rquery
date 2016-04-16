@@ -3,17 +3,6 @@
 
 - HTTP API for Redis queries
 
-### Implementation
-
-See: https://github.com/evanx/rquery/tree/master/src
-
-We use the component model specified in:
-- https://github.com/evanx/component-validator
-
-We use a supervisor implementation for such components via the `lib` submodule:
-- https://github.com/evanx/libv
-
-
 ### Status
 
 UNSTABLE, INCOMPLETE
@@ -196,6 +185,17 @@ redisKeyspace: 'demo:rquery'
 ```
 
 See the configuration module for this demo: https://github.com/evanx/rquery/blob/master/demo.js
+
+### Implementation
+
+See: https://github.com/evanx/rquery/tree/master/src
+
+We use the component model specified in:
+- https://github.com/evanx/component-validator
+
+We use a supervisor implementation for such components via the `lib` submodule:
+- https://github.com/evanx/libv
+
 
 ### Further reading
 
