@@ -10,12 +10,12 @@ c1commit() {
   git add -A
   git commit -m "$message" 
   git push
+  git remote set-url origin https://github.com/evanx/libv.git
   echo; echo "done lib"
   git status
   echo; echo "sync"
   cd ..
   pwd 
-  git remote set-url origin https://github.com/evanx/libv.git
   git add -A
   git commit -m "$message" 
   git push
