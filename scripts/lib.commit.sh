@@ -2,7 +2,6 @@
 set -u -e 
 
 cd lib 
-echo >> SupervisorStarter.js
 pwd
 
 c1commit() {
