@@ -73,6 +73,8 @@ curl -s demo.ibhala.com/rquery/ks/$USER/scard/myset | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/smembers/myset | python -mjson.tool
 ```
 
+where `smembers/myset` returns:
+
 ```json
 [
     "item1",
