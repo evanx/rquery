@@ -24,7 +24,8 @@ where the following "help" is available:
 Notes about this demo:
 - no authentication but choose a "keyspace" e.g. your username.
 - automatically expires keys after an idle duration of 3 minutes.
-- anyone can see and modify your test data. 
+- the `keyspaces` and `info` command is for the whole Redis instance.
+- anyone can query and modify your test data. 
 
 The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your chosen keyspace should appear therein.
 
@@ -37,8 +38,6 @@ The following subset of Redis commands is supported for this demo:
 - other: `time` `info` `keyspaces`
 
 See Redis commands: http://redis.io/commands
-
-Note that the `keyspaces` and `info` command is for the whole Redis instance, and so does not require a keyspace like the others.
 
 
 #### curl
