@@ -10,6 +10,7 @@ c1commit() {
   git remote set-url origin git@github.com:evanx/libv.git
   git add -A
   git commit -m "$message" 
+  git remote -v 
   git push
   git remote set-url origin https://github.com/evanx/libv.git
   echo; echo "done lib"
@@ -20,6 +21,7 @@ c1commit() {
   git status
   git add -A
   git commit -m "$message" 
+  git remote -v 
   git push
   echo; echo "done"
   git status
