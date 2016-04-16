@@ -273,8 +273,12 @@ export default class {
       });
    }
 
-   async addKeyspaceRoute(uri, fn) {
-      expressApp.get(config.location + uri, async (req, res) => {
+   async addKeyspaceRoute(options, fn) {
+      if (typeof options === 'string') {
+         options = {uri: options};
+      }
+      assert(options.uri, 'options.uri');
+      expressApp.get(config.location + options.uri, async (req, res) => {
          try {
             const {keyspace, key, timeout} = req.params;
             if (!keyspace) {
