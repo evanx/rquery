@@ -148,12 +148,13 @@ where `keys` returns:
 where `ttl` returns:
 ```json
 [
-   "myhashes": 180,
-   "mykey": 179,
-   "mylist": 180,
-   "myset": 179
+   "myhashes": 174,
+   "mykey": 165,
+   "mylist": 179,
+   "myset": 169
 ]
 ```
+which shows my keys' TTLs decreasing from 180 seconds.
 
 We can check the keys and their TTL in the specified `keyspace` as follows:
 ```shell
