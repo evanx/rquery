@@ -69,6 +69,13 @@ curl -s demo.ibhala.com/rquery/ks/$USER/scard/myset | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/smembers/myset | python -mjson.tool
 ```
 
+```json
+[
+    "item1",
+    "item2"
+]
+```
+
 ##### hashes
 
 ```shell
@@ -81,6 +88,22 @@ curl -s demo.ibhala.com/rquery/ks/$USER/hexists/myhashes/myfield2 | python -mjso
 curl -s demo.ibhala.com/rquery/ks/$USER/hlen/myhashes | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/hkeys/myhashes | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/hgetall/myhashes | python -mjson.tool
+```
+
+where `hkeys/myhashes` returns:
+```json
+[
+    "myfield1",
+    "myfield2"
+]
+```
+
+where `hgetall/myhashes` returns:
+```json
+{
+    "myfield1": "myfield1value",
+    "myfield2": "myfield2value"
+}
 ```
 
 ##### lists
@@ -96,6 +119,15 @@ curl -s demo.ibhala.com/rquery/ks/$USER/brpop/mylist/1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/llen/mylist | python -mjson.tool
 ```
 
+where `lrange/mylist/0/-1` returns:
+```json
+[
+    "item3",
+    "item2",
+    "item1"
+]
+```
+
 ##### keyspace
 
 We can check the keys and their TTL in the specified `keyspace` as follows:
@@ -104,10 +136,36 @@ curl -s demo.ibhala.com/rquery/ks/$USER/keys | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/ttl | python -mjson.tool
 ```
 
+where `keys` returns:
+```json
+[
+   "myhashes",
+   "myset",
+   "mykey",
+   "mylist"
+]
+```
+where `ttl` returns:
+```json
+[
+   "myhashes": 180,
+   "mykey": 179,
+   "mylist": 180,
+   "myset": 179
+]
+```
+
 We can check the keys and their TTL in the specified `keyspace` as follows:
 ```shell
 ```
 curl -s demo.ibhala.com/rquery/keyspaces | python -mjson.tool
+```
+
+where `keyspaces` returns:
+```json
+[
+    "evanx"
+]
 ```
 
 ### Installation
