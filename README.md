@@ -88,10 +88,11 @@ curl -s demo.ibhala.com/rquery/ks/$USER/hgetall/myhashes | python -mjson.tool
 ```shell
 curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item2 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item3 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/lrange/mylist/0/-1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/llen/mylist | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/rpop/mylist | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/brpop/mylist/4 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/lpop/mylist | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/brpop/mylist/1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/llen/mylist | python -mjson.tool
 ```
 
