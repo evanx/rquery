@@ -177,6 +177,7 @@ where `keys` returns:
    "myhashes",
    "myset",
    "mykey",
+   "mysortedset",
    "mylist"
 ]
 ```
@@ -184,9 +185,10 @@ and `ttl` returns:
 ```json
 {
    "myhashes": 174,
-   "mykey": 165,
+   "mykey": 161,
    "mylist": 179,
-   "myset": 169
+   "myset": 166,
+   "mysortedset": 169
 }
 ```
 which shows my keys' TTLs decreasing from 180 seconds.
