@@ -108,7 +108,7 @@ where `hkeys/myhashes` returns:
 ]
 ```
 
-where `hgetall/myhashes` returns:
+and `hgetall/myhashes` returns:
 ```json
 {
     "myfield1": "myfield1value",
