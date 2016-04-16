@@ -62,6 +62,10 @@ curl -s demo.ibhala.com/rquery/ks/$USER/exists/mykey | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/get/mykey | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/ttl/mykey | python -mjson.tool
 ```
+where `ttl/mykey` returns the TTL decreasing from 180 seconds:
+```
+179
+```
 
 ##### sets
 
