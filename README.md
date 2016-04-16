@@ -21,13 +21,12 @@ where the following "help" is available:
 - http://demo.ibhala.com/rquery/routes - shows all the "routes"
 - http://demo.ibhala.com/rquery/help - renders this `README.md`
 
-The demo has no authentication but choose a "keyspace" e.g. your username.
+Notes about this demo:
+- no authentication but choose a "keyspace" e.g. your username.
+- automatically expires keys after an idle duration of 3 minutes.
+- anyone can see and modify your test data. 
 
-See Redis commands: http://redis.io/commands
-
-Note that this demo automatically expires keys after an idle duration of 3 minutes.
-
-The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your `$USER` should appear therein.
+The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your chosen keyspace should appear therein.
 
 The following subset of Redis commands is supported for this demo:
 - keys: `keys` `exists` `set` `get` `type` `ttl` `incr`
@@ -36,6 +35,8 @@ The following subset of Redis commands is supported for this demo:
 - lists: `lpush` `rpop` `brpop` `brpoplpush` `llen` `lrange`
 - hashes: `hexists` `hset` `hincrby` `hget` `hlen` `hkeys` `hgetall`
 - other: `time` `info` `keyspaces`
+
+See Redis commands: http://redis.io/commands
 
 Note that the `keyspaces` and `info` command is for the whole Redis instance, and so does not require a keyspace like the others.
 
