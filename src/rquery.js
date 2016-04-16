@@ -35,6 +35,9 @@ export default class {
          res.set('Content-Type', 'text/plain');
          res.send(await redisClient.infoAsync());
       });
+      this.addRoute('time', async (req, res) => {
+         res.json(await redisClient.timeAsync());
+      });
       this.addRoute('keyspaces', async (req, res) => {
          res.json(await redisClient.smembersAsync(this.redisKey('keyspaces')));
       });
@@ -100,6 +103,12 @@ export default class {
          const {keyspace, key, member} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          res.json(await redisClient.saddAsync(redisKey, member));
+         redisClient.expire(redisKey, config.expire);
+      });
+      this.addKeyspaceRoute('ks/:keyspace/srem/:key/:member', async (req, res) => {
+         const {keyspace, key, member} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         res.json(await redisClient.sremAsync(redisKey, member));
          redisClient.expire(redisKey, config.expire);
       });
       this.addKeyspaceRoute('ks/:keyspace/smembers/:key', async (req, res) => {

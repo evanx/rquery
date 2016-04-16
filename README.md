@@ -29,10 +29,11 @@ The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces
 
 The following subset of Redis commands is supported for this demo:
 - keys: `keys` `exists` `set` `get` `type` `ttl` `incr`
-- sets: `sadd` `sismember` `smembers` `scard`
+- sets: `sadd` `srem` `sismember` `smembers` `scard`
+- sorted sets: `zadd` `zrem` `zcard` `zrange` `zrevrange`
 - lists: `lpush` `rpop` `brpop` `brpoplpush` `llen` `lrange`
 - hashes: `hexists` `hset` `hincrby` `hget` `hlen` `hkeys` `hgetall`
-- other: `info` `keyspaces`
+- other: `time` `info` `keyspaces`
 
 Note that the `keyspaces` and `info` command is for the whole Redis instance, and so does not require a keyspace like the others.
 
@@ -43,6 +44,20 @@ We try `curl` too
 
 In the examples below, we set our "keyspace" as our username via `$USER.` (This is prefixed to the key by rquery.)
 
+##### Info
+
+```shell
+curl -s demo.ibhala.com/rquery/ks/$USER/info | tail -1
+curl -s demo.ibhala.com/rquery/ks/$USER/time | python -mjson.tool
+```
+where `time` returns:
+```json
+[
+    "1460808868",
+    "712166"
+]
+```
+
 ##### Keys
 
 ```shell
@@ -52,7 +67,7 @@ curl -s demo.ibhala.com/rquery/ks/$USER/get/mykey | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/ttl/mykey | python -mjson.tool
 ```
 where `ttl/mykey` returns the TTL decreasing from 180 seconds:
-```
+```json
 179
 ```
 
@@ -62,8 +77,9 @@ where `ttl/mykey` returns the TTL decreasing from 180 seconds:
 curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item2 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/sismember/myset/item1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/scard/myset | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/smembers/myset | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/srem/myset/item1 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/scard/myset | python -mjson.tool
 ```
 
 where `smembers/myset` returns:
