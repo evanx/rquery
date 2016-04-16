@@ -12,6 +12,8 @@ export default class {
       redisClient = redisLib.createClient(config.redisUrl);
       expressApp = expressLib();
       this.addRoutes();
+      expressServer = await Express.listen(expressApp, config.port);
+      logger.info('listen', config.port, Express.getRoutes(expressApp), expressServer);
    }
 
    addRoutes() {
@@ -236,8 +238,6 @@ export default class {
          const redisKey = this.redisKey(keyspace, key);
          res.json(await redisClient.zrevrangeAsync(redisKey, start, stop));
       });
-      logger.info('listen', config.port, Express.getRoutes(expressApp));
-      expressServer = expressApp.listen(config.port);
    }
 
    async addRoute(uri, fn) {
