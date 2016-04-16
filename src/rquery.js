@@ -35,11 +35,11 @@ export default class {
          res.set('Content-Type', 'text/plain');
          res.send(await redisClient.infoAsync());
       });
-      this.addRoute('time/millis', async (req, res) => {
+      this.addRoute('time/seconds', async (req, res) => {
          const time = await redisClient.timeAsync();
          res.json(time[0]);
       });
-      this.addRoute('time/millis/plain', async (req, res) => {
+      this.addRoute('time/seconds/plain', async (req, res) => {
          res.set('Content-Type', 'text/plain');
          const time = await redisClient.timeAsync();
          res.send(time[0]);

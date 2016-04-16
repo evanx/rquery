@@ -58,6 +58,15 @@ where `time` returns:
 ]
 ```
 
+We sometimes support variants:
+```shell
+root@joy:~# date -d @`curl -s ibhala.com/rquery/time/seconds/plain`
+Sat Apr 16 12:37:28 EDT 2016
+```
+where the time in epoch seconds in plain text rather than JSON.
+
+Incidently, this VM is named after Bill Joy :)
+
 ##### Keys
 
 ```shell
