@@ -32,17 +32,6 @@ The demo has no authentication but choose a "keyspace" e.g. your username.
 
 Note that keys are expired after an idle duration of 3 minutes.
 
-#### curl
-
-We try `curl` too:
-```shell
-curl -s demo.ibhala.com/rquery/ks/$USER/set/mykey/myvalue; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/get/mykey; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/ttl/mykey; echo
-curl -s demo.ibhala.com/rquery/ks/keyspaces; echo
-```
-where we specify a "keyspace" as our username via `$USER.` (This is prefixed to the key by rquery.)
-
 The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your `$USER` should appear therein.
 
 The following subset of Redis commands is supported for this demo:
@@ -54,6 +43,60 @@ The following subset of Redis commands is supported for this demo:
 
 Note that the `keyspaces` and `info` command is for the whole Redis instance, and so does not require a keyspace like the others.
 
+
+#### curl
+
+We try `curl` too
+
+In the examples below, we set our "keyspace" as our username via `$USER.` (This is prefixed to the key by rquery.)
+
+##### keys
+
+```shell
+curl -s demo.ibhala.com/rquery/ks/$USER/set/mykey/myvalue; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/exists/mykey; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/get/mykey; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/ttl/mykey; echo
+```
+
+##### sets
+
+```shell
+curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item1; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item2; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/sismember/myset/item1; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/scard/myset; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/smembers/myset; echo
+```
+
+##### hashes
+
+```shell
+curl -s demo.ibhala.com/rquery/ks/$USER/hset/myhashes/myfield/myfieldvalue; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/hget/myhashes/myfield; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/hexists/myhashes/myfield; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/hlen/myhashes; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/hkeys/myhashes; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/hgetall/myhashes; echo
+```
+
+##### lists
+
+```shell
+curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item1; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item2; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/lrange/mylist/0/-1; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/rpop/mylist; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/llen/mylist; echo
+```
+
+##### keys
+
+```shell
+curl -s demo.ibhala.com/rquery/ks/$USER/keys; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/ttl; echo
+curl -s demo.ibhala.com/rquery/keyspaces; echo
+```
 
 ### Installation
 
