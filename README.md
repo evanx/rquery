@@ -49,8 +49,8 @@ In the examples below, we set our "keyspace" as our username via `$USER.` (This 
 ##### Info
 
 ```shell
-curl -s demo.ibhala.com/rquery/ks/$USER/info | tail -1
-curl -s demo.ibhala.com/rquery/ks/$USER/time | python -mjson.tool
+curl -s demo.ibhala.com/rquery/info | tail -1
+curl -s demo.ibhala.com/rquery/time | python -mjson.tool
 ```
 where `time` returns:
 ```json
