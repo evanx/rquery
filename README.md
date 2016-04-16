@@ -30,7 +30,7 @@ It should report the available "routes" defined for the ExpressJS webserver:
 
 The demo has no authentication but choose a "keyspace" e.g. your username.
 
-Note that keys are expired after an idle duration 3 minutes.
+Note that keys are expired after an idle duration of 3 minutes.
 
 #### curl
 
@@ -52,7 +52,7 @@ The following subset of Redis commands is supported for this demo:
 - hashes: `hexists` `hset` `hincrby` `hget` `hlen` `hkeys` `hgetall`
 - other: `info` `keyspaces`
 
-Note that the `info` command is for the whole Redis instance, and so does not require a keyspace like the others.
+Note that the `keyspaces` and `info` command is for the whole Redis instance, and so does not require a keyspace like the others.
 
 
 ### Installation
