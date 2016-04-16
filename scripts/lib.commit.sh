@@ -22,6 +22,7 @@ c1commit() {
   git add -A
   git commit -m "$message" 
   git remote -v 
+  #git remote set-url origin git@github.com:evanx/rquery.git
   git push
   echo; echo "done"
   git status
