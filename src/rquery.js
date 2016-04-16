@@ -11,15 +11,15 @@ export default class {
       logger.info('start');
       redisClient = redisLib.createClient(config.redisUrl);
       expressApp = expressLib();
+      this.addRoutes();
+   }
+
+   addRoutes() {
       if (config.location !== '/') {
          expressApp.get('/', async (req, res) => {
             res.json(Express.getRoutes(expressApp));
          });
       }
-      this.addRoutes();
-   }
-
-   addRoutes() {
       this.addRoute('', async (req, res) => {
          res.json(Express.getRoutes(expressApp));
       });
