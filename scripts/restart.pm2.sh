@@ -14,7 +14,7 @@ then
   port=8766
 fi
 
-echo rquery_port=$port pm2 restart $name
+rquery_port=$port pm2 restart $name
 
 sleep 1
 ls -lh ~/.pm2/logs/rquery*

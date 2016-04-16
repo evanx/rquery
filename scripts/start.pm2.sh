@@ -13,7 +13,7 @@ then
   port=8766
 fi
 
-echo rquery_port=$port NODE_ENV=production configModule=./demo.js redisUrl='redis://localhost:6379/13' pm2 start index.js --name $name
+rquery_port=$port NODE_ENV=production configModule=./demo.js redisUrl='redis://localhost:6379/13' pm2 start index.js --name $name
 
 sleep 1
 ls -l ~/.pm2/logs/rquery*
