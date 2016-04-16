@@ -63,8 +63,11 @@ We sometimes support variants:
 root@joy:~# date -d @`curl -s ibhala.com/rquery/time/seconds/plain`
 Sat Apr 16 12:37:28 EDT 2016
 ```
-where the `/time/seconds/plain` endpoint returns the epoch seconds in plain text rather than JSON.
-
+where the `/time/seconds/plain` endpoint returns the epoch seconds in plain text, whereas `/time/seconds` is JSON and so returns the epoch seconds with double-quotes (to be a valid JSON "document"):
+```shell
+root@joy:~# curl -s ibhala.com/rquery/time/seconds; echo
+"1460836467"
+```
 Incidently, this VM is named after Bill Joy :)
 
 ##### Keys
