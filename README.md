@@ -53,49 +53,52 @@ In the examples below, we set our "keyspace" as our username via `$USER.` (This 
 ##### keys
 
 ```shell
-curl -s demo.ibhala.com/rquery/ks/$USER/set/mykey/myvalue; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/exists/mykey; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/get/mykey; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/ttl/mykey; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/set/mykey/myvalue | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/exists/mykey | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/get/mykey | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/ttl/mykey | python -mjson.tool
 ```
 
 ##### sets
 
 ```shell
-curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item1; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item2; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/sismember/myset/item1; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/scard/myset; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/smembers/myset; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item1 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item2 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/sismember/myset/item1 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/scard/myset | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/smembers/myset | python -mjson.tool
 ```
 
 ##### hashes
 
 ```shell
-curl -s demo.ibhala.com/rquery/ks/$USER/hset/myhashes/myfield/myfieldvalue; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/hget/myhashes/myfield; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/hexists/myhashes/myfield; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/hlen/myhashes; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/hkeys/myhashes; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/hgetall/myhashes; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/hset/myhashes/myfield1/myfield1value | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/hget/myhashes/myfield1 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/hset/myhashes/myfield2/myfield2value | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/hget/myhashes/myfield2 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/hexists/myhashes/myfield1 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/hexists/myhashes/myfield2 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/hlen/myhashes | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/hkeys/myhashes | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/hgetall/myhashes | python -mjson.tool
 ```
 
 ##### lists
 
 ```shell
-curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item1; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item2; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/lrange/mylist/0/-1; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/rpop/mylist; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/llen/mylist; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item1 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item2 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/lrange/mylist/0/-1 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/rpop/mylist | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/llen/mylist | python -mjson.tool
 ```
 
 ##### keys
 
 ```shell
-curl -s demo.ibhala.com/rquery/ks/$USER/keys; echo
-curl -s demo.ibhala.com/rquery/ks/$USER/ttl; echo
-curl -s demo.ibhala.com/rquery/keyspaces; echo
+curl -s demo.ibhala.com/rquery/ks/$USER/keys | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/ttl | python -mjson.tool
+curl -s demo.ibhala.com/rquery/keyspaces | python -mjson.tool
 ```
 
 ### Installation
