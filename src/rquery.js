@@ -5,7 +5,7 @@ import marked from 'marked';
 import * as Files from '../lib/Files';
 import * as Express from '../lib/Express';
 
-export default class ExpressComponent {
+export default class {
 
    async start() {
       logger.info('start');
