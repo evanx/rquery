@@ -2,6 +2,7 @@
 set -u -e 
 
 cd lib 
+echo >> SupervisorStarter.js
 pwd
 
 c1commit() {
@@ -16,6 +17,7 @@ c1commit() {
   echo; echo "sync"
   cd ..
   pwd 
+  git status
   git add -A
   git commit -m "$message" 
   git push
