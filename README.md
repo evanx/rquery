@@ -168,7 +168,6 @@ which shows my keys' TTLs decreasing from 180 seconds.
 
 We can check the keys and their TTL in the specified `keyspace` as follows:
 ```shell
-```
 curl -s demo.ibhala.com/rquery/keyspaces | python -mjson.tool
 ```
 
