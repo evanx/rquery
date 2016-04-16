@@ -157,12 +157,12 @@ where `keys` returns:
 ```
 and `ttl` returns:
 ```json
-[
+{
    "myhashes": 174,
    "mykey": 165,
    "mylist": 179,
    "myset": 169
-]
+}
 ```
 which shows my keys' TTLs decreasing from 180 seconds.
 
