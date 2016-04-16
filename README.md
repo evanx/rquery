@@ -155,7 +155,7 @@ where `keys` returns:
    "mylist"
 ]
 ```
-where `ttl` returns:
+and `ttl` returns:
 ```json
 [
    "myhashes": 174,
