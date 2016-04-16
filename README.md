@@ -25,7 +25,7 @@ The demo has no authentication but choose a "keyspace" e.g. your username.
 
 See Redis commands: http://redis.io/commands
 
-Note that keys are expired after an idle duration of 3 minutes.
+Note that this demo automatically expires keys after an idle duration of 3 minutes.
 
 The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your `$USER` should appear therein.
 
