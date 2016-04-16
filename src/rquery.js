@@ -38,6 +38,10 @@ export default class {
       this.addRoute('time', async (req, res) => {
          res.json(await redisClient.timeAsync());
       });
+      this.addRoute('timem', async (req, res) => {
+         const time = await redisClient.timeAsync();
+         res.json(time[1]);
+      });
       this.addRoute('keyspaces', async (req, res) => {
          res.json(await redisClient.smembersAsync(this.redisKey('keyspaces')));
       });
