@@ -43,7 +43,7 @@ We try `curl` too
 
 In the examples below, we set our "keyspace" as our username via `$USER.` (This is prefixed to the key by rquery.)
 
-##### keys
+##### Keys
 
 ```shell
 curl -s demo.ibhala.com/rquery/ks/$USER/set/mykey/myvalue | python -mjson.tool
@@ -56,7 +56,7 @@ where `ttl/mykey` returns the TTL decreasing from 180 seconds:
 179
 ```
 
-##### sets
+##### Sets
 
 ```shell
 curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item1 | python -mjson.tool
@@ -75,7 +75,27 @@ where `smembers/myset` returns:
 ]
 ```
 
-##### hashes
+##### Sorted sets
+
+```shell
+curl -s demo.ibhala.com/rquery/ks/$USER/zadd/mysortedset/10/value10 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/zadd/mysortedset/20/value20 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/zcard/mysortedset | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/zrange/mysortedset | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/zrem/mysortedset/value10 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/zrevrange/mysortedset | python -mjson.tool
+```
+
+where `zrange/mysortedset` returns:
+
+```json
+[
+    "value10",
+    "value20"
+]
+```
+
+##### Hashes
 
 ```shell
 curl -s demo.ibhala.com/rquery/ks/$USER/hset/myhashes/myfield1/myfield1value | python -mjson.tool
@@ -105,7 +125,7 @@ and `hgetall/myhashes` returns:
 }
 ```
 
-##### lists
+##### Lists
 
 ```shell
 curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item1 | python -mjson.tool
@@ -127,7 +147,7 @@ where `lrange/mylist/0/-1` returns:
 ]
 ```
 
-##### keyspace
+##### Keyspace
 
 We can check the keys and their TTL in the specified `keyspace` as follows:
 ```shell

@@ -238,6 +238,12 @@ export default class {
          res.json(await redisClient.zremAsync(redisKey, member));
          redisClient.expire(redisKey, config.expire);
       });
+      this.addKeyspaceRoute('ks/:keyspace/zrange/:key/:start/:stop', async (req, res) => {
+         const {keyspace, key, start, stop} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         res.json(await redisClient.zrangeAsync(redisKey, start, stop));
+         redisClient.expire(redisKey, config.expire);
+      });
       this.addKeyspaceRoute('ks/:keyspace/zrevrange/:key/:start/:stop', async (req, res) => {
          const {keyspace, key, start, stop} = req.params;
          const redisKey = this.redisKey(keyspace, key);
