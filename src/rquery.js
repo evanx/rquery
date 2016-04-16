@@ -282,7 +282,7 @@ export default class {
             }
             if (timeout) {
                if (timeout < 1 || timeout > 10) {
-                  throw new ValidationError('timeout range 1 to 10 seconds: ' + timeout);
+                  throw new ValidationError('timeout must range from 1 to 10 seconds: ' + timeout);
                }
             }
             await redisClient.saddAsync([config.redisKeyspace, 'keyspaces'].join(':'), keyspace);
