@@ -28,6 +28,10 @@ It should report the available "routes" defined for the ExpressJS webserver:
 
 <img src="http://evanx.github.io/images/rquery/rquery-routes.png">
 
+where the following "help" is available:
+- http://demo.ibhala.com/rquery/routes - shows all the "routes"
+- http://demo.ibhala.com/rquery/help - renders this `README.md`
+
 The demo has no authentication but choose a "keyspace" e.g. your username.
 
 Note that keys are expired after an idle duration of 3 minutes.
