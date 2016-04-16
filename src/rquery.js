@@ -36,11 +36,11 @@ export default class ExpressComponent {
          res.send(await redisClient.infoAsync());
       });
       this.addRoute('keyspaces', async (req, res) => {
-         res.json(await redisClient.smembersAsync([this.redisKey('keyspaces')));
+         res.json(await redisClient.smembersAsync(this.redisKey('keyspaces')));
       });
       this.addKeyspaceRoute('ks/:keyspace/keys', async (req, res) => {
          const {keyspace} = req.params;
-         const keys = await redisClient.keysAsync([this.redisKey(keyspace, '*'));
+         const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
          const index = config.redisKeyspace.length + keyspace.length + 2;
          res.json(keys.map(key => key.substring(index)));
       });
