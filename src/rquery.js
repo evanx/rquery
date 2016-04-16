@@ -220,6 +220,30 @@ export default class {
          res.json(await redisClient.hgetallAsync(redisKey));
          redisClient.expire(redisKey, config.expire);
       });
+      this.addKeyspaceRoute('ks/:keyspace/zcard/:key', async (req, res) => {
+         const {keyspace, key} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         res.json(await redisClient.zcardAsync(redisKey));
+         redisClient.expire(redisKey, config.expire);
+      });
+      this.addKeyspaceRoute('ks/:keyspace/zadd/:key/:score/:member', async (req, res) => {
+         const {keyspace, key, score, member} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         res.json(await redisClient.zaddAsync(redisKey, score, member));
+         redisClient.expire(redisKey, config.expire);
+      });
+      this.addKeyspaceRoute('ks/:keyspace/zrem/:key/:member', async (req, res) => {
+         const {keyspace, key, member} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         res.json(await redisClient.zremAsync(redisKey, member));
+         redisClient.expire(redisKey, config.expire);
+      });
+      this.addKeyspaceRoute('ks/:keyspace/zrevrange/:key/:start/:stop', async (req, res) => {
+         const {keyspace, key, start, stop} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         res.json(await redisClient.zrevrangeAsync(redisKey, start, stop));
+         redisClient.expire(redisKey, config.expire);
+      });
       logger.info('listen', config.port, Express.getRoutes(expressApp));
       expressServer = expressApp.listen(config.port);
    }

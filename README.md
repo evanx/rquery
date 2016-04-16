@@ -83,7 +83,7 @@ curl -s demo.ibhala.com/rquery/ks/$USER/hget/myhashes/myfield1 | python -mjson.t
 curl -s demo.ibhala.com/rquery/ks/$USER/hset/myhashes/myfield2/myfield2value | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/hget/myhashes/myfield2 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/hexists/myhashes/myfield1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/hexists/myhashes/myfield2 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/hexists/myhashes/myfield3 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/hlen/myhashes | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/hkeys/myhashes | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/hgetall/myhashes | python -mjson.tool
