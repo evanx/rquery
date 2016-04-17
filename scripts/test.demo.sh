@@ -21,6 +21,7 @@ c1curla() {
   c2curl $1 sismember/myset/item1
   c2curl $1 smembers/myset
   c2curl $1 srem/myset/item1
+  c2curl $1 spop/myset
   c2curl $1 scard/myset
   c2curl $1 zadd/mysortedset/10/value10
   c2curl $1 zadd/mysortedset/20/value20
@@ -33,17 +34,21 @@ c1curla() {
   c2curl $1 hset/myhashes/myfield2/myfield2value
   c2curl $1 hget/myhashes/myfield2
   c2curl $1 hexists/myhashes/myfield1
-  c2curl $1 hexists/myhashes/myfield3
   c2curl $1 hlen/myhashes
   c2curl $1 hkeys/myhashes
   c2curl $1 hgetall/myhashes
+  c2curl $1 hdel/myhashes/myfield2
   c2curl $1 lpush/mylist/item1
   c2curl $1 lpush/mylist/item2
   c2curl $1 lpush/mylist/item3
   c2curl $1 lpush/mylist/item4
+  c2curl $1 lindex/mylist/0
   c2curl $1 lrange/mylist/0/-1
   c2curl $1 llen/mylist
   c2curl $1 lpop/mylist
+  c2curl $1 lrem/mylist/-1/item4
+  c2curl $1 lset/mylist/0/item4
+  c2curl $1 ltrim/mylist/0/2
   c2curl $1 brpop/mylist/1
   c2curl $1 brpoplpush/mylist/mypoppedlist/1
   c2curl $1 llen/mylist
@@ -68,5 +73,21 @@ c0curld() {
   c1curld demo2.ibhala.com 
 }
 
-c0curld
+c0curl1() {
+  c1curld demo1.ibhala.com 
+}
+
+c0curl2() {
+  c1curld demo2.ibhala.com 
+}
+
+command=curld
+if [ $# -ge 1 ]
+then
+  command=$1
+  shift
+  c$#$command $@
+else
+  c0curld
+fi
 echo "OK"

@@ -88,10 +88,15 @@ where `ttl/mykey` returns the TTL decreasing from 180 seconds:
 ```shell
 curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item2 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item3 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item4 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/sismember/myset/item1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/smembers/myset | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/srem/myset/item1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/scard/myset | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/smove/myset/myotherset/item4 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/smembers/myotherset | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/spop/myset | python -mjson.tool
 ```
 
 where `smembers/myset` returns:
@@ -135,6 +140,7 @@ curl -s demo.ibhala.com/rquery/ks/$USER/hexists/myhashes/myfield3 | python -mjso
 curl -s demo.ibhala.com/rquery/ks/$USER/hlen/myhashes | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/hkeys/myhashes | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/hgetall/myhashes | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/hdel/myhashes/myfield2 | python -mjson.tool
 ```
 
 where `hkeys/myhashes` returns:
@@ -159,12 +165,16 @@ and `hgetall/myhashes` returns:
 curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item2 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item3 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item4 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/lrange/mylist/0/-1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/llen/mylist | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/lrem/mylist/-1/item4 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/lindex/mylist/0 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/lrange/mylist/0/-1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/lpop/mylist | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/brpop/mylist/1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/brpoplpush/mylist/mypoppedlist/1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/llen/mylist | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/ltrim/mylist/0/2 | python -mjson.tool
 ```
 
 where `lrange/mylist/0/-1` returns:

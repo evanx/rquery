@@ -114,6 +114,18 @@ export default class {
          const redisKey = this.redisKey(keyspace, key);
          res.json(await redisClient.sremAsync(redisKey, member));
       });
+      this.addKeyspaceRoute('ks/:keyspace/smove/:key/:dest/:member', async (req, res, multi) => {
+         const {keyspace, key, dest, member} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         const destKey = this.redisKey(keyspace, dest);
+         res.json(await redisClient.smoveAsync(redisKey, destKey, member));
+         multi.expire(destKey, config.expire);
+      });
+      this.addKeyspaceRoute('ks/:keyspace/spop/:key', async (req, res) => {
+         const {keyspace, key} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         res.json(await redisClient.spopAsync(redisKey));
+      });
       this.addKeyspaceRoute('ks/:keyspace/smembers/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = this.redisKey(keyspace, key);
@@ -173,6 +185,26 @@ export default class {
          const redisKey = this.redisKey(keyspace, key);
          res.json(await redisClient.llenAsync(redisKey));
       });
+      this.addKeyspaceRoute('ks/:keyspace/lindex/:key/:index', async (req, res) => {
+         const {keyspace, key, index} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         res.json(await redisClient.lindexAsync(redisKey, index));
+      });
+      this.addKeyspaceRoute('ks/:keyspace/lrem/:key/:count/:value', async (req, res) => {
+         const {keyspace, key, count, value} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         res.json(await redisClient.lremAsync(redisKey, count, value));
+      });
+      this.addKeyspaceRoute('ks/:keyspace/lset/:key/:index/:value', async (req, res) => {
+         const {keyspace, key, index, value} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         res.json(await redisClient.lsetAsync(redisKey, index, value));
+      });
+      this.addKeyspaceRoute('ks/:keyspace/ltrim/:key/:start/:stop', async (req, res) => {
+         const {keyspace, key, start, stop} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         res.json(await redisClient.ltrimAsync(redisKey, start, stop));
+      });
       this.addKeyspaceRoute('ks/:keyspace/lrange/:key/:start/:stop', async (req, res) => {
          const {keyspace, key, start, stop} = req.params;
          const redisKey = this.redisKey(keyspace, key);
@@ -187,6 +219,11 @@ export default class {
          const {keyspace, key, field} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          res.json(await redisClient.hgetAsync(redisKey, field));
+      });
+      this.addKeyspaceRoute('ks/:keyspace/hdel/:key/:field', async (req, res) => {
+         const {keyspace, key, field} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         res.json(await redisClient.hdelAsync(redisKey, field));
       });
       this.addKeyspaceRoute('ks/:keyspace/hincrby/:key/:field/:increment', async (req, res) => {
          const {keyspace, key, field, increment} = req.params;
