@@ -82,12 +82,12 @@ $ date -d @`curl -s https://ibhala.com/rquery/time/seconds/plain`
 Sun Apr 17 18:27:51 SAST 2016
 ```
 
-Incidently the following endpoint was announced to be "eternally" available on the `ibhala.com` domain:
+Incidently the `http://ibhala.com/epoch` endpoint was announced to be "eternally" available. Actually this endpoint is proxied to `/rquery/time/seconds/plain.` An HTTP expiry header of 15 seconds is added:
 ```shell
 $ curl -I http://ibhala.com/epoch | grep '^Cache-Control'
 Cache-Control: max-age=15
 ```
-where actually this endpoint is proxied to `/rquery/time/seconds/plain.` Note that an HTTP expiry header of 15 seconds is added. As thereby indicated, it's expected to be within about 15 seconds of actual epoch time i.e. allowing for caching e.g. by CloudFlare.
+As such, it's expected to be within about 15 seconds later than the actual epoch time i.e. allowing for CDN caching.
 
 ##### Keys
 
