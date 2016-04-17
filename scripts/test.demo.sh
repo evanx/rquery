@@ -40,10 +40,12 @@ c1curla() {
   c2curl $1 lpush/mylist/item1
   c2curl $1 lpush/mylist/item2
   c2curl $1 lpush/mylist/item3
+  c2curl $1 lpush/mylist/item4
   c2curl $1 lrange/mylist/0/-1
   c2curl $1 llen/mylist
   c2curl $1 lpop/mylist
   c2curl $1 brpop/mylist/1
+  c2curl $1 brpoplpush/mylist/mypoppedlist/1
   c2curl $1 llen/mylist
   c2curl $1 keys
   c2curl $1 ttl

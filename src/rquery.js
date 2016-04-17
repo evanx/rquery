@@ -161,12 +161,12 @@ export default class {
          const redisKey = this.redisKey(keyspace, key);
          res.json(await redisClient.rpopAsync(redisKey));
       });
-      this.addKeyspaceRoute('ks/:keyspace/brpoplpush/:key/:dest/:timeout', async (req, res) => {
+      this.addKeyspaceRoute('ks/:keyspace/brpoplpush/:key/:dest/:timeout', async (req, res, multi) => {
          const {keyspace, key, dest, timeout} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          const destKey = this.redisKey(keyspace, dest);
          res.json(await redisClient.brpoplpushAsync(redisKey, destKey, timeout));
-         redisClient.expire(destKey, config.expire);
+         multi.expire(destKey, config.expire);
       });
       this.addKeyspaceRoute('ks/:keyspace/llen/:key', async (req, res) => {
          const {keyspace, key} = req.params;

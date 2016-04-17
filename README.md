@@ -163,6 +163,7 @@ curl -s demo.ibhala.com/rquery/ks/$USER/lrange/mylist/0/-1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/llen/mylist | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/lpop/mylist | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/brpop/mylist/1 | python -mjson.tool
+curl -s demo.ibhala.com/rquery/ks/$USER/brpoplpush/mylist/mypoppedlist/1 | python -mjson.tool
 curl -s demo.ibhala.com/rquery/ks/$USER/llen/mylist | python -mjson.tool
 ```
 
