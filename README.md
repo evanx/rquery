@@ -28,7 +28,7 @@ Notes about this demo:
 - automatically expires keys after an idle duration of 3 minutes.
 - beware that anyone can query and modify your test data
 
-If you would want a secured private keyspace, email evan.summers@gmail.com to signup for a free "beta" service with the following limits:
+If you want an authenticated keyspace, email evan.summers@gmail.com to signup for an upcoming free "beta" service with the following limits:
 - 20MB storage
 - 20GB transfer
 
