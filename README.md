@@ -87,7 +87,7 @@ Incidently the `http://ibhala.com/epoch` endpoint was announced to be "eternally
 $ curl -I http://ibhala.com/epoch | grep '^Cache-Control'
 Cache-Control: max-age=15
 ```
-As such, it's expected to be within about 15 seconds later than the actual epoch time i.e. allowing for CDN caching.
+As such, it's expected to be up to about 15 seconds later than the actual epoch time i.e. allowing for CDN caching.
 
 ##### Keys
 
