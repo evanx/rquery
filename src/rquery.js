@@ -280,7 +280,6 @@ export default class {
    async addRoute(uri, fn) {
       expressApp.get(config.location + uri, async (req, res) => {
          let hostname = req.hostname.replace(/\..*$/, '');
-         logger.debug('req', uri, req.hostname, hostname);
          try {
             await fn(req, res);
          } catch (err) {
@@ -295,6 +294,7 @@ export default class {
       }
       assert(options.uri, 'options.uri');
       expressApp.get(config.location + options.uri, async (req, res) => {
+         let hostname = req.hostname.replace(/\..*$/, '');
          try {
             const {keyspace, key, timeout} = req.params;
             if (!keyspace) {
@@ -326,6 +326,7 @@ export default class {
    handleError(err, req, res) {
       res.status(500).send({
          err: err.message,
+         host: req.hostname,
          params: req.params,
       });
    }
