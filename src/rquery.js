@@ -279,8 +279,8 @@ export default class {
 
    async addRoute(uri, fn) {
       expressApp.get(config.location + uri, async (req, res) => {
-         let host = req.host.replace(/\..*$/, '');
-         logger.debug('req', uri, req.host);
+         let hostname = req.hostname.replace(/\..*$/, '');
+         logger.debug('req', uri, req.hostname, hostname);
          try {
             await fn(req, res);
          } catch (err) {
