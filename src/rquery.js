@@ -298,9 +298,11 @@ export default class {
             const {keyspace, key, timeout} = req.params;
             let hostname;
             if (req.hostname === config.hostname) {
-            } else if (lodash.endsWith(req.hostname, config.hostname)) {
+            } else if (lodash.endsWith(req.hostname, config.keyspaceHostname)) {
                hostname = req.hostname.replace(/\..*$/, '');
-               logger.debug('hostname', hostname);
+               if (hostname !== keyspace) {
+                  throw new ValidationError(`invalid keyspace (${keyspace}) for hostname: ${hostname}`);
+               }
             }
             if (!keyspace) {
                throw new ValidationError('keyspace: ' + req.path);

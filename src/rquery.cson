@@ -8,6 +8,8 @@ config:
       type: 'string'
    location:
       defaultValue: '/'
+   keyspaceHostname:
+      type: 'string'
    port:
       defaultValue: 8080
    expire:
