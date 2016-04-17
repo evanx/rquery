@@ -9,17 +9,17 @@ UNSTABLE, INCOMPLETE
 
 ### Live demo
 
-Try: http://demo.ibhala.com/rquery
+Try: https://demo.ibhala.com/rquery
 
 However be sure to have a JSON Viewer extension installed in your browser.
 
 It should report the available "routes" defined for the ExpressJS webserver:
 
-<img src="http://evanx.github.io/images/rquery/rquery-routes.png">
+<img src="https://evanx.github.io/images/rquery/rquery-routes.png">
 
 where the following "help" is available:
-- http://demo.ibhala.com/rquery/routes - shows all the "routes"
-- http://demo.ibhala.com/rquery/help - renders this `README.md`
+- https://demo.ibhala.com/rquery/routes - shows all the "routes"
+- https://demo.ibhala.com/rquery/help - renders this `README.md`
 
 The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your chosen keyspace should appear therein.
 
@@ -42,7 +42,7 @@ The following subset of Redis commands is supported for this demo:
 - hashes: `hexists` `hset` `hincrby` `hget` `hdel` `hlen` `hkeys` `hgetall`
 - other: `time` `info` `keyspaces`
 
-See Redis commands: http://redis.io/commands
+See Redis commands: https://redis.io/commands
 
 #### curl
 
