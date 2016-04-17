@@ -300,18 +300,15 @@ export default class {
             if (req.hostname === config.hostname) {
             } else if (lodash.endsWith(req.hostname, config.keyspaceHostname)) {
                hostname = req.hostname.replace(/\..*$/, '');
-               if (hostname !== keyspace) {
-                  throw new ValidationError(`Invalid keyspace (${keyspace}) for hostname: ${hostname}`);
-               }
-               let keyspaceHashes = await redisClient.hgetallAsync(this.redisKey('keyspace', keyspace));
-               if (!keyspaceHashes) {
+               let hostHashes = await redisClient.hgetallAsync(this.redisKey('host', hostname));
+               if (!hostHashes) {
                   throw new ValidationError(`Invalid hostname: ${hostname}`);
                }
-               logger.debug('keyspaceHashes', keyspaceHashes);
-               if (!keyspaceHashes.keyspaces) {
-                  throw new ValidationError(`Invalid keyspace: ${keyspace}`);
+               logger.debug('hostHashes', hostHashes);
+               if (!hostHashes.keyspaces) {
+                  throw new ValidationError(`Invalid hostname: ${hostname}`);
                }
-               if (!lodash.includes(keyspaceHashes.keyspaces, keyspace)) {
+               if (!lodash.includes(hostHashes.keyspaces, keyspace)) {
                   throw new ValidationError(`Invalid keyspace: ${keyspace}`);
                }
             }
