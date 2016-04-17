@@ -303,6 +303,10 @@ export default class {
                if (hostname !== keyspace) {
                   throw new ValidationError(`invalid keyspace (${keyspace}) for hostname: ${hostname}`);
                }
+               let keyspaceMeta = await redisClient.hgetallAsync(this.redisKey('keyspace', keyspace));
+               if (!keyspaceMeta) {
+                  throw new ValidationError(`invalid keyspace hostname: ${hostname}`);
+               }
             }
             if (!keyspace) {
                throw new ValidationError('keyspace: ' + req.path);
