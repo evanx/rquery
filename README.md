@@ -31,6 +31,7 @@ Notes about this demo:
 If you require a secured private keyspace, email evan.summers@gmail.com. I'm offering this as a free service, with the following limits:
 - 20MB storage
 - 20GB transfer
+
 Otherwise I'll gladly charge triple AWS or Digital Ocean hosting rates, e.g. $15 per month for a private rquery instance on Digital Ocean, with limits of 400MB RAM and 1TB transfer, or multiples thereof, with a basic service package, to make money on premium packages later, blah blah.
 
 The following subset of Redis commands is supported for this demo:
