@@ -294,9 +294,14 @@ export default class {
       }
       assert(options.uri, 'options.uri');
       expressApp.get(config.location + options.uri, async (req, res) => {
-         let hostname = req.hostname.replace(/\..*$/, '');
          try {
             const {keyspace, key, timeout} = req.params;
+            let hostname;
+            if (req.hostname === config.hostname) {
+            } else if (lodash.endsWith(req.hostname, config.hostname)) {
+               hostname = req.hostname.replace(/\..*$/, '');
+               logger.debug('hostname', hostname);
+            }
             if (!keyspace) {
                throw new ValidationError('keyspace: ' + req.path);
             }
