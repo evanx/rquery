@@ -266,12 +266,14 @@ export default class {
                   throw new ValidationError('timeout must range from 1 to 10 seconds: ' + timeout);
                }
             }
-            await redisClient.saddAsync([config.redisKeyspace, 'keyspaces'].join(':'), keyspace);
-            await fn(req, res);
+            const multi = redisClient.multi();
+            await fn(req, res, multi);
+            multi.sadd([config.redisKeyspace, 'keyspaces'].join(':'), keyspace);
             if (key) {
                const redisKey = this.redisKey(keyspace, key);
-               redisClient.expire(redisKey, config.expire);
+               multi.expire(redisKey, config.expire);
             }
+            await multi.execAsync();
          } catch (err) {
             this.handleError(err, req, res);
          }
