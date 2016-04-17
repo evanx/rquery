@@ -32,7 +32,7 @@ If you would want a secured private keyspace, email evan.summers@gmail.com to si
 - 20MB storage
 - 20GB transfer
 
-And when you want to "upgrade," I'll gladly charge triple AWS or Digital Ocean hosting rates, e.g. $15 per month for a private rquery instance on Digital Ocean with limits of 400MB RAM and 1TB transfer, or multiples thereof, with a basic service package, to make money on premium packages later, blah blah.
+And when you want to "upgrade," I'll gladly charge triple AWS or Digital Ocean hosting rates, e.g. $15 per month for a private rquery instance on Digital Ocean with limits of 400MB RAM and 1TB transfer, or multiples thereof, with a basic service package, to make money on premium packages as we add value later, blah blah.
 
 The following subset of Redis commands is supported for this demo:
 - keys: `keys` `exists` `set` `get` `type` `ttl` `incr`

@@ -57,7 +57,7 @@ c1curla() {
 }
 
 c1curlg() {
-  c1curlv "http://$1/rquery/keyspaces" 
+  c1curlv "$1/rquery/keyspaces" 
 }
 
 c1curld() {
@@ -68,6 +68,8 @@ c1curld() {
 
 c0curld() {
   c1curld localhost:8765 
+  c1curld https://demo.ibhala.com 
+  c1curld https://demo1.ibhala.com 
   c1curld demo.ibhala.com 
   c1curld demo1.ibhala.com 
   c1curld demo2.ibhala.com 
