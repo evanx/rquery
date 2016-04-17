@@ -82,7 +82,7 @@ $ date -d @`curl -s https://ibhala.com/rquery/time/seconds/plain`
 Sun Apr 17 18:27:51 SAST 2016
 ```
 
-Incidently we announced that the following endpoint is "eternal" to the `ibhala.com` domain:
+Incidently the following endpoint was announced to be "eternally" available on the `ibhala.com` domain:
 ```shell
 $ curl -I http://ibhala.com/epoch | grep '^Cache-Control'
 Cache-Control: max-age=15
