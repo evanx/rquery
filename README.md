@@ -28,12 +28,6 @@ Notes about this demo:
 - automatically expires keys after an idle duration of 3 minutes.
 - beware that anyone can query and modify your test data
 
-If you want an authenticated keyspace, email evan.summers@gmail.com to signup for an upcoming free "beta" service with the following limits:
-- 20MB storage
-- 20GB transfer
-
-And when you want to "upgrade," I'll gladly charge triple AWS or Digital Ocean hosting rates, e.g. $15 per month for a private rquery instance on Digital Ocean with limits of 400MB RAM and 1TB transfer, or multiples thereof, with a basic service package. Premium packages should include monitoring, replication, backups and what-have-you.
-
 The following subset of Redis commands is supported for this demo:
 - keys: `keys` `exists` `set` `get` `type` `ttl` `incr`
 - sets: `sadd` `srem` `sismember` `smembers` `scard` `spop`
