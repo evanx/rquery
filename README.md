@@ -87,7 +87,7 @@ Incidently we announced that the following endpoint is "eternal" to the `ibhala.
 $ curl -I http://ibhala.com/epoch | grep '^Cache-Control'
 Cache-Control: max-age=15
 ```
-where this endpoint is proxied to `/rquery/time/seconds/plain,` and an HTTP expiry header of 15 seconds is added. As thereby indicated, it's expected to be within about 15 seconds of actual epoch time i.e. allowing for caching e.g. by CloudFlare.
+where actually this endpoint is proxied to `/rquery/time/seconds/plain.` Note that an HTTP expiry header of 15 seconds is added. As thereby indicated, it's expected to be within about 15 seconds of actual epoch time i.e. allowing for caching e.g. by CloudFlare.
 
 ##### Keys
 
