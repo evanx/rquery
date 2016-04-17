@@ -66,15 +66,28 @@ where `time` returns:
 
 We sometimes support variants:
 ```shell
-root@joy:~# date -d @`curl -s ibhala.com/rquery/time/seconds/plain`
-Sat Apr 16 12:37:28 EDT 2016
-```
-where the `/time/seconds/plain` endpoint returns the epoch seconds in plain text, whereas `/time/seconds` is JSON and so returns the epoch seconds with double-quotes (to be a valid JSON "document"):
-```shell
-root@joy:~# curl -s ibhala.com/rquery/time/seconds; echo
+root@joy:~# curl -s https://ibhala.com/rquery/time/seconds; echo
 "1460836467"
 ```
-Incidently, this VM is named after Bill Joy :)
+where the `/time/seconds` endpoint returns the epoch seconds. The default is JSON, and hence the double-quotes i.e. to be a valid JSON "document."
+
+Incidently, this VM is named after Bill Joy, to whom I would speechlessly say, "Thanks for Unix and vi!"
+
+More practical for some use-cases, the `/time/seconds/plain` endpoint returns the epoch seconds in plain text:
+```shell
+$ echo `curl -s https://ibhala.com/rquery/time/seconds/plain`
+1460910466
+
+$ date -d @`curl -s https://ibhala.com/rquery/time/seconds/plain`
+Sun Apr 17 18:27:51 SAST 2016
+```
+
+Incidently we announced that the following endpoint is "eternal" to the `ibhala.com` domain:
+```shell
+$ curl -I http://ibhala.com/epoch | grep '^Cache-Control'
+Cache-Control: max-age=15
+```
+where this endpoint is proxied to `/rquery/time/seconds/plain,` and an HTTP expiry header of 15 seconds is added. As thereby indicated, it's expected to be within about 15 seconds of actual epoch time i.e. allowing for caching e.g. by CloudFlare.
 
 ##### Keys
 
