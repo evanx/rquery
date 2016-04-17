@@ -301,19 +301,26 @@ export default class {
             } else if (lodash.endsWith(req.hostname, config.keyspaceHostname)) {
                hostname = req.hostname.replace(/\..*$/, '');
                if (hostname !== keyspace) {
-                  throw new ValidationError(`invalid keyspace (${keyspace}) for hostname: ${hostname}`);
+                  throw new ValidationError(`Invalid keyspace (${keyspace}) for hostname: ${hostname}`);
                }
-               let keyspaceMeta = await redisClient.hgetallAsync(this.redisKey('keyspace', keyspace));
-               if (!keyspaceMeta) {
-                  throw new ValidationError(`invalid keyspace hostname: ${hostname}`);
+               let keyspaceHashes = await redisClient.hgetallAsync(this.redisKey('keyspace', keyspace));
+               if (!keyspaceHashes) {
+                  throw new ValidationError(`Invalid hostname: ${hostname}`);
+               }
+               logger.debug('keyspaceHashes', keyspaceHashes);
+               if (!keyspaceHashes.keyspaces) {
+                  throw new ValidationError(`Invalid keyspace: ${keyspace}`);
+               }
+               if (!lodash.includes(keyspaceHashes.keyspaces, keyspace)) {
+                  throw new ValidationError(`Invalid keyspace: ${keyspace}`);
                }
             }
             if (!keyspace) {
-               throw new ValidationError('keyspace: ' + req.path);
+               throw new ValidationError('Missing keyspace: ' + req.path);
             }
             if (timeout) {
                if (timeout < 1 || timeout > 10) {
-                  throw new ValidationError('timeout must range from 1 to 10 seconds: ' + timeout);
+                  throw new ValidationError('Timeout must range from 1 to 10 seconds: ' + timeout);
                }
             }
             const multi = redisClient.multi();
