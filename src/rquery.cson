@@ -4,13 +4,16 @@ config:
       type: 'string'
    redisKeyspace:
       type: 'string'
+   hostname:
+      type: 'string'
    location:
       defaultValue: '/'
    port:
       defaultValue: 8080
    expire:
-      type: 'integer'
-      max: 9999
+      type: 'duration'
+      unit: 'seconds'
+      max: 999
 state:
    redisClient: {}
    expressApp: {}
