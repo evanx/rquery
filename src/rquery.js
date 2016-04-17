@@ -326,7 +326,7 @@ export default class {
    handleError(err, req, res) {
       res.status(500).send({
          err: err.message,
-         host: req.hostname,
+         hostname: req.hostname,
          params: req.params,
       });
    }
