@@ -26,14 +26,20 @@ The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces
 Notes about this demo:
 - no authentication but choose a "keyspace" e.g. your username.
 - automatically expires keys after an idle duration of 3 minutes.
-- anyone can query and modify your test data
+- beware that anyone can query and modify your test data
+
+If you require a secured private keyspace, email evan.summers@gmail.com. This is free, with the following limits:
+- 20Mb storage
+- 50Gb transfer
+- 5 requests per minute
+Otherwise I'll gladly charge triple AWS or Digital Ocean hosting rates, e.g. $15 per month for a private rquery instance on Digital Ocean, with limits of 400Mb and 1Tb transfer, and multiples thereof, with a basic service package, to make money on premium packages later, blah blah.
 
 The following subset of Redis commands is supported for this demo:
 - keys: `keys` `exists` `set` `get` `type` `ttl` `incr`
-- sets: `sadd` `srem` `sismember` `smembers` `scard`
+- sets: `sadd` `srem` `sismember` `smembers` `scard` `spop`
 - sorted sets: `zadd` `zrem` `zcard` `zrange` `zrevrange`
-- lists: `lpush` `rpop` `brpop` `brpoplpush` `llen` `lrange`
-- hashes: `hexists` `hset` `hincrby` `hget` `hlen` `hkeys` `hgetall`
+- lists: `lpush` `rpop` `brpop` `brpoplpush` `llen` `lrange` `lset` `lindex` `lrem`
+- hashes: `hexists` `hset` `hincrby` `hget` `hdel` `hlen` `hkeys` `hgetall`
 - other: `time` `info` `keyspaces`
 
 See Redis commands: http://redis.io/commands
