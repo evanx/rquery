@@ -57,7 +57,10 @@ c1curla() {
 }
 
 c1curlg() {
-  c1curlv "$1/rquery/keyspaces" 
+  if ! c1curlv "$1/rquery/keyspaces" 
+  then
+    echo 'keyspaces failed'
+  fi
 }
 
 c1curld() {
