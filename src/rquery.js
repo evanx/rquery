@@ -278,16 +278,16 @@ export default class {
    }
 
    async sendResult(req, res, result) {
-      logger.debug('sendResult', req.query, query);
+      logger.debug('sendResult', req.query, result);
       if (result) {
-         if (req.query === '?quiet') {
+         if (req.query.quiet !== undefined) {
             res.send('');
-         } else if (req.query === '?plain') {
+         } else if (req.query.plain !== undefined) {
             res.set('Content-Type', 'text/plain');
-            res.send(result);
-         } else if (req.query === '?html') {
+            res.send(result.toString() + '\n');
+         } else if (req.query.html !== undefined) {
             res.set('Content-Type', 'text/html');
-            res.send(result);
+            res.send(result.toString() + '\n');
          } else {
             res.json(result);
          }
@@ -298,7 +298,7 @@ export default class {
       expressApp.get(config.location + uri, async (req, res) => {
          let hostname = req.hostname.replace(/\..*$/, '');
          try {
-            await sendResult(req, res, await fn(req, res));
+            await this.sendResult(req, res, await fn(req, res));
          } catch (err) {
             this.handleError(err, req, res);
          }
