@@ -67,16 +67,16 @@ where the `/time/seconds` endpoint returns the epoch seconds. The default is JSO
 
 Incidently, this VM is named after Bill Joy, to whom I would speechlessly say, "Thanks for Unix and vi!"
 
-More practical for some use-cases, the `/time/seconds/plain` endpoint returns the epoch seconds in plain text:
+More practical for some use-cases, the `?plain` query returns the epoch seconds in plain text:
 ```shell
-$ echo `curl -s https://ibhala.com/rquery/time/seconds/plain`
+$ echo `curl -s https://ibhala.com/rquery/time/seconds?plain`
 1460910466
 
-$ date -d @`curl -s https://ibhala.com/rquery/time/seconds/plain`
+$ date -d @`curl -s https://ibhala.com/rquery/time/seconds?plain`
 Sun Apr 17 18:27:51 SAST 2016
 ```
 
-Incidently the `http://ibhala.com/epoch` endpoint was announced to be "eternally" available. Actually this endpoint is proxied to `/rquery/time/seconds/plain.` An HTTP expiry header of 15 seconds is added:
+Incidently the `http://ibhala.com/epoch` endpoint was announced to be "eternally" available. Actually this endpoint is proxied to `/rquery/time/seconds?plain.` An HTTP expiry header of 15 seconds is added:
 ```shell
 $ curl -I http://ibhala.com/epoch | grep '^Cache-Control'
 Cache-Control: max-age=15

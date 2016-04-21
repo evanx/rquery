@@ -37,26 +37,19 @@ export default class {
          res.set('Content-Type', 'text/plain');
          res.send(await redisClient.infoAsync());
       });
-      this.addRoute('time/seconds', async (req, res) => {
+      this.addRoute('time/seconds', async () => {
          const time = await redisClient.timeAsync();
          return time[0];
       });
-      this.addRoute('time/seconds/plain', async (req, res) => {
-         res.set('Content-Type', 'text/plain');
-         const time = await redisClient.timeAsync();
-         res.send(time[0]);
-      });
-      this.addRoute('time', (req, res) => redisClient.timeAsync());
+      this.addRoute('time', () => redisClient.timeAsync());
       if (config.allowKeyspaces) {
-         this.addRoute('keyspaces', async (req, res) => {
-            res.json(await redisClient.smembersAsync(this.redisKey('keyspaces')));
-         });
+         this.addRoute('keyspaces', () => redisClient.smembersAsync(this.redisKey('keyspaces')));
       }
       this.addKeyspaceRoute('ks/:keyspace/keys', async (req, res) => {
          const {keyspace} = req.params;
          const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
          const index = config.redisKeyspace.length + keyspace.length + 2;
-         res.json(keys.map(key => key.substring(index)));
+         return keys.map(key => key.substring(index));
       });
       this.addKeyspaceRoute('ks/:keyspace/ttl', async (req, res) => {
          const {keyspace} = req.params;
@@ -338,7 +331,7 @@ export default class {
                }
             }
             const multi = redisClient.multi();
-            await fn(req, res, multi);
+            await this.sendResult(req, res, await fn(req, res, multi));
             multi.sadd([config.redisKeyspace, 'keyspaces'].join(':'), keyspace);
             if (key) {
                const redisKey = this.redisKey(keyspace, key);
