@@ -33,23 +33,33 @@ export default class {
          res.set('Content-Type', 'text/html');
          res.send(marked(content.toString()));
       });
-      this.addRoute('info', async (req, res) => {
-         res.set('Content-Type', 'text/plain');
-         res.send(await redisClient.infoAsync());
-      });
+      if (config.allowInfo) {
+         this.addRoute('info', async (req, res) => {
+            res.set('Content-Type', 'text/plain');
+            res.send(await redisClient.infoAsync());
+         });
+      }
+      if (config.allowKeyspaces) {
+         this.addRoute('keyspaces', () => redisClient.smembersAsync(this.redisKey('keyspaces')));
+      }
       this.addRoute('time/seconds', async () => {
          const time = await redisClient.timeAsync();
          return time[0];
       });
       this.addRoute('time', () => redisClient.timeAsync());
-      if (config.allowKeyspaces) {
-         this.addRoute('keyspaces', () => redisClient.smembersAsync(this.redisKey('keyspaces')));
-      }
       this.addKeyspaceRoute('ks/:keyspace/keys', async (req, res) => {
          const {keyspace} = req.params;
          const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
          const index = config.redisKeyspace.length + keyspace.length + 2;
          return keys.map(key => key.substring(index));
+      });
+      this.addRoute('ks/:keyspace/fingerprint/:fingerprint', async (req, res) => {
+         const {keyspace, fingerprint} = req.params;
+         const ismember = await redisClient.sismemberAsync(this.redisKey('keyspaces'), keyspace);
+         if (ismember) {
+            throw new ValidationError('Already exists');
+         }
+         return await redisClient.hsetnxAsync(this.redisKey('keyspace', keyspace), 'fingerprint', fingerprint);
       });
       this.addKeyspaceRoute('ks/:keyspace/ttl', async (req, res) => {
          const {keyspace} = req.params;
@@ -259,6 +269,7 @@ export default class {
       expressApp.get(config.location + options.uri, async (req, res) => {
          try {
             const {keyspace, key, timeout} = req.params;
+            logger.debug('req', Object.keys(req), req.peerCN);
             let hostname;
             if (req.hostname === config.hostname) {
             } else if (lodash.endsWith(req.hostname, config.keyspaceHostname)) {
