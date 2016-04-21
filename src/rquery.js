@@ -39,16 +39,14 @@ export default class {
       });
       this.addRoute('time/seconds', async (req, res) => {
          const time = await redisClient.timeAsync();
-         res.json(time[0]);
+         return time[0];
       });
       this.addRoute('time/seconds/plain', async (req, res) => {
          res.set('Content-Type', 'text/plain');
          const time = await redisClient.timeAsync();
          res.send(time[0]);
       });
-      this.addRoute('time', async (req, res) => {
-         res.json(await redisClient.timeAsync());
-      });
+      this.addRoute('time', (req, res) => redisClient.timeAsync());
       if (config.allowKeyspaces) {
          this.addRoute('keyspaces', async (req, res) => {
             res.json(await redisClient.smembersAsync(this.redisKey('keyspaces')));
@@ -279,11 +277,28 @@ export default class {
       });
    }
 
+   async sendResult(req, res, result) {
+      logger.debug('sendResult', req.query, query);
+      if (result) {
+         if (req.query === '?quiet') {
+            res.send('');
+         } else if (req.query === '?plain') {
+            res.set('Content-Type', 'text/plain');
+            res.send(result);
+         } else if (req.query === '?html') {
+            res.set('Content-Type', 'text/html');
+            res.send(result);
+         } else {
+            res.json(result);
+         }
+      }
+   }
+
    async addRoute(uri, fn) {
       expressApp.get(config.location + uri, async (req, res) => {
          let hostname = req.hostname.replace(/\..*$/, '');
          try {
-            await fn(req, res);
+            await sendResult(req, res, await fn(req, res));
          } catch (err) {
             this.handleError(err, req, res);
          }
