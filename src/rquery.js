@@ -49,9 +49,11 @@ export default class {
       this.addRoute('time', async (req, res) => {
          res.json(await redisClient.timeAsync());
       });
-      this.addRoute('keyspaces', async (req, res) => {
-         res.json(await redisClient.smembersAsync(this.redisKey('keyspaces')));
-      });
+      if (config.allowKeyspaces) {
+         this.addRoute('keyspaces', async (req, res) => {
+            res.json(await redisClient.smembersAsync(this.redisKey('keyspaces')));
+         });
+      }
       this.addKeyspaceRoute('ks/:keyspace/keys', async (req, res) => {
          const {keyspace} = req.params;
          const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));

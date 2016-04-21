@@ -21,7 +21,7 @@ where the following "help" is available:
 - https://demo.ibhala.com/rquery/routes - shows all the "routes"
 - https://demo.ibhala.com/rquery/help - renders this `README.md`
 
-The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your chosen keyspace should appear therein.
+The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your chosen keyspace should appear therein. However, this command is disabled by default.
 
 Notes about this demo:
 - no authentication but choose a "keyspace" e.g. your username.
