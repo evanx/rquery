@@ -57,7 +57,7 @@ export default class {
          const {keyspace, token} = req.params;
          return await redisClient.hsetnxAsync(this.redisKey('keyspace', keyspace), 'token', token);
       });
-      this.addRoute('ks/:keyspace/flush', async (req, res) => {
+      this.addKeyspaceRoute('ks/:keyspace/flush', async (req, res) => {
          const {keyspace} = req.params;
          const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
          const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
