@@ -65,17 +65,6 @@ See Redis commands: https://redis.io/commands
 
 We try `curl` too. In the examples below, we set our "keyspace" as our Github username. (Incidently, this is prefixed to the key by rquery.)
 
-Let's first set some environment variables:
-```shell
-rqueryGithubUser=MY
-```
-and then:
-```shell
-rqueryToken=`dd if=/dev/urandom bs=20 count=1 2>/dev/null | sha1sum | cut -d' ' -f1`
-rqueryUrl="https://demo1.ibhala.com/rquery/kt/$rqueryGithubUser/$rqueryToken" # TODO
-echo $rqueryUrl
-curl -s $rqueryUrl/register/github.com/$rqueryGithubUser
-```
 
 ##### Info
 
@@ -118,11 +107,24 @@ As such, it's expected to be up to about 15 seconds later than the actual epoch 
 
 ##### Keys
 
+Let's first set some environment variables:
 ```shell
-curl -s demo.ibhala.com/rquery/ks/$USER/set/mykey/myvalue | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/exists/mykey | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/get/mykey | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/ttl/mykey | python -mjson.tool
+rqueryGithubUser=MY
+```
+and then:
+```shell
+rqueryDemoToken=`dd if=/dev/urandom bs=20 count=1 2>/dev/null | sha1sum | cut -d' ' -f1`
+rqueryDemoUrl="https://demo.ibhala.com/rquery/kt/$rqueryGithubUser/$rqueryToken"
+echo $rqueryDemoUrl
+curl -s $rqueryDemoUrl/register/github.com/$rqueryGithubUser; printf '\n%d\n' $?
+```
+
+Now let's test:
+```shell
+curl -s $rqueryDemoUrl/set/mykey/myvalue | python -mjson.tool
+curl -s $rqueryDemoUrl/exists/mykey | python -mjson.tool
+curl -s $rqueryDemoUrl/get/mykey | python -mjson.tool
+curl -s $rqueryDemoUrl/ttl/mykey | python -mjson.tool
 ```
 where `ttl/mykey` returns the TTL decreasing from 180 seconds:
 ```json
@@ -132,17 +134,17 @@ where `ttl/mykey` returns the TTL decreasing from 180 seconds:
 ##### Sets
 
 ```shell
-curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item2 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item3 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/sadd/myset/item4 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/sismember/myset/item1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/smembers/myset | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/srem/myset/item1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/scard/myset | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/smove/myset/myotherset/item4 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/smembers/myotherset | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/spop/myset | python -mjson.tool
+curl -s $rqueryDemoUrl/sadd/myset/item1 | python -mjson.tool
+curl -s $rqueryDemoUrl/sadd/myset/item2 | python -mjson.tool
+curl -s $rqueryDemoUrl/sadd/myset/item3 | python -mjson.tool
+curl -s $rqueryDemoUrl/sadd/myset/item4 | python -mjson.tool
+curl -s $rqueryDemoUrl/sismember/myset/item1 | python -mjson.tool
+curl -s $rqueryDemoUrl/smembers/myset | python -mjson.tool
+curl -s $rqueryDemoUrl/srem/myset/item1 | python -mjson.tool
+curl -s $rqueryDemoUrl/scard/myset | python -mjson.tool
+curl -s $rqueryDemoUrl/smove/myset/myotherset/item4 | python -mjson.tool
+curl -s $rqueryDemoUrl/smembers/myotherset | python -mjson.tool
+curl -s $rqueryDemoUrl/spop/myset | python -mjson.tool
 ```
 
 where `smembers/myset` returns:
@@ -157,12 +159,12 @@ where `smembers/myset` returns:
 ##### Sorted sets
 
 ```shell
-curl -s demo.ibhala.com/rquery/ks/$USER/zadd/mysortedset/10/value10 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/zadd/mysortedset/20/value20 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/zcard/mysortedset | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/zrange/mysortedset/0/-1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/zrem/mysortedset/value10 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/zrevrange/mysortedset/0/-1 | python -mjson.tool
+curl -s $rqueryDemoUrl/zadd/mysortedset/10/value10 | python -mjson.tool
+curl -s $rqueryDemoUrl/zadd/mysortedset/20/value20 | python -mjson.tool
+curl -s $rqueryDemoUrl/zcard/mysortedset | python -mjson.tool
+curl -s $rqueryDemoUrl/zrange/mysortedset/0/-1 | python -mjson.tool
+curl -s $rqueryDemoUrl/zrem/mysortedset/value10 | python -mjson.tool
+curl -s $rqueryDemoUrl/zrevrange/mysortedset/0/-1 | python -mjson.tool
 ```
 
 where `zrange/mysortedset` returns:
@@ -177,16 +179,16 @@ where `zrange/mysortedset` returns:
 ##### Hashes
 
 ```shell
-curl -s demo.ibhala.com/rquery/ks/$USER/hset/myhashes/myfield1/myfield1value | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/hget/myhashes/myfield1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/hset/myhashes/myfield2/myfield2value | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/hget/myhashes/myfield2 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/hexists/myhashes/myfield1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/hexists/myhashes/myfield3 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/hlen/myhashes | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/hkeys/myhashes | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/hgetall/myhashes | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/hdel/myhashes/myfield2 | python -mjson.tool
+curl -s $rqueryDemoUrl/hset/myhashes/myfield1/myfield1value | python -mjson.tool
+curl -s $rqueryDemoUrl/hget/myhashes/myfield1 | python -mjson.tool
+curl -s $rqueryDemoUrl/hset/myhashes/myfield2/myfield2value | python -mjson.tool
+curl -s $rqueryDemoUrl/hget/myhashes/myfield2 | python -mjson.tool
+curl -s $rqueryDemoUrl/hexists/myhashes/myfield1 | python -mjson.tool
+curl -s $rqueryDemoUrl/hexists/myhashes/myfield3 | python -mjson.tool
+curl -s $rqueryDemoUrl/hlen/myhashes | python -mjson.tool
+curl -s $rqueryDemoUrl/hkeys/myhashes | python -mjson.tool
+curl -s $rqueryDemoUrl/hgetall/myhashes | python -mjson.tool
+curl -s $rqueryDemoUrl/hdel/myhashes/myfield2 | python -mjson.tool
 ```
 
 where `hkeys/myhashes` returns:
@@ -208,19 +210,19 @@ and `hgetall/myhashes` returns:
 ##### Lists
 
 ```shell
-curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item2 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item3 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/lpush/mylist/item4 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/lrange/mylist/0/-1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/lrem/mylist/-1/item4 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/lindex/mylist/0 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/lrange/mylist/0/-1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/lpop/mylist | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/brpop/mylist/1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/brpoplpush/mylist/mypoppedlist/1 | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/llen/mylist | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/ltrim/mylist/0/2 | python -mjson.tool
+curl -s $rqueryDemoUrl/lpush/mylist/item1 | python -mjson.tool
+curl -s $rqueryDemoUrl/lpush/mylist/item2 | python -mjson.tool
+curl -s $rqueryDemoUrl/lpush/mylist/item3 | python -mjson.tool
+curl -s $rqueryDemoUrl/lpush/mylist/item4 | python -mjson.tool
+curl -s $rqueryDemoUrl/lrange/mylist/0/-1 | python -mjson.tool
+curl -s $rqueryDemoUrl/lrem/mylist/-1/item4 | python -mjson.tool
+curl -s $rqueryDemoUrl/lindex/mylist/0 | python -mjson.tool
+curl -s $rqueryDemoUrl/lrange/mylist/0/-1 | python -mjson.tool
+curl -s $rqueryDemoUrl/lpop/mylist | python -mjson.tool
+curl -s $rqueryDemoUrl/brpop/mylist/1 | python -mjson.tool
+curl -s $rqueryDemoUrl/brpoplpush/mylist/mypoppedlist/1 | python -mjson.tool
+curl -s $rqueryDemoUrl/llen/mylist | python -mjson.tool
+curl -s $rqueryDemoUrl/ltrim/mylist/0/2 | python -mjson.tool
 ```
 
 where `lrange/mylist/0/-1` returns:
@@ -236,8 +238,8 @@ where `lrange/mylist/0/-1` returns:
 
 We can check the keys and their TTL in the specified `keyspace` as follows:
 ```shell
-curl -s demo.ibhala.com/rquery/ks/$USER/keys | python -mjson.tool
-curl -s demo.ibhala.com/rquery/ks/$USER/ttl | python -mjson.tool
+curl -s $rqueryDemoUrl/keys | python -mjson.tool
+curl -s $rqueryDemoUrl/ttl | python -mjson.tool
 ```
 
 where `keys` returns:

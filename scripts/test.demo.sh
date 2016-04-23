@@ -2,13 +2,13 @@
 set -e -u
 
 c1curlv() {
-  url="$1" 
+  url="$1"
   echo "curl $url"
   curl -s "$url" | python -mjson.tool
 }
 
 c2curl() {
-  c1curlv "$1/rquery/ks/$USER/$2" 
+  c1curlv "$rqueryDemoUrl/rquery/ks/$USE/$2" 
 }
 
 c1curla() {
@@ -57,7 +57,7 @@ c1curla() {
 }
 
 c1curlg() {
-  if ! c1curlv "$1/rquery/keyspaces" 
+  if ! c1curlv "$1/rquery/keyspaces"
   then
     echo 'keyspaces failed'
   fi
@@ -70,20 +70,20 @@ c1curld() {
 }
 
 c0curld() {
-  c1curld localhost:8765 
-  c1curld https://demo.ibhala.com 
-  c1curld https://demo1.ibhala.com 
-  c1curld demo.ibhala.com 
-  c1curld demo1.ibhala.com 
-  c1curld demo2.ibhala.com 
+  c1curld localhost:8765
+  c1curld https://demo.ibhala.com
+  c1curld https://demo1.ibhala.com
+  c1curld demo.ibhala.com
+  c1curld demo1.ibhala.com
+  c1curld demo2.ibhala.com
 }
 
 c0curl1() {
-  c1curld demo1.ibhala.com 
+  c1curld demo1.ibhala.com
 }
 
 c0curl2() {
-  c1curld demo2.ibhala.com 
+  c1curld demo2.ibhala.com
 }
 
 command=curld
