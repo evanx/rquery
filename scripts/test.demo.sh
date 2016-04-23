@@ -8,7 +8,7 @@ c1curlv() {
 }
 
 c2curl() {
-  c1curlv "$rqueryDemoUrl/rquery/ks/$USE/$2" 
+  c1curlv "$rqueryDemoUrl/$2" 
 }
 
 c1curla() {
