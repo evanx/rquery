@@ -4,6 +4,11 @@ set -e -u
 name=`basename $PWD`
 echo $name
 
-  file=`ls -t ~/.pm2/logs/${name}-out-*`
-  tail $file 
+  logFile=`ls -t ~/.pm2/logs/${name}-out-*`
+  errorFile=`ls -t ~/.pm2/logs/${name}-error-*`
+  echo; ls -l $errorFile
+  tail $errorFile
+  echo; ls -l $logFile
+  tail $logFile
+
 
