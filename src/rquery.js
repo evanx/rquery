@@ -269,7 +269,6 @@ export default class {
       expressApp.get(config.location + options.uri, async (req, res) => {
          try {
             const {keyspace, key, timeout} = req.params;
-            logger.debug('req', Object.keys(req), req.peerCN);
             let hostname;
             if (req.hostname === config.hostname) {
             } else if (lodash.endsWith(req.hostname, config.keyspaceHostname)) {
