@@ -162,11 +162,19 @@ export default class {
       });
       this.addKeyspaceRoute('blpop/:key/:timeout', async (req, res) => {
          const reply = await redisClient.blpopAsync(this.reqKey(req), req.params.timeout);
-         return reply[1];
+         if (!reply) {
+            return null;
+         } else {
+            return reply[1];
+         }
       });
       this.addKeyspaceRoute('brpop/:key/:timeout', async (req, res) => {
          const reply = await redisClient.brpopAsync(this.reqKey(req), req.params.timeout);
-         return reply[1];
+         if (!reply) {
+            return null;
+         } else {
+            return reply[1];
+         }
       });
       this.addKeyspaceRoute('rpop/:key', async (req, res) => {
          return await redisClient.rpopAsync(this.reqKey(req));
