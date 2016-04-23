@@ -297,7 +297,7 @@ export default class {
    }
 
    addKeyspaceRoute(uri, fn) {
-      uri = 'tk/:token/:keyspace/' + uri;
+      uri = 'kt/:keyspace/:token/' + uri;
       expressApp.get(config.location + uri, async (req, res) => {
          try {
             const {token, keyspace, key, timeout} = req.params;
