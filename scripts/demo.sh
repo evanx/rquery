@@ -6,12 +6,8 @@ rediscli() {
   redis-cli -n 13 $*
 }
 
-[ `hostname -s` = 'eowyn' -a $USER = 'evans' ]
+  #curl -s https://ibhala.com/rquery/kt/demo/qwerty/register/github.com/evanx
 
-  NODE_ENV=development loggingUrlX='https://ibhala.com/rquery/atk/demo/demo/demo' \
+  NODE_ENV=development loggingUrlX='https://ibhala.com/rquery/kt/demo/qwerty' \
     configModule=./demo.js redisUrl='redis://localhost:6379/13' \
     npm start | ./node_modules/.bin/bunyan -o short
-  #npm run demo
-
-  rediscli keys 'demo:hmsetprops:*'
-  rediscli hgetall 'demo:hmsetprops:1'

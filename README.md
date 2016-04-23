@@ -21,12 +21,34 @@ where the following "help" is available:
 - https://demo.ibhala.com/rquery/routes - shows all the "routes"
 - https://demo.ibhala.com/rquery/help - renders this `README.md`
 
-The `/keyspaces` endpoint performs a `smembers` of the set of all used keyspaces, and so your chosen keyspace should appear therein. However, this command is disabled by default.
-
 Notes about this demo:
-- no authentication but choose a "keyspace" e.g. your username.
 - automatically expires keys after an idle duration of 3 minutes.
-- beware that anyone can query and modify your test data
+
+
+#### Register
+
+Register a keyspace that is associated with your identity, either Github or Twitter:
+```shell
+curl -s https://demo.ibhala.com/rquery/kt/KEYSPACE/TOKEN/register/github.com/USERNAME
+```
+where `github.com/USERNAME` is your Github.com username. Alternatively specify `twitter.com` and your Twitter username.
+
+Note that SSL must be used, otherwise your keyspace could be hijacked i.e. if the `TOKEN` is transferred in cleartext.
+
+Incidently, for production use, we would generate a "strong" token as follows:
+```shell
+rqueryToken=`dd if=/dev/urandom bs=20 count=1 2>/dev/null | sha1sum | cut -d' ' -f1`
+echo "export rqueryToken='$rqueryToken'" >> ~/.bashrc
+tail -1 ~/.bashrc
+. ~/.bashrc
+```
+
+Having said that, this token-based `/kt` is provided for demonstration purposes, especially to be usable "as is" via your browser. However it is susceptible to replay attacks, and so is not appropriate for production use.
+
+This service will support client-side cert authentication. Incidently that will be offered via `secure.ibhala.com,` free within limits yet to be announced for a "community service" package. Those limits should be sufficient for small, low-volume databases. Later, we'll trade-off in-memory performance for database size, where larger databases are served by a disk-based back end e.g. utilising https://ssdb.io.
+
+
+#### Commands
 
 The following subset of Redis commands is supported for this demo:
 - keys: `keys` `exists` `set` `get` `type` `ttl` `incr`
@@ -38,11 +60,19 @@ The following subset of Redis commands is supported for this demo:
 
 See Redis commands: https://redis.io/commands
 
+
 #### curl
 
-We try `curl` too
+We try `curl` too. In the examples below, we set our "keyspace" as our Github username. (Incidently, this is prefixed to the key by rquery.)
 
-In the examples below, we set our "keyspace" as our username via `$USER.` (This is prefixed to the key by rquery.)
+Let's first set some environment variables:
+```shell
+redis-cli -n 13 keys 'demo:*' | xargs redis-cli -n 13 del # TODO
+rqueryToken=`dd if=/dev/urandom bs=20 count=1 2>/dev/null | sha1sum | cut -d' ' -f1`
+rqueryGithubUser=PLACEHOLDER
+rqueryUrl="https://demo1.ibhala.com/rquery/kt/$rqueryGithubUser/$rqueryToken" # TODO
+curl -s $rqueryUrl/register/github.com/$rqueryGithubUser
+```
 
 ##### Info
 
@@ -82,12 +112,6 @@ $ curl -I http://ibhala.com/epoch | grep '^Cache-Control'
 Cache-Control: max-age=15
 ```
 As such, it's expected to be up to about 15 seconds later than the actual epoch time i.e. allowing for CDN caching.
-
-##### Keyspace token
-
-```shell
-$ curl http://ibhala.com/rquery/ks/$USER/MYTOKEN
-
 
 ##### Keys
 

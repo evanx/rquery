@@ -143,11 +143,16 @@ export default class {
       });
       this.addKeyspaceRoute('scard/:key', async (req) => {
          let result = await redisClient.scardAsync(this.reqKey(req));
-         logger.info('zz', req.params, this.reqKey(req), result);
          return result;
       });
       this.addKeyspaceRoute('lpush/:key/:value', async (req, res) => {
          return await redisClient.lpushAsync(this.reqKey(req), req.params.value);
+      });
+      this.addKeyspaceRoute('lpush/:key/:value/trim/:length', async (req, res, multi) => {
+         const {keyspace, key, value, length} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         multi.lpush(redisKey, value);
+         multi.trim(redisKey, length);
       });
       this.addKeyspaceRoute('rpush/:key/:value', async (req, res) => {
          return await redisClient.rpushAsync(this.reqKey(req), req.params.value);
@@ -265,7 +270,7 @@ export default class {
    }
 
    addRegisterRoute(site) {
-      const uri = `tk/:token/:keyspace/register/${site}/:username`;
+      const uri = `kt/:keyspace/:token/register/${site}/:username`;
       logger.debug('url', uri);
       expressApp.get(config.location + uri, async (req, res) => {
          logger.debug('url', uri);
@@ -289,6 +294,9 @@ export default class {
                throw {message: 'Invalid site/username for recovery', statusCode: response.statusCode, url};
             }
             const reply = await redisClient.hsetnxAsync(this.redisKey('keyspace', keyspace), 'token', token);
+            if (!reply) {
+               throw {message: 'Invalid keyspace/token'};
+            }
             res.json(reply);
          } catch (err) {
             this.handleError(err, req, res);
