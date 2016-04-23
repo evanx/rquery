@@ -16,6 +16,12 @@ config:
       type: 'duration'
       unit: 'seconds'
       max: 999
+   registerLimit:      
+      defaultValue: 2000
+      type: 'duration'
+      unit: 'millis'
+      max: 9000
+
 state:
    redisClient: {}
    expressApp: {}

@@ -83,6 +83,12 @@ Cache-Control: max-age=15
 ```
 As such, it's expected to be up to about 15 seconds later than the actual epoch time i.e. allowing for CDN caching.
 
+##### Keyspace token
+
+```shell
+$ curl http://ibhala.com/rquery/ks/$USER/MYTOKEN
+
+
 ##### Keys
 
 ```shell

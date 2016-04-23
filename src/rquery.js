@@ -22,42 +22,40 @@ export default class {
             res.json(Express.getRoutes(expressApp));
          });
       }
-      this.addRoute('', async (req, res) => {
+      this.addPublicRoute('', async (req, res) => {
          return Express.getRoutes(expressApp);
       });
-      this.addRoute('routes', async (req, res) => {
+      this.addPublicRoute('routes', async (req, res) => {
          return Express.getRoutes(expressApp);
       });
-      this.addRoute('help', async (req, res) => {
+      this.addPublicRoute('help', async (req, res) => {
          let content = await Files.readFile('README.md');
          res.set('Content-Type', 'text/html');
          res.send(marked(content.toString()));
       });
       if (config.allowInfo) {
-         this.addRoute('info', async (req, res) => {
+         this.addPublicRoute('info', async (req, res) => {
             res.set('Content-Type', 'text/plain');
             res.send(await redisClient.infoAsync());
          });
       }
       if (config.allowKeyspaces) {
-         this.addRoute('keyspaces', () => redisClient.smembersAsync(this.redisKey('keyspaces')));
+         this.addPublicRoute('keyspaces', () => redisClient.smembersAsync(this.redisKey('keyspaces')));
       }
-      this.addRoute('time/seconds', async () => {
+      this.addPublicRoute('time/seconds', async () => {
          const time = await redisClient.timeAsync();
          return time[0];
       });
-      this.addRoute('time', () => redisClient.timeAsync());
-      this.addKeyspaceRoute('ks/:keyspace/keys', async (req, res) => {
+      this.addPublicRoute('time', () => redisClient.timeAsync());
+      this.addKeyspaceRoute('keys', async (req, res) => {
          const {keyspace} = req.params;
          const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
          const index = config.redisKeyspace.length + keyspace.length + 2;
          return keys.map(key => key.substring(index));
       });
-      this.addRoute('ks/:keyspace/register/:token', async (req, res) => {
-         const {keyspace, token} = req.params;
-         return await redisClient.hsetnxAsync(this.redisKey('keyspace', keyspace), 'token', token);
-      });
-      this.addKeyspaceRoute('ks/:keyspace/flush', async (req, res) => {
+      this.addRegisterRoute('github.com');
+      this.addRegisterRoute('twitter.com');
+      this.addKeyspaceRoute('flush', async (req, res) => {
          const {keyspace} = req.params;
          const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
          const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
@@ -66,7 +64,7 @@ export default class {
          const multiReply = await multi.execAsync();
          return keys.map(key => key.substring(keyIndex));
       });
-      this.addKeyspaceRoute('ks/:keyspace/ttl', async (req, res) => {
+      this.addKeyspaceRoute('ttl', async (req, res) => {
          const {keyspace} = req.params;
          const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
          const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
@@ -77,52 +75,52 @@ export default class {
          keys.forEach((key, index) => result[key.substring(keyIndex)] = results[index]);
          return result;
       });
-      this.addKeyspaceRoute('ks/:keyspace/type/:key', async (req, res) => {
+      this.addKeyspaceRoute('type/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          return await redisClient.typeAsync(redisKey);
       });
-      this.addKeyspaceRoute('ks/:keyspace/ttl/:key', async (req, res) => {
+      this.addKeyspaceRoute('ttl/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          return await redisClient.ttlAsync(redisKey);
       });
-      this.addKeyspaceRoute('ks/:keyspace/set/:key/:value', async (req, res) => {
+      this.addKeyspaceRoute('set/:key/:value', async (req, res) => {
          const {keyspace, key, value} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          return await redisClient.setAsync(redisKey, value);
       });
-      this.addKeyspaceRoute('ks/:keyspace/get/:key', async (req, res) => {
+      this.addKeyspaceRoute('get/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          return await redisClient.getAsync(redisKey);
       });
-      this.addKeyspaceRoute('ks/:keyspace/incr/:key', async (req, res) => {
+      this.addKeyspaceRoute('incr/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          return await redisClient.incrAsync(redisKey);
       });
-      this.addKeyspaceRoute('ks/:keyspace/exists/:key', async (req, res) => {
+      this.addKeyspaceRoute('exists/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          return await redisClient.existsAsync(redisKey);
       });
-      this.addKeyspaceRoute('ks/:keyspace/del/:key', async (req, res) => {
+      this.addKeyspaceRoute('del/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          return await redisClient.delAsync(redisKey);
       });
-      this.addKeyspaceRoute('ks/:keyspace/sadd/:key/:member', async (req, res) => {
+      this.addKeyspaceRoute('sadd/:key/:member', async (req, res) => {
          const {keyspace, key, member} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          return await redisClient.saddAsync(redisKey, member);
       });
-      this.addKeyspaceRoute('ks/:keyspace/srem/:key/:member', async (req, res) => {
+      this.addKeyspaceRoute('srem/:key/:member', async (req, res) => {
          const {keyspace, key, member} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          return await redisClient.sremAsync(redisKey, member);
       });
-      this.addKeyspaceRoute('ks/:keyspace/smove/:key/:dest/:member', async (req, res, multi) => {
+      this.addKeyspaceRoute('smove/:key/:dest/:member', async (req, res, multi) => {
          const {keyspace, key, dest, member} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          const destKey = this.redisKey(keyspace, dest);
@@ -130,45 +128,45 @@ export default class {
          multi.expire(destKey, config.expire);
          return result;
       });
-      this.addKeyspaceRoute('ks/:keyspace/spop/:key', async (req, res) => {
+      this.addKeyspaceRoute('spop/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          return await redisClient.spopAsync(redisKey);
       });
-      this.addKeyspaceRoute('ks/:keyspace/smembers/:key', async (req, res) => {
+      this.addKeyspaceRoute('smembers/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          return await redisClient.smembersAsync(redisKey);
       });
-      this.addKeyspaceRoute('ks/:keyspace/sismember/:key/:member', async (req) => {
+      this.addKeyspaceRoute('sismember/:key/:member', async (req) => {
          return await redisClient.sismemberAsync(this.reqKey(req), req.params.member);
       });
-      this.addKeyspaceRoute('ks/:keyspace/scard/:key', async (req) => {
+      this.addKeyspaceRoute('scard/:key', async (req) => {
          let result = await redisClient.scardAsync(this.reqKey(req));
          logger.info('zz', req.params, this.reqKey(req), result);
          return result;
       });
-      this.addKeyspaceRoute('ks/:keyspace/lpush/:key/:value', async (req, res) => {
+      this.addKeyspaceRoute('lpush/:key/:value', async (req, res) => {
          return await redisClient.lpushAsync(this.reqKey(req), req.params.value);
       });
-      this.addKeyspaceRoute('ks/:keyspace/rpush/:key/:value', async (req, res) => {
+      this.addKeyspaceRoute('rpush/:key/:value', async (req, res) => {
          return await redisClient.rpushAsync(this.reqKey(req), req.params.value);
       });
-      this.addKeyspaceRoute('ks/:keyspace/lpop/:key', async (req, res) => {
+      this.addKeyspaceRoute('lpop/:key', async (req, res) => {
          return await redisClient.lpopAsync(this.reqKey(req));
       });
-      this.addKeyspaceRoute('ks/:keyspace/blpop/:key/:timeout', async (req, res) => {
+      this.addKeyspaceRoute('blpop/:key/:timeout', async (req, res) => {
          const reply = await redisClient.blpopAsync(this.reqKey(req), req.params.timeout);
          return reply[1];
       });
-      this.addKeyspaceRoute('ks/:keyspace/brpop/:key/:timeout', async (req, res) => {
+      this.addKeyspaceRoute('brpop/:key/:timeout', async (req, res) => {
          const reply = await redisClient.brpopAsync(this.reqKey(req), req.params.timeout);
          return reply[1];
       });
-      this.addKeyspaceRoute('ks/:keyspace/rpop/:key', async (req, res) => {
+      this.addKeyspaceRoute('rpop/:key', async (req, res) => {
          return await redisClient.rpopAsync(this.reqKey(req));
       });
-      this.addKeyspaceRoute('ks/:keyspace/brpoplpush/:key/:dest/:timeout', async (req, res, multi) => {
+      this.addKeyspaceRoute('brpoplpush/:key/:dest/:timeout', async (req, res, multi) => {
          const {keyspace, key, dest, timeout} = req.params;
          const redisKey = this.redisKey(keyspace, key);
          const destKey = this.redisKey(keyspace, dest);
@@ -176,62 +174,73 @@ export default class {
          multi.expire(destKey, config.expire);
          return result;
       });
-      this.addKeyspaceRoute('ks/:keyspace/llen/:key', async (req, res) => {
+      this.addKeyspaceRoute('llen/:key', async (req, res) => {
          return await redisClient.llenAsync(this.reqKey(req));
       });
-      this.addKeyspaceRoute('ks/:keyspace/lindex/:key/:index', async (req, res) => {
+      this.addKeyspaceRoute('lindex/:key/:index', async (req, res) => {
          return await redisClient.lindexAsync(this.reqKey(req), req.params.index);
       });
-      this.addKeyspaceRoute('ks/:keyspace/lrem/:key/:count/:value', async (req, res) => {
+      this.addKeyspaceRoute('lrem/:key/:count/:value', async (req, res) => {
          return await redisClient.lremAsync(this.reqKey(req), req.params.count, req.params.value);
       });
-      this.addKeyspaceRoute('ks/:keyspace/lset/:key/:index/:value', async (req, res) => {
+      this.addKeyspaceRoute('lset/:key/:index/:value', async (req, res) => {
          return await redisClient.lsetAsync(this.reqKey(req), req.params.index, req.params.value);
       });
-      this.addKeyspaceRoute('ks/:keyspace/ltrim/:key/:start/:stop', async (req, res) => {
+      this.addKeyspaceRoute('ltrim/:key/:start/:stop', async (req, res) => {
          return await redisClient.ltrimAsync(this.reqKey(req), req.params.start, req.params.stop);
       });
-      this.addKeyspaceRoute('ks/:keyspace/lrange/:key/:start/:stop', async (req, res) => {
+      this.addKeyspaceRoute('lrange/:key/:start/:stop', async (req, res) => {
          return await redisClient.lrangeAsync(this.reqKey(req), req.params.start, req.params.stop);
       });
-      this.addKeyspaceRoute('ks/:keyspace/hset/:key/:field/:value', async (req, res) => {
+      this.addKeyspaceRoute('hset/:key/:field/:value', async (req, res) => {
          return await redisClient.hsetAsync(this.reqKey(req), req.params.field, req.params.value);
       });
-      this.addKeyspaceRoute('ks/:keyspace/hget/:key/:field', async (req, res) => {
+      this.addKeyspaceRoute('hget/:key/:field', async (req, res) => {
          return await redisClient.hgetAsync(this.reqKey(req), req.params.field);
       });
-      this.addKeyspaceRoute('ks/:keyspace/hdel/:key/:field', async (req, res) => {
+      this.addKeyspaceRoute('hdel/:key/:field', async (req, res) => {
          return await redisClient.hdelAsync(this.reqKey(req), req.params.field);
       });
-      this.addKeyspaceRoute('ks/:keyspace/hincrby/:key/:field/:increment', async (req, res) => {
+      this.addKeyspaceRoute('hincrby/:key/:field/:increment', async (req, res) => {
          return await redisClient.hincrbyAsync(this.reqKey(req), req.params.field, req.params.increment);
       });
-      this.addKeyspaceRoute('ks/:keyspace/hexists/:key/:field', async (req, res) => {
+      this.addKeyspaceRoute('hexists/:key/:field', async (req, res) => {
          return await redisClient.hexistsAsync(this.reqKey(req), req.params.field);
       });
-      this.addKeyspaceRoute('ks/:keyspace/hlen/:key', async (req, res) => {
+      this.addKeyspaceRoute('hlen/:key', async (req, res) => {
          return await redisClient.hlenAsync(this.reqKey(req));
       });
-      this.addKeyspaceRoute('ks/:keyspace/hkeys/:key', async (req, res) => {
+      this.addKeyspaceRoute('hkeys/:key', async (req, res) => {
          return await redisClient.hkeysAsync(this.reqKey(req));
       });
-      this.addKeyspaceRoute('ks/:keyspace/hgetall/:key', async (req, res) => {
+      this.addKeyspaceRoute('hgetall/:key', async (req, res) => {
          return await redisClient.hgetallAsync(this.reqKey(req));
       });
-      this.addKeyspaceRoute('ks/:keyspace/zcard/:key', async (req, res) => {
+      this.addKeyspaceRoute('zcard/:key', async (req, res) => {
          return await redisClient.zcardAsync(this.reqKey(req));
       });
-      this.addKeyspaceRoute('ks/:keyspace/zadd/:key/:score/:member', async (req, res) => {
+      this.addKeyspaceRoute('zadd/:key/:score/:member', async (req, res) => {
          return await redisClient.zaddAsync(this.reqKey(req), req.params.score, req.params.member);
       });
-      this.addKeyspaceRoute('ks/:keyspace/zrem/:key/:member', async (req, res) => {
+      this.addKeyspaceRoute('zrem/:key/:member', async (req, res) => {
          return await redisClient.zremAsync(this.reqKey(req), req.params.member);
       });
-      this.addKeyspaceRoute('ks/:keyspace/zrange/:key/:start/:stop', async (req, res) => {
+      this.addKeyspaceRoute('zrange/:key/:start/:stop', async (req, res) => {
          return await redisClient.zrangeAsync(this.reqKey(req), req.params.start, req.params.stop);
       });
-      this.addKeyspaceRoute('ks/:keyspace/zrevrange/:key/:start/:stop', async (req, res) => {
+      this.addKeyspaceRoute('zrevrange/:key/:start/:stop', async (req, res) => {
          return await redisClient.zrevrangeAsync(this.reqKey(req), req.params.start, req.params.stop);
+      });
+   }
+
+   addPublicRoute(uri, fn) {
+      expressApp.get(config.location + uri, async (req, res) => {
+         let hostname = req.hostname.replace(/\..*$/, '');
+         try {
+            await this.sendResult(req, res, await fn(req, res));
+         } catch (err) {
+            this.handleError(err, req, res);
+         }
       });
    }
 
@@ -255,35 +264,52 @@ export default class {
       }
    }
 
-   async addRoute(uri, fn) {
+   addRegisterRoute(site) {
+      const uri = `tk/:token/:keyspace/register/${site}/:username`;
+      logger.debug('url', uri);
       expressApp.get(config.location + uri, async (req, res) => {
-         let hostname = req.hostname.replace(/\..*$/, '');
+         logger.debug('url', uri);
          try {
-            await this.sendResult(req, res, await fn(req, res));
+            const now = new Date().getTime();
+            if (this.registerTime) {
+               if (now - this.registerTime < config.registerLimit) {
+                  await Promises.delay(config.registerLimit);
+               }
+            }
+            this.registerTime = now;
+            const {token, keyspace, username} = req.params;
+            const supportedSites = ['twitter.com', 'github.com'];
+            if (!lodash.includes(supportedSites, site)) {
+               throw {message: 'Invalid site', supportedSites, site};
+            }
+            const url = 'https://' + site + '/' + username;
+            logger.debug('url', url);
+            const response = await Requests.head({url});
+            if (response.statusCode !== 200) {
+               throw {message: 'Invalid site/username for recovery', statusCode: response.statusCode, url};
+            }
+            const reply = await redisClient.hsetnxAsync(this.redisKey('keyspace', keyspace), 'token', token);
+            res.json(reply);
          } catch (err) {
             this.handleError(err, req, res);
          }
       });
    }
 
-   async addKeyspaceRoute(options, fn) {
-      if (typeof options === 'string') {
-         options = {uri: options};
-      }
-      assert(options.uri, 'options.uri');
-      expressApp.get(config.location + options.uri, async (req, res) => {
+   addKeyspaceRoute(uri, fn) {
+      uri = 'tk/:token/:keyspace/' + uri;
+      expressApp.get(config.location + uri, async (req, res) => {
          try {
-            const {keyspace, key, timeout} = req.params;
-            if (/^:/.test(keyspace)) {
-               res.status(400).send('Invalid keyspace: leading colon');
+            const {token, keyspace, key, timeout} = req.params;
+            let v;
+            v = this.validateKeyspace(keyspace);
+            if (v) {
+               res.status(400).send('Invalid keyspace: ' + v);
                return;
             }
-            if (keyspace === 'MYKEYSPACE') {
-               res.status(400).send('Reserved keyspace: ' + keyspace);
-               return;
-            }
-            if (/^:/.test(key)) {
-               res.status(400).send('Invalid key: leading colon');
+            v = this.validateKey(key);
+            if (v) {
+               res.status(400).send('Invalid key: ' + v);
                return;
             }
             if (timeout) {
@@ -292,16 +318,15 @@ export default class {
                   return;
                }
             }
-            const token = await redisClient.hgetAsync(this.redisKey('keyspace', keyspace), 'token');
-            if (token) {
-               logger.debug('token', token);
-               const requestToken = req.headers['token'] || req.query.token;
-               if (!requestToken) {
+            const ktoken = await redisClient.hgetAsync(this.redisKey('keyspace', keyspace), 'token');
+            if (ktoken) {
+               logger.debug('token', ktoken);
+               if (!token) {
                   res.status(403).send('Access prohibited with token for keyspace: ' + keyspace);
                   return;
                }
-               if (token !== requestToken) {
-                  res.status(403).send(`Invalid token for keyspace ${keyspace}: ${requestToken}`);
+               if (token !== ktoken) {
+                  res.status(403).send(`Invalid token for keyspace ${keyspace}`);
                   return;
                }
             }
@@ -341,6 +366,21 @@ export default class {
             this.handleError(err, req, res);
          }
       });
+   }
+
+   validateKeyspace(keyspace) {
+      if (/^:/.test(keyspace)) {
+         return 'leading colon';
+      }
+      if (keyspace === 'MYKEYSPACE') {
+         return 'reserved keyspace';
+      }
+   }
+
+   validateKey(key) {
+      if (/^:/.test(key)) {
+         return 'leading colon';
+      }
    }
 
    reqKey(req, ...parts) {
