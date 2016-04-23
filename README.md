@@ -67,10 +67,13 @@ We try `curl` too. In the examples below, we set our "keyspace" as our Github us
 
 Let's first set some environment variables:
 ```shell
-redis-cli -n 13 keys 'demo:*' | xargs redis-cli -n 13 del # TODO
+rqueryGithubUser=MY
+```
+and then:
+```shell
 rqueryToken=`dd if=/dev/urandom bs=20 count=1 2>/dev/null | sha1sum | cut -d' ' -f1`
-rqueryGithubUser=PLACEHOLDER
 rqueryUrl="https://demo1.ibhala.com/rquery/kt/$rqueryGithubUser/$rqueryToken" # TODO
+echo $rqueryUrl
 curl -s $rqueryUrl/register/github.com/$rqueryGithubUser
 ```
 
