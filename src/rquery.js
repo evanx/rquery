@@ -53,13 +53,18 @@ export default class {
          const index = config.redisKeyspace.length + keyspace.length + 2;
          return keys.map(key => key.substring(index));
       });
-      this.addRoute('ks/:keyspace/fingerprint/:fingerprint', async (req, res) => {
-         const {keyspace, fingerprint} = req.params;
-         const ismember = await redisClient.sismemberAsync(this.redisKey('keyspaces'), keyspace);
-         if (ismember) {
-            throw new ValidationError('Already exists');
-         }
-         return await redisClient.hsetnxAsync(this.redisKey('keyspace', keyspace), 'fingerprint', fingerprint);
+      this.addRoute('ks/:keyspace/register/:token', async (req, res) => {
+         const {keyspace, token} = req.params;
+         return await redisClient.hsetnxAsync(this.redisKey('keyspace', keyspace), 'token', token);
+      });
+      this.addRoute('ks/:keyspace/flush', async (req, res) => {
+         const {keyspace} = req.params;
+         const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
+         const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
+         const multi = redisClient.multi();
+         keys.forEach(key => multi.del(key));
+         const multiReply = await multi.execAsync();
+         return keys.map(key => key.substring(keyIndex));
       });
       this.addKeyspaceRoute('ks/:keyspace/ttl', async (req, res) => {
          const {keyspace} = req.params;
@@ -269,6 +274,19 @@ export default class {
       expressApp.get(config.location + options.uri, async (req, res) => {
          try {
             const {keyspace, key, timeout} = req.params;
+            const token = await redisClient.hgetAsync(this.redisKey('keyspace', keyspace), 'token');
+            if (token) {
+               logger.debug('token', token);
+               const requestToken = req.headers['token'] || req.query.token;
+               if (!requestToken) {
+                  res.status(403).send('Access prohibited with token for keyspace: ' + keyspace);
+                  return;
+               }
+               if (token !== requestToken) {
+                  res.status(403).send(`Invalid token for keyspace ${keyspace}: ${requestToken}`);
+                  return;
+               }
+            }
             let hostname;
             if (req.hostname === config.hostname) {
             } else if (lodash.endsWith(req.hostname, config.keyspaceHostname)) {
