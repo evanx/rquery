@@ -321,7 +321,7 @@ export default class {
                return;
             }
             if (timeout) {
-               if (/^[0-9]$/.test(timeout.toString())) {
+               if (!/^[0-9]$/.test(timeout)) {
                   res.status(400).send('Invalid timeout: require range 1 to 9 seconds');
                   return;
                }
