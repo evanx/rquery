@@ -274,6 +274,24 @@ export default class {
       expressApp.get(config.location + options.uri, async (req, res) => {
          try {
             const {keyspace, key, timeout} = req.params;
+            if (/^:/.test(keyspace)) {
+               res.status(400).send('Invalid keyspace: leading colon');
+               return;
+            }
+            if (keyspace === 'MYKEYSPACE') {
+               res.status(400).send('Reserved keyspace: ' + keyspace);
+               return;
+            }
+            if (/^:/.test(key)) {
+               res.status(400).send('Invalid key: leading colon');
+               return;
+            }
+            if (timeout) {
+               if (/^[0-9]$/.test(timeout)) {
+                  res.status(400).send('Invalid timeout: require range 1 to 9 seconds');
+                  return;
+               }
+            }
             const token = await redisClient.hgetAsync(this.redisKey('keyspace', keyspace), 'token');
             if (token) {
                logger.debug('token', token);
