@@ -554,7 +554,7 @@ export default class {
       });
       if (token && !accessToken) {
          const [hset, hdel] = await redisClient.multiExecAsync(multi => {
-            multi.hsetnx(this.redisKey('keyspace', keyspace), 'accessToken', accessToken);
+            multi.hsetnx(this.redisKey('keyspace', keyspace), 'accessToken', token);
             multi.hdel(this.redisKey('keyspace', keyspace), 'token');
          });
          if (!hset) {
