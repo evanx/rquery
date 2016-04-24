@@ -80,6 +80,16 @@ export default class {
          const multiReply = await multi.execAsync();
          return keys.map(key => key.substring(keyIndex));
       });
+      this.addKeyspaceRoute('grant/:readToken', async (req, res) => {
+         const {keyspace, readToken} = req.params;
+         return await redisClient.hsetAsync(this.redisKey('keyspace', keyspace), 'readToken', readToken);
+      });
+      this.addKeyspaceRoute('revoke', async (req, res) => {
+         const {keyspace} = req.params;
+         const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
+         const index = config.redisKeyspace.length + keyspace.length + 2;
+         return keys.map(key => key.substring(index));
+      });
       this.addKeyspaceRoute('keys', async (req, res) => {
          const {keyspace} = req.params;
          const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
