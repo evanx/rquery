@@ -1,6 +1,8 @@
 
 set -e -u
 
+echo rdemo $rdemo
+
 c1curlv() {
   url="$1"
   echo "curl $url"
@@ -8,21 +10,38 @@ c1curlv() {
 }
 
 c2curl() {
-  c1curlv "$rqueryDemoUrl/$2" 
+  c1curlv $1/$rdemo/$2
 }
+
+c3curlr() {
+  c2curl $1 $2 | grep "$3"
+}
+
+c3curle() {
+  c3curlr $1 $2 "^${3}$"
+}
+
+c2curl0() {
+  c3curle $1 $2 0
+}
+
+c2curl1() {
+  c3curle $1 $2 1
+}
+
 
 c1curla() {
   c2curl $1 set/mykey/myvalue
-  c2curl $1 exists/mykey
-  c2curl $1 get/mykey
-  c2curl $1 ttl/mykey
+  c2curl1 $1 exists/mykey
+  c3curle $1 get/mykey myvalue
+  c3curlr $1 ttl/mykey '^1'
   c2curl $1 sadd/myset/item1
   c2curl $1 sadd/myset/item2
-  c2curl $1 sismember/myset/item1
+  c2curl1 $1 sismember/myset/item1
   c2curl $1 smembers/myset
   c2curl $1 srem/myset/item1
-  c2curl $1 spop/myset
-  c2curl $1 scard/myset
+  c2curle $1 spop/myset item2
+  c2curle $1 scard/myset 0
   c2curl $1 zadd/mysortedset/10/value10
   c2curl $1 zadd/mysortedset/20/value20
   c2curl $1 zcard/mysortedset

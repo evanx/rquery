@@ -5,6 +5,8 @@ import marked from 'marked';
 import * as Files from '../lib/Files';
 import * as Express from '../lib/Express';
 
+const supportedAuth = ['twitter.com', 'github.com', 'gitlib.com', 'bitbucket.org'];
+
 export default class {
 
    async start() {
@@ -53,14 +55,25 @@ export default class {
          const index = config.redisKeyspace.length + keyspace.length + 2;
          return keys.map(key => key.substring(index));
       });
-      this.addRegisterRoute('github.com');
-      this.addRegisterRoute('twitter.com');
+      //supportedAuth.forEach(auth => this.addRegisterRoute(auth));
+      this.addRegisterRoute();
       this.addKeyspaceRoute('flush', async (req, res) => {
          const {keyspace} = req.params;
          const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
          const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
          const multi = redisClient.multi();
          keys.forEach(key => multi.del(key));
+         const multiReply = await multi.execAsync();
+         return keys.map(key => key.substring(keyIndex));
+      });
+      this.addKeyspaceRoute('deregister', async (req, res) => {
+         const {keyspace} = req.params;
+         const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
+         logger.info('deregister', keyspace, keys.length);
+         const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
+         const multi = redisClient.multi();
+         keys.forEach(key => multi.del(key));
+         multi.del(this.redisKey('keyspace', keyspace));
          const multiReply = await multi.execAsync();
          return keys.map(key => key.substring(keyIndex));
       });
@@ -277,8 +290,8 @@ export default class {
       }
    }
 
-   addRegisterRoute(site) {
-      const uri = `kt/:keyspace/:token/register/${site}/:username`;
+   addRegisterRoute() {
+      const uri = `kt/:keyspace/:token/register/:auth/:user`;
       logger.debug('url', uri);
       expressApp.get(config.location + uri, async (req, res) => {
          logger.debug('url', uri);
@@ -290,22 +303,26 @@ export default class {
                }
             }
             this.registerTime = now;
-            const {token, keyspace, username} = req.params;
-            const supportedSites = ['twitter.com', 'github.com'];
-            if (!lodash.includes(supportedSites, site)) {
-               throw {message: 'Invalid site', supportedSites, site};
+            const {token, keyspace, auth, user} = req.params;
+            if (!lodash.includes(supportedAuth, auth)) {
+               throw {message: 'Invalid auth site', supportedAuth, auth};
             }
-            const url = 'https://' + site + '/' + username;
+            const url = 'https://' + auth + '/' + user;
             logger.debug('url', url);
             const response = await Requests.head({url});
             if (response.statusCode !== 200) {
-               throw {message: 'Invalid site/username for recovery', statusCode: response.statusCode, url};
+               throw {message: 'Invalid auth site/username for recovery', statusCode: response.statusCode, url};
             }
-            const reply = await redisClient.hsetnxAsync(this.redisKey('keyspace', keyspace), 'token', token);
-            if (!reply) {
+            const replies = await redisClient.multiExecAsync(multi => {
+               multi.hsetnx(this.redisKey('keyspace', keyspace), 'token', token);
+               multi.hsetnx(this.redisKey('keyspace', keyspace), 'auth', auth);
+               multi.hsetnx(this.redisKey('keyspace', keyspace), 'user', user);
+               multi.hgetall(this.redisKey('keyspace', keyspace));
+            });
+            if (lodash.includes(replies, 0)) {
                throw {message: 'Invalid keyspace/token'};
             }
-            res.json(reply);
+            res.json(replies[3]);
          } catch (err) {
             this.handleError(err, req, res);
          }
@@ -334,8 +351,14 @@ export default class {
                   return;
                }
             }
-            const ktoken = await redisClient.hgetAsync(this.redisKey('keyspace', keyspace), 'token');
-            if (ktoken) {
+            const [[accessed], ktoken] = await redisClient.multiExecAsync(multi => {
+               multi.time();
+               multi.hget(this.redisKey('keyspace', keyspace), 'token');
+            });
+            if (!ktoken) {
+               res.status(403).send('Unregistered keyspace: ' + keyspace);
+               return;
+            } else {
                logger.debug('token', ktoken);
                if (!token) {
                   res.status(403).send('Access prohibited with token for keyspace: ' + keyspace);
@@ -372,7 +395,8 @@ export default class {
             }
             const multi = redisClient.multi();
             await this.sendResult(req, res, await fn(req, res, multi));
-            multi.sadd([config.redisKeyspace, 'keyspaces'].join(':'), keyspace);
+            multi.sadd(this.redisKey('keyspaces'), keyspace);
+            multi.hset(this.redisKey('keyspace', keyspace), 'accessed', accessed);
             if (key) {
                const redisKey = this.redisKey(keyspace, key);
                multi.expire(redisKey, config.expire);
