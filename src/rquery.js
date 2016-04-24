@@ -297,7 +297,7 @@ export default class {
       if (result !== undefined) {
          if (req.query.quiet !== undefined) {
             res.send('');
-         } else if (req.query.nplain !== undefined) {
+         } else if (req.query.line !== undefined) {
             res.set('Content-Type', 'text/plain');
             res.send(result.toString() + '\n');
          } else if (req.query.plain !== undefined) {
