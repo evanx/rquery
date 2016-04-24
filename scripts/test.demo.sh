@@ -16,7 +16,7 @@ c2curl() {
 
 c3curlr() {
   url="$1/$uri/$2"
-  >&2 echo "curl -s $url"
+  >&2 echo "curl -s $url # expect $3"
   reply=`curl -s "$url?plain"`
   if ! echo "$reply" | grep "$3"
   then
@@ -41,7 +41,7 @@ c1curla() {
   c2curl $1 set/mykey/myvalue
   c2curl1 $1 exists/mykey
   c3curle $1 get/mykey myvalue
-  c3curlr $1 ttl/mykey '^1'
+  c3curlr $1 ttl/mykey '^17[0-9]$'
   c2curl $1 sadd/myset/item1
   c2curl $1 sadd/myset/item2
   c3curle $1 scard/myset 2
@@ -50,29 +50,32 @@ c1curla() {
   c2curl $1 srem/myset/item1
   c3curle $1 spop/myset item2
   c3curle $1 scard/myset 0
+  c2curl $1 del/mysortedset
   c2curl $1 zadd/mysortedset/10/value10
   c2curl $1 zadd/mysortedset/20/value20
-  c2curl $1 zcard/mysortedset
+  c3curle $1 zcard/mysortedset 2
   c2curl $1 zrange/mysortedset/0/-1
   c2curl $1 zrem/mysortedset/value10
   c2curl $1 zrevrange/mysortedset/0/-1
+  c2curl $1 del/myhashes
   c2curl $1 hset/myhashes/myfield1/myfield1value
   c2curl $1 hget/myhashes/myfield1
   c2curl $1 hset/myhashes/myfield2/myfield2value
   c2curl $1 hget/myhashes/myfield2
   c2curl $1 hexists/myhashes/myfield1
-  c2curl $1 hlen/myhashes
+  c3curle $1 hlen/myhashes 2
   c2curl $1 hkeys/myhashes
   c2curl $1 hgetall/myhashes
   c2curl $1 hdel/myhashes/myfield2
+  c2curl $1 del/mylist
   c2curl $1 lpush/mylist/item1
   c2curl $1 lpush/mylist/item2
   c2curl $1 lpush/mylist/item3
   c2curl $1 lpush/mylist/item4
   c2curl $1 lindex/mylist/0
   c2curl $1 lrange/mylist/0/-1
-  c2curl $1 llen/mylist
-  c2curl $1 lpop/mylist
+  c3curle $1 llen/mylist 4
+  c3curle $1 lpop/mylist item2
   c2curl $1 lrem/mylist/-1/item4
   c2curl $1 lset/mylist/0/item4
   c2curl $1 ltrim/mylist/0/2

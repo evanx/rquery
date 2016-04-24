@@ -135,6 +135,12 @@ curl -s $rdemo/deregister | python -mjson.tool
 ```
 where `rdemo` provides the keyspace and authorization token.
 
+We can now run the test script
+```shell
+sh scripts/test.demo.sh
+```
+where this will use `~/demo-rquery/uri` i.e. our keyspace/token URL as per `register` e.g. performed by `setup.sh.`
+
 ##### Sets
 
 ```shell
