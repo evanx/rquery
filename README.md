@@ -44,6 +44,11 @@ where `mysecret` should be specified, ideally generated and saved on disk as fol
 ```
 where this "strong" token cannot be easily remembered (or guessed) and so must be saved e.g. the `setup.sh` script saves it to a file `token` in a specified directory.
 
+Alternatively, use the public `gentoken` endpoint:
+```shell
+curl -s https://demo.ibhala.com/rquery/gentoken?plain
+```
+
 Note that SSL must be used, otherwise your keyspace could be hijacked i.e. if the token `mysecret` is transferred in cleartext.
 
 This token-based `/kt` endpoint is provided for initial demonstration purposes, especially to be usable "as is" via your browser. As on ongoing effect, this service will support more sophisticated identification, authentication and authorization.
