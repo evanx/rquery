@@ -51,9 +51,11 @@ export default class {
          return time[0];
       });
       this.addPublicRoute('time', () => redisClient.timeAsync());
+      this.addPublicRoute('gentoken', async (req, res) => {
+         return base32.encode(crypto.randomBytes(10));
+      });
       this.addPublicRoute('gentoken/:keyspace', async (req, res) => {
          const token = base32.encode(crypto.randomBytes(10));
-         logger.debug('zz', token);
          return 'https://' + req.hostname + '/rquery/kt/' + req.params.keyspace + '/' + token;
       });
       //supportedAuth.forEach(auth => this.addRegisterRoute(auth));
