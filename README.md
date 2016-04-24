@@ -111,9 +111,9 @@ As such, it's expected to be up to about 15 seconds later than the actual epoch 
 
 Let's first setup a working directory as follows:
 ```shell
-[ -f ~/.rdemo-response ]
-dir=~/demo-rquery auth=github.com user=evanxgh ./scripts/setup.demo.sh &&
-  export rdemo=`cat url` && echo 'Use base url $rdemo : '$rdemo
+rdemoFile=~/.rdemo dir=~/demo-rquery auth=github.com user=evanx force=true ./scripts/setup.demo.sh &&
+  export rdemo=`cat ~/.rdemo` &&
+  echo 'Try: curl -s $rdemo/keys | python -mjson.tool #' $rdemo
 ```
 where `user` must be substituted with <b>your</b> Github username.
 

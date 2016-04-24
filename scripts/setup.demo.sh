@@ -1,3 +1,4 @@
+#!/bin/bash
 
 set -u -e
 
@@ -79,8 +80,11 @@ abort() {
 }
 
 
+[ -n "$BASH" ] || abort "Use bash"
+
 # parameters
 
+echo -n 'rdemoFile (e.g. ~/.rdemo) '; echo $rdemoFile
 echo -n 'dir (e.g. ~/demo-rquery) '; echo $dir
 echo -n 'auth (e.g. github.com) '; echo $auth
 echo -n 'user '; echo $user
@@ -100,9 +104,9 @@ if [ -d $dir ]
 then
   if [ -f $dir/url ]
   then
-    if [ "$force" == 'true' ]
+    if [ "$force" = 'true' ]
     then
-      curl -I -s `cat $dir/url`/deregister; printf '\n'
+      curl -I -s `cat $dir/url`/deregister | grep ^HTTP
     else
       abort "Directory already exists ($dir), try: force=true"
     fi
@@ -124,8 +128,10 @@ echo uri $uri
 echo $uri > uri
 rdemo="$serviceUrl/$uri"
 echo rdemo $rdemo
-echo $rdemo > url # required to access and deregister, so save to file
+echo $rdemo > url
+echo $rdemo > $rdemoFile # required to access and deregister, so save to file
 ls -l url
+ls -l $rdemoFile
 cat url
 
 echo "curl -s $rdemo/register/github.com/$user"
