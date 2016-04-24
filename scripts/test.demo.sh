@@ -15,7 +15,13 @@ c2curl() {
 }
 
 c3curlr() {
-  c2curl $1 $2 | grep "$3"
+  reply=`c2curl $1 $2`
+  if ! echo "$reply" | grep "$3"
+  then
+    echo "$1/$uri/$2 - expected $3, received $reply"
+  else
+    echo "$reply"
+  fi
 }
 
 c3curle() {
@@ -30,7 +36,6 @@ c2curl1() {
   c3curle $1 $2 1
 }
 
-
 c1curla() {
   c2curl $1 set/mykey/myvalue
   c2curl1 $1 exists/mykey
@@ -41,8 +46,8 @@ c1curla() {
   c2curl1 $1 sismember/myset/item1
   c2curl $1 smembers/myset
   c2curl $1 srem/myset/item1
-  c2curle $1 spop/myset item2
-  c2curle $1 scard/myset 0
+  c3curle $1 spop/myset item2
+  c3curle $1 scard/myset 0
   c2curl $1 zadd/mysortedset/10/value10
   c2curl $1 zadd/mysortedset/20/value20
   c2curl $1 zcard/mysortedset
@@ -96,6 +101,10 @@ c0curld() {
   c1curld demo.ibhala.com
   c1curld demo1.ibhala.com
   c1curld demo2.ibhala.com
+}
+
+c0curl0() {
+  c1curld demo.ibhala.com
 }
 
 c0curl1() {

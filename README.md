@@ -111,14 +111,13 @@ As such, it's expected to be up to about 15 seconds later than the actual epoch 
 
 Let's first setup a working directory as follows:
 ```shell
-urlFile=~/.rdemo dir=~/demo-rquery auth=github.com user=evanx force=true ./scripts/setup.demo.sh &&
-  rdemo=`cat ~/.rdemo`
-echo 'Try:'
-echo "curl -s $rdemo/set/mykey/myvalue | python -mjson.tool"
+urlFile=~/.rdemo dir=~/demo-rquery auth=github.com user=evanx force=true ./scripts/setup.demo.sh
+export rdemo=`cat ~/.rdemo`
+echo rdemo $rdemo
 ```
 where `user` must be substituted with <b>your</b> Github username.
 
-Now let's test:
+Then we can use `curl $rdemo` as follows:
 ```shell
 curl -s $rdemo/set/mykey/myvalue | python -mjson.tool
 curl -s $rdemo/exists/mykey | python -mjson.tool
@@ -129,6 +128,12 @@ where `ttl/mykey` returns the TTL decreasing from 180 seconds:
 ```json
 179
 ```
+
+The above `setup.sh` script will `register` a keyspace with a chosen `token.` For the reverse operation, we `deregister` (and flush) our keyspace as follows:
+```shell
+curl -s $rdemo/deregister | python -mjson.tool
+```
+where `rdemo` provides the keyspace and authorization token.
 
 ##### Sets
 
