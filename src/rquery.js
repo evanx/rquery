@@ -299,7 +299,7 @@ export default class {
             res.send('');
          } else if (req.query.line !== undefined || /^cli\./.test(req.hostname)) {
             res.set('Content-Type', 'text/plain');
-            res.send(result.toString() + '\n');
+            res.send(result.toString().split(',').join('\n'));
          } else if (req.query.plain !== undefined) {
             res.set('Content-Type', 'text/plain');
             res.send(result.toString());
