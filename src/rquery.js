@@ -103,6 +103,16 @@ export default class {
          const redisKey = this.redisKey(keyspace, key);
          return await redisClient.setAsync(redisKey, value);
       });
+      this.addKeyspaceRoute('setex/:key/:seconds/:value', async (req, res) => {
+         const {keyspace, key, seconds, value} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         return await redisClient.setexAsync(redisKey, seconds, value);
+      });
+      this.addKeyspaceRoute('setnx/:key/:value', async (req, res) => {
+         const {keyspace, key, value} = req.params;
+         const redisKey = this.redisKey(keyspace, key);
+         return await redisClient.setnxAsync(redisKey, value);
+      });
       this.addKeyspaceRoute('get/:key', async (req, res) => {
          const {keyspace, key} = req.params;
          const redisKey = this.redisKey(keyspace, key);
@@ -220,6 +230,9 @@ export default class {
       });
       this.addKeyspaceRoute('hset/:key/:field/:value', async (req, res) => {
          return await redisClient.hsetAsync(this.reqKey(req), req.params.field, req.params.value);
+      });
+      this.addKeyspaceRoute('hsetnx/:key/:field/:value', async (req, res) => {
+         return await redisClient.hsetnxAsync(this.reqKey(req), req.params.field, req.params.value);
       });
       this.addKeyspaceRoute('hget/:key/:field', async (req, res) => {
          return await redisClient.hgetAsync(this.reqKey(req), req.params.field);
