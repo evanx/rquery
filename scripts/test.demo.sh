@@ -1,7 +1,8 @@
 
 set -e -u
 
-echo rdemo $rdemo
+uri=${uri:=rquery/`cat ~/demo-rquery/uri`}
+echo uri $uri
 
 c1curlv() {
   url="$1"
@@ -10,7 +11,7 @@ c1curlv() {
 }
 
 c2curl() {
-  c1curlv $1/$rdemo/$2
+  c1curlv $1/$uri/$2
 }
 
 c3curlr() {

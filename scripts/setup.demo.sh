@@ -84,7 +84,7 @@ abort() {
 
 # parameters
 
-echo -n 'rdemoFile (e.g. ~/.rdemo) '; echo $rdemoFile
+echo -n 'urlFile (e.g. ~/.rdemo) '; echo $urlFile
 echo -n 'dir (e.g. ~/demo-rquery) '; echo $dir
 echo -n 'auth (e.g. github.com) '; echo $auth
 echo -n 'user '; echo $user
@@ -129,9 +129,9 @@ echo $uri > uri
 rdemo="$serviceUrl/$uri"
 echo rdemo $rdemo
 echo $rdemo > url
-echo $rdemo > $rdemoFile # required to access and deregister, so save to file
+echo $rdemo > $urlFile # required to access and deregister, so save to file
 ls -l url
-ls -l $rdemoFile
+ls -l $urlFile
 cat url
 
 echo "curl -s $rdemo/register/github.com/$user"
