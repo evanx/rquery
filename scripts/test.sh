@@ -128,6 +128,10 @@ c1curld() {
   c1curlg $1
 }
 
+c0localhost() {
+  c1curld localhost:8765
+}
+
 c0curld() {
   c1curld localhost:8765
   c1curld https://demo.ibhala.com

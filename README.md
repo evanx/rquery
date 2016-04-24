@@ -51,7 +51,7 @@ curl -s https://demo.ibhala.com/rquery/gentoken?plain
 
 Note that SSL must be used, otherwise your keyspace could be hijacked i.e. if the token `mysecret` is transferred in cleartext.
 
-This token-based `/kt` endpoint is provided for initial demonstration purposes, especially to be usable "as is" via your browser. As on ongoing effect, this service will support more sophisticated identification, authentication and authorization.
+This token-based `/kt` endpoint is provided for initial demonstration purposes, especially to be usable "as is" via your browser. As an ongoing effect, this service will support more sophisticated identification, authentication and authorization, e.g. via authenticated client certs.
 
 
 #### Commands
