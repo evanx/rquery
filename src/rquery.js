@@ -301,6 +301,8 @@ export default class {
             res.set('Content-Type', 'text/plain');
             if (lodash.isArray(result)) {
                res.send(result.join('\n') + '\n');
+            } else if (lodash.isObject(result)) {
+               res.send(Object.keys(result).map(key => [key, result[key]].join('=')));
             } else {
                res.send(result.toString() + '\n');
             }
