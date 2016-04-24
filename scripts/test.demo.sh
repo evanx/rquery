@@ -80,7 +80,7 @@ c1curla() {
   c2curl $1 lset/mylist/0/item4
   c2curl $1 ltrim/mylist/0/2
   c2curl $1 brpop/mylist/1
-  c2curl $1 brpoplpush/mylist/mypoppedlist/1
+  c3curle $1 brpoplpush/mylist/mypoppedlist/1 item2
   c2curl $1 llen/mylist
   c2curl $1 keys
   c2curl $1 ttl
