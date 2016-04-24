@@ -137,7 +137,7 @@ where `rdemo` provides the keyspace and authorization token.
 
 We can now run the test script
 ```shell
-sh scripts/test.demo.sh
+./scripts/test.sh
 ```
 where this will use `~/demo-rquery/uri` i.e. our keyspace/token URL as per `register` e.g. performed by `setup.sh.`
 
