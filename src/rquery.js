@@ -300,7 +300,7 @@ export default class {
          } else if (req.query.line !== undefined || /^cli\./.test(req.hostname)) {
             res.set('Content-Type', 'text/plain');
             if (lodash.isArray(result)) {
-               res.send(result.join('/') + '\n');
+               res.send(result.join('\n') + '\n');
             } else {
                res.send(result.toString() + '\n');
             }
