@@ -6,7 +6,7 @@ echo uri $uri
 
 c1curlv() {
   url="$1"
-  echo "curl $url"
+  >&2 echo "curl -s $url | python -mjson.tool"
   curl -s "$url" | python -mjson.tool
 }
 
@@ -15,12 +15,12 @@ c2curl() {
 }
 
 c3curlr() {
-  reply=`c2curl $1 $2`
+  url="$1/$uri/$2"
+  >&2 echo "curl -s $url"
+  reply=`curl -s "$url?plain"`
   if ! echo "$reply" | grep "$3"
   then
     echo "$1/$uri/$2 - expected $3, received $reply"
-  else
-    echo "$reply"
   fi
 }
 
@@ -37,12 +37,14 @@ c2curl1() {
 }
 
 c1curla() {
+  c2curl $1 del/mykey
   c2curl $1 set/mykey/myvalue
   c2curl1 $1 exists/mykey
   c3curle $1 get/mykey myvalue
   c3curlr $1 ttl/mykey '^1'
   c2curl $1 sadd/myset/item1
   c2curl $1 sadd/myset/item2
+  c3curle $1 scard/myset 2
   c2curl1 $1 sismember/myset/item1
   c2curl $1 smembers/myset
   c2curl $1 srem/myset/item1
@@ -97,31 +99,27 @@ c1curld() {
 c0curld() {
   c1curld localhost:8765
   c1curld https://demo.ibhala.com
-  c1curld https://demo1.ibhala.com
-  c1curld demo.ibhala.com
   c1curld demo1.ibhala.com
   c1curld demo2.ibhala.com
 }
 
 c0curl0() {
-  c1curld demo.ibhala.com
+  c1curld https://demo.ibhala.com
 }
 
 c0curl1() {
-  c1curld demo1.ibhala.com
+  c1curld https://demo1.ibhala.com
 }
 
 c0curl2() {
-  c1curld demo2.ibhala.com
+  c1curld https://demo2.ibhala.com
 }
 
-command=curld
+command=curl0
 if [ $# -ge 1 ]
 then
   command=$1
   shift
-  c$#$command $@
-else
-  c0curld
 fi
+c$#$command $@
 echo "OK"

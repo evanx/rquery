@@ -49,23 +49,8 @@ export default class {
          return time[0];
       });
       this.addPublicRoute('time', () => redisClient.timeAsync());
-      this.addKeyspaceRoute('keys', async (req, res) => {
-         const {keyspace} = req.params;
-         const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
-         const index = config.redisKeyspace.length + keyspace.length + 2;
-         return keys.map(key => key.substring(index));
-      });
       //supportedAuth.forEach(auth => this.addRegisterRoute(auth));
       this.addRegisterRoute();
-      this.addKeyspaceRoute('flush', async (req, res) => {
-         const {keyspace} = req.params;
-         const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
-         const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
-         const multi = redisClient.multi();
-         keys.forEach(key => multi.del(key));
-         const multiReply = await multi.execAsync();
-         return keys.map(key => key.substring(keyIndex));
-      });
       this.addKeyspaceRoute('deregister', async (req, res) => {
          const {keyspace} = req.params;
          const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
@@ -76,6 +61,21 @@ export default class {
          multi.del(this.redisKey('keyspace', keyspace));
          const multiReply = await multi.execAsync();
          return keys.map(key => key.substring(keyIndex));
+      });
+      this.addKeyspaceRoute('flush', async (req, res) => {
+         const {keyspace} = req.params;
+         const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
+         const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
+         const multi = redisClient.multi();
+         keys.forEach(key => multi.del(key));
+         const multiReply = await multi.execAsync();
+         return keys.map(key => key.substring(keyIndex));
+      });
+      this.addKeyspaceRoute('keys', async (req, res) => {
+         const {keyspace} = req.params;
+         const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
+         const index = config.redisKeyspace.length + keyspace.length + 2;
+         return keys.map(key => key.substring(index));
       });
       this.addKeyspaceRoute('ttl', async (req, res) => {
          const {keyspace} = req.params;
