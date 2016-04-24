@@ -302,7 +302,7 @@ export default class {
             if (lodash.isArray(result)) {
                res.send(result.join('\n') + '\n');
             } else if (lodash.isObject(result)) {
-               res.send(Object.keys(result).map(key => [key, result[key]].join('=')));
+               res.send(Object.keys(result).map(key => [key, result[key]].join('=')).join('\n') + '\n');
             } else {
                res.send(result.toString() + '\n');
             }
