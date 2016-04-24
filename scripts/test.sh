@@ -27,12 +27,23 @@ curlr() {
   fi
 }
 
+curlm() {
+  url="$1/$uri/$2"
+  count=$3
+  >&2 echo "curl -s $url # expect $count items (or more)"
+  reply=`curl -s "$url" | python -mjson.tool`
+  echo "$reply" 
+  echo count `echo "$reply" | grep '^\s' | wc -l`
+  [ `echo "$reply" | grep '^\s' | wc -l` -ge $count ]
+}
+
 curli() {
   url="$1/$uri/$2"
   shift; shift
   >&2 echo "curl -s $url # expect includes $@"
   reply=`curl -s "$url" | python -mjson.tool`
-  >&2 echo "$reply" 
+  echo "$reply" 
+  echo count `echo "$reply" | grep '^\s' | wc -l`
   while [ $# -gt 0 ]
   do
     expected=$1
@@ -64,6 +75,7 @@ c1curla() {
   curle $1 scard/myset 2
   curl1 $1 sismember/myset/item1
   curli $1 smembers/myset item1 item2
+  curlm $1 smembers/myset 2
   curlu $1 srem/myset/item1
   curle $1 spop/myset item2
   curle $1 scard/myset 0
@@ -90,7 +102,7 @@ c1curla() {
   curlu $1 lpush/mylist/item3
   curlu $1 lpush/mylist/item4
   curlu $1 lindex/mylist/0
-  curlu $1 lrange/mylist/0/-1
+  curlm $1 lrange/mylist/0/-1 4
   curle $1 llen/mylist 4
   curle $1 lpop/mylist item2
   curlu $1 lrem/mylist/-1/item4
