@@ -23,10 +23,9 @@ const commands = {
    revoke: {
       access: 'admin'
    },
-   keys: {
-      access: 'debug'
+   readtoken: {
    },
-   ttl: {
+   keys: {
       access: 'debug'
    },
    type: {
@@ -35,7 +34,7 @@ const commands = {
    },
    ttl: {
       access: 'debug',
-      params: ['key']
+      optionals: ['key']
    },
    set: {
       params: ['key', 'value'],
@@ -180,6 +179,10 @@ export default class {
       this.addKeyspaceCommand('revoke', async (req, res) => {
          const {keyspace} = req.params;
          return await redisClient.hdelAsync(this.redisKey('keyspace', keyspace), 'readToken');
+      });
+      this.addKeyspaceCommand('readtoken', async (req, res) => {
+         const {keyspace} = req.params;
+         return await redisClient.hgetAsync(this.redisKey('keyspace', keyspace), 'readToken');
       });
       this.addKeyspaceCommand('keys', async (req, res) => {
          const {keyspace} = req.params;
