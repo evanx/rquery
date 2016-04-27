@@ -31,7 +31,7 @@ Register a chosen keyspace name, and security access token:
 ```shell
 curl -s https://redishub.com/rquery/kt/$keyspace/$token/register/github.com/$user
 ```
-where you also provide our Github username as identification to administer the keyspace (TODO).
+where you also provide your Github username as identification to administer the keyspace (TODO).
 
 For example:
 ```shell
