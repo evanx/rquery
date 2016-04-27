@@ -9,103 +9,257 @@ import * as Express from '../lib/Express';
 
 const supportedAuth = ['twitter.com', 'github.com', 'gitlib.com', 'bitbucket.org'];
 
-const commands = {
-   deregister: {
+const commands = [
+   {
+      key: 'deregister',
       access: 'admin'
    },
-   flush: {
+   {
+      key: 'flush',
       access: 'admin'
    },
-   grant: {
+   {
+      key: 'grant',
       params: ['readToken'],
       access: 'admin'
    },
-   revoke: {
+   {
+      key: 'revoke',
       access: 'admin'
    },
-   readtoken: {
+   {
+      key: 'readtoken',
    },
-   keys: {
+   {
+      key: 'keys',
       access: 'debug'
    },
-   type: {
+   {
+      key: 'type',
       access: 'debug',
       params: ['key']
    },
-   ttl: {
+   {
+      key: 'ttl',
+      access: 'debug'
+   },
+   {
+      key: 'ttl',
       access: 'debug',
-      optionals: ['key']
-   },
-   set: {
-      params: ['key', 'value'],
-      access: 'set'
-   },
-   setex: {
-      params: ['key', 'expire', 'value'],
-      access: 'set'
-   },
-   setnx: {
-      params: ['key', 'value'],
-      access: 'set'
-   },
-   get: {
       params: ['key']
    },
-   incr: {
-      params: ['key'],
-      access: 'set'
+   {
+      key: 'set',
+      access: 'set',
+      params: ['key', 'value']
    },
-   exists: {
+   {
+      key: 'setex',
+      access: 'set',
+      params: ['key', 'expire', 'value']
+   },
+   {
+      key: 'setnx',
+      access: 'set',
+      params: ['key', 'value']
+   },
+   {
+      key: 'get',
       params: ['key']
    },
-   del: {
+   {
+      key: 'incr',
+      access: 'set',
       params: ['key'],
-      access: 'set'
+   },
+   {
+      key: 'exists',
+      params: ['key']
+   },
+   {
+      key: 'del',
+      access: 'set',
+      params: ['key']
+   },
+   {
+      key: 'sadd',
+      access: 'set',
+      params: ['key', 'member']
+   },
+   {
+      key: 'srem',
+      access: 'set',
+      params: ['key', 'member']
+   },
+   {
+      key: 'smove',
+      access: 'set',
+      params: ['key', 'dest', 'member']
+   },
+   {
+      key: 'spop',
+      access: 'set',
+      params: ['key']
+   },
+   {
+      key: 'smembers',
+      params: ['key']
+   },
+   {
+      key: 'sismember',
+      params: ['key', 'member']
+   },
+   {
+      key: 'scard',
+      params: ['key']
+   },
+   {
+      key: 'lpush',
+      access: 'set',
+      params: ['key', 'value']
+   },
+   {
+      key: 'lpushtrim',
+      access: 'set',
+      params: ['key', 'value', 'length']
+   },
+   {
+      key: 'rpush',
+      access: 'set',
+      params: ['key', 'value']
+   },
+   {
+      key: 'lpop',
+      access: 'set',
+      params: ['key']
+   },
+   {
+      key: 'blpop',
+      access: 'set',
+      params: ['key', 'timeout']
+   },
+   {
+      key: 'brpop',
+      access: 'set',
+      params: ['key', 'timeout']
+   },
+   {
+      key: 'rpop',
+      access: 'set',
+      params: ['key']
+   },
+   {
+      key: 'brpoplpush',
+      access: 'set',
+      params: ['key', 'dest', 'timeout']
+   },
+   {
+      key: 'llen',
+      params: ['key']
+   },
+   {
+      key: 'lindex',
+      params: ['key', 'index']
+   },
+   {
+      key: 'lrem',
+      access: 'set',
+      params: ['key', 'count', 'value']
+   },
+   {
+      key: 'lset',
+      access: 'set',
+      params: ['key', 'index', 'value']
+   },
+   {
+      key: 'ltrim',
+      access: 'set',
+      params: ['key', 'start', 'stop']
+   },
+   {
+      key: 'lrange',
+      params: ['key', 'start', 'stop']
+   },
+   {
+      key: 'hset',
+      access: 'set',
+      params: ['key', 'field', 'value']
+   },
+   {
+      key: 'hsetnx',
+      access: 'set',
+      params: ['key', 'field', 'value']
+   },
+   {
+      key: 'hget',
+      params: ['key', 'field']
+   },
+   {
+      key: 'hdel',
+      access: 'set',
+      params: ['key', 'field']
+   },
+   {
+      key: 'hincrby',
+      access: 'set',
+      params: ['key', 'field', 'increment']
+   },
+   {
+      key: 'hexists',
+      params: ['key', 'field']
+   },
+   {
+      key: 'hlen',
+      params: ['key']
+   },
+   {
+      key: 'hkeys',
+      params: ['key']
+   },
+   {
+      key: 'hgetall',
+      params: ['key']
+   },
+   {
+      key: 'zcard',
+      params: ['key']
+   },
+   {
+      key: 'zadd',
+      access: 'set',
+      params: ['key', 'score', 'member']
+   },
+   {
+      key: 'zrem',
+      access: 'set',
+      params: ['key', 'member']
+   },
+   {
+      key: 'zrange',
+      params: ['key', 'start', 'stop']
+   },
+   {
+      key: 'zrevrange',
+      params: ['key', 'start', 'stop']
    }
-};
-
-const rest = [
-   'sadd/:key/:member',
-   'srem/:key/:member',
-   'smove/:key/:dest/:member',
-   'spop/:key',
-   'smembers/:key',
-   'sismember/:key/:member',
-   'scard/:key',
-   'lpush/:key/:value',
-   'lpush/:key/:value/trim/:length',
-   'rpush/:key/:value',
-   'lpop/:key',
-   'blpop/:key/:timeout',
-   'brpop/:key/:timeout',
-   'rpop/:key',
-   'brpoplpush/:key/:dest/:timeout',
-   'llen/:key',
-   'lindex/:key/:index',
-   'lrem/:key/:count/:value',
-   'lset/:key/:index/:value',
-   'ltrim/:key/:start/:stop',
-   'lrange/:key/:start/:stop',
-   'hset/:key/:field/:value',
-   'hsetnx/:key/:field/:value',
-   'hget/:key/:field',
-   'hdel/:key/:field',
-   'hincrby/:key/:field/:increment',
-   'hexists/:key/:field',
-   'hlen/:key',
-   'hkeys/:key',
-   'hgetall/:key',
-   'zcard/:key',
-   'zadd/:key/:score/:member',
-   'zrem/:key/:member',
-   'zrange/:key/:start/:stop',
-   'zrevrange/:key/:start/:stop'
 ];
+
+const commandMap = {};
 
 export default class {
 
+   async init() {
+      logger.info('init');
+      commands.forEach(command => {
+         assert(command.key, 'command key');
+         const key = command.key + command.params? 0: command.params.length;
+         logger.debug('command', {key, command});
+         commandMap[key] = command;
+      });
+      throw commandMap;
+   }
+
    async start() {
-      logger.info('start');
       redisClient = redisLib.createClient(config.redisUrl);
       expressApp = expressLib();
       this.addRoutes();
