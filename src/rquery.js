@@ -602,7 +602,7 @@ export default class {
                multi.hget(this.redisKey('keyspace', keyspace), 'accessToken');
                multi.hget(this.redisKey('keyspace', keyspace), 'readToken');
             });
-            v = this.validateAccess(options, keyspace, token, accessToken, readToken);
+            v = this.validateAccess(req, options, keyspace, token, accessToken, readToken);
             if (v) {
                res.status(403).send(v + ': ' + keyspace);
                return;
@@ -700,7 +700,8 @@ export default class {
       return false;
    }
 
-   validateAccess(options, keyspace, token, accessToken, readToken) {
+   validateAccess(req, options, keyspace, token, accessToken, readToken) {
+      logger.debug('validateAccess', Object.keys(req.headers));
       //logger.ndebug('validateAccess', {options, keyspace, token, accessToken, readToken}, this.isReadCommand(options.command));
       if (!token) {
          return 'Unregistered keyspace';
