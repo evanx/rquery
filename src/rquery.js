@@ -111,6 +111,13 @@ export default class {
          return await redisClient.hgetAsync(this.redisKey('keyspace', keyspace), 'readToken');
       });
       this.addKeyspaceCommand({
+         key: 'getconfig',
+         access: 'debug'
+      }, async (req, res) => {
+         const {keyspace} = req.params;
+         return await redisClient.hgetallAsync(this.redisKey('keyspace', keyspace));
+      });
+      this.addKeyspaceCommand({
          key: 'keys',
          access: 'debug'
       }, async (req, res) => {
@@ -280,8 +287,8 @@ export default class {
          return await redisClient.lpushAsync(this.reqKey(req), req.params.value);
       });
       this.addKeyspaceCommand({
-         key: 'lpush',
-         params: ['key', 'value/trim', 'length'],
+         key: 'lpushtrim',
+         params: ['key', 'value', 'length'],
          access: 'set'
       }, async (req, res, multi) => {
          const {keyspace, key, value, length} = req.params;
@@ -597,12 +604,13 @@ export default class {
                   return;
                }
             }
-            const [[accessed], accessToken, readToken] = await redisClient.multiExecAsync(multi => {
+            const [[accessed], accessToken, readToken, cert] = await redisClient.multiExecAsync(multi => {
                multi.time();
                multi.hget(this.redisKey('keyspace', keyspace), 'accessToken');
                multi.hget(this.redisKey('keyspace', keyspace), 'readToken');
+               multi.hget(this.redisKey('keyspace', keyspace), 'cert');
             });
-            v = this.validateAccess(req, options, keyspace, token, accessToken, readToken);
+            v = this.validateAccess(req, options, keyspace, token, accessToken, readToken, cert);
             if (v) {
                res.status(403).send(v + ': ' + keyspace);
                return;
@@ -700,9 +708,16 @@ export default class {
       return false;
    }
 
-   validateAccess(req, options, keyspace, token, accessToken, readToken) {
-      logger.info('validateAccess', req.get('ssl_client_cert'));
-      //logger.ndebug('validateAccess', {options, keyspace, token, accessToken, readToken}, this.isReadCommand(options.command));
+   validateAccess(req, options, keyspace, token, accessToken, readToken, cert) {
+      const clientCert = req.get('ssl_client_cert');
+      logger.debug('validateAccess', this.isReadCommand(options.command), !clientCert? 0: clientCert.length);
+      if (cert) {
+         if (clientCert) {
+            if (cert !== clientCert) {
+               return 'Invalid cert';
+            }
+         }
+      }
       if (!token) {
          return 'Unregistered keyspace';
       } else if (token === accessToken) {
