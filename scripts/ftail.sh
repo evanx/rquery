@@ -7,5 +7,5 @@ echo $name
   file=`ls -t ~/.pm2/logs/${name}-out-*`
   tail $file 
   echo 
-  tail -f $file 
+  tail -f $file | bunyan -o short
 

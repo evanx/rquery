@@ -9,6 +9,6 @@ echo $name
   echo; ls -l $errorFile
   tail $errorFile
   echo; ls -l $logFile
-  tail $logFile
+  tail $logFile | bunyan -o short
 
 
