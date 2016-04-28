@@ -794,7 +794,7 @@ export default class {
 
    handleError(err, req, res) {
       if (this.isCliDomain(req)) {
-         return err.message + '\n';
+         res.status(500).send(err.message + '\n');
       } else {
          res.status(500).send({
             err: err.message,
