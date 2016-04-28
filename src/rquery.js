@@ -625,7 +625,9 @@ export default class {
    }
 
    addKeyspaceRoute(options, fn) {
-      assert(options.key, 'options.key');
+      if (typeof options === 'string') {
+         options = {uri: options};
+      }
       let uri = 'kt/:keyspace/:token';
       if (options.uri) {
          uri += '/' + options.uri;
