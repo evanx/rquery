@@ -701,7 +701,7 @@ export default class {
    }
 
    validateAccess(options, keyspace, token, accessToken, readToken) {
-      logger.debug('validateAccess', {options, keyspace, token, accessToken, readToken}, this.isReadCommand(options.command));
+      //logger.ndebug('validateAccess', {options, keyspace, token, accessToken, readToken}, this.isReadCommand(options.command));
       if (!token) {
          return 'Unregistered keyspace';
       } else if (token === accessToken) {
