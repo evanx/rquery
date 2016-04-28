@@ -24,6 +24,7 @@ curlr() {
   if ! echo "$reply" | grep "$3"
   then
     echo "$1/$uri/$2 - expected $3, received $reply"
+    exit 1
   fi
 }
 
@@ -32,7 +33,7 @@ curlm() {
   count=$3
   >&2 echo "curl -s $url # expect $count items (or more)"
   reply=`curl -s "$url" | python -mjson.tool`
-  echo "$reply" 
+  echo "$reply"
   echo count `echo "$reply" | grep '^\s' | wc -l`
   [ `echo "$reply" | grep '^\s' | wc -l` -ge $count ]
 }
@@ -42,7 +43,7 @@ curli() {
   shift; shift
   >&2 echo "curl -s $url # expect includes $@"
   reply=`curl -s "$url" | python -mjson.tool`
-  echo "$reply" 
+  echo "$reply"
   echo count `echo "$reply" | grep '^\s' | wc -l`
   while [ $# -gt 0 ]
   do
@@ -65,11 +66,14 @@ curl1() {
 }
 
 c1curla() {
+  curlu $1 deregister
+  curlu $1 register/github.com/evanx
+  curle $1 set/mykey/myvalue OK
   curlu $1 del/mykey
   curle $1 set/mykey/myvalue OK
   curl1 $1 exists/mykey
   curle $1 get/mykey myvalue
-  curlr $1 ttl/mykey '^17[0-9]$'
+  curlr $1 ttl/mykey '^1[78][0-9]$'
   curlu $1 sadd/myset/item1
   curlu $1 sadd/myset/item2
   curle $1 scard/myset 2
@@ -86,12 +90,13 @@ c1curla() {
   curli $1 zrange/mysortedset/0/-1 value10 value20
   curlu $1 zrem/mysortedset/value10
   curli $1 zrevrange/mysortedset/0/-1 value20
+  curlu $1 hset/myhashes/myfield1/myfield1value
   curl1 $1 del/myhashes
   curlu $1 hset/myhashes/myfield1/myfield1value
   curle $1 hget/myhashes/myfield1 myfield1value
   curlu $1 hset/myhashes/myfield2/myfield2value
   curle $1 hget/myhashes/myfield2 myfield2value
-  curl1 $1 hexists/myhashes/myfield1 
+  curl1 $1 hexists/myhashes/myfield1
   curle $1 hlen/myhashes 2
   curli $1 hkeys/myhashes myfield1 myfield2
   curlu $1 hgetall/myhashes
