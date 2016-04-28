@@ -107,17 +107,20 @@ c1curla() {
   curlu $1 lpush/mylist/item3
   curlu $1 lpush/mylist/item4
   curlu $1 lindex/mylist/0
-  curlm $1 lrange/mylist/0/-1 4
   curle $1 llen/mylist 4
-  curle $1 lpop/mylist item2
+  curlm $1 lrange/mylist/0/-1 4
+  curle $1 lpop/mylist item4
   curlu $1 lrem/mylist/-1/item4
   curlu $1 lset/mylist/0/item4
   curlu $1 ltrim/mylist/0/2
   curle $1 brpop/mylist/1 item1
+  curle $1 lpop/mylist item4
+  curlm $1 lrange/mylist/0/-1 0
   curle $1 brpoplpush/mylist/mypoppedlist/1 item2
   curl0 $1 llen/mylist
-  curli $1 keys mypoppedlist
-  curli $1 ttl_all mysortedset
+  curle $1 lpop/mypoppedlist item2
+  curl0 $1 llen/mypoppedlist
+  curli $1 ttl mysortedset
 }
 
 c1curlg() {
