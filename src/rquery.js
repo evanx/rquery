@@ -759,7 +759,7 @@ export default class {
    }
 
    validateAccess(req, options, keyspace, token, accessToken, readToken, certs) {
-      logger.debug('validateAccess', req.get('X-Forwarded-Proto'));
+      logger.debug('validateAccess', req.get('X-Forwarded-Proto'), keyspace);
       if (options.command.key === 'importcerts') {
          logger.info('validateAccess importcerts', keyspace);
       } else if (config.secureDomain || this.isSecureDomain(req)) {
