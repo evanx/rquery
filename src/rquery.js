@@ -761,11 +761,12 @@ export default class {
    validateAccess(req, options, keyspace, token, accessToken, readToken, certs) {
       if (certs) {
          const clientCert = req.get('ssl_client_cert');
+         logger.info('validateAccess', clientCert);
          if (!clientCert) {
             return 'No client cert';
          }
          const clientCertDigest = this.digestPem(clientCert);
-         logger.debug('validateAccess', clientCertDigest, certs);
+         logger.info('validateAccess', clientCertDigest, certs);
          if (!certs.includes(clientCertDigest)) {
             return 'Invalid cert';
          }
