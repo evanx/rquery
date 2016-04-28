@@ -760,7 +760,10 @@ export default class {
 
    validateAccess(req, options, keyspace, token, accessToken, readToken, certs) {
       const scheme = req.get('X-Forwarded-Proto');
-      logger.debug('validateAccess', scheme, keyspace);      
+      logger.debug('validateAccess', scheme, keyspace);
+      if (this.isSecureDomain(req) && scheme === 'http') {
+         return 'Insecure protocol';
+      }
       if (options.command.key === 'importcerts') {
          logger.info('validateAccess importcerts', keyspace);
       } else if (config.secureDomain || this.isSecureDomain(req)) {
