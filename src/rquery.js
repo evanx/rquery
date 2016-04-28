@@ -3,6 +3,7 @@ import expressLib from 'express';
 import marked from 'marked';
 import base32 from 'base32';
 import crypto from 'crypto';
+import CSON from 'season';
 
 import * as Files from '../lib/Files';
 import * as Express from '../lib/Express';
@@ -118,18 +119,44 @@ export default class {
          return await redisClient.hgetallAsync(this.redisKey('keyspace', keyspace));
       });
       this.addKeyspaceCommand({
-         key: 'importcerts',
+         key: 'remcerts',
          access: 'admin'
       }, async (req, res) => {
          const {keyspace} = req.params;
+         return redisClient.sremAsync(this.redisKey('certs', keyspace));
+      });
+      this.addKeyspaceCommand({
+         key: 'importcerts',
+         access: 'admin'
+      }, async (req, res, multi) => {
+         const {keyspace} = req.params;
          const keyspaceConfig = await redisClient.hgetallAsync(this.redisKey('keyspace', keyspace));
          if (keyspaceConfig.auth !== 'github.com') {
-            throw 'Only github.com auth currently supported: ' + keyspaceConfig.auth;
+            throw new ValidationError('Only github.com auth currently supported: ' + keyspaceConfig.auth);
          } else {
             const ghuser = keyspaceConfig.user;
-            const url = `https://raw.githubusercontent.com/${ghuser}/config-redishub/master/authorized_certs.json`;
-            const manifest = await Requests.json(url);
-            return manifest;
+            const manifestUrl = `https://raw.githubusercontent.com/${ghuser}/config-redishub/master/authorized_certs.cson`;
+            const manifest = CSON.parse(await Requests.request({url: manifestUrl}));
+            if (!manifest.spec) {
+               throw new ValidationError('No spec: ' + manifest);
+            }
+            if (!lodash.isArray(manifest.certs)) {
+               throw new ValidationError('No certs array: ' + manifest);
+            }
+            if (manifest.certs.length > config.certLimit) {
+               throw new ValidationError('Too many certs: ' + manifest);
+            }
+            const digests = await Promise.all(manifest.certs.map(async cert => {
+               if (!/\.pem/.test(cert)) {
+                  throw new ValidationError('Not .pem: ' + cert);
+               } else {
+                  const certUrl = `https://raw.githubusercontent.com/${ghuser}/config-redishub/master/${cert}`;
+                  const pem = await Requests.request({url: certUrl});
+                  const digest = this.digestPem(pem);
+                  multi.sadd(this.redisKey('certs', keyspace), digest);
+               }
+            }));
+            return manifest.certs;
          }
       });
       this.addKeyspaceCommand({
@@ -619,13 +646,13 @@ export default class {
                   return;
                }
             }
-            const [[accessed], accessToken, readToken, cert] = await redisClient.multiExecAsync(multi => {
+            const [[accessed], accessToken, readToken, certs] = await redisClient.multiExecAsync(multi => {
                multi.time();
                multi.hget(this.redisKey('keyspace', keyspace), 'accessToken');
                multi.hget(this.redisKey('keyspace', keyspace), 'readToken');
-               multi.hget(this.redisKey('keyspace', keyspace), 'cert');
+               multi.smembers(this.redisKey('certs', keyspace));
             });
-            v = this.validateAccess(req, options, keyspace, token, accessToken, readToken, cert);
+            v = this.validateAccess(req, options, keyspace, token, accessToken, readToken, certs);
             if (v) {
                res.status(403).send(v + ': ' + keyspace);
                return;
@@ -723,12 +750,13 @@ export default class {
       return false;
    }
 
-   validateAccess(req, options, keyspace, token, accessToken, readToken, cert) {
+   validateAccess(req, options, keyspace, token, accessToken, readToken, certs) {
       const clientCert = req.get('ssl_client_cert');
-      logger.debug('validateAccess', this.isReadCommand(options.command), !clientCert? 0: clientCert.length);
-      if (cert) {
+      const clientCertDigest = !clientCert? null : this.digestPem(clientCert);
+      logger.debug('validateAccess', this.isReadCommand(options.command), !clientCert? 0: clientCert.length, certs);
+      if (certs && !lodash.isEmpty(certs)) {
          if (clientCert) {
-            if (cert !== clientCert) {
+            if (!certs.includes(clientCertDigest)) {
                return 'Invalid cert';
             }
          }
@@ -760,6 +788,29 @@ export default class {
          hostname: req.hostname,
          params: req.params,
       });
+   }
+
+   digestPem(pem) {
+      const lines = pem.split('\n');
+      if (lines.length < 8) {
+         throw new ValidationError('Invalid lines: ' + cert);
+      }
+      if (!/^-+BEGIN CERTIFICATE/.test(lines[0])) {
+         throw new ValidationError('Invalid first line: ' + cert + ' ' + lines[0]);
+      }
+      const contentLines = lines.filter(line => {
+         return line.length > 16 && /^[\w\/\+]+$/.test(line);
+      });
+      if (contentLines.length < 8) {
+         throw new ValidationError('Invalid lines: ' + cert);
+      }
+      const sha1 = crypto.createHash('sha1');
+      contentLines.forEach(line => sha1.update(new Buffer(line)));
+      const digest = sha1.digest('hex');
+      if (digest.length < 32) {
+         throw new ValidationError('Invalid cert length: ' + cert);
+      }
+      return digest;
    }
 
    async end() {

@@ -7,6 +7,7 @@ module.exports = {
       keyspaceHostname: 'ks.ibhala.com',
       port: 8765,
       location: '/rquery/',
-      expire: 180
+      expire: 180,
+      certLimit: 4
    }
 };

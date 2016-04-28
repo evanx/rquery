@@ -21,6 +21,9 @@ config:
       type: 'duration'
       unit: 'millis'
       max: 9000
+   certLimit:
+      defaultValue: 4
+      max: 99
 
 state:
    redisClient: {}
