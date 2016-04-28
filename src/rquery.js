@@ -662,7 +662,7 @@ export default class {
             });
             v = this.validateAccess(req, options, keyspace, token, accessToken, readToken, certs);
             if (v) {
-               this.sendStatusMessage(req, res, 403, v + ': ' + keyspace);
+               this.sendStatusMessage(req, res, 403, v);
                return;
             }
             let hostname;
