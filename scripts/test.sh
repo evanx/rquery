@@ -139,21 +139,21 @@ c0localhost() {
 
 c0curld() {
   c1curld localhost:8765
-  c1curld https://demo.ibhala.com
-  c1curld demo1.ibhala.com
-  c1curld demo2.ibhala.com
+  c1curld https://demo.redishub.com
+  c1curld demo1.redishub.com
+  c1curld demo2.redishub.com
 }
 
 c0curl0() {
-  c1curld https://demo.ibhala.com
+  c1curld https://demo.redishub.com
 }
 
 c0curl1() {
-  c1curld https://demo1.ibhala.com
+  c1curld https://demo1.redishub.com
 }
 
 c0curl2() {
-  c1curld https://demo2.ibhala.com
+  c1curld https://demo2.redishub.com
 }
 
 command=curl0

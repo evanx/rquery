@@ -1,11 +1,11 @@
 
 set -u -e 
 
-mkdir -p tmp
-mv -f ~/.pm2/logs/rquery* tmp/. || echo 'no pm2 logs'
-
 name=`basename $PWD`
 echo $name
+
+mkdir -p tmp
+mv -f ~/.pm2/logs/${name}* tmp/. || echo 'no pm2 logs'
 
 port=8765
 if [ $name = rquery2 ]
