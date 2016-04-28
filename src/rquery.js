@@ -533,7 +533,7 @@ export default class {
          try {
             await this.sendResult(req, res, await fn(req, res));
          } catch (err) {
-            this.handleError(err, req, res);
+            this.sendError(err, req, res);
          }
       });
    }
@@ -606,7 +606,7 @@ export default class {
             }
             res.json(replies[3]);
          } catch (err) {
-            this.handleError(err, req, res);
+            this.sendError(err, req, res);
          }
       });
    }
@@ -640,17 +640,17 @@ export default class {
             let v;
             v = await this.validateKeyspace(req, keyspace);
             if (v) {
-               res.status(400).send('Invalid keyspace: ' + v);
+               this.sendStatusMessage(res, 400, 'Invalid keyspace: ' + v);
                return;
             }
             v = this.validateKey(key);
             if (v) {
-               res.status(400).send('Invalid key: ' + v);
+               this.sendStatusMessage(res, 400, 'Invalid key: ' + v);
                return;
             }
             if (timeout) {
                if (!/^[0-9]$/.test(timeout)) {
-                  res.status(400).send('Invalid timeout: require range 1 to 9 seconds');
+                  this.sendStatusMessage(res, 400, 'Invalid timeout: require range 1 to 9 seconds');
                   return;
                }
             }
@@ -662,7 +662,7 @@ export default class {
             });
             v = this.validateAccess(req, options, keyspace, token, accessToken, readToken, certs);
             if (v) {
-               res.status(403).send(v + ': ' + keyspace);
+               this.sendStatusMessage(res, 403, v + ': ' + keyspace);
                return;
             }
             let hostname;
@@ -699,7 +699,7 @@ export default class {
             }
             await multi.execAsync();
          } catch (err) {
-            this.handleError(err, req, res);
+            this.sendError(err, req, res);
          }
       });
    }
@@ -792,15 +792,15 @@ export default class {
       return [config.redisKeyspace, ...parts].join(':');
    }
 
-   handleError(err, req, res) {
+   sendError(err, req, res) {
+      this.sendStatusMessage(res, 500, err.message);
+   }
+
+   sendStatusMessage(res, statusCode, errorMessage) {
       if (this.isCliDomain(req)) {
-         res.status(500).send(err.message + '\n');
+         res.status(statusCode).send(errorMessage + '\n');
       } else {
-         res.status(500).send({
-            err: err.message,
-            hostname: req.hostname,
-            params: req.params,
-         });
+         res.status(statusCode).send(errorMessage);
       }
    }
 
