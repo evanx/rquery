@@ -759,7 +759,7 @@ export default class {
    }
 
    validateAccess(req, options, keyspace, token, accessToken, readToken, certs) {
-      if (config.isSecure) { 
+      if (config.secureDomain || this.isSecureDomain(req)) { 
          if (!certs) {
             return 'No encrolled certs';
          }
