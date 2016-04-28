@@ -759,9 +759,9 @@ export default class {
    }
 
    validateAccess(req, options, keyspace, token, accessToken, readToken, certs) {
-      if (this.isSecureDomain(req)) {
+      if (config.isSecure) { 
          if (!certs) {
-            return 'No encrolled certs';            
+            return 'No encrolled certs';
          }
          const clientCert = req.get('ssl_client_cert');
          logger.info('validateAccess', clientCert);

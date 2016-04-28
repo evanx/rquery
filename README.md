@@ -308,7 +308,7 @@ redisUrl: 'redis://localhost:6379/13'
 redisKeyspace: 'demo:rquery'
 ```
 
-See the configuration module for this demo: https://github.com/evanx/rquery/blob/master/demo.js
+See the configuration module for this demo: https://github.com/evanx/rquery/blob/master/config/demo.js
 
 ### Implementation
 

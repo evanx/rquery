@@ -8,6 +8,7 @@ module.exports = {
       port: 8765,
       location: '/rquery/',
       expire: 180,
-      certLimit: 4
+      certLimit: 4,
+      secureDomain: false
    }
 };
