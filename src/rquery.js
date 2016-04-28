@@ -809,6 +809,7 @@ export default class {
    digestPem(pem, name) {
       const lines = pem.split('\n');
       if (lines.length < 8) {
+         logger.error('zz', lines);
          throw new ValidationError('Invalid lines');
       }
       if (!/^-+BEGIN CERTIFICATE/.test(lines[0])) {
