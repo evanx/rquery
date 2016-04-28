@@ -759,7 +759,9 @@ export default class {
    }
 
    validateAccess(req, options, keyspace, token, accessToken, readToken, certs) {
-      if (config.secureDomain || this.isSecureDomain(req)) {
+      if (options.command === 'importcerts') {
+         logger.info('validateAccess importcerts', keyspace);         
+      } else if (config.secureDomain || this.isSecureDomain(req)) {
          if (!certs) {
             return 'No encrolled certs';
          }
