@@ -807,7 +807,7 @@ export default class {
    }
 
    digestPem(pem, name) {
-      const lines = pem.split(/\w/);
+      const lines = pem.split(/\s/);
       if (lines.length < 8) {
          throw new ValidationError('Invalid lines');
       }
