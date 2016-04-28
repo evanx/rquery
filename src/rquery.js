@@ -759,15 +759,15 @@ export default class {
    }
 
    validateAccess(req, options, keyspace, token, accessToken, readToken, certs) {
-      const clientCert = req.get('ssl_client_cert');
-      const clientCertDigest = !clientCert? null : this.digestPem(clientCert);
-      logger.debug('validateAccess', this.isReadCommand(options.command), !clientCert? 0: clientCert.length, certs);
-      if (certs && !lodash.isEmpty(certs)) {
-         if (clientCert) {
-            logger.debug('validateAccess', clientCertDigest, certs);
-            if (!certs.includes(clientCertDigest)) {
-               return 'Invalid cert';
-            }
+      if (certs) {
+         const clientCert = req.get('ssl_client_cert');
+         if (!clientCert) {
+            return 'No client cert';
+         }
+         const clientCertDigest = this.digestPem(clientCert);
+         logger.debug('validateAccess', clientCertDigest, certs);
+         if (!certs.includes(clientCertDigest)) {
+            return 'Invalid cert';
          }
       }
       if (!token) {
@@ -793,7 +793,7 @@ export default class {
 
    handleError(err, req, res) {
       if (this.isCliDomain(req)) {
-         return err.message + '\n';         
+         return err.message + '\n';
       } else {
          res.status(500).send({
             err: err.message,
