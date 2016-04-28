@@ -809,7 +809,7 @@ export default class {
       if (this.isCliDomain(req)) {
          res.status(statusCode).send(errorMessage + '\n');
       } else {
-         res.status(statusCode).send(errorMessage);
+         res.status(statusCode).send(errorMessage + '\n');
       }
    }
 
