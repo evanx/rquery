@@ -640,17 +640,17 @@ export default class {
             let v;
             v = await this.validateKeyspace(req, keyspace);
             if (v) {
-               this.sendStatusMessage(res, 400, 'Invalid keyspace: ' + v);
+               this.sendStatusMessage(req, res, 400, 'Invalid keyspace: ' + v);
                return;
             }
             v = this.validateKey(key);
             if (v) {
-               this.sendStatusMessage(res, 400, 'Invalid key: ' + v);
+               this.sendStatusMessage(req, res, 400, 'Invalid key: ' + v);
                return;
             }
             if (timeout) {
                if (!/^[0-9]$/.test(timeout)) {
-                  this.sendStatusMessage(res, 400, 'Invalid timeout: require range 1 to 9 seconds');
+                  this.sendStatusMessage(req, res, 400, 'Invalid timeout: require range 1 to 9 seconds');
                   return;
                }
             }
@@ -662,7 +662,7 @@ export default class {
             });
             v = this.validateAccess(req, options, keyspace, token, accessToken, readToken, certs);
             if (v) {
-               this.sendStatusMessage(res, 403, v + ': ' + keyspace);
+               this.sendStatusMessage(req, res, 403, v + ': ' + keyspace);
                return;
             }
             let hostname;
@@ -793,10 +793,10 @@ export default class {
    }
 
    sendError(err, req, res) {
-      this.sendStatusMessage(res, 500, err.message);
+      this.sendStatusMessage(req, res, 500, err.message);
    }
 
-   sendStatusMessage(res, statusCode, errorMessage) {
+   sendStatusMessage(req, res, statusCode, errorMessage) {
       if (this.isCliDomain(req)) {
          res.status(statusCode).send(errorMessage + '\n');
       } else {
