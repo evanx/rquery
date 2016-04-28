@@ -121,20 +121,6 @@ export default class {
       });
       this.addKeyspaceCommand({
          key: 'ttl',
-         access: 'debug'
-      }, async (req, res) => {
-         const {keyspace} = req.params;
-         const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
-         const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
-         const multi = redisClient.multi();
-         keys.forEach(key => multi.ttl(key));
-         const results = await multi.execAsync();
-         const result = {};
-         keys.forEach((key, index) => result[key.substring(keyIndex)] = results[index]);
-         return result;
-      });
-      this.addKeyspaceCommand({
-         key: 'ttl',
          params: ['key'],
          access: 'debug'
       }, async (req, res) => {
@@ -153,7 +139,7 @@ export default class {
       });
       this.addKeyspaceCommand({
          key: 'set',
-         params: ['key'],
+         params: ['key', 'value'],
          access: 'set'
       }, async (req, res) => {
          const {keyspace, key, value} = req.params;
@@ -162,7 +148,7 @@ export default class {
       });
       this.addKeyspaceCommand({
          key: 'setex',
-         params: ['key'],
+         params: ['key', 'seconds', 'value'],
          access: 'set'
       }, async (req, res) => {
          const {keyspace, key, seconds, value} = req.params;
@@ -171,7 +157,7 @@ export default class {
       });
       this.addKeyspaceCommand({
          key: 'setnx',
-         params: ['key'],
+         params: ['key', 'value'],
          access: 'set'
       }, async (req, res) => {
          const {keyspace, key, value} = req.params;
@@ -475,6 +461,20 @@ export default class {
          params: ['key', 'start', 'stop']
       }, async (req, res) => {
          return await redisClient.zrevrangeAsync(this.reqKey(req), req.params.start, req.params.stop);
+      });
+      this.addKeyspaceCommand({
+         key: 'ttl',
+         access: 'debug'
+      }, async (req, res) => {
+         const {keyspace} = req.params;
+         const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
+         const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
+         const multi = redisClient.multi();
+         keys.forEach(key => multi.ttl(key));
+         const results = await multi.execAsync();
+         const result = {};
+         keys.forEach((key, index) => result[key.substring(keyIndex)] = results[index]);
+         return result;
       });
    }
 
