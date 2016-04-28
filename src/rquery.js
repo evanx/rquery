@@ -756,6 +756,7 @@ export default class {
       logger.debug('validateAccess', this.isReadCommand(options.command), !clientCert? 0: clientCert.length, certs);
       if (certs && !lodash.isEmpty(certs)) {
          if (clientCert) {
+            logger.debug('validateAccess', clientCertDigest, certs);
             if (!certs.includes(clientCertDigest)) {
                return 'Invalid cert';
             }
