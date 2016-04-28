@@ -764,7 +764,6 @@ export default class {
             return 'No encrolled certs';
          }
          const clientCert = req.get('ssl_client_cert');
-         logger.info('validateAccess', clientCert);
          if (!clientCert) {
             return 'No client cert';
          }
