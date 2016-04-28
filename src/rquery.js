@@ -463,7 +463,7 @@ export default class {
          return await redisClient.zrevrangeAsync(this.reqKey(req), req.params.start, req.params.stop);
       });
       this.addKeyspaceCommand({
-         key: 'ttl',
+         key: 'ttl_all',
          access: 'debug'
       }, async (req, res) => {
          const {keyspace} = req.params;

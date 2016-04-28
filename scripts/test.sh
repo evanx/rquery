@@ -117,7 +117,7 @@ c1curla() {
   curle $1 brpoplpush/mylist/mypoppedlist/1 item2
   curl0 $1 llen/mylist
   curli $1 keys mypoppedlist
-  curli $1 ttl mysortedset
+  curli $1 ttl_all mysortedset
 }
 
 c1curlg() {
