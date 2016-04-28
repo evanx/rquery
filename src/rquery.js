@@ -538,12 +538,20 @@ export default class {
       });
    }
 
+   isSecureDomain(req) {
+      return /^(secure|clisecure)\./.test(req.hostname);
+   }
+
+   isCliDomain(req) {
+      return /^(cli|clisecure)\./.test(req.hostname);
+   }
+
    async sendResult(req, res, result) {
       logger.ndebug('sendResult', req.params, req.query, result);
       if (result !== undefined) {
          if (req.query.quiet !== undefined) {
             res.send('');
-         } else if (req.query.line !== undefined || /^(cli|clisecure)\./.test(req.hostname)) {
+         } else if (req.query.line !== undefined || this.isCliDomain(req)) {
             res.set('Content-Type', 'text/plain');
             if (lodash.isArray(result)) {
                res.send(result.join('\n') + '\n');
@@ -784,11 +792,15 @@ export default class {
    }
 
    handleError(err, req, res) {
-      res.status(500).send({
-         err: err.message,
-         hostname: req.hostname,
-         params: req.params,
-      });
+      if (this.isCliDomain(req)) {
+         return err.message + '\n';         
+      } else {
+         res.status(500).send({
+            err: err.message,
+            hostname: req.hostname,
+            params: req.params,
+         });
+      }
    }
 
    digestPem(pem) {
