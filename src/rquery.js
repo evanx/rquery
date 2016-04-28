@@ -152,7 +152,7 @@ export default class {
                } else {
                   const certUrl = `https://raw.githubusercontent.com/${ghuser}/config-redishub/master/${cert}`;
                   const pem = await Requests.request({url: certUrl});
-                  const digest = this.digestPem(pem);
+                  const digest = this.digestPem(pem, cert);
                   multi.sadd(this.redisKey('certs', keyspace), digest);
                }
             }));
@@ -759,7 +759,7 @@ export default class {
    }
 
    validateAccess(req, options, keyspace, token, accessToken, readToken, certs) {
-      if (config.secureDomain || this.isSecureDomain(req)) { 
+      if (config.secureDomain || this.isSecureDomain(req)) {
          if (!certs) {
             return 'No encrolled certs';
          }
@@ -768,7 +768,7 @@ export default class {
          if (!clientCert) {
             return 'No client cert';
          }
-         const clientCertDigest = this.digestPem(clientCert);
+         const clientCertDigest = this.digestPem(clientCert, keyspace);
          logger.info('validateAccess', clientCertDigest, certs);
          if (!certs.includes(clientCertDigest)) {
             return 'Invalid cert';
@@ -807,25 +807,25 @@ export default class {
       }
    }
 
-   digestPem(pem) {
+   digestPem(pem, name) {
       const lines = pem.split('\n');
       if (lines.length < 8) {
-         throw new ValidationError('Invalid lines: ' + cert);
+         throw new ValidationError('Invalid lines');
       }
       if (!/^-+BEGIN CERTIFICATE/.test(lines[0])) {
-         throw new ValidationError('Invalid first line: ' + cert + ' ' + lines[0]);
+         throw new ValidationError('Invalid first line');
       }
       const contentLines = lines.filter(line => {
          return line.length > 16 && /^[\w\/\+]+$/.test(line);
       });
       if (contentLines.length < 8) {
-         throw new ValidationError('Invalid lines: ' + cert);
+         throw new ValidationError('Invalid lines');
       }
       const sha1 = crypto.createHash('sha1');
       contentLines.forEach(line => sha1.update(new Buffer(line)));
       const digest = sha1.digest('hex');
       if (digest.length < 32) {
-         throw new ValidationError('Invalid cert length: ' + cert);
+         throw new ValidationError('Invalid cert length');
       }
       return digest;
    }
