@@ -5,7 +5,7 @@ name=`basename $PWD`
 echo $name
 
   file=`ls -t ~/.pm2/logs/${name}-out-*`
-  tail $file 
+  tail $file | node_modules/.bin/bunyan -o short
   echo 
-  tail -f $file | bunyan -o short
+  tail -f $file | node_modules/.bin/bunyan -o short
 
