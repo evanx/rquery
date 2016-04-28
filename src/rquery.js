@@ -494,7 +494,7 @@ export default class {
       if (result !== undefined) {
          if (req.query.quiet !== undefined) {
             res.send('');
-         } else if (req.query.line !== undefined || /^cli\./.test(req.hostname)) {
+         } else if (req.query.line !== undefined || /^(cli|clisecure)\./.test(req.hostname)) {
             res.set('Content-Type', 'text/plain');
             if (lodash.isArray(result)) {
                res.send(result.join('\n') + '\n');
