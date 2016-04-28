@@ -701,7 +701,7 @@ export default class {
    }
 
    validateAccess(req, options, keyspace, token, accessToken, readToken) {
-      logger.debug('validateAccess', req.get('ssl_client_cert'));
+      logger.info('validateAccess', req.get('ssl_client_cert'));
       //logger.ndebug('validateAccess', {options, keyspace, token, accessToken, readToken}, this.isReadCommand(options.command));
       if (!token) {
          return 'Unregistered keyspace';
