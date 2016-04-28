@@ -762,7 +762,7 @@ export default class {
       const scheme = req.get('X-Forwarded-Proto');
       logger.debug('validateAccess', scheme, keyspace);
       if (this.isSecureDomain(req) && scheme === 'http') {
-         return 'Insecure protocol';
+         return 'Insecure protocol. Try: https://' + req.host;
       }
       if (options.command.key === 'importcerts') {
          logger.info('validateAccess importcerts', keyspace);
