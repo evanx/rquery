@@ -118,6 +118,21 @@ export default class {
          return await redisClient.hgetallAsync(this.redisKey('keyspace', keyspace));
       });
       this.addKeyspaceCommand({
+         key: 'importcerts',
+         access: 'admin'
+      }, async (req, res) => {
+         const {keyspace} = req.params;
+         const keyspaceConfig = await redisClient.hgetallAsync(this.redisKey('keyspace', keyspace));
+         if (keyspaceConfig.auth !== 'github.com') {
+            throw 'Only github.com auth currently supported: ' + keyspaceConfig.auth;
+         } else {
+            const ghuser = keyspaceConfig.user;
+            const url = `https://raw.githubusercontent.com/${ghuser}/config-redishub/master/authorized_certs.json`;
+            const manifest = await Requests.json(url);
+            return manifest;
+         }
+      });
+      this.addKeyspaceCommand({
          key: 'keys',
          access: 'debug'
       }, async (req, res) => {
