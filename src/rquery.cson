@@ -27,9 +27,14 @@ config:
    certLimit:
       defaultValue: 4
       max: 99
+   importLimited:
+      defaultValue: 1
+      unit: 'seconds'
+      regex: [0-9]
    adminLimit:
       defaultValue: 2
       unit: 'seconds'
+      regex: [0-9]
 
 state:
    redisClient: {}

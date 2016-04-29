@@ -788,7 +788,7 @@ export default class {
       }
       if (command.key === 'importcerts') {
          logger.info('validateAccess importcerts', keyspace);
-      } else if (config.secureDomain || this.isSecureDomain(req)) {
+      } else if (this.isSecureDomain(req)) {
          if (!certs) {
             return 'No encrolled certs';
          }
@@ -801,6 +801,8 @@ export default class {
          if (!certs.includes(clientCertDigest)) {
             return 'Invalid cert';
          }
+      } else if (config.secureDomain) {
+         return 'Invalid domain';
       }
       if (!token) {
          return 'Unregistered keyspace';
