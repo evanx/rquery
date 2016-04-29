@@ -27,6 +27,9 @@ config:
    certLimit:
       defaultValue: 4
       max: 99
+   adminLimit:
+      defaultValue: 2
+      unit: 'seconds'
 
 state:
    redisClient: {}

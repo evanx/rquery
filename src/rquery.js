@@ -539,7 +539,14 @@ export default class {
    }
 
    isSecureDomain(req) {
-      return /^(secure|clisecure)\./.test(req.hostname);
+      if (config.secureDomain) {
+         return true;
+      }
+      if (/^(secure|clisecure)\./.test(req.hostname)) {
+         logger.warn('isSecureDomain', req.hostname);
+         return true;
+      }
+      return false;
    }
 
    isCliDomain(req) {
@@ -628,6 +635,7 @@ export default class {
       if (typeof options === 'string') {
          options = {uri: options};
       }
+      const command = options.command || {};
       let uri = 'kt/:keyspace/:token';
       if (options.uri) {
          uri += '/' + options.uri;
@@ -654,13 +662,16 @@ export default class {
                   return;
                }
             }
-            const [[accessed], accessToken, readToken, certs] = await redisClient.multiExecAsync(multi => {
+            const [[time], admined, accessed, accessToken, readToken, certs] = await redisClient.multiExecAsync(multi => {
                multi.time();
+               multi.hget(this.redisKey('keyspace', keyspace), 'admined');
+               multi.hget(this.redisKey('keyspace', keyspace), 'accessed');
                multi.hget(this.redisKey('keyspace', keyspace), 'accessToken');
                multi.hget(this.redisKey('keyspace', keyspace), 'readToken');
                multi.smembers(this.redisKey('certs', keyspace));
             });
-            v = this.validateAccess(req, options, keyspace, token, accessToken, readToken, certs);
+            v = this.validateAccess({req, options, command, keyspace, token, time,
+               admined, accessed, accessToken, readToken, certs});
             if (v) {
                this.sendStatusMessage(req, res, 403, v);
                return;
@@ -692,7 +703,10 @@ export default class {
             const multi = redisClient.multi();
             await this.sendResult(req, res, await fn(req, res, multi));
             multi.sadd(this.redisKey('keyspaces'), keyspace);
-            multi.hset(this.redisKey('keyspace', keyspace), 'accessed', accessed);
+            multi.hset(this.redisKey('keyspace', keyspace), 'accessed', time);
+            if (command && command.access === 'admin') {
+               multi.hset(this.redisKey('keyspace', keyspace), 'admined', time);
+            }
             if (key) {
                const redisKey = this.redisKey(keyspace, key);
                multi.expire(redisKey, config.expire);
@@ -758,13 +772,21 @@ export default class {
       return false;
    }
 
-   validateAccess(req, options, keyspace, token, accessToken, readToken, certs) {
+   validateAccess({req, options, command, keyspace, token, time, admined, accessed, accessToken, readToken, certs}) {
       const scheme = req.get('X-Forwarded-Proto');
-      logger.debug('validateAccess', scheme, keyspace);
+      logger.debug('validateAccess', scheme, keyspace, command);
       if (this.isSecureDomain(req) && scheme === 'http') {
          return 'Insecure protocol. Try: https://' + req.host;
       }
-      if (options.command.key === 'importcerts') {
+      if (command.access && command.access === 'admin') {
+         if (!admined) {
+            logger.warn('validateAccess admined', keyspace, command.key, time);
+         } else if (time - admined < config.adminLimit) {
+            logger.warn('validateAccess admined', keyspace, command, time, admined);
+            return `Admin interval exceeded: ${config.adminLimit}s`;
+         }
+      }
+      if (command.key === 'importcerts') {
          logger.info('validateAccess importcerts', keyspace);
       } else if (config.secureDomain || this.isSecureDomain(req)) {
          if (!certs) {
