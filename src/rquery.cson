@@ -9,6 +9,7 @@ config:
    location:
       defaultValue: '/'
    keyspaceHostname:
+      optional: true
       type: 'string'
    port:
       defaultValue: 8080
@@ -21,20 +22,26 @@ config:
       type: 'duration'
       unit: 'millis'
       max: 9000
+   defaultFormat:
+      defaultValue: 'plain'
+      allowedValues: ['html', 'plain', 'line']
+   indexCommand:
+      defaultValue: 'getconfig'
    secureDomain:
       type: 'boolean'
       defaultValue: false
    certLimit:
       defaultValue: 4
       max: 99
-   importLimited:
+   registerLimit:
+      defaultValue: 2
+      unit: 'per second'
+   importLimit:
+      defaultValue: 2
+      unit: 'per second'
+   adminLimit:
       defaultValue: 1
       unit: 'seconds'
-      regex: [0-9]
-   adminLimit:
-      defaultValue: 2
-      unit: 'seconds'
-      regex: [0-9]
 
 state:
    redisClient: {}

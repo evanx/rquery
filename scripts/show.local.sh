@@ -1,5 +1,7 @@
 
 set -e -u
 
-  redis-cli -n 13 hgetall 'demo:rquery:keyspace:evanx'
+dbn=${dbn:=13}
+
+  redis-cli -n $dbn hgetall 'demo:rquery:keyspace:evanx'
 

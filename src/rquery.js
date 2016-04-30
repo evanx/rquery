@@ -8,7 +8,8 @@ import CSON from 'season';
 import * as Files from '../lib/Files';
 import * as Express from '../lib/Express';
 
-const supportedAuth = ['twitter.com', 'github.com', 'gitlib.com', 'bitbucket.org'];
+const unsupportedAuth = ['twitter.com', 'github.com', 'gitlib.com', 'bitbucket.org'];
+const supportedAuth = ['github.com'];
 
 export default class {
 
@@ -72,10 +73,6 @@ export default class {
          multi.del(this.redisKey('keyspace', keyspace));
          const multiReply = await multi.execAsync();
          return keys.map(key => key.substring(keyIndex));
-      });
-      this.addKeyspaceRoute('', async (req, res) => {
-         const {keyspace} = req.params;
-         return await redisClient.hgetallAsync(this.redisKey('keyspace', keyspace));
       });
       this.addKeyspaceCommand({
          key: 'flush',
@@ -555,93 +552,138 @@ export default class {
 
    async sendResult(req, res, result) {
       logger.ndebug('sendResult', req.params, req.query, result);
-      if (result !== undefined) {
-         if (req.query.quiet !== undefined) {
-            res.send('');
-         } else if (req.query.line !== undefined || this.isCliDomain(req)) {
-            res.set('Content-Type', 'text/plain');
-            if (lodash.isArray(result)) {
-               res.send(result.join('\n') + '\n');
-            } else if (lodash.isObject(result)) {
-               res.send(Object.keys(result).map(key => [key, result[key]].join('=')).join('\n') + '\n');
-            } else {
-               res.send(result.toString() + '\n');
-            }
-         } else if (req.query.plain !== undefined) {
-            res.set('Content-Type', 'text/plain');
-            res.send(result.toString());
-         } else if (req.query.html !== undefined) {
-            res.set('Content-Type', 'text/html');
-            res.send(result.toString() + '\n');
+      let resultString = '';
+      if (!Values.isDefined(result)) {
+      } else if (Values.isDefined(req.query.quiet)) {
+      } else if (config.defaultFormat === 'cli' || Values.isDefined(req.query.line) || this.isCliDomain(req)) {
+         res.set('Content-Type', 'text/plain');
+         if (lodash.isArray(result)) {
+            resultString = result.join('\n');
+         } else if (lodash.isObject(result)) {
+            resultString = Object.keys(result).map(key => [key, result[key]].join('=')).join('\n');
+         } else if (result === null) {
          } else {
-            res.json(result);
+            resultString = result.toString();
          }
+      } else if (config.defaultFormat === 'plain' || Values.isDefined(req.query.plain)) {
+         res.set('Content-Type', 'text/plain');
+         resultString = result.toString();
+      } else if (config.defaultFormat === 'html' || Values.isDefined(req.query.html)) {
+         res.set('Content-Type', 'text/html');
+         resultString = result.toString();
+      } else if (config.defaultFormat !== 'json') {
+         this.sendError(req, res, {message: `Invalid default format: ${config.defaultFormat}`});
+      } else {
+         res.json(result);
+         return;
       }
+      res.send(resultString + '\n');
    }
 
    addRegisterRoute() {
-      const uri = `kt/:keyspace/:token/register/:auth/:user`;
-      logger.debug('url', uri);
-      expressApp.get(config.location + uri, async (req, res) => {
-         logger.debug('url', uri);
-         try {
-            const now = new Date().getTime();
-            if (this.registerTime) {
-               if (now - this.registerTime < config.registerLimit) {
-                  await Promises.delay(config.registerLimit);
-               }
-            }
-            this.registerTime = now;
-            const {token, keyspace, auth, user} = req.params;
-            if (!lodash.includes(supportedAuth, auth)) {
-               throw {message: 'Invalid auth site', supportedAuth, auth};
-            }
-            const url = 'https://' + auth + '/' + user;
-            logger.debug('url', url);
-            const response = await Requests.head({url});
-            if (response.statusCode !== 200) {
-               throw {message: 'Invalid auth site/username for recovery', statusCode: response.statusCode, url};
-            }
-            const replies = await redisClient.multiExecAsync(multi => {
-               multi.hsetnx(this.redisKey('keyspace', keyspace), 'accessToken', token);
-               multi.hsetnx(this.redisKey('keyspace', keyspace), 'auth', auth);
-               multi.hsetnx(this.redisKey('keyspace', keyspace), 'user', user);
-               multi.hgetall(this.redisKey('keyspace', keyspace));
-            });
-            if (lodash.includes(replies, 0)) {
-               throw {message: 'Invalid keyspace/token'};
-            }
-            res.json(replies[3]);
-         } catch (err) {
-            this.sendError(err, req, res);
+      const uri = (config.secureDomain? 'k/:keyspace': 'kt/:keyspace/:token')
+      + '/register/:auth/:user';
+      logger.debug('register uri', uri);
+      expressApp.get(config.location + uri, (req, res) => this.register(req, res));
+   }
+
+   async register(req, res) {
+      try {
+         let errorMessage = this.validateRegisterTime();
+         if (errorMessage) {
+            this.sendError(req, res, {message: errorMessage});
+            return;
          }
-      });
+         const {token, keyspace, auth, user} = req.params;
+         if (!lodash.includes(supportedAuth, auth)) {
+            throw {message: 'Invalid auth site', supportedAuth, auth};
+         }
+         const url = 'https://' + auth + '/' + user;
+         logger.debug('url', url);
+         const response = await Requests.head({url});
+         if (response.statusCode !== 200) {
+            throw {message: 'Invalid auth site/username for recovery', statusCode: response.statusCode, url};
+         }
+         const replies = await redisClient.multiExecAsync(multi => {
+            if (token) {
+               multi.hsetnx(this.redisKey('keyspace', keyspace), 'accessToken', token);
+            }
+            multi.hsetnx(this.redisKey('keyspace', keyspace), 'auth', auth);
+            multi.hsetnx(this.redisKey('keyspace', keyspace), 'user', user);
+            multi.hgetall(this.redisKey('keyspace', keyspace));
+         });
+         if (lodash.includes(replies, 0)) {
+            throw {message: 'Invalid keyspace/token'};
+         }
+         res.json(replies[replies.length - 1]);
+      } catch (err) {
+         this.sendError(req, res, err);
+      }
+   }
+
+
+   validateRegisterTime() {
+      const time = new Date().getTime();
+      if (!this.registerTime) {
+         this.registerTime = time;
+      } else {
+         const duration = time - this.registerTime;
+         if (duration > 1000) {
+            this.registerTime = time;
+            this.registerCount = 0;
+         } else {
+            this.registerCount++;
+         }
+         if (this.registerCount > config.registerLimit) {
+            logger.error('registerCount');
+            return `Global register rate exceeed: ${config.registerLimit} per second`;
+         }
+      }
+      this.registerTime = time;
+   }
+
+   validateImportTime() {
+      const time = new Date().getTime();
+      if (!this.importTime) {
+         this.importTime = time;
+      } else {
+         const duration = time - this.importTime;
+         if (duration > 1000) {
+            this.importTime = time;
+            this.importCount = 0;
+         } else {
+            this.importCount++;
+         }
+         if (this.importCount > config.importLimit) {
+            logger.error('importCount');
+            return `Global import rate exceeed: ${config.importLimit} per second`;
+         }
+      }
+      this.importTime = time;
    }
 
    addKeyspaceCommand(command, fn) {
       assert(command.key, 'command.key');
-      let uri = command.key;
-      if (command.params) {
-         uri += '/' + command.params.map(param => ':' + param).join('/');
-      }
+      let uri = config.secureDomain? 'k/:keyspace': 'kt/:keyspace/:token';
       const paramsLength = !command.params? 0: command.params.length;
       const key = command.key + paramsLength;
       logger.debug('addKeyspaceCommand', command.key, key, uri);
       commandMap[key] = command;
-      this.addKeyspaceRoute({uri, command}, fn);
+      const handler = this.createKeyspaceHandler(command, fn);
+      if (command.key === config.indexCommand) {
+         expressApp.get(config.location + uri, handler);
+      }
+      uri += '/' + command.key;
+      if (command.params) {
+         assert(command.key !== config.indexCommand, 'indexCommand');
+         uri += '/' + command.params.map(param => ':' + param).join('/');
+      }
+      expressApp.get(config.location + uri, handler);
+      logger.debug('add', command.key, uri);
    }
 
-   addKeyspaceRoute(options, fn) {
-      if (typeof options === 'string') {
-         options = {uri: options};
-      }
-      const command = options.command || {};
-      let uri = 'kt/:keyspace/:token';
-      if (options.uri) {
-         uri += '/' + options.uri;
-      }
-      logger.debug('add', uri);
-      expressApp.get(config.location + uri, async (req, res) => {
+   createKeyspaceHandler(command, fn) {
+      return async (req, res) => {
          try {
             const {token, keyspace, key, timeout} = req.params;
             assert(keyspace, 'keyspace');
@@ -670,8 +712,9 @@ export default class {
                multi.hget(this.redisKey('keyspace', keyspace), 'readToken');
                multi.smembers(this.redisKey('certs', keyspace));
             });
-            v = this.validateAccess({req, options, command, keyspace, token, time,
-               admined, accessed, accessToken, readToken, certs});
+            v = this.validateAccess({command, req, keyspace, token, time,
+               admined, accessed, accessToken, readToken, certs
+            });
             if (v) {
                this.sendStatusMessage(req, res, 403, v);
                return;
@@ -713,9 +756,9 @@ export default class {
             }
             await multi.execAsync();
          } catch (err) {
-            this.sendError(err, req, res);
+            this.sendError(req, res, err);
          }
-      });
+      };
    }
 
    async migrateKeyspace({keyspace}) {
@@ -772,22 +815,27 @@ export default class {
       return false;
    }
 
-   validateAccess({req, options, command, keyspace, token, time, admined, accessed, accessToken, readToken, certs}) {
+   validateAccess({req, command, keyspace, token, time, admined, accessed, accessToken, readToken, certs}) {
       const scheme = req.get('X-Forwarded-Proto');
       logger.debug('validateAccess', scheme, keyspace, command);
       if (this.isSecureDomain(req) && scheme === 'http') {
-         return 'Insecure protocol. Try: https://' + req.host;
+         return `Insecure scheme ${scheme}: ${req.hostname}`;
       }
       if (command.access && command.access === 'admin') {
          if (!admined) {
             logger.warn('validateAccess admined', keyspace, command.key, time);
-         } else if (time - admined < config.adminLimit) {
-            logger.warn('validateAccess admined', keyspace, command, time, admined);
-            return `Admin interval exceeded: ${config.adminLimit}s`;
+         } else {
+            const duration = time - admined;
+            if (duration < config.adminLimit) {
+               return `Admin command embargo: ${config.adminLimit}`;
+            }
          }
       }
       if (command.key === 'importcerts') {
-         logger.info('validateAccess importcerts', keyspace);
+         const errorMessage = this.validateImportTime();
+         if (errorMessage) {
+            return errorMessage;
+         }
       } else if (this.isSecureDomain(req)) {
          if (!certs) {
             return 'No encrolled certs';
@@ -807,7 +855,7 @@ export default class {
       if (!token) {
          return 'Unregistered keyspace';
       } else if (token === accessToken) {
-      } else if (options.command && this.isReadCommand(options.command)) {
+      } else if (this.isReadCommand(command)) {
          if (token !== readToken) {
             return 'Invalid token for command';
          }
@@ -825,16 +873,22 @@ export default class {
       return [config.redisKeyspace, ...parts].join(':');
    }
 
-   sendError(err, req, res) {
-      this.sendStatusMessage(req, res, 500, err.message);
+   sendError(req, res, err) {
+      if (req.hostname === 'localhost') {
+         logger.warn('sendError', err);
+      }
+      this.sendStatusMessage(req, res, 500, err.message, err);
    }
 
-   sendStatusMessage(req, res, statusCode, errorMessage) {
+   sendStatusMessage(req, res, statusCode, errorMessage, err) {
       if (this.isCliDomain(req)) {
-         res.status(statusCode).send(errorMessage + '\n');
-      } else {
-         res.status(statusCode).send(errorMessage + '\n');
+         if (err) {
+            if (err.stack) {
+               errorMessage = err.stack.toString();
+            }
+         }
       }
+      res.status(statusCode).send(errorMessage + '\n');
    }
 
    digestPem(pem, name) {
@@ -843,7 +897,6 @@ export default class {
          throw new ValidationError('Invalid lines');
       }
       if (!/^-+BEGIN CERTIFICATE/.test(lines[0])) {
-         logger.error('zz', lines);
          throw new ValidationError('Invalid first line');
       }
       const contentLines = lines.filter(line => {

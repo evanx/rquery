@@ -140,26 +140,11 @@ c0localhost() {
   c1curld localhost:8765
 }
 
-c0curld() {
-  c1curld localhost:8765
-  c1curld https://redishub.com
-  c1curld demo1.redishub.com
-  c1curld demo2.redishub.com
-}
-
-c0curl0() {
+c0rh() {
   c1curld https://redishub.com
 }
 
-c0curl1() {
-  c1curld https://demo1.redishub.com
-}
-
-c0curl2() {
-  c1curld https://demo2.redishub.com
-}
-
-command=curl0
+command=localhost
 if [ $# -ge 1 ]
 then
   command=$1
