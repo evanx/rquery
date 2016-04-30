@@ -47,6 +47,6 @@ state:
    redisClient: {}
    expressApp: {}
    expressServer: {}
-   commandMap: []
+   commands: []
    startTimestamp: 0
    ended: false

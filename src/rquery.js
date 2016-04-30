@@ -39,7 +39,7 @@ export default class {
       });
       this.addPublicRoute('help', async (req, res) => {
          if (this.isCliDomain(req)) {
-            return Express.getRoutes(expressApp);
+            return commands.map(command => command.key + !command.params? '': ' ' + command.params.join(' '));
          } else {
             let content = await Files.readFile('README.md');
             res.set('Content-Type', 'text/html');
@@ -672,7 +672,7 @@ export default class {
       const paramsLength = !command.params? 0: command.params.length;
       const key = command.key + paramsLength;
       logger.debug('addKeyspaceCommand', command.key, key, uri);
-      commandMap[key] = command;
+      commands.push(command);
       const handler = this.createKeyspaceHandler(command, fn);
       if (command.key === config.indexCommand) {
          expressApp.get(config.location + uri, handler);
