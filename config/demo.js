@@ -3,9 +3,9 @@ module.exports = {
    rquery: {
       redisUrl: 'redis://localhost:6379/13',
       redisKeyspace: 'demo:rquery',
-      hostname: 'ibhala.com',
+      hostname: 'demo.redishub.com',
       port: 8765,
-      location: '/rquery/',
+      location: '/',
       indexCommand: 'getconfig',
       expire: 180,
       certLimit: 4,
