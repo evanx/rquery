@@ -827,7 +827,7 @@ export default class {
          } else {
             const duration = time - admined;
             if (duration < config.adminLimit) {
-               return `Admin command embargo: ${config.adminLimit}`;
+               return `Admin command interval not elapsed: ${config.adminLimit}s`;
             }
          }
       }
