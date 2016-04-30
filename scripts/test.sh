@@ -4,6 +4,7 @@ set -e -u
 ls -l ~/demo-rquery/uri
 cat ~/demo-rquery/uri
 
+port=${uri:=8765}
 uri=${uri:=rquery/`cat ~/demo-rquery/uri`}
 echo uri $uri
 
@@ -137,7 +138,7 @@ c1curld() {
 }
 
 c0localhost() {
-  c1curld localhost:8765
+  c1curld localhost:$port
 }
 
 c0rh() {

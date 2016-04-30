@@ -39,7 +39,7 @@ export default class {
       });
       this.addPublicRoute('help', async (req, res) => {
          if (this.isCliDomain(req)) {
-            return commands.map(command => command.key + !command.params? '': ' ' + command.params.join(' '));
+            return commands.map(command => [command.key].concat(command.params).join(' '));
          } else {
             let content = await Files.readFile('README.md');
             res.set('Content-Type', 'text/html');
@@ -539,51 +539,6 @@ export default class {
       });
    }
 
-   isSecureDomain(req) {
-      if (config.secureDomain) {
-         return true;
-      }
-      if (/^(secure|clisecure)\./.test(req.hostname)) {
-         logger.warn('isSecureDomain', req.hostname);
-         return true;
-      }
-      return false;
-   }
-
-   isCliDomain(req) {
-      return /^(cli|clisecure)\./.test(req.hostname);
-   }
-
-   async sendResult(req, res, result) {
-      logger.ndebug('sendResult', req.params, req.query, result);
-      let resultString = '';
-      if (!Values.isDefined(result)) {
-      } else if (Values.isDefined(req.query.quiet)) {
-      } else if (config.defaultFormat === 'cli' || Values.isDefined(req.query.line) || this.isCliDomain(req)) {
-         res.set('Content-Type', 'text/plain');
-         if (lodash.isArray(result)) {
-            resultString = result.join('\n');
-         } else if (lodash.isObject(result)) {
-            resultString = Object.keys(result).map(key => [key, result[key]].join('=')).join('\n');
-         } else if (result === null) {
-         } else {
-            resultString = result.toString();
-         }
-      } else if (config.defaultFormat === 'plain' || Values.isDefined(req.query.plain)) {
-         res.set('Content-Type', 'text/plain');
-         resultString = result.toString();
-      } else if (config.defaultFormat === 'html' || Values.isDefined(req.query.html)) {
-         res.set('Content-Type', 'text/html');
-         resultString = result.toString();
-      } else if (config.defaultFormat !== 'json') {
-         this.sendError(req, res, {message: `Invalid default format: ${config.defaultFormat}`});
-      } else {
-         res.json(result);
-         return;
-      }
-      res.send(resultString + '\n');
-   }
-
    addRegisterRoute() {
       const uri = (config.secureDomain? 'k/:keyspace': 'kt/:keyspace/:token')
       + '/register/:auth/:user';
@@ -669,8 +624,8 @@ export default class {
    addKeyspaceCommand(command, fn) {
       assert(command.key, 'command.key');
       let uri = config.secureDomain? 'k/:keyspace': 'kt/:keyspace/:token';
-      const paramsLength = !command.params? 0: command.params.length;
-      const key = command.key + paramsLength;
+      command.params = command.params || [];
+      const key = command.key + command.params.length;
       logger.debug('addKeyspaceCommand', command.key, key, uri);
       commands.push(command);
       const handler = this.createKeyspaceHandler(command, fn);
@@ -678,7 +633,7 @@ export default class {
          expressApp.get(config.location + uri, handler);
       }
       uri += '/' + command.key;
-      if (command.params) {
+      if (command.params.length) {
          assert(command.key !== config.indexCommand, 'indexCommand');
          uri += '/' + command.params.map(param => ':' + param).join('/');
       }
@@ -874,6 +829,51 @@ export default class {
 
    redisKey(...parts) {
       return [config.redisKeyspace, ...parts].join(':');
+   }
+
+   async sendResult(req, res, result) {
+      logger.ndebug('sendResult', req.params, req.query, result);
+      let resultString = '';
+      if (!Values.isDefined(result)) {
+      } else if (Values.isDefined(req.query.quiet)) {
+      } else if (config.defaultFormat === 'cli' || Values.isDefined(req.query.line) || this.isCliDomain(req)) {
+         res.set('Content-Type', 'text/plain');
+         if (lodash.isArray(result)) {
+            resultString = result.join('\n');
+         } else if (lodash.isObject(result)) {
+            resultString = Object.keys(result).map(key => [key, result[key]].join('=')).join('\n');
+         } else if (result === null) {
+         } else {
+            resultString = result.toString();
+         }
+      } else if (config.defaultFormat === 'plain' || Values.isDefined(req.query.plain)) {
+         res.set('Content-Type', 'text/plain');
+         resultString = result.toString();
+      } else if (config.defaultFormat === 'html' || Values.isDefined(req.query.html)) {
+         res.set('Content-Type', 'text/html');
+         resultString = result.toString();
+      } else if (config.defaultFormat !== 'json') {
+         this.sendError(req, res, {message: `Invalid default format: ${config.defaultFormat}`});
+      } else {
+         res.json(result);
+         return;
+      }
+      res.send(resultString + '\n');
+   }
+
+   isSecureDomain(req) {
+      if (config.secureDomain) {
+         return true;
+      }
+      if (/^(secure|clisecure)\./.test(req.hostname)) {
+         logger.warn('isSecureDomain', req.hostname);
+         return true;
+      }
+      return false;
+   }
+
+   isCliDomain(req) {
+      return /^(cli|clisecure)\./.test(req.hostname);
    }
 
    sendError(req, res, err) {
