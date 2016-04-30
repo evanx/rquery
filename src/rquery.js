@@ -851,8 +851,7 @@ export default class {
          }
       } else if (config.secureDomain) {
          return 'Invalid domain';
-      }
-      if (!token) {
+      } else if (!token) {
          return 'Unregistered keyspace';
       } else if (token === accessToken) {
       } else if (this.isReadCommand(command)) {
