@@ -69,7 +69,14 @@ export default class {
          access: 'admin'
       }, async (req, res) => {
          const {keyspace} = req.params;
-         const keys = await redisClient.keysAsync(this.redisKey(keyspace, '*'));
+         const [keys, auth, ghuser] = await redisClient.execMultiAsync(multi => {
+            multi.keys(this.redisKey(keyspace, '*'));
+            multi.hget(this.redisKey('keyspace', keyspace), 'auth');
+            multi.hget(this.redisKey('keyspace', keyspace), 'user');
+         });
+         const [keyspaces] = await redisClient.execMultiAsync(multi => {
+            multi.smembers(this.redisKey('keyspaces', user));
+         });
          logger.info('deregister', keyspace, keys.length);
          const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
          const multi = redisClient.multi();
@@ -561,12 +568,13 @@ export default class {
          logger.debug('url', url);
          const response = await Requests.head({url});
          if (response.statusCode !== 200) {
-            throw {message: 'Invalid auth site/username for recovery', statusCode: response.statusCode, url};
+            throw {message: 'Invalid auth site/username', statusCode: response.statusCode, url};
          }
          const replies = await redisClient.multiExecAsync(multi => {
             if (token) {
                multi.hsetnx(this.redisKey('keyspace', keyspace), 'accessToken', token);
             }
+            multi.sadd(this.redisKey('keyspaces', auth, user), keyspace);
             multi.hsetnx(this.redisKey('keyspace', keyspace), 'auth', auth);
             multi.hsetnx(this.redisKey('keyspace', keyspace), 'user', user);
             multi.hgetall(this.redisKey('keyspace', keyspace));
