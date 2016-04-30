@@ -69,17 +69,17 @@ export default class {
          access: 'admin'
       }, async (req, res) => {
          const {keyspace} = req.params;
-         const [keys, auth, ghuser] = await redisClient.execMultiAsync(multi => {
+         const [keys, auth, ghuser] = await redisClient.multiExecAsync(multi => {
             multi.keys(this.redisKey(keyspace, '*'));
             multi.hget(this.redisKey('keyspace', keyspace), 'auth');
             multi.hget(this.redisKey('keyspace', keyspace), 'user');
          });
-         const [keyspaces] = await redisClient.execMultiAsync(multi => {
+         const [keyspaces] = await redisClient.multiExecAsync(multi => {
             multi.smembers(this.redisKey('keyspaces', user));
          });
-         logger.info('deregister', keyspace, keys.length);
+         logger.info('deregister', keyspace, keys.length, keyspaces);
          const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
-         const multiReply = await redisClient.execMultiAsync(multi => {
+         const multiReply = await redisClient.multiExecAsync(multi => {
             keys.forEach(key => multi.del(key));
             multi.srem(this.redisKey('keyspaces', ghuser), keyspace);
             multi.del(this.redisKey('keyspace', keyspace));
