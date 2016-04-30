@@ -5,7 +5,7 @@ ls -l ~/demo-rquery/uri
 cat ~/demo-rquery/uri
 
 port=${port:=8765}
-uri=${uri:=rquery/`cat ~/demo-rquery/uri`}
+uri=${uri:=`cat ~/demo-rquery/uri`}
 echo uri $uri
 
 c1curlv() {
@@ -125,7 +125,7 @@ c1curla() {
 }
 
 c1curlg() {
-  if ! c1curlv "$1/rquery/keyspaces"
+  if ! c1curlv "$1/keyspaces"
   then
     echo 'keyspaces failed'
   fi

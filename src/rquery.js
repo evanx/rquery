@@ -79,10 +79,11 @@ export default class {
          });
          logger.info('deregister', keyspace, keys.length);
          const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
-         const multi = redisClient.multi();
-         keys.forEach(key => multi.del(key));
-         multi.del(this.redisKey('keyspace', keyspace));
-         const multiReply = await multi.execAsync();
+         const multiReply = await redisClient.execMultiAsync(multi => {
+            keys.forEach(key => multi.del(key));
+            multi.srem(this.redisKey('keyspaces', ghuser), keyspace);
+            multi.del(this.redisKey('keyspace', keyspace));
+         });
          return keys.map(key => key.substring(keyIndex));
       });
       this.addKeyspaceCommand({
@@ -788,14 +789,20 @@ export default class {
       if (this.isSecureDomain(req) && scheme === 'http') {
          return `Insecure scheme ${scheme}: ${req.hostname}`;
       }
-      if (command.access && command.access === 'admin') {
-         if (!admined) {
-            logger.warn('validateAccess admined', keyspace, command.key, time);
-         } else {
-            const duration = time - admined;
-            if (duration < config.adminLimit) {
-               return `Admin command interval not elapsed: ${config.adminLimit}s`;
+      if (command.access) {
+         if (command.access === 'admin') {
+            if (!admined) {
+               logger.warn('validateAccess admined', keyspace, command.key, time);
+            } else {
+               const duration = time - admined;
+               if (duration < config.adminLimit) {
+                  return `Admin command interval not elapsed: ${config.adminLimit}s`;
+               }
             }
+         } else if (command.access === 'debug') {
+         } else if (command.access === 'set') {
+         } else if (command.access === 'get') {
+         } else {
          }
       }
       if (command.key === 'importcerts') {
@@ -804,17 +811,9 @@ export default class {
             return errorMessage;
          }
       } else if (this.isSecureDomain(req)) {
-         if (!certs) {
-            return 'No encrolled certs';
-         }
-         const clientCert = req.get('ssl_client_cert');
-         if (!clientCert) {
-            return 'No client cert';
-         }
-         const clientCertDigest = this.digestPem(clientCert, keyspace);
-         logger.info('validateAccess', clientCertDigest, certs);
-         if (!certs.includes(clientCertDigest)) {
-            return 'Invalid cert';
+         const errorMessage = this.validateCert(req, certs, keyspace);
+         if (errorMessage) {
+            return errorMessage;
          }
       } else if (config.secureDomain) {
          return 'Invalid domain';
@@ -827,6 +826,21 @@ export default class {
          }
       } else if (token !== accessToken) {
          return 'Invalid access token';
+      }
+   }
+
+   validateCert(req, certs, name) {
+      if (!certs) {
+         return 'No encrolled certs';
+      }
+      const clientCert = req.get('ssl_client_cert');
+      if (!clientCert) {
+         return 'No client cert';
+      }
+      const clientCertDigest = this.digestPem(clientCert, name);
+      logger.info('validateAccess', clientCertDigest, name);
+      if (!certs.includes(clientCertDigest)) {
+         return 'Invalid cert';
       }
    }
 
