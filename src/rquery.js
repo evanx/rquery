@@ -38,9 +38,13 @@ export default class {
          return Express.getRoutes(expressApp);
       });
       this.addPublicRoute('help', async (req, res) => {
-         let content = await Files.readFile('README.md');
-         res.set('Content-Type', 'text/html');
-         res.send(marked(content.toString()));
+         if (this.isCliDomain(req)) {
+            let content = await Files.readFile('README.md');
+            res.set('Content-Type', 'text/html');
+            res.send(marked(content.toString()));
+         } else {
+            return Express.getRoutes(expressApp);            
+         }
       });
       if (config.allowInfo) {
          this.addPublicRoute('info', async (req, res) => {
