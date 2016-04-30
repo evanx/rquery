@@ -15,11 +15,9 @@ fi
 if echo $name | grep -q 'left'
 then
   port=${port}0
-  config=secure
 elif echo $name | grep -q 'right'
 then
   port=${port}1
-  config=secure
 else
   port=${port}0
 fi
