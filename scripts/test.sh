@@ -4,7 +4,7 @@ set -e -u
 ls -l ~/demo-rquery/uri
 cat ~/demo-rquery/uri
 
-port=${uri:=8765}
+port=${port:=8765}
 uri=${uri:=rquery/`cat ~/demo-rquery/uri`}
 echo uri $uri
 

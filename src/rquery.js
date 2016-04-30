@@ -574,7 +574,7 @@ export default class {
          if (lodash.includes(replies, 0)) {
             throw {message: 'Invalid keyspace/token'};
          }
-         res.json(replies[replies.length - 1]);
+         return replies[replies.length - 1];
       } catch (err) {
          this.sendError(req, res, err);
       }
