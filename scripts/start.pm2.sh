@@ -1,7 +1,7 @@
 
 set -u -e
 
-. ~/rquery/scripts/_name.sh
+. ./scripts/_name.sh
 
 rquery_port=$port NODE_ENV=production configModule=./config/${config}.js \
   pm2 start index.js --name $name

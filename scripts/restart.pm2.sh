@@ -3,7 +3,7 @@ set -u -e
 
 git pull && git submodule update
 
-. ~/rquery/scripts/_name.sh
+. ./scripts/_name.sh
 
 rquery_port=$port pm2 restart $name
 
