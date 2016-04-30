@@ -1,18 +1,9 @@
 
-git pull
-git submodule update
+set -u -e
 
-name=`basename $PWD`
-echo $name
+git pull && git submodule update
 
-mkdir -p tmp
-mv -f ~/.pm2/logs/${name}* tmp/. || echo 'no pm2 logs'
-
-port=8765
-if [ $name = rquery2 ]
-then
-  port=8766
-fi
+. ~/rquery/scripts/_name.sh
 
 rquery_port=$port pm2 restart $name
 
