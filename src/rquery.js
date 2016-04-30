@@ -572,16 +572,16 @@ export default class {
             throw {message: 'Invalid auth site/username', statusCode: response.statusCode, url};
          }
          const replies = await redisClient.multiExecAsync(multi => {
+            multi.sadd(this.redisKey('keyspaces', auth, user), keyspace);
             if (token) {
                multi.hsetnx(this.redisKey('keyspace', keyspace), 'accessToken', token);
             }
-            multi.sadd(this.redisKey('keyspaces', auth, user), keyspace);
             multi.hsetnx(this.redisKey('keyspace', keyspace), 'auth', auth);
             multi.hsetnx(this.redisKey('keyspace', keyspace), 'user', user);
             multi.hgetall(this.redisKey('keyspace', keyspace));
          });
-         if (lodash.includes(replies, 0)) {
-            throw {message: 'Invalid keyspace/token'};
+         if (!replies[0]) {
+            throw {message: 'Invalid keyspace'};
          }
          await this.sendResult(req, res, replies[replies.length - 1]);
       } catch (err) {
