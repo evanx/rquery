@@ -9,7 +9,7 @@ UNSTABLE, INCOMPLETE
 
 ### Live demo
 
-Try: https://redishub.com/rquery
+Try: https://demo.redishub.com/rquery
 
 However be sure to have a JSON Viewer extension installed in your browser.
 
@@ -18,8 +18,8 @@ It should report the available "routes" defined for the ExpressJS webserver:
 <img src="https://evanx.github.io/images/rquery/rquery-routes.png">
 
 where the following "help" is available:
-- https://redishub.com/rquery/routes - shows all the "routes"
-- https://redishub.com/rquery/help - renders this `README.md`
+- https://demo.redishub.com/rquery/routes - shows all the "routes"
+- https://demo.redishub.com/rquery/help - renders this `README.md`
 
 Notes about this demo:
 - automatically expires keys after an idle duration of 3 minutes.
@@ -29,13 +29,13 @@ Notes about this demo:
 
 Register a chosen keyspace name, and security access token:
 ```shell
-curl -s https://redishub.com/rquery/kt/$keyspace/$token/register/github.com/$user
+curl -s https://demo.redishub.com/rquery/kt/$keyspace/$token/register/github.com/$user
 ```
 where you also provide your Github username as identification to administer the keyspace (TODO).
 
 For example:
 ```shell
-curl -s https://redishub.com/rquery/kt/snoopyinc:test1/mysecret/register/github.com/snoopy
+curl -s https://demo.redishub.com/rquery/kt/snoopyinc:test1/mysecret/register/github.com/snoopy
 ```
 where `mysecret` should be specified, ideally generated and saved on disk as follows:
 ```shell
@@ -46,7 +46,7 @@ where this "strong" token cannot be easily remembered (or guessed) and so must b
 
 Alternatively, use the public `gentoken` endpoint:
 ```shell
-curl -s https://redishub.com/rquery/gentoken?plain
+curl -s https://demo.redishub.com/rquery/gentoken?plain
 ```
 
 Note that SSL must be used, otherwise your keyspace could be hijacked i.e. if the token `mysecret` is transferred in cleartext.
@@ -81,8 +81,8 @@ We try `curl` too. In the examples below, we set our "keyspace" as our Github us
 ##### Info
 
 ```shell
-curl -s redishub.com/rquery/info | tail -1
-curl -s redishub.com/rquery/time | python -mjson.tool
+curl -s https://demo.redishub.com/rquery/info | tail -1
+curl -s https://demo.redishub.com/rquery/time | python -mjson.tool
 ```
 where `time` returns:
 ```json
@@ -94,29 +94,21 @@ where `time` returns:
 
 We sometimes support variants:
 ```shell
-root@joy:~# curl -s https://redishub.com/rquery/time/seconds; echo
+root@joy:~# curl -s https://demo.redishub.com/rquery/time/seconds; echo
 "1460836467"
 ```
 where the `/time/seconds` endpoint returns the epoch seconds. The default is JSON, and hence the double-quotes i.e. to be a valid JSON "document."
 
-Incidently, this VM is named after Bill Joy, to whom I would say, "Thanks for Unix and vi!" :)
-
 More practical for some use-cases, the `?plain` query returns the epoch seconds in plain text:
 ```shell
-$ echo `curl -s https://redishub.com/rquery/time/seconds?plain`
+$ curl -s https://demo.redishub.com/rquery/time/seconds?plain
 1460910466
-
-$ date -d @`curl -s https://redishub.com/rquery/time/seconds?plain`
-Sun Apr 17 18:27:51 SAST 2016
 ```
-
-Incidently the `http://redishub.com/epoch` endpoint was announced to be "eternally" available. Actually this endpoint is proxied to `/rquery/time/seconds?plain.` An HTTP expiry header of 15 seconds is added:
+Actually we provide a domain `cli.redishub.com` intended for command-line testing, where `plain` result formatting is the default.
 ```shell
-$ curl -I http://redishub.com/epoch | grep '^Cache-Control'
-Cache-Control: max-age=15
+$ curl -s https://cli.redishub.com/rquery/time/seconds`
+1460910466
 ```
-As such, it's expected to be up to about 15 seconds later than the actual epoch time i.e. allowing for CDN caching.
-
 
 ##### Keys
 

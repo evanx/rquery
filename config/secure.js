@@ -13,6 +13,6 @@ module.exports = {
       registerLimit: 10,
       importLimit: 5,
       adminLimit: 1,
-      defaultFormat: 'cli'           
+      defaultFormat: 'cli'
    }
 };
