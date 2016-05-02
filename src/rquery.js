@@ -902,11 +902,11 @@ export default class {
    }
 
    isCliDomain(req) {
+      logger.info('zz', req.get('User-Agent'));
       return /^curl/.test(req.get('User-Agent')) || /^(cli|clisecure)\./.test(req.hostname);
    }
 
    sendError(req, res, err) {
-      logger.info('zz', req.get('User-Agent'));
       if (req.hostname === 'localhost') {
          logger.warn('sendError', err);
       }
