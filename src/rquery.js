@@ -52,6 +52,7 @@ export default class {
             res.send(await redisClient.infoAsync());
          });
       }
+      
       if (config.allowKeyspaces) {
          this.addPublicRoute('keyspaces', () => redisClient.smembersAsync(this.redisKey('keyspaces')));
       }
