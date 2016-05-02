@@ -8,4 +8,4 @@ git pull && git submodule update
 rquery_port=$port pm2 restart $name
 
 sleep 1
-ls -lh ~/.pm2/logs/rquery*
+ls -lh ~/.pm2/logs/${name}*
