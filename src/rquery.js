@@ -61,7 +61,7 @@ export default class {
       });
       this.addPublicRoute('time/milliseconds', async () => {
          const time = await redisClient.timeAsync();
-         return time[0] * 1000 + time[1]/1000;
+         return Math.ceil(time[0] * 1000 + time[1]/1000);
       });
       this.addPublicRoute('time/nanoseconds', async () => {
          const time = await redisClient.timeAsync();
