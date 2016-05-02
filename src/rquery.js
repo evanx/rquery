@@ -52,7 +52,6 @@ export default class {
             res.send(await redisClient.infoAsync());
          });
       }
-      
       if (config.allowKeyspaces) {
          this.addPublicRoute('keyspaces', () => redisClient.smembersAsync(this.redisKey('keyspaces')));
       }
@@ -66,7 +65,7 @@ export default class {
       });
       this.addPublicRoute('time/nanoseconds', async () => {
          const time = await redisClient.timeAsync();
-         return time[0] * 1000 * 1000 + parseInt(time[1]);
+         return Math.ceil(time[0] * 1000 * 1000 + parseInt(time[1]));
       });
       this.addPublicRoute('time', () => redisClient.timeAsync());
       this.addPublicRoute('gentoken', async (req, res) => {
