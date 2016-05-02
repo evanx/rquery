@@ -51,8 +51,14 @@ curl -s https://redishub.com/rquery/gentoken?plain
 
 Note that SSL must be used, otherwise your keyspace could be hijacked i.e. if the token `mysecret` is transferred in cleartext.
 
-This token-based `/kt` endpoint is provided for initial demonstration purposes, especially to be usable "as is" via your browser. As an ongoing effect, this service will support more sophisticated identification, authentication and authorization, e.g. via authenticated client certs.
+This token-based `/kt` endpoint is provided for initial demonstration purposes, especially to be usable "as is" via your browser.
 
+
+#### Client cert
+
+For a more secure solution, create a self-signed cert using `openssl:`
+```shell
+```
 
 #### Commands
 
@@ -93,7 +99,7 @@ root@joy:~# curl -s https://redishub.com/rquery/time/seconds; echo
 ```
 where the `/time/seconds` endpoint returns the epoch seconds. The default is JSON, and hence the double-quotes i.e. to be a valid JSON "document."
 
-Incidently, this VM is named after Bill Joy, to whom I would speechlessly say, "Thanks for Unix and vi!"
+Incidently, this VM is named after Bill Joy, to whom I would say, "Thanks for Unix and vi!" :)
 
 More practical for some use-cases, the `?plain` query returns the epoch seconds in plain text:
 ```shell

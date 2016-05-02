@@ -1,7 +1,7 @@
 
 set -e -u
 
-rurl=${rurl:=`cat ~/.rh/cli.url`}
+rurl=${rurl:=`cat ~/.redishub/cli.url`}
 echo rurl $rurl
 
 curls() {

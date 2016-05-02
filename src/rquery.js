@@ -589,7 +589,6 @@ export default class {
       }
    }
 
-
    validateRegisterTime() {
       const time = new Date().getTime();
       if (!this.registerTime) {

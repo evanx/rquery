@@ -1,8 +1,8 @@
 
 set -e -u
 
-rurl=${rurl:=`cat ~/.rh/clisecure.url`}
-cert=${cert:=~/.rh/rqueryclient.privcert.pem}
+rurl=${rurl:=`cat ~/.redishub/clisecure.url`}
+cert=${cert:=~/.redishub/rqueryclient.privcert.pem}
 echo rurl $rurl
 openssl x509 -text -in $cert | grep CN
 
@@ -21,7 +21,7 @@ curlv() {
 
 curls() {
   url="$rurl/$1"
-  curl -s "$url"
+  curl -s -E $cert "$url"
 }
 
 curlr() {
