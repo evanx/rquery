@@ -906,6 +906,7 @@ export default class {
    }
 
    sendError(req, res, err) {
+      logger.info('zz', req.get('User-Agent'));
       if (req.hostname === 'localhost') {
          logger.warn('sendError', err);
       }
