@@ -902,7 +902,7 @@ export default class {
    }
 
    isCliDomain(req) {
-      return /^(cli|clisecure)\./.test(req.hostname);
+      return /^curl/.test(req.get('User-Agent')) || /^(cli|clisecure)\./.test(req.hostname);
    }
 
    sendError(req, res, err) {
