@@ -59,6 +59,14 @@ export default class {
          const time = await redisClient.timeAsync();
          return time[0];
       });
+      this.addPublicRoute('time/milliseconds', async () => {
+         const time = await redisClient.timeAsync();
+         return time[0] * 1000 + time[1]/1000;
+      });
+      this.addPublicRoute('time/nanoseconds', async () => {
+         const time = await redisClient.timeAsync();
+         return time[0] * 1000 * 1000 + time[1];
+      });
       this.addPublicRoute('time', () => redisClient.timeAsync());
       this.addPublicRoute('gentoken', async (req, res) => {
          return base32.encode(crypto.randomBytes(10));
