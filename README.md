@@ -65,7 +65,7 @@ $ curl -s https://demo.redishub.com/time/nanoseconds
 where we can get the Epoch time in seconds, milliseconds or nanoseconds.
 
 
-##### Keys
+##### Ephemeral keyspace
 
 We can request an temporary keyspace that will expire after an idle period of 180s:
 ```shell
