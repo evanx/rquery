@@ -772,7 +772,9 @@ export default class {
                assert(reqx.keyspaceKey);
                multi.expire(reqx.keyspaceKey, config.expire);
             }
-            multi.expire(adminKey, config.expire);
+            if (!config.secureDomain && /^~/.test(keyspace)) {
+               multi.expire(adminKey, config.expire);
+            }
             await multi.execAsync();
          } catch (err) {
             this.sendError(req, res, err);
