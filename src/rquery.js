@@ -148,13 +148,14 @@ export default class {
       this.addKeyspaceCommand({
          key: 'importcerts',
          access: 'admin'
-      }, async (req, res, {multi, keyspace, keyspaceKey}) => {
-         const keyspaceConfig = await redisClient.hgetallAsync(keyspaceKey);
+      }, async (req, res, {multi, keyspace, keyspaceKey, adminKey}) => {
+         const keyspaceConfig = await redisClient.hgetallAsync(adminKey);
          if (keyspaceConfig.auth !== 'github.com') {
             throw new ValidationError('Only github.com auth currently supported: ' + keyspaceConfig.auth);
          } else {
             const ghuser = keyspaceConfig.user;
-            const manifestUrl = `https://raw.githubusercontent.com/${ghuser}/config-redishub/master/authorized_certs.cson`;
+            const manifestUrl = `https://raw.githubusercontent.com/${ghuser}`
+            + `/certs-concerto/master/redishub_authorized_certs.cson`;
             const manifest = CSON.parse(await Requests.request({url: manifestUrl}));
             if (!manifest.spec) {
                throw new ValidationError('No spec: ' + manifest);
@@ -169,7 +170,8 @@ export default class {
                if (!/\.pem/.test(cert)) {
                   throw new ValidationError('Not .pem: ' + cert);
                } else {
-                  const certUrl = `https://raw.githubusercontent.com/${ghuser}/config-redishub/master/${cert}`;
+                  const certUrl = `https://raw.githubusercontent.com/${ghuser}`
+                  + `/certs-concerto/master/${cert}`;
                   const pem = await Requests.request({url: certUrl});
                   const digest = this.digestPem(pem, cert);
                   multi.sadd(this.adminKey('certs', keyspace), digest);
@@ -379,7 +381,6 @@ export default class {
       }, async (req, res, {multi, keyspace, keyspaceKey}) => {
          const {dest, timeout} = req.params;
          const destKey = this.keyspaceKey(keyspace, dest);
-         logger.debug('zz', keyspace, keyspaceKey, dest, destKey, timeout, config.expire);
          const result = await redisClient.brpoplpushAsync(keyspaceKey, destKey, timeout);
          multi.expire(destKey, config.expire);
          return result;
@@ -565,7 +566,6 @@ export default class {
          const adminKey = this.adminKey('keyspace', keyspace);
          const replies = await redisClient.multiExecAsync(multi => {
             //multi.sadd(this.adminKey('keyspaces:expire'), keyspace);
-            logger.info('zz', adminKey, token, config.expire);
             multi.hsetnx(adminKey, 'token', token);
             multi.hsetnx(adminKey, 'registered', new Date().getTime());
             multi.expire(adminKey, config.expire);
@@ -758,7 +758,7 @@ export default class {
                }
             }
             const multi = redisClient.multi();
-            const reqx = {multi, keyspace};
+            const reqx = {multi, keyspace, adminKey};
             if (key) {
                reqx.keyspaceKey = this.keyspaceKey(keyspace, key);
             }
@@ -790,7 +790,6 @@ export default class {
          const [hsetnx, hdel] = await redisClient.multiExecAsync(multi => {
             multi.hsetnx(adminKey, 'token', accessToken);
             multi.hdel(adminKey, 'accessToken');
-            logger.debug('zz', Object.keys(multi));
          });
          if (!hsetnx) {
             throw new Error('Migrate keyspace hset failed');
@@ -935,7 +934,7 @@ export default class {
          res.set('Content-Type', 'text/plain');
          resultString = result.toString();
       } else if (config.defaultFormat === 'html' || Values.isDefined(req.query.html)
-         || command.format === 'html') {
+      || command.format === 'html') {
          res.set('Content-Type', 'text/html');
          resultString = result.toString();
       } else if (config.defaultFormat !== 'json') {
