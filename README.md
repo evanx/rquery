@@ -303,17 +303,6 @@ and `ttl` returns:
 ```
 which shows my keys' TTLs decreasing from 180 seconds.
 
-We can check the keys and their TTL in the specified `keyspace` as follows:
-```shell
-curl -s redishub.com/keyspaces | python -mjson.tool
-```
-
-where `keyspaces` returns:
-```json
-[
-    "evanx"
-]
-```
 
 ### Installation
 
