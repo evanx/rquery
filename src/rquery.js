@@ -38,12 +38,14 @@ export default class {
          return Express.getRoutes(expressApp);
       });
       this.addPublicRoute('help', async (req, res) => {
-         if (this.isCliDomain(req)) {
-            return commands.map(command => [command.key].concat(command.params).join(' '));
-         } else {
+         if (this.isBrowser()) {
             let content = await Files.readFile('README.md');
             res.set('Content-Type', 'text/html');
             res.send(marked(content.toString()));
+         } else if (this.isCliDomain(req)) {
+            return commands.map(command => [command.key].concat(command.params).join(' '));
+         } else {
+            return commands.map(command => [command.key].concat(command.params).join(' '));
          }
       });
       if (config.allowInfo) {
