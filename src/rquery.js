@@ -150,6 +150,7 @@ export default class {
          access: 'admin'
       }, async (req, res, {multi, keyspace, keyspaceKey, adminKey}) => {
          const keyspaceConfig = await redisClient.hgetallAsync(adminKey);
+         logger.info('zz', keyspace, adminKey, keyspaceConfig);
          if (keyspaceConfig.auth !== 'github.com') {
             throw new ValidationError('Only github.com auth currently supported: ' + keyspaceConfig.auth);
          } else {
