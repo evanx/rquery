@@ -38,21 +38,20 @@ The following subset of Redis commands is supported for this demo:
 See Redis commands: https://redis.io/commands
 
 
-##### Info
+##### Time
+
+Let's try get the Redis `time.`
 
 ```shell
-curl -s https://demo.redishub.com/info | tail -1
 curl -s https://demo.redishub.com/time
 ```
-where `time` returns:
-```json
-[
-    "1460808868",
-    "712166"
-]
+```shell
+1460808868
+712166
 ```
+where `time` returns the seconds and nanos since the Epoch.
 
-We sometimes support variants:
+For convenience, we sometimes support additional variants of the standard Redis commands e.g. the Epoch time in seconds, milliseconds or nanoseconds:
 ```shell
 root@joy:~# curl -s https://demo.redishub.com/time/seconds
 1460836467
