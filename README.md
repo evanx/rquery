@@ -58,6 +58,9 @@ root@joy:~# curl -s https://demo.redishub.com/time/seconds
 ```
 where the `/time/seconds` endpoint returns the epoch seconds.
 
+Also try:
+- `/time/milliseconds`
+- `/time/nanoseconds`
 
 ##### Keys
 
