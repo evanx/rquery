@@ -589,8 +589,6 @@ export default class {
             await this.sendResult(null, req, res, replyPath);
          }
       } catch (err) {
-         logger.error(err);
-         logger.debug(err.stack);
          this.sendError(req, res, err);
       }
    }
@@ -970,9 +968,7 @@ export default class {
    }
 
    sendError(req, res, err) {
-      if (req.hostname === 'localhost') {
-         logger.debug(err.stack);
-      }
+      logger.debug(err.stack);
       this.sendStatusMessage(req, res, 500, err.message, err);
    }
 
