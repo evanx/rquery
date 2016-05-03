@@ -56,8 +56,42 @@ This token-based `/kt` endpoint is provided for initial demonstration purposes, 
 
 #### Client cert
 
-For a more secure solution, create a self-signed cert using `openssl:`
+For a secure solution for permanent keyspaces, let's try SSL client cert authentication, as per: http://github.com/evanx/concerto
+
+In this case, you will need create a repo named `certs-concerto` on your Github account.
+
+Let's clone `concerto:`
 ```shell
+git clone git@github.com:evanx/concerto.git
+```
+Then we use `bin/concerto gen`
+```shell
+cd concerto
+bin/concerto gen
+bin/concerto deploy
+```
+where `gen` command creates self-signed client cert using `openssl.`
+
+Once you have created `certs-concerto` on your Github account, then try `ghuser:`
+```shell
+bin/concerto ghuser MY_GITHUB_USER
+```
+Create a local ~/certs-concerto repo with the generated cert:
+```shell
+bin/concerto ghinit
+```
+Try `ghcommit` to add, commit and push upstream to Github:
+```
+bin/concerto ghcommit 'initial'
+```
+```shell
+curl -s https://clisecure.redishub.com/k/GHUSER:keyspace1/register/github.com/GHUSER
+```
+where you must substitute `GHUSER` for your Github user.
+
+Then we instruct the service to import these client certs for our keyspace:
+```
+curl -s https://clisecure.redishub.com/GHUSER:mykeyspace/importcerts
 ```
 
 #### Commands
@@ -106,7 +140,6 @@ We can request an temporary keyspace that will expire after an idle period of 18
 rdemo=`curl -s https://demo.redishub.com/register-expire | grep ^kt`
 rdemo="https://demo.redishub.com/$rdemo"
 ```
-where `user` must be substituted with <b>your</b> Github username.
 
 Then we can use `curl $rdemo` as follows:
 ```shell
