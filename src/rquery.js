@@ -542,7 +542,7 @@ export default class {
          expressApp.get(config.location + 'register-expire', (req, res) => this.registerExpire(req, res));
          uri = 'kt/:keyspace/:token';
       } else {
-         uri = 'k/:token';
+         uri = 'k/:keyspace';
       }
       uri += '/register/:auth/:user';
       logger.debug('register uri', uri);
