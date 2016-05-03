@@ -89,7 +89,7 @@ where `ttl/mykey` returns the TTL decreasing from 180 seconds:
 179
 ```
 
-#### Permanent keyspace
+#### Register a new keyspace
 
 Register a chosen keyspace name, and security access token:
 ```shell
