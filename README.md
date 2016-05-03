@@ -18,24 +18,83 @@ It should report the available "routes" defined for the ExpressJS webserver:
 <img src="https://evanx.github.io/images/rquery/rquery-routes.png">
 
 where the following "help" is available:
-- https://demo.redishub.com/rquery/routes - shows all the "routes"
-- https://demo.redishub.com/rquery/help - renders this `README.md`
+- https://demo.redishub.com/routes - shows all the "routes"
+- https://demo.redishub.com/help - renders this `README.md`
 
 Notes about this demo:
 - automatically expires keys after an idle duration of 3 minutes.
 
 
+#### Commands
+
+The following subset of Redis commands is supported for this demo:
+- keys: `keys` `exists` `set` `get` `type` `ttl` `incr`
+- sets: `sadd` `srem` `sismember` `smembers` `scard` `spop`
+- sorted sets: `zadd` `zrem` `zcard` `zrange` `zrevrange`
+- lists: `lpush` `rpop` `brpop` `brpoplpush` `llen` `lrange` `lset` `lindex` `lrem`
+- hashes: `hexists` `hset` `hincrby` `hget` `hdel` `hlen` `hkeys` `hgetall`
+- other: `time` `info` `keyspaces`
+
+See Redis commands: https://redis.io/commands
+
+
+##### Info
+
+```shell
+curl -s https://demo.redishub.com/info | tail -1
+curl -s https://demo.redishub.com/time
+```
+where `time` returns:
+```json
+[
+    "1460808868",
+    "712166"
+]
+```
+
+We sometimes support variants:
+```shell
+root@joy:~# curl -s https://demo.redishub.com/time/seconds
+1460836467
+```
+where the `/time/seconds` endpoint returns the epoch seconds.
+
+
+##### Keys
+
+We can request an temporary keyspace that will expire after an idle period of 180s:
+```shell
+rdemo=`curl -s https://demo.redishub.com/register-expire | grep ^kt`
+rdemo="https://demo.redishub.com/$rdemo"
+echo $rdemo
+```
+```
+https://demo.redishub.com/kt/~atfmbxg/g05qk2g
+```
+
+Then we can use `curl $rdemo` as follows:
+```shell
+curl -s $rdemo/set/mykey/myvalue
+curl -s $rdemo/exists/mykey
+curl -s $rdemo/get/mykey
+curl -s $rdemo/ttl/mykey
+```
+where `ttl/mykey` returns the TTL decreasing from 180 seconds:
+```json
+179
+```
+
 #### Register
 
 Register a chosen keyspace name, and security access token:
 ```shell
-curl -s https://demo.redishub.com/rquery/kt/$keyspace/$token/register/github.com/$user
+curl -s https://demo.redishub.com/kt/$keyspace/$token/register/github.com/$user
 ```
 where you also provide your Github username as identification to administer the keyspace (TODO).
 
 For example:
 ```shell
-curl -s https://demo.redishub.com/rquery/kt/snoopyinc:test1/mysecret/register/github.com/snoopy
+curl -s https://demo.redishub.com/kt/snoopyinc:test1/mysecret/register/github.com/snoopy
 ```
 where `mysecret` should be specified, ideally generated and saved on disk as follows:
 ```shell
@@ -46,7 +105,7 @@ where this "strong" token cannot be easily remembered (or guessed) and so must b
 
 Alternatively, use the public `gentoken` endpoint:
 ```shell
-curl -s https://demo.redishub.com/rquery/gentoken?plain
+curl -s https://demo.redishub.com/gentoken?plain
 ```
 
 Note that SSL must be used, otherwise your keyspace could be hijacked i.e. if the token `mysecret` is transferred in cleartext.
@@ -104,65 +163,6 @@ curl -s https://clisecure.redishub.com/k/mykeyspace/importcerts
 Using our client privcert `~/.redishub/privcert.pem` as deployed by `concerto,` we can operate on the keyspace:
 ```shell
 curl -s -E ~/.redishub/privcert.pem https://clisecure.redishub.com/k/mykeyspace/set/message/HELLO
-```
-
-#### Commands
-
-The following subset of Redis commands is supported for this demo:
-- keys: `keys` `exists` `set` `get` `type` `ttl` `incr`
-- sets: `sadd` `srem` `sismember` `smembers` `scard` `spop`
-- sorted sets: `zadd` `zrem` `zcard` `zrange` `zrevrange`
-- lists: `lpush` `rpop` `brpop` `brpoplpush` `llen` `lrange` `lset` `lindex` `lrem`
-- hashes: `hexists` `hset` `hincrby` `hget` `hdel` `hlen` `hkeys` `hgetall`
-- other: `time` `info` `keyspaces`
-
-See Redis commands: https://redis.io/commands
-
-
-#### curl
-
-We try `curl` too. In the examples below, we set our "keyspace" as our Github username. (Incidently, this is prefixed to the key by rquery.)
-
-
-##### Info
-
-```shell
-curl -s https://demo.redishub.com/rquery/info | tail -1
-curl -s https://demo.redishub.com/rquery/time
-```
-where `time` returns:
-```json
-[
-    "1460808868",
-    "712166"
-]
-```
-
-We sometimes support variants:
-```shell
-root@joy:~# curl -s https://demo.redishub.com/rquery/time/seconds
-1460836467
-```
-where the `/time/seconds` endpoint returns the epoch seconds.
-
-##### Keys
-
-We can request an temporary keyspace that will expire after an idle period of 180s:
-```shell
-rdemo=`curl -s https://demo.redishub.com/register-expire | grep ^kt`
-rdemo="https://demo.redishub.com/$rdemo"
-```
-
-Then we can use `curl $rdemo` as follows:
-```shell
-curl -s $rdemo/set/mykey/myvalue
-curl -s $rdemo/exists/mykey
-curl -s $rdemo/get/mykey
-curl -s $rdemo/ttl/mykey
-```
-where `ttl/mykey` returns the TTL decreasing from 180 seconds:
-```json
-179
 ```
 
 ##### Sets
@@ -300,7 +300,7 @@ which shows my keys' TTLs decreasing from 180 seconds.
 
 We can check the keys and their TTL in the specified `keyspace` as follows:
 ```shell
-curl -s redishub.com/rquery/keyspaces | python -mjson.tool
+curl -s redishub.com/keyspaces | python -mjson.tool
 ```
 
 where `keyspaces` returns:
