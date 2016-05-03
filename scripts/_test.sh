@@ -1,9 +1,7 @@
 
 curla() {
-  curlx deregister 
-  curlv register/github.com/evanx
-  curls importcerts
   curle set/mykey/myvalue OK
+  curle type/mykey string
   curli get/mykey myvalue
   curlv del/mykey
   curle set/mykey/myvalue OK
@@ -12,6 +10,7 @@ curla() {
   curlr ttl/mykey '^1[78][0-9]$'
   curlv sadd/myset/item1
   curlv sadd/myset/item2
+  curle type/myset set
   curle scard/myset 2
   curl1 sismember/myset/item1
   curli smembers/myset item1 item2
@@ -54,8 +53,7 @@ curla() {
   curlm lrange/mylist/0/-1 0
   curle brpoplpush/mylist/mypoppedlist/1 item2
   curl0 llen/mylist
+  curl1 llen/mypoppedlist
   curle lpop/mypoppedlist item2
-  curl0 llen/mypoppedlist
-  curli ttl mysortedset
+  curlv ttl
 }
-

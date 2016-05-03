@@ -42,6 +42,8 @@ config:
    adminLimit:
       defaultValue: 1
       unit: 'seconds'
+   addClientIp:
+      defaultValue: false
 
 state:
    redisClient: {}

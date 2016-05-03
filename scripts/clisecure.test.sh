@@ -81,5 +81,12 @@ mkdir -p $tmp
 cd $tmp 
 pwd 
 
+c0register() {
+  curlx deregister 
+  curlv register/github.com/evanx
+  curls importcerts
+}
+
+c0register
 curla 
 

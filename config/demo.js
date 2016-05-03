@@ -13,6 +13,7 @@ module.exports = {
       registerLimit: 10,
       importLimit: 5,
       adminLimit: 1,
-      defaultFormat: 'json'
+      defaultFormat: 'json',
+      addClientIp: true
    }
 };

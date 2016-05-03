@@ -82,7 +82,7 @@ We try `curl` too. In the examples below, we set our "keyspace" as our Github us
 
 ```shell
 curl -s https://demo.redishub.com/rquery/info | tail -1
-curl -s https://demo.redishub.com/rquery/time | python -mjson.tool
+curl -s https://demo.redishub.com/rquery/time
 ```
 where `time` returns:
 ```json
@@ -94,70 +94,46 @@ where `time` returns:
 
 We sometimes support variants:
 ```shell
-root@joy:~# curl -s https://demo.redishub.com/rquery/time/seconds; echo
-"1460836467"
+root@joy:~# curl -s https://demo.redishub.com/rquery/time/seconds
+1460836467
 ```
-where the `/time/seconds` endpoint returns the epoch seconds. The default is JSON, and hence the double-quotes i.e. to be a valid JSON "document."
-
-More practical for some use-cases, the `?plain` query returns the epoch seconds in plain text:
-```shell
-$ curl -s https://demo.redishub.com/rquery/time/seconds?plain
-1460910466
-```
-Actually we provide a domain `cli.redishub.com` intended for command-line testing, where `plain` result formatting is the default.
-```shell
-$ curl -s https://cli.redishub.com/rquery/time/seconds`
-1460910466
-```
+where the `/time/seconds` endpoint returns the epoch seconds.
 
 ##### Keys
 
-Let's first setup a working directory as follows:
+We can request an temporary keyspace that will expire after an idle period of 180s:
 ```shell
-urlFile=~/.rdemo dir=~/demo-rquery auth=github.com user=evanx force=true ./scripts/setup.demo.sh
-export rdemo=`cat ~/.rdemo`
-echo rdemo $rdemo
+rdemo=`curl -s https://demo.redishub.com/register-expire | grep ^kt`
+rdemo="https://demo.redishub.com/$rdemo"
 ```
 where `user` must be substituted with <b>your</b> Github username.
 
 Then we can use `curl $rdemo` as follows:
 ```shell
-curl -s $rdemo/set/mykey/myvalue | python -mjson.tool
-curl -s $rdemo/exists/mykey | python -mjson.tool
-curl -s $rdemo/get/mykey | python -mjson.tool
-curl -s $rdemo/ttl/mykey | python -mjson.tool
+curl -s $rdemo/set/mykey/myvalue
+curl -s $rdemo/exists/mykey
+curl -s $rdemo/get/mykey
+curl -s $rdemo/ttl/mykey
 ```
 where `ttl/mykey` returns the TTL decreasing from 180 seconds:
 ```json
 179
 ```
 
-The above `setup.sh` script will `register` a keyspace with a chosen `token.` For the reverse operation, we `deregister` (and flush) our keyspace as follows:
-```shell
-curl -s $rdemo/deregister | python -mjson.tool
-```
-where `rdemo` provides the keyspace and authorization token.
-
-We can now run the test script
-```shell
-./scripts/test.sh
-```
-where this will use `~/demo-rquery/uri` i.e. our keyspace/token URL as per `register` e.g. performed by `setup.sh.`
-
 ##### Sets
 
 ```shell
-curl -s $rdemo/sadd/myset/item1 | python -mjson.tool
-curl -s $rdemo/sadd/myset/item2 | python -mjson.tool
-curl -s $rdemo/sadd/myset/item3 | python -mjson.tool
-curl -s $rdemo/sadd/myset/item4 | python -mjson.tool
-curl -s $rdemo/sismember/myset/item1 | python -mjson.tool
-curl -s $rdemo/smembers/myset | python -mjson.tool
-curl -s $rdemo/srem/myset/item1 | python -mjson.tool
-curl -s $rdemo/scard/myset | python -mjson.tool
-curl -s $rdemo/smove/myset/myotherset/item4 | python -mjson.tool
-curl -s $rdemo/smembers/myotherset | python -mjson.tool
-curl -s $rdemo/spop/myset | python -mjson.tool
+curl -s $rdemo/sadd/myset/item1
+curl -s $rdemo/sadd/myset/item2
+curl -s $rdemo/sadd/myset/item3
+curl -s $rdemo/sadd/myset/item4
+curl -s $rdemo/sismember/myset/item1
+curl -s $rdemo/smembers/myset
+curl -s $rdemo/srem/myset/item1
+curl -s $rdemo/scard/myset
+curl -s $rdemo/smove/myset/myotherset/item4
+curl -s $rdemo/smembers/myotherset
+curl -s $rdemo/spop/myset
 ```
 
 where `smembers/myset` returns:
@@ -172,12 +148,12 @@ where `smembers/myset` returns:
 ##### Sorted sets
 
 ```shell
-curl -s $rdemo/zadd/mysortedset/10/value10 | python -mjson.tool
-curl -s $rdemo/zadd/mysortedset/20/value20 | python -mjson.tool
-curl -s $rdemo/zcard/mysortedset | python -mjson.tool
-curl -s $rdemo/zrange/mysortedset/0/-1 | python -mjson.tool
-curl -s $rdemo/zrem/mysortedset/value10 | python -mjson.tool
-curl -s $rdemo/zrevrange/mysortedset/0/-1 | python -mjson.tool
+curl -s $rdemo/zadd/mysortedset/10/value10
+curl -s $rdemo/zadd/mysortedset/20/value20
+curl -s $rdemo/zcard/mysortedset
+curl -s $rdemo/zrange/mysortedset/0/-1
+curl -s $rdemo/zrem/mysortedset/value10
+curl -s $rdemo/zrevrange/mysortedset/0/-1
 ```
 
 where `zrange/mysortedset` returns:
@@ -192,16 +168,16 @@ where `zrange/mysortedset` returns:
 ##### Hashes
 
 ```shell
-curl -s $rdemo/hset/myhashes/myfield1/myfield1value | python -mjson.tool
-curl -s $rdemo/hget/myhashes/myfield1 | python -mjson.tool
-curl -s $rdemo/hset/myhashes/myfield2/myfield2value | python -mjson.tool
-curl -s $rdemo/hget/myhashes/myfield2 | python -mjson.tool
-curl -s $rdemo/hexists/myhashes/myfield1 | python -mjson.tool
-curl -s $rdemo/hexists/myhashes/myfield3 | python -mjson.tool
-curl -s $rdemo/hlen/myhashes | python -mjson.tool
-curl -s $rdemo/hkeys/myhashes | python -mjson.tool
-curl -s $rdemo/hgetall/myhashes | python -mjson.tool
-curl -s $rdemo/hdel/myhashes/myfield2 | python -mjson.tool
+curl -s $rdemo/hset/myhashes/myfield1/myfield1value
+curl -s $rdemo/hget/myhashes/myfield1
+curl -s $rdemo/hset/myhashes/myfield2/myfield2value
+curl -s $rdemo/hget/myhashes/myfield2
+curl -s $rdemo/hexists/myhashes/myfield1
+curl -s $rdemo/hexists/myhashes/myfield3
+curl -s $rdemo/hlen/myhashes
+curl -s $rdemo/hkeys/myhashes
+curl -s $rdemo/hgetall/myhashes
+curl -s $rdemo/hdel/myhashes/myfield2
 ```
 
 where `hkeys/myhashes` returns:
@@ -223,19 +199,19 @@ and `hgetall/myhashes` returns:
 ##### Lists
 
 ```shell
-curl -s $rdemo/lpush/mylist/item1 | python -mjson.tool
-curl -s $rdemo/lpush/mylist/item2 | python -mjson.tool
-curl -s $rdemo/lpush/mylist/item3 | python -mjson.tool
-curl -s $rdemo/lpush/mylist/item4 | python -mjson.tool
-curl -s $rdemo/lrange/mylist/0/-1 | python -mjson.tool
-curl -s $rdemo/lrem/mylist/-1/item4 | python -mjson.tool
-curl -s $rdemo/lindex/mylist/0 | python -mjson.tool
-curl -s $rdemo/lrange/mylist/0/-1 | python -mjson.tool
-curl -s $rdemo/lpop/mylist | python -mjson.tool
-curl -s $rdemo/brpop/mylist/1 | python -mjson.tool
-curl -s $rdemo/brpoplpush/mylist/mypoppedlist/1 | python -mjson.tool
-curl -s $rdemo/llen/mylist | python -mjson.tool
-curl -s $rdemo/ltrim/mylist/0/2 | python -mjson.tool
+curl -s $rdemo/lpush/mylist/item1
+curl -s $rdemo/lpush/mylist/item2
+curl -s $rdemo/lpush/mylist/item3
+curl -s $rdemo/lpush/mylist/item4
+curl -s $rdemo/lrange/mylist/0/-1
+curl -s $rdemo/lrem/mylist/-1/item4
+curl -s $rdemo/lindex/mylist/0
+curl -s $rdemo/lrange/mylist/0/-1
+curl -s $rdemo/lpop/mylist
+curl -s $rdemo/brpop/mylist/1
+curl -s $rdemo/brpoplpush/mylist/mypoppedlist/1
+curl -s $rdemo/llen/mylist
+curl -s $rdemo/ltrim/mylist/0/2
 ```
 
 where `lrange/mylist/0/-1` returns:
@@ -251,8 +227,8 @@ where `lrange/mylist/0/-1` returns:
 
 We can check the keys and their TTL in the specified `keyspace` as follows:
 ```shell
-curl -s $rdemo/keys | python -mjson.tool
-curl -s $rdemo/ttl | python -mjson.tool
+curl -s $rdemo/keys
+curl -s $rdemo/ttl
 ```
 
 where `keys` returns:

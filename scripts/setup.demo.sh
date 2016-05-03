@@ -79,7 +79,6 @@ abort() {
    exit 1
 }
 
-
 [ -n "$BASH" ] || abort "Use bash"
 
 # parameters

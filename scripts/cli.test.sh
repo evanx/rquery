@@ -5,7 +5,7 @@ rurl=${rurl:=`cat ~/.redishub/cli.url`}
 echo rurl $rurl
 
 curls() {
-  >&2 echo ignore $$
+  >&2 echo ignore "$*"
 }
 
 curlx() {
@@ -75,12 +75,22 @@ curl1() {
   curle $1 1
 }
 
+if echo $rurl | grep -q ^localhost
+then
+  ruri=`curl -s $rurl/register-expire`
+  echo ruri $ruri
+  rurl="$rurl/$ruri"
+  echo rurl $rurl
+  echo $rurl > ~/.redishub/test.url
+fi
+
 . scripts/_test.sh
 
 tmp=~/tmp/`basename $0 .sh`
-mkdir -p $tmp 
-cd $tmp 
-pwd 
+mkdir -p $tmp
+cd $tmp
+pwd
 
-curla 
+curla
 
+echo "OK"
