@@ -51,16 +51,19 @@ curl -s https://demo.redishub.com/time
 ```
 where `time` returns the seconds and nanos since the Epoch.
 
-For convenience, we sometimes support additional variants of the standard Redis commands e.g. the Epoch time in seconds, milliseconds or nanoseconds:
+For convenience, we sometimes support additional variants of the standard Redis commands:
 ```shell
-root@joy:~# curl -s https://demo.redishub.com/time/seconds
-1460836467
-```
-where the `/time/seconds` endpoint returns the epoch seconds.
+$ curl -s https://demo.redishub.com/time/seconds
+1462241590
 
-Also try:
-- `/time/milliseconds`
-- `/time/nanoseconds`
+$ curl -s https://demo.redishub.com/time/milliseconds
+1462241598375
+
+$ curl -s https://demo.redishub.com/time/nanoseconds
+1462241604365091
+```
+where we can get the Epoch time in seconds, milliseconds or nanoseconds.
+
 
 ##### Keys
 
