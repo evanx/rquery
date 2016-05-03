@@ -38,7 +38,7 @@ export default class {
          return Express.getRoutes(expressApp);
       });
       this.addPublicRoute('help', async (req, res) => {
-         if (this.isBrowser()) {
+         if (this.isBrowser(req)) {
             let content = await Files.readFile('README.md');
             res.set('Content-Type', 'text/html');
             res.send(marked(content.toString()));
