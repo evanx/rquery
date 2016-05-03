@@ -89,7 +89,7 @@ where `ttl/mykey` returns the TTL decreasing from 180 seconds:
 179
 ```
 
-#### Register a keyspace
+#### Permanent keyspace
 
 Register a chosen keyspace name, and security access token:
 ```shell
@@ -99,7 +99,7 @@ where you also provide your Github username as identification to administer the 
 
 For example:
 ```shell
-curl -s https://demo.redishub.com/kt/snoopyinc:test1/mysecret/register/github.com/snoopy
+curl -s https://demo.redishub.com/kt/mykeyspace1/mysecret/register/github.com/snoopy
 ```
 where `mysecret` should be specified, ideally generated and saved on disk as follows:
 ```shell
@@ -110,17 +110,17 @@ where this "strong" token cannot be easily remembered (or guessed) and so must b
 
 Alternatively, use the public `gentoken` endpoint:
 ```shell
-curl -s https://demo.redishub.com/gentoken?plain
+curl -s https://demo.redishub.com/gentoken
 ```
 
 Note that SSL must be used, otherwise your keyspace could be hijacked i.e. if the token `mysecret` is transferred in cleartext.
 
-This token-based `/kt` endpoint is provided for initial demonstration purposes, especially to be usable "as is" via your browser.
+Actually this token-based `/kt` endpoint is provided for casual purposes, especially to be usable "as is" via your browser.
 
 
 #### Client cert
 
-For a secure solution for permanent keyspaces, let's try SSL client cert authentication, as per: http://github.com/evanx/concerto
+For a secure access to keyspaces, let's try SSL client cert authentication, as per: http://github.com/evanx/concerto
 
 In this case, you will need create a repo named `certs-concerto` on your Github account.
 
@@ -135,14 +135,14 @@ bin/concerto gen
 ```
 where `gen` command creates self-signed client cert using `openssl.`
 
-We deploy this generated privcert to `~/.redishub/privcert.pem` et al as follows:
+We deploy this generated privcert to `~/.redishub/privcert.pem` as follows:
 ```shell
 bin/concerto deploy
 ```
 
 ##### certs-concerto
 
-Once you have created `certs-concerto` on your Github account, then try `ghuser:`
+Once you have created a `certs-concerto` repo on your Github account, then try `ghuser:`
 ```shell
 bin/concerto ghuser MY_GITHUB_USER
 ```
