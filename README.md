@@ -42,7 +42,7 @@ where `mysecret` should be specified, ideally generated and saved on disk as fol
 [ ! -f ~/.rquery-demo-token] && dd if=/dev/urandom bs=10 count=1 2>/dev/null |
   ./node_modules/.bin/base32 > ~/.rquery-demo-token
 ```
-where this "strong" token cannot be easily remembered (or guessed) and so must be saved e.g. the `setup.sh` script saves it to a file `token` in a specified directory.
+where this "strong" token cannot be easily remembered (or guessed) and so must be saved. Note that currently it cannot be recovered if lost (TODO).
 
 Alternatively, use the public `gentoken` endpoint:
 ```shell
