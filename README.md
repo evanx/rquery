@@ -85,13 +85,18 @@ Try `ghcommit` to add, commit and push upstream to Github:
 bin/concerto ghcommit 'initial'
 ```
 ```shell
-curl -s https://clisecure.redishub.com/k/GHUSER:keyspace1/register/github.com/GHUSER
+curl -s https://clisecure.redishub.com/k/MYORG:mykeyspace/register/github.com/GHUSER
 ```
 where you must substitute `GHUSER` for your Github user.
 
-Then we instruct the service to import these client certs for our keyspace:
+We instruct the service to import these client certs for our keyspace:
+```shell
+curl -s https://clisecure.redishub.com/k/MYORG:mykeyspace/importcerts
 ```
-curl -s https://clisecure.redishub.com/GHUSER:mykeyspace/importcerts
+
+Now specifying our `~/.redishub/privcert.pem` deployed by `concerto,` we can operate on the keyspace:
+```shell
+curl -s -E ~/.redishub/privcert.pem https://clisecure.redishub.com/k/MYORG:mykeyspace/set/message/HELLO
 ```
 
 #### Commands
