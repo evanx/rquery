@@ -68,9 +68,15 @@ Then we use `bin/concerto gen`
 ```shell
 cd concerto
 bin/concerto gen
-bin/concerto deploy
 ```
 where `gen` command creates self-signed client cert using `openssl.`
+
+We deploy this generated privcert to `~/.redishub/privcert.pem` et al as follows:
+```shell
+bin/concerto deploy
+```
+
+##### certs-concerto
 
 Once you have created `certs-concerto` on your Github account, then try `ghuser:`
 ```shell
