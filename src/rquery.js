@@ -601,7 +601,6 @@ export default class {
             return;
          }
          const {token, keyspace, auth, user} = req.params;
-         const adminKey = this.adminKey('keyspace', keyspace);
          let v = this.validateRegisterKeyspace(keyspace);
          if (v) {
             throw {message: 'Invalid keyspace', keyspace};
@@ -615,7 +614,9 @@ export default class {
          if (response.statusCode !== 200) {
             throw {message: 'Invalid auth site/username', statusCode: response.statusCode, url};
          }
+         const adminKey = this.adminKey('keyspace', keyspace);
          const replies = await redisClient.multiExecAsync(multi => {
+            logger.info('zz', adminKey, auth, user, this.adminKey('keyspaces', auth, user), keyspace);
             multi.sadd(this.adminKey('keyspaces', auth, user), keyspace);
             if (token) {
                multi.hsetnx(adminKey, 'token', token);
