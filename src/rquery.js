@@ -41,9 +41,11 @@ export default class {
       logger.debug('sendErrorRoute', account, keyspace, this.isBrowser(req));
       if (account && keyspace) {
          if (this.isBrowser(req)) {
-            res.redirect(302, ['/ak', account, keyspace, 'help'].join('/'));
+            const redirectPath = ['/ak', account, keyspace, 'help'].join('/');
+            logger.debug('sendErrorRoute 32', account, keyspace, req.path, req.get('user-agent'), redirectPath);
+            res.redirect(302, redirectPath);
          } else {
-            logger.debug('sendErrorRoute', account, keyspace, req.path, req.get('user-agent'));
+            logger.debug('sendErrorRoute 404', account, keyspace, req.path, req.get('user-agent'));
             res.statusCode(404).send(`Route not found: ${req.path}`);
          }
       } else {
