@@ -37,11 +37,15 @@ export default class {
    }
 
    async sendErrorRoute(req, res) {
-      const [account, keyspace] = Strings.matches(req.path, /^\/tak\/([a-z])([a-z]+)\/([^\/]+)\//);
+      const [account, keyspace] = Strings.matches(req.path, /^\/ak\/([a-z])([a-z]+)\/([^\/]+)\//);
       if (account && keyspace) {
-         res.json(account, keyspace);
+         if (this.isBrowser(req)) {
+            res.redirect(302, ['ak', account, keyspace, 'help'].join('/'));
+         } else {
+            res.statusCode(404).send(`Route not found: ${req.path}`);
+         }
       } else {
-         res.redirect(302, '/routes');
+         res.statusCode(404).send(`Route not found: ${req.path}`);
       }
    }
 
