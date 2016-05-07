@@ -38,6 +38,7 @@ export default class {
 
    async sendErrorRoute(req, res) {
       const [account, keyspace] = Strings.matches(req.path, /^\/ak\/([a-z])([a-z]+)\/([^\/]+)\//);
+      logger.debug('sendErrorRoute', account, keyspace, this.isBrowser(req));
       if (account && keyspace) {
          if (this.isBrowser(req)) {
             res.redirect(302, ['/ak', account, keyspace, 'help'].join('/'));
