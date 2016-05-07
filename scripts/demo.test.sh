@@ -1,14 +1,16 @@
 
 set -e -u
 
-rurl=${rurl:=`cat ~/.redishub/cli.url`}
-cert=${cert:=~/.redishub/privcert.pem}
+rurl=${rurl:=`cat ~/.redishub/demo.url`}
 echo rurl $rurl
-openssl x509 -text -in $cert | grep CN
+
+curls() {
+  >&2 echo ignore "$*"
+}
 
 curlx() {
   url="$rurl/$1"
-  if ! curl -s -E $cert "$url"
+  if ! curl -s "$url"
   then
     >&2 echo "ERROR $url"
   fi
@@ -16,22 +18,19 @@ curlx() {
 
 curlv() {
   url="$rurl/$1"
-  curl -s -E $cert "$url"
-}
-
-curls() {
-  url="$rurl/$1"
-  curl -s -E $cert "$url"
+  curl -s "$url"
 }
 
 curlr() {
   url="$rurl/$1"
   expected=$2
-  >&2 echo "$url # expect $expected"
-  reply=`curl -s -E $cert $url`
-  if ! echo "$reply" | grep "$expected"
+  >&2 echo
+  >&2 echo "curl $url # expect $expected"
+  reply=`curl -s $url`
+  if ! echo "$reply" | grep -q "$expected"
   then
-    echo "$url # expected $expected, reply $reply"
+    >&2 echo "$reply"
+    >&2 echo "ERROR $url # expected $expected"
     exit 1
   fi
 }
@@ -39,8 +38,9 @@ curlr() {
 curlm() {
   url="$rurl/$1"
   count=$2
-  >&2 echo "$url # expect $count items (or more)"
-  reply=`curl -s -E $cert "$url"`
+  >&2 echo
+  >&2 echo "curl $url # expect $count items (or more)"
+  reply=`curl -s "$url"`
   echo "$reply"
   echo count `echo "$reply" | wc -w`
   [ `echo "$reply" | wc -w` -ge $count ]
@@ -49,8 +49,9 @@ curlm() {
 curli() {
   url="$rurl/$1"
   shift
-  >&2 echo "$url # expect includes $@"
-  reply=`curl -s -E $cert "$url"`
+  >&2 echo
+  >&2 echo "curl $url # expect includes $@"
+  reply=`curl -s "$url"`
   echo "$reply"
   echo count `echo "$reply" | wc -w`
   while [ $# -gt 0 ]
@@ -74,6 +75,15 @@ curl1() {
   curle $1 1
 }
 
+if echo $rurl | grep -q ^localhost
+then
+  ruri=`curl -s $rurl/register-expire`
+  echo ruri $ruri
+  rurl="$rurl/$ruri"
+  echo rurl $rurl
+  echo $rurl > ~/.redishub/test.url
+fi
+
 . scripts/_test.sh
 
 tmp=~/tmp/`basename $0 .sh`
@@ -81,11 +91,6 @@ mkdir -p $tmp
 cd $tmp
 pwd
 
-c0register() {
-  curlx deregister
-  curlv register/github.com/evanx
-  curls importcerts
-}
-
-c0register
 curla
+
+echo "OK"

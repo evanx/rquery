@@ -91,85 +91,45 @@ where `ttl/mykey` returns the TTL decreasing from 180 seconds:
 179
 ```
 
-#### Register a new keyspace
-
-Register a chosen keyspace name, and security access token:
-```shell
-curl -s https://demo.redishub.com/kt/$keyspace/$token/register/github.com/$user
-```
-where you also provide your Github username as identification to administer the keyspace (TODO).
-
-For example:
-```shell
-curl -s https://demo.redishub.com/kt/mykeyspace1/mysecret/register/github.com/snoopy
-```
-where `mysecret` should be specified, ideally generated and saved on disk as follows:
-```shell
-[ ! -f ~/.rquery-demo-token] && dd if=/dev/urandom bs=10 count=1 2>/dev/null |
-  ./node_modules/.bin/base32 > ~/.rquery-demo-token
-```
-where this "strong" token cannot be easily remembered (or guessed) and so must be saved. Note that currently it cannot be recovered if lost (TODO).
-
-Alternatively, use the public `gentoken` endpoint:
-```shell
-curl -s https://demo.redishub.com/gentoken
-```
-
-Note that SSL must be used, otherwise your keyspace could be hijacked i.e. if the token `mysecret` is transferred in cleartext.
-
-Actually this token-based `/kt` endpoint is provided for casual purposes, especially to be usable "as is" via your browser.
-
-
 #### Client cert
 
-For a secure access to keyspaces, let's try SSL client cert authentication, as per: http://github.com/evanx/concerto
+For a secure access to permanent keyspaces, let's try SSL client cert authentication on `redishub.com.`
 
-In this case, you will need create a repo named `certs-concerto` on your Github account.
+Note that we will register an account using our Telegram.org username. (I like Telegram.org, have an Ubuntu phone, and want to build a Telegram Bot whilst on annual leave to win one of those prizes, woohoo!)
 
-Let's clone `concerto:`
+So visit `https://web.telegram.org` or install the mobile app, and message `@redishub_bot.` That will verify your Telegram username to Redishub.
+
+Then generate a client cert in bash:
 ```shell
-git clone git@github.com:evanx/concerto.git
+(
+  set -e
+  [ ! -d .redishub ]
+  mkdir .redishub
+  cd .redishub
+  echo -n 'Enter your Telegram.org username: '
+  read tuser
+  if curl -s https://cli.redishub.com/verifyuser/telegram.org/$tuser | grep -v 'OK'
+  then
+    echo "Invalid Telegram user"
+  else
+    subj="/CN=$tuser"
+    echo subj $subj
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+      -subj "$subj" \
+      -out $tuser.cert.pem \
+      -keyout $tuser.privkey.pem
+    cat $tuser.privkey.pem $tuser.cert.pem > $tuser.privcert.pem
+  fi
+)
 ```
-Then we use `bin/concerto gen`
-```shell
-cd concerto
-bin/concerto gen
-```
-where `gen` command creates self-signed client cert using `openssl.`
 
 We deploy this generated privcert to `~/.redishub/privcert.pem` as follows:
 ```shell
-bin/concerto deploy
+client=redishub bin/concerto deploy
 ```
 
-##### certs-concerto
-
-Once you have created a `certs-concerto` repo on your Github account, then try `ghuser:`
+Then we can setup
 ```shell
-bin/concerto ghuser MY_GITHUB_USER
-```
-Create a local ~/certs-concerto repo with the generated cert:
-```shell
-bin/concerto ghinit
-```
-Try `ghcommit` to add, commit and push upstream to Github:
-```
-bin/concerto ghcommit 'initial'
-```
-```shell
-curl -s https://clisecure.redishub.com/k/mykeyspace/register/github.com/GHUSER
-```
-where you must substitute:
-- `GHUSER` for your Github user
-
-We instruct the service to import these client certs for our keyspace:
-```shell
-curl -s https://clisecure.redishub.com/k/mykeyspace/importcerts
-```
-
-Using our client privcert `~/.redishub/privcert.pem` as deployed by `concerto,` we can operate on the keyspace:
-```shell
-curl -s -E ~/.redishub/privcert.pem https://clisecure.redishub.com/k/mykeyspace/set/message/HELLO
 ```
 
 ##### Sets
