@@ -3,7 +3,7 @@ set -u -e
 
 . ./scripts/_name.sh
 
-rquery_port=$port NODE_ENV=production configModule=./config/${config}.js \
+rquery_port=$port NODE_ENV=production loggerLevel=debug configModule=./config/${config}.js \
   pm2 start index.js --name $name
 
 sleep 1
