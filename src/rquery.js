@@ -559,7 +559,7 @@ export default class {
             logger.debug('addPublicRoute', uri, result);
             await this.sendResult(null, req, res, result);
          } catch (err) {
-            this.sendError(err, req, res);
+            this.sendError(req, res, err);
          }
       });
    }
