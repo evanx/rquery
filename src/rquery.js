@@ -123,7 +123,7 @@ export default class {
       if (config.isSecureDomain) {
          this.addSecureDomain();
       }
-      this.addPublicRoute('verifyuser/telegram.org/:user', async (req, res) => {
+      this.addPublicRoute('verify-user-telegram/:user', async (req, res) => {
          // TODO
          return 'OK';
       });
@@ -573,7 +573,7 @@ export default class {
          const {account} = req.params;
          let v = this.validateRegisterAccount(account);
          if (v) {
-            throw {message: 'Invalid account name', account};
+            throw {message: v, account};
          }
          const dn = req.get('ssl_client_s_dn');
          const clientCert = req.get('ssl_client_cert');
