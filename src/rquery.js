@@ -43,9 +43,9 @@ export default class {
             res.set('Content-Type', 'text/html');
             res.send(marked(content.toString()));
          } else if (this.isCliDomain(req)) {
-            return commands.map(command => [command.key].concat(command.params).join(' '));
+            return this.listCommands();
          } else {
-            return commands.map(command => [command.key].concat(command.params).join(' '));
+            return this.listCommands();
          }
       });
       if (config.allowInfo) {
@@ -78,29 +78,26 @@ export default class {
          key: 'help',
          access: 'debug',
          format: 'plain'
-      }, async (req, res) => {
-         this.renderKeyspaceHelp(req, res);
+      }, async (req, res, reqx) => {
+         return this.renderKeyspaceHelp(req, res, reqx);
       });
       this.addKeyspaceCommand({
          key: 'deregister',
          access: 'admin'
-      }, async (req, res) => {
-         const {keyspace} = req.params;
-         const adminKey = this.adminKey('keyspace', keyspace);
-         const [keys, auth, user] = await redisClient.multiExecAsync(multi => {
-            multi.keys(this.adminKey(keyspace, '*'));
-            multi.hget(adminKey, 'auth');
-            multi.hget(adminKey, 'user');
+      }, async (req, res, {account, keyspace, accountKey, keyspaceKey}) => {
+         const [keys] = await redisClient.multiExecAsync(multi => {
+            multi.keys(this.keyspaceKey(account, keyspace, '*'));
          });
          const [keyspaces] = await redisClient.multiExecAsync(multi => {
-            multi.smembers(this.adminKey('keyspaces', user));
+            multi.smembers(this.accountKey(account, 'keyspaces'));
          });
          logger.info('deregister', keyspace, keys.length, keyspaces);
-         const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
+         const keyIndex = this.keyIndex(account, keyspace);
          const multiReply = await redisClient.multiExecAsync(multi => {
             keys.forEach(key => multi.del(key));
-            multi.srem(this.adminKey('keyspaces', user), keyspace);
-            multi.del(adminKey);
+            multi.del(this.accountKey(account, 'keyspaces'), keyspace);
+            multi.del(this.accountKey(account, 'certs'));
+            multi.del(accountKey);
          });
          return keys.map(key => key.substring(keyIndex));
       });
@@ -108,88 +105,41 @@ export default class {
          key: 'flush',
          access: 'admin'
       }, async (req, res) => {
-         const {keyspace} = req.params;
-         const keys = await redisClient.keysAsync(this.adminKey(keyspace, '*'));
-         const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
+         const {account, keyspace} = req.params;
+         const keys = await redisClient.keysAsync(this.keyspaceKey(account, keyspace, '*'));
+         const keyIndex = this.keyIndex(account, keyspace);
          const multi = redisClient.multi();
          keys.forEach(key => multi.del(key));
          const multiReply = await multi.execAsync();
          return keys.map(key => key.substring(keyIndex));
       });
       this.addKeyspaceCommand({
-         key: 'grant',
-         params: ['readToken'],
-         access: 'admin'
-      }, async (req, res, {keyspaceKey}) => {
-         return await redisClient.hsetAsync(keyspaceKey, 'readToken', req.params.readToken);
-      });
-      this.addKeyspaceCommand({
-         key: 'revoke',
-         access: 'admin'
-      }, async (req, res, {keyspaceKey}) => {
-         return await redisClient.hdelAsync(keyspaceKey, 'readToken');
-      });
-      this.addKeyspaceCommand({
-         key: 'readtoken',
-         access: 'debug'
-      }, async (req, res, {keyspaceKey}) => {
-         return await redisClient.hgetAsync(keyspaceKey, 'readToken');
-      });
-      this.addKeyspaceCommand({
          key: 'getconfig',
          access: 'debug'
-      }, async (req, res, {keyspaceKey}) => {
-         return await redisClient.hgetallAsync(keyspaceKey);
-      });
-      this.addKeyspaceCommand({
-         key: 'remcerts',
-         access: 'admin'
-      }, async (req, res, {keyspace}) => {
-         return redisClient.sremAsync(this.adminKey('certs', keyspace));
-      });
-      this.addKeyspaceCommand({
-         key: 'importcerts',
-         access: 'admin'
-      }, async (req, res, {multi, keyspace, keyspaceKey, adminKey}) => {
-         const keyspaceConfig = await redisClient.hgetallAsync(adminKey);
-         logger.info('zz', keyspace, adminKey, keyspaceConfig);
-         if (keyspaceConfig.auth !== 'github.com') {
-            throw new ValidationError('Only github.com auth currently supported: ' + keyspaceConfig.auth);
-         } else {
-            const ghuser = keyspaceConfig.user;
-            const manifestUrl = `https://raw.githubusercontent.com/${ghuser}`
-            + `/certs-concerto/master/redishub_authorized_certs.cson`;
-            const manifest = CSON.parse(await Requests.request({url: manifestUrl}));
-            if (!manifest.spec) {
-               throw new ValidationError('No spec: ' + manifest);
-            }
-            if (!lodash.isArray(manifest.certs)) {
-               throw new ValidationError('No certs array: ' + manifest);
-            }
-            if (manifest.certs.length > config.certLimit) {
-               throw new ValidationError('Too many certs: ' + manifest);
-            }
-            const digests = await Promise.all(manifest.certs.map(async cert => {
-               if (!/\.pem/.test(cert)) {
-                  throw new ValidationError('Not .pem: ' + cert);
-               } else {
-                  const certUrl = `https://raw.githubusercontent.com/${ghuser}`
-                  + `/certs-concerto/master/${cert}`;
-                  const pem = await Requests.request({url: certUrl});
-                  const digest = this.digestPem(pem, cert);
-                  multi.sadd(this.adminKey('certs', keyspace), digest);
-               }
-            }));
-            return manifest.certs;
-         }
+      }, async (req, res, {accountKey}) => {
+         return await redisClient.hgetallAsync(accountKey);
       });
       this.addKeyspaceCommand({
          key: 'keys',
          access: 'debug'
-      }, async (req, res, {keyspace}) => {
-         const keys = await redisClient.keysAsync(this.adminKey(keyspace, '*'));
-         const index = config.redisKeyspace.length + keyspace.length + 2;
-         return keys.map(key => key.substring(index));
+      }, async (req, res, {account, keyspace}) => {
+         const keys = await redisClient.keysAsync(this.keyspaceKey(account, keyspace, '*'));
+         const keyIndex = this.keyIndex(account, keyspace);
+         return keys.map(key => key.substring(keyIndex));
+      });
+      this.addKeyspaceCommand({
+         key: 'types',
+         access: 'debug'
+      }, async (req, res, {account, keyspace}) => {
+         const keys = await redisClient.keysAsync(this.keyspaceKey(account, keyspace, '*'));
+         logger.debug('ttl ak', account, keyspace, keys);
+         const keyIndex = this.keyIndex(account, keyspace);
+         const multi = redisClient.multi();
+         keys.forEach(key => multi.type(key));
+         const results = await multi.execAsync();
+         const result = {};
+         keys.forEach((key, index) => result[key.substring(keyIndex)] = results[index]);
+         return result;
       });
       this.addKeyspaceCommand({
          key: 'ttl',
@@ -199,11 +149,12 @@ export default class {
          return await redisClient.ttlAsync(keyspaceKey);
       });
       this.addKeyspaceCommand({
-         key: 'ttl',
+         key: 'ttls',
          access: 'debug'
-      }, async (req, res, {keyspace}) => {
-         const keys = await redisClient.keysAsync(this.adminKey(keyspace, '*'));
-         const keyIndex = config.redisKeyspace.length + keyspace.length + 2;
+      }, async (req, res, {account, keyspace}) => {
+         const keys = await redisClient.keysAsync(this.keyspaceKey(account, keyspace, '*'));
+         logger.debug('ttl ak', account, keyspace, keys);
+         const keyIndex = this.keyIndex(account, keyspace);
          const multi = redisClient.multi();
          keys.forEach(key => multi.ttl(key));
          const results = await multi.execAsync();
@@ -286,7 +237,7 @@ export default class {
          access: 'set'
       }, async (req, res, {multi, keyspace, keyspaceKey}) => {
          const {dest, member} = req.params;
-         const destKey = this.keyspaceKey(keyspace, dest);
+         const destKey = this.keyspaceKey(account, keyspace, dest);
          let result = await redisClient.smoveAsync(keyspaceKey, destKey, member);
          multi.expire(destKey, config.expire);
          return result;
@@ -381,9 +332,9 @@ export default class {
          key: 'brpoplpush',
          params: ['key', 'dest', 'timeout'],
          access: 'set'
-      }, async (req, res, {multi, keyspace, keyspaceKey}) => {
+      }, async (req, res, {multi, account, keyspace, keyspaceKey}) => {
          const {dest, timeout} = req.params;
-         const destKey = this.keyspaceKey(keyspace, dest);
+         const destKey = this.keyspaceKey(account, keyspace, dest);
          const result = await redisClient.brpoplpushAsync(keyspaceKey, destKey, timeout);
          multi.expire(destKey, config.expire);
          return result;
@@ -521,10 +472,13 @@ export default class {
    }
 
    renderKeyspaceHelp(req, res) {
-      const {keyspace} = req.params;
-      return commands.map(command => {
-         return command.command;
-      }).join('\n');
+      const {account, keyspace} = req.params;
+      logger.debug('help', req.params, commands);
+      return this.listCommands().join('\n');
+   }
+
+   listCommands() {
+      return commands.map(command => [command.key].concat(command.params).join(' '));
    }
 
    addPublicRoute(uri, fn) {
@@ -542,99 +496,65 @@ export default class {
       let uri;
       if (!config.secureDomain) {
          expressApp.get(config.location + 'register-expire', (req, res) => this.registerExpire(req, res));
-         uri = 'kt/:keyspace/:token';
       } else {
-         uri = 'k/:keyspace';
-      }
-      uri += '/register/:auth/:user';
-      logger.debug('register uri', uri);
-      expressApp.get(config.location + uri, (req, res) => this.register(req, res));
-   }
-
-   async registerExpire(req, res, previousError) {
-      if (previousError) {
-         logger.warn('registerExpire retry');
-      }
-      try {
-         logger.debug('registerExpire');
-         let errorMessage = this.validateRegisterTime();
-         if (errorMessage) {
-            this.sendError(req, res, {message: errorMessage});
-            return;
-         }
-         const keyspace = '~' + base32.encode(crypto.randomBytes(4));
-         const token = base32.encode(crypto.randomBytes(4));
-         let clientIp = req.get('x-forwarded-for');
-         logger.debug('registerExpire clientIp', keyspace, clientIp);
-         const adminKey = this.adminKey('keyspace', keyspace);
-         const replies = await redisClient.multiExecAsync(multi => {
-            //multi.sadd(this.adminKey('keyspaces:expire'), keyspace);
-            multi.hsetnx(adminKey, 'token', token);
-            multi.hsetnx(adminKey, 'registered', new Date().getTime());
-            multi.expire(adminKey, config.expire);
-            multi.incr(this.adminKey('demo:count'));
-            if (config.addClientIp && clientIp) {
-               multi.sadd(this.adminKey('demo:ips'), clientIp);
-            }
-         });
-         if (!replies[0]) {
-            logger.error('keyspace clash', keyspace, token);
-            if (!previousError) {
-               return registerExpire(req, res, {message: 'keyspace clash'});
-            }
-            throw {message: 'Expire keyspace clash'};
-         }
-         const replyPath = ['kt', keyspace, token].join('/');
-         logger.debug('registerExpire', keyspace, clientIp, replyPath);
-         if (this.isBrowser(req)) {
-            req.redirect(301, [replyPath, 'getconfig'].join('/'));
-         } else {
-            await this.sendResult(null, req, res, replyPath);
-         }
-      } catch (err) {
-         this.sendError(req, res, err);
+         this.addRegisterAccount('ak/:account/:keyspace');
       }
    }
 
-   async register(req, res) {
+   addRegisterAccount(uri) {
+      logger.debug('addRegisterAccount', uri);
+      expressApp.get(config.location + uri, (req, res) => this.registerAccount(req, res));
+   }
+
+   async registerAccount(req, res) {
       try {
          let errorMessage = this.validateRegisterTime();
          if (errorMessage) {
             this.sendError(req, res, {message: errorMessage});
             return;
          }
-         const {token, keyspace, auth, user} = req.params;
-         let v = this.validateRegisterKeyspace(keyspace);
+         const {account} = req.params;
+         let v = this.validateRegisterAccount(account);
          if (v) {
-            throw {message: 'Invalid keyspace', keyspace};
+            throw {message: 'Invalid account name', account};
          }
-         if (!lodash.includes(supportedAuth, auth)) {
-            throw {message: 'Invalid auth site', supportedAuth, auth};
+         const dn = req.get('ssl_client_s_dn');
+         const clientCert = req.get('ssl_client_cert');
+         logger.info('registerAccount dn', dn);
+         if (!clientCert) {
+            return 'No client cert';
          }
-         const url = 'https://' + auth + '/' + user;
-         logger.debug('url', url);
-         const response = await Requests.head({url});
-         if (response.statusCode !== 200) {
-            throw {message: 'Invalid auth site/username', statusCode: response.statusCode, url};
-         }
-         const adminKey = this.adminKey('keyspace', keyspace);
-         const replies = await redisClient.multiExecAsync(multi => {
-            logger.info('zz', adminKey, auth, user, this.adminKey('keyspaces', auth, user), keyspace);
-            multi.sadd(this.adminKey('keyspaces', auth, user), keyspace);
-            if (token) {
-               multi.hsetnx(adminKey, 'token', token);
-            }
-            multi.hsetnx(adminKey, 'auth', auth);
-            multi.hsetnx(adminKey, 'user', user);
-            multi.hgetall(adminKey);
+         const clientCertDigest = this.digestPem(clientCert);
+         const token = base32.encode(crypto.randomBytes(10));
+         const accountKey = this.adminKey('account', account);
+         const [hsetnx, saddAccount, saddCert] = await redisClient.multiExecAsync(multi => {
+            multi.hsetnx(accountKey, 'registered', new Date().getTime());
+            multi.sadd(this.adminKey('accounts'), account);
+            multi.sadd(this.adminKey('account', account, 'certs'), clientCertDigest);
          });
-         if (!replies[0]) {
-            throw {message: 'Invalid keyspace'};
+         if (!hsetnx) {
+            throw {message: 'Account exists (token)'};
          }
-         await this.sendResult(null, req, res, replies[replies.length - 1]);
+         if (!saddAccount) {
+            logger.error('sadd account');
+         }
+         if (!saddCert) {
+            logger.error('sadd cert');
+         }
+         const reply = {
+            token,
+            qr: this.buildQrUrl(account, token)
+         };
+         await this.sendResult(null, req, res, reply);
       } catch (err) {
          this.sendError(req, res, err);
       }
+   }
+
+   buildQrUrl(account, token) {
+      const otpauth = 'otpauth://totp/${account}@${config.serviceName}&secret=${token}';
+      return 'http://chart.googleapis.com/chart?chs=200x200&chld=M%7C0&cht=qr&chl='
+      + encodeURIComponent(otpauth);
    }
 
    validateRegisterTime() {
@@ -655,6 +575,61 @@ export default class {
          }
       }
       this.registerTime = time;
+   }
+
+   async registerExpire(req, res, previousError) {
+      if (previousError) {
+         logger.warn('registerExpire retry');
+      }
+      try {
+         logger.debug('registerExpire');
+         let errorMessage = this.validateRegisterTime();
+         if (errorMessage) {
+            this.sendError(req, res, {message: errorMessage});
+            return;
+         }
+         const account = '@' + base32.encode(crypto.randomBytes(4));
+         const keyspace = base32.encode(crypto.randomBytes(4));
+         let clientIp = req.get('x-forwarded-for');
+         const accountKey = this.accountKeyspace(account, keyspace);
+         logger.debug('registerExpire clientIp', clientIp, account, keyspace, accountKey);
+         const replies = await redisClient.multiExecAsync(multi => {
+            multi.hsetnx(accountKey, 'registered', new Date().getTime());
+            multi.expire(accountKey, 10*config.expire);
+            if (clientIp) {
+               multi.hsetnx(accountKey, 'clientIp', clientIp);
+               if (config.addClientIp) {
+                  multi.sadd(this.adminKey('keyspaces:expire:ips'), clientIp);
+               }
+            }
+            this.count(multi, 'keyspaces:expire');
+         });
+         if (!replies[0]) {
+            logger.error('keyspace clash', account, keyspace);
+            if (!previousError) {
+               return this.registerExpire(req, res, {message: 'keyspace clash'});
+            }
+            throw {message: 'Expire keyspace clash'};
+         }
+         const replyPath = ['ak', account, keyspace].join('/');
+         logger.debug('registerExpire', keyspace, clientIp, replyPath);
+         if (this.isBrowser(req)) {
+            if (true) {
+               res.redirect(302, [replyPath, 'help'].join('/'));
+            } else {
+               res.send(replyPath);
+            }
+         } else {
+            await this.sendResult(null, req, res, replyPath);
+         }
+         logger.debug($lineNumber);
+      } catch (err) {
+         this.sendError(req, res, err);
+      }
+   }
+
+   count(multi, key) {
+      multi.incr(this.adminKey(`metrics:${key}:count`));
    }
 
    validateImportTime() {
@@ -679,7 +654,7 @@ export default class {
 
    addKeyspaceCommand(command, fn) {
       assert(command.key, 'command.key');
-      let uri = config.secureDomain? 'k/:keyspace': 'kt/:keyspace/:token';
+      let uri = 'ak/:account/:keyspace';
       command.params = command.params || [];
       const key = command.key + command.params.length;
       logger.debug('addKeyspaceCommand', command.key, key, uri);
@@ -700,11 +675,13 @@ export default class {
    createKeyspaceHandler(command, fn) {
       return async (req, res) => {
          try {
-            const {token, keyspace, key, timeout} = req.params;
-            const adminKey = this.adminKey('keyspace', keyspace);
+            const {account, keyspace, key, timeout} = req.params;
+            assert(account, 'account');
             assert(keyspace, 'keyspace');
+            const accountKey = this.accountKeyspace(account, keyspace);
             let v;
-            v = await this.validateReqKeyspaceAsync(req, keyspace);
+            //await this.migrateKeyspace(req.params);
+            v = this.validateReqKeyspace(req, account, keyspace);
             if (v) {
                this.sendStatusMessage(req, res, 400, 'Invalid keyspace: ' + v);
                return;
@@ -720,17 +697,17 @@ export default class {
                   return;
                }
             }
-            const [[time], admined, accessed, accessToken, readToken, certs] = await redisClient.multiExecAsync(multi => {
+            const isSecureAccount = !/^@/.test(account);
+            const [[time], registered, admined, accessed, certs] = await redisClient.multiExecAsync(multi => {
                multi.time();
-               multi.hget(adminKey, 'admined');
-               multi.hget(adminKey, 'accessed');
-               multi.hget(adminKey, 'token');
-               multi.hget(adminKey, 'readToken');
-               multi.smembers(this.adminKey('certs', keyspace));
+               multi.hget(accountKey, 'registered');
+               multi.hget(accountKey, 'admined');
+               multi.hget(accountKey, 'accessed');
+               if (isSecureAccount) {
+                  multi.smembers(this.adminKey('account', account, 'certs'));
+               }
             });
-            v = this.validateAccess({command, req, keyspace, token, time,
-               admined, accessed, accessToken, readToken, certs
-            });
+            v = this.validateAccess({command, req, account, keyspace, time, registered, admined, accessed, certs});
             if (v) {
                this.sendStatusMessage(req, res, 403, v);
                return;
@@ -760,22 +737,22 @@ export default class {
                }
             }
             const multi = redisClient.multi();
-            const reqx = {multi, keyspace, adminKey};
+            const reqx = {multi, account, keyspace, accountKey};
             if (key) {
-               reqx.keyspaceKey = this.keyspaceKey(keyspace, key);
+               reqx.keyspaceKey = this.keyspaceKey(account, keyspace, key);
             }
             await this.sendResult(command, req, res, await fn(req, res, reqx));
             multi.sadd(this.adminKey('keyspaces'), keyspace);
-            multi.hset(adminKey, 'accessed', time);
+            multi.hset(accountKey, 'accessed', time);
             if (command && command.access === 'admin') {
-               multi.hset(adminKey, 'admined', time);
+               multi.hset(accountKey, 'admined', time);
             }
             if (key) {
                assert(reqx.keyspaceKey);
                multi.expire(reqx.keyspaceKey, config.expire);
             }
-            if (!config.secureDomain && /^~/.test(keyspace)) {
-               multi.expire(adminKey, config.expire);
+            if (!config.secureDomain && account[0] === '@') {
+               multi.expire(accountKey, config.expire);
             }
             await multi.execAsync();
          } catch (err) {
@@ -784,16 +761,16 @@ export default class {
       };
    }
 
-   async migrateKeyspace({keyspace}) {
-      const adminKey = this.adminKey('keyspace', keyspace);
+   async migrateKeyspace({account, keyspace}) {
+      const accountKey = this.accountKeyspace(account, keyspace);
       const [accessToken, token] = await redisClient.multiExecAsync(multi => {
-         multi.hget(adminKey, 'accessToken');
-         multi.hget(adminKey, 'token');
+         multi.hget(accountKey, 'accessToken');
+         multi.hget(accountKey, 'token');
       });
       if (!token && accessToken) {
          const [hsetnx, hdel] = await redisClient.multiExecAsync(multi => {
-            multi.hsetnx(adminKey, 'token', accessToken);
-            multi.hdel(adminKey, 'accessToken');
+            multi.hsetnx(accountKey, 'token', accessToken);
+            multi.hdel(accountKey, 'accessToken');
          });
          if (!hsetnx) {
             throw new Error('Migrate keyspace hset failed');
@@ -803,13 +780,19 @@ export default class {
       }
    }
 
+   validateRegisterAccount(account) {
+      if (!/^[^\-_a-z0-9]+$/.test(account)) {
+         return 'Account name is invalid. Try only lowercase/numeric with dash/underscore.';
+      }
+   }
+
    validateRegisterKeyspace(keyspace) {
       if (/~/.test(keyspace)) {
          return 'contains tilde';
       }
    }
 
-   async validateReqKeyspaceAsync(req, keyspace) {
+   validateReqKeyspace(req, account, keyspace) {
       if (/^:/.test(keyspace)) {
          return 'leading colon';
       }
@@ -819,13 +802,12 @@ export default class {
       if (/:$/.test(keyspace)) {
          return 'trailing colon';
       }
-      if (/^(MYKEYSPACE)/.test(keyspace)) {
+      if (/^(KEYSPACE)/.test(keyspace)) {
          return 'Reserved keyspace for documentation purposes';
       }
       if (/^(test)/.test(keyspace)) {
          return 'Reserved keyspace for testing purposes';
       }
-      await this.migrateKeyspace(req.params);
    }
 
    validateKey(key) {
@@ -845,11 +827,13 @@ export default class {
       return false;
    }
 
-   validateAccess({req, command, keyspace, token, time, admined, accessed, accessToken, readToken, certs}) {
+   validateAccess({req, command, account, keyspace, time, registered, admined, accessed, certs}) {
       const scheme = req.get('X-Forwarded-Proto');
-      logger.debug('validateAccess scheme', scheme, keyspace, command);
-      if (this.isSecureDomain(req) && scheme === 'http') {
-         return `Insecure scheme ${scheme}: ${req.hostname}`;
+      logger.debug('validateAccess scheme', scheme, account, keyspace, command);
+      if (this.isSecureDomain(req)) {
+         if (scheme === 'http') {
+            return `Insecure scheme ${scheme}: ${req.hostname}`;
+         }
       }
       if (command.access) {
          if (command.access === 'admin') {
@@ -867,31 +851,21 @@ export default class {
          } else {
          }
       }
-      if (command.key === 'importcerts') {
-         const errorMessage = this.validateImportTime();
+      const isSecureAccount = !/^@/.test(account);
+      if (this.isSecureDomain(req)) {
+         const errorMessage = this.validateCert(req, certs, account);
          if (errorMessage) {
             return errorMessage;
          }
-      } else if (this.isSecureDomain(req)) {
-         const errorMessage = this.validateCert(req, certs, keyspace);
-         if (errorMessage) {
-            return errorMessage;
-         }
-      } else if (config.secureDomain) {
-         return 'Invalid domain';
-      } else if (!token) {
+      } else if (!registered) {
          return 'Unregistered keyspace';
-      } else if (token === accessToken) {
-      } else if (this.isReadCommand(command)) {
-         if (token !== readToken) {
-            return 'Invalid token';
-         }
-      } else if (token !== accessToken) {
-         return 'Invalid access token';
+      } else if (isSecureAccount) {
+         logger.error('validateAccess', account, keyspace);
+         return 'Invalid access';
       }
    }
 
-   validateCert(req, certs, name) {
+   validateCert(req, certs, account) {
       if (!certs) {
          return 'No encrolled certs';
       }
@@ -899,15 +873,25 @@ export default class {
       if (!clientCert) {
          return 'No client cert';
       }
-      const clientCertDigest = this.digestPem(clientCert, name);
-      logger.info('validateAccess', clientCertDigest, name);
+      const clientCertDigest = this.digestPem(clientCert);
+      logger.info('validateCert', clientCertDigest, account);
       if (!certs.includes(clientCertDigest)) {
          return 'Invalid cert';
       }
    }
 
-   keyspaceKey(keyspace, key) {
-      return this.adminKey('keyspace', keyspace) + '~' + key;
+   keyIndex(account, keyspace) {
+      return [config.redisKeyspace, account, keyspace].reduce((previousValue, currentValue) => {
+         return previousValue + currentValue.length
+      }, 3);
+   }
+
+   accountKeyspace(account, keyspace) {
+      return [config.redisKeyspace, 'ak', account, keyspace].join(':');
+   }
+
+   keyspaceKey(account, keyspace, key) {
+      return [config.redisKeyspace, account, keyspace, key].join('~');
    }
 
    adminKey(...parts) {
@@ -989,7 +973,7 @@ export default class {
       res.status(statusCode).send(errorMessage + '\n');
    }
 
-   digestPem(pem, name) {
+   digestPem(pem) {
       const lines = pem.split(/[\n\t]/);
       if (lines.length < 8) {
          throw new ValidationError('Invalid lines');

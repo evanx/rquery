@@ -4,6 +4,7 @@ module.exports = {
       redisUrl: 'redis://localhost:6379/13',
       redisKeyspace: 'demo:rquery',
       hostname: 'demo.redishub.com',
+      serviceName: 'redishub',
       port: 8765,
       location: '/',
       indexCommand: 'getconfig',

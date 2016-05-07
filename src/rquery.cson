@@ -44,6 +44,8 @@ config:
       unit: 'seconds'
    addClientIp:
       defaultValue: false
+   serviceName:
+      type: 'string'
 
 state:
    redisClient: {}

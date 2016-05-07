@@ -69,13 +69,15 @@ where we can get the Epoch time in seconds, milliseconds or nanoseconds.
 
 We can request an temporary keyspace that will expire after an idle period of 180s:
 ```shell
-rdemo=`curl -s https://demo.redishub.com/register-expire | grep ^kt`
+rdemo=`curl -s https://demo.redishub.com/register-expire | grep ^ak`
 rdemo="https://demo.redishub.com/$rdemo"
 echo $rdemo
 ```
+where we set `rdemo` environment variable with the keyspace URL:
 ```
-https://demo.redishub.com/kt/~atfmbxg/g05qk2g
+https://demo.redishub.com/ak/@gyu3vn0/ztrp8y8
 ```
+where an account and keyspace have been randomly generated (and so better than a password). Note that generated ephemeral account names start with `@.`
 
 Then we can use `curl $rdemo` as follows:
 ```shell
