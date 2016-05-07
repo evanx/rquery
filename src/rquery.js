@@ -40,7 +40,7 @@ export default class {
       const [account, keyspace] = Strings.matches(req.path, /^\/ak\/([a-z])([a-z]+)\/([^\/]+)\//);
       if (account && keyspace) {
          if (this.isBrowser(req)) {
-            res.redirect(302, ['ak', account, keyspace, 'help'].join('/'));
+            res.redirect(302, ['/ak', account, keyspace, 'help'].join('/'));
          } else {
             res.statusCode(404).send(`Route not found: ${req.path}`);
          }
