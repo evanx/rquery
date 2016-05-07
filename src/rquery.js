@@ -37,19 +37,24 @@ export default class {
    }
 
    sendErrorRoute(req, res) {
-      const [account, keyspace] = Strings.matches(req.path, /^\/ak\/([a-z]+)\/([^\/]+)\//);
-      logger.debug('sendErrorRoute', account, keyspace, this.isBrowser(req));
-      if (account && keyspace) {
-         if (this.isBrowser(req)) {
-            const redirectPath = ['/ak', account, keyspace, 'help'].join('/');
-            logger.debug('sendErrorRoute 32', account, keyspace, req.path, req.get('user-agent'), redirectPath);
-            res.redirect(302, redirectPath);
+      try {
+         const [account, keyspace] = Strings.matches(req.path, /^\/ak\/([a-z]+)\/([^\/]+)\//);
+         logger.debug('sendErrorRoute', account, keyspace, this.isBrowser(req));
+         if (account && keyspace) {
+            if (this.isBrowser(req)) {
+               const redirectPath = ['/ak', account, keyspace, 'help'].join('/');
+               logger.debug('sendErrorRoute 32', account, keyspace, req.path, req.get('user-agent'), redirectPath);
+               res.redirect(302, redirectPath);
+            } else {
+               logger.debug('sendErrorRoute 404', account, keyspace, req.path, req.get('user-agent'));
+               res.statusCode(404).send(`Route not found: ${req.path}`);
+            }
          } else {
-            logger.debug('sendErrorRoute 404', account, keyspace, req.path, req.get('user-agent'));
             res.statusCode(404).send(`Route not found: ${req.path}`);
          }
-      } else {
-         res.statusCode(404).send(`Route not found: ${req.path}`);
+      } catch (err) {
+         logger.warn(err);
+         throw err;
       }
    }
 
