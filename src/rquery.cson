@@ -46,6 +46,10 @@ config:
       defaultValue: false
    serviceName:
       type: 'string'
+   serviceLabel:
+      type: 'string'
+   webhookTimeout:
+      defaultValue: 8000
 
 state:
    redisClient: {}

@@ -95,41 +95,65 @@ where `ttl/mykey` returns the TTL decreasing from 180 seconds:
 
 For a secure access to permanent keyspaces, let's try SSL client cert authentication on `redishub.com.`
 
-Note that we will register an account using our Telegram.org username. (I like Telegram.org, have an Ubuntu phone, and want to build a Telegram Bot whilst on annual leave to win one of those prizes, woohoo!)
+Note that we will register an account using our Telegram.org username. (I like Telegram.org, have an Ubuntu phone, and want to build a Telegram Bot to win one of those prizes, woohoo!)
 
-So visit `https://web.telegram.org` or install the mobile app, and message `@redishub_bot.` That will verify your Telegram username to Redishub.
+So visit `https://web.telegram.org` or install the mobile app, and message `@redishub_bot /verify.` That will verify your Telegram username to Redishub.
 
 Then generate a client cert in bash:
 ```shell
 (
   set -e
+  cd
   [ ! -d .redishub ]
   mkdir .redishub
   cd .redishub
+  pwd
   echo -n 'Enter your Telegram.org username: '
   read tuser
   if curl -s https://cli.redishub.com/verifyuser/telegram.org/$tuser | grep -v 'OK'
   then
-    echo "Invalid Telegram user"
+    echo "Invalid Telegram user '$tuser'"
   else
+    echo $tuser > tuser
     subj="/CN=$tuser"
     echo subj $subj
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
       -subj "$subj" \
-      -out $tuser.cert.pem \
-      -keyout $tuser.privkey.pem
-    cat $tuser.privkey.pem $tuser.cert.pem > $tuser.privcert.pem
+      -out cert.pem \
+      -keyout privkey.pem
+    cat privkey.pem cert.pem > privcert.pem
+    ls -l
+    openssl x509 -text -in ~/.redishub/privcert.pem | grep 'CN='    
   fi
 )
 ```
 
-We deploy this generated privcert to `~/.redishub/privcert.pem` as follows:
+We can register a keyspace using this privcert:
 ```shell
-client=redishub bin/concerto deploy
+tuser=`cat ~/.redishub/tuser`
+curl -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/register
 ```
 
-Then we can setup
+We can create a bash function an alias for keyspace commands in `~/.bashrc:`
 ```shell
+redishubcli() {
+  local tuser=`cat ~/.redishub/tuser`
+  local cmd=`echo $@ | tr ' ' '/'`
+  curl -s -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/$cmd
+}
+
+alias rh=redishubcli
+```
+
+First we register a keyspace:
+```shell
+rh ks1 register-keyspace
+```
+In a given keyspace e.g. `ks1` we can invoke Redis commands:
+```shell
+rh ks1 sadd myset item1
+rh ks1 sadd myset item2
+rh ks1 smembers myset
 ```
 
 ##### Sets

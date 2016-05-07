@@ -1,7 +1,6 @@
 
 import expressLib from 'express';
 import marked from 'marked';
-import base32 from 'base32';
 import crypto from 'crypto';
 import CSON from 'season';
 
@@ -10,6 +9,17 @@ import * as Express from '../lib/Express';
 
 const unsupportedAuth = ['twitter.com', 'github.com', 'gitlib.com', 'bitbucket.org'];
 const supportedAuth = ['github.com'];
+
+global.Strings = {
+   matches(string, regex) {
+      const match = string.match(regex);
+      if (!match) {
+         return [];
+      } else {
+         return match.slice(1);
+      }
+   }
+};
 
 export default class {
 
@@ -21,8 +31,41 @@ export default class {
       redisClient = redisLib.createClient(config.redisUrl);
       expressApp = expressLib();
       this.addRoutes();
+      expressApp.use((req, res) => this.sendErrorRoute(req, res));
       expressServer = await Express.listen(expressApp, config.port);
       logger.info('listen', config.port, Express.getRoutes(expressApp), expressServer);
+   }
+
+   async sendErrorRoute(req, res) {
+      const [account, keyspace] = Strings.matches(req.path, /^\/tak\/([a-z])([a-z]+)\/([^\/]+)\//);
+      if (account && keyspace) {
+         res.json(account, keyspace);
+      } else {
+         res.redirect(302, '/routes');
+      }
+   }
+
+   addSecureDomain() {
+      this.addPublicRoute(`gentoken/:host/:user/:webhookDomain`, async (req, res) => {
+         const {user, host, webhook} = req.params;
+         if (!/^[a-z][a-z0-9-\.]+\.[a-z]+$/.test(webhookDomain)) {
+            throw {message: 'Invalid webhook host'};
+         }
+         const supportedDomains = ['test.redishub.com'];
+         if (webhookDomain !== supportedDomains[0]) {
+            throw {message: 'Webhook host not supported. Try: ' + supportedDomains[0]};
+         }
+         const uri = ['webhook', config.serviceName, host, user].join('/');
+         const url = `https://${webhook}/${uri}`;
+         logger.debug('webhook url', url, host, user);
+         const response = await Requests.head({url, timeout: config.webhookTimeout});
+         if (response.statusCode !== 200) {
+            throw {message: `Webhook ` + response.statusCode, url};
+         }
+         const token = this.generateToken();
+         const qr = this.buildQrUrl({token, user, host});
+         return {token, qr};
+      });
    }
 
    addRoutes() {
@@ -70,8 +113,19 @@ export default class {
          return Math.ceil(time[0] * 1000 * 1000 + parseInt(time[1]));
       });
       this.addPublicRoute('time', () => redisClient.timeAsync());
-      this.addPublicRoute('gentoken', async (req, res) => {
-         return base32.encode(crypto.randomBytes(10));
+      this.addPublicRoute(`gentoken/:host/:user`, async (req, res) => {
+         const {user, host} = req.params;
+         logger.debug('gentoken', user, host);
+         const token = this.generateToken();
+         const qr = this.buildQrUrl({token, user, host});
+         return {token, qr};
+      });
+      if (config.isSecureDomain) {
+         this.addSecureDomain();
+      }
+      this.addPublicRoute('verifyuser/telegram.org/:user', async (req, res) => {
+         // TODO
+         return 'OK';
       });
       this.addRegisterRoutes();
       this.addKeyspaceCommand({
@@ -82,7 +136,16 @@ export default class {
          return this.renderKeyspaceHelp(req, res, reqx);
       });
       this.addKeyspaceCommand({
-         key: 'deregister',
+         key: 'register-keyspace',
+         access: 'admin'
+      }, async (req, res, {time, account, keyspace, accountKey}) => {
+         const replies = await redisClient.multiExecAsync(multi => {
+            multi.hsetnx(accountKey, 'registered', time);
+         });
+         return replies;
+      });
+      this.addKeyspaceCommand({
+         key: 'deregister-keyspace',
          access: 'admin'
       }, async (req, res, {account, keyspace, accountKey, keyspaceKey}) => {
          const [keys] = await redisClient.multiExecAsync(multi => {
@@ -483,9 +546,10 @@ export default class {
 
    addPublicRoute(uri, fn) {
       expressApp.get(config.location + uri, async (req, res) => {
-         let hostname = req.hostname.replace(/\..*$/, '');
          try {
-            await this.sendResult(null, req, res, await fn(req, res));
+            const result = await fn(req, res);
+            logger.debug('addPublicRoute', uri, result);
+            await this.sendResult(null, req, res, result);
          } catch (err) {
             this.sendError(err, req, res);
          }
@@ -493,17 +557,10 @@ export default class {
    }
 
    addRegisterRoutes() {
-      let uri;
-      if (!config.secureDomain) {
-         expressApp.get(config.location + 'register-expire', (req, res) => this.registerExpire(req, res));
-      } else {
-         this.addRegisterAccount('ak/:account/:keyspace');
+      expressApp.get(config.location + 'register-expire', (req, res) => this.registerExpire(req, res));
+      if (config.secureDomain) {
+         expressApp.get(config.location + 'register-account/:account', (req, res) => this.registerAccount(req, res));
       }
-   }
-
-   addRegisterAccount(uri) {
-      logger.debug('addRegisterAccount', uri);
-      expressApp.get(config.location + uri, (req, res) => this.registerAccount(req, res));
    }
 
    async registerAccount(req, res) {
@@ -525,7 +582,7 @@ export default class {
             return 'No client cert';
          }
          const clientCertDigest = this.digestPem(clientCert);
-         const token = base32.encode(crypto.randomBytes(10));
+         const token = this.generateToken();
          const accountKey = this.adminKey('account', account);
          const [hsetnx, saddAccount, saddCert] = await redisClient.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', new Date().getTime());
@@ -541,20 +598,34 @@ export default class {
          if (!saddCert) {
             logger.error('sadd cert');
          }
-         const reply = {
+         const qr = this.buildQrUrl({
             token,
-            qr: this.buildQrUrl(account, token)
-         };
-         await this.sendResult(null, req, res, reply);
+            user: account,
+            host: config.hostname
+         });
+         await this.sendResult(null, req, res, {token, qr});
       } catch (err) {
          this.sendError(req, res, err);
       }
    }
 
-   buildQrUrl(account, token) {
-      const otpauth = 'otpauth://totp/${account}@${config.serviceName}&secret=${token}';
-      return 'http://chart.googleapis.com/chart?chs=200x200&chld=M%7C0&cht=qr&chl='
-      + encodeURIComponent(otpauth);
+   generateToken() {
+      const bytes = crypto.randomBytes(10);
+      const set = 'abcdefghijklmnopqrstuvwxyz234567';
+      var output = '';
+      for (var i = 0, l = bytes.length; i < l; i++) {
+         output += set[Math.floor(bytes[i] / 255.0 * (set.length - 1))];
+      }
+      return output;
+   }
+
+   buildQrUrl(options) {
+      assert(options.host);
+      options = Object.assign({label: options.host, issuer: options.host}, options);
+      const {label, user, host, token, issuer} = options;
+      const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=';
+      const uri = `${label}:${user}@${host}?secret=${token.toUpperCase()}&issuer=${issuer}`;
+      return [uri, 'otpauth://totp/' + encodeURIComponent(uri)];
    }
 
    validateRegisterTime() {
@@ -588,8 +659,8 @@ export default class {
             this.sendError(req, res, {message: errorMessage});
             return;
          }
-         const account = '@' + base32.encode(crypto.randomBytes(4));
-         const keyspace = base32.encode(crypto.randomBytes(4));
+         const account = '@' + this.generateToken();
+         const keyspace = this.generateToken();
          let clientIp = req.get('x-forwarded-for');
          const accountKey = this.accountKeyspace(account, keyspace);
          logger.debug('registerExpire clientIp', clientIp, account, keyspace, accountKey);
@@ -737,7 +808,7 @@ export default class {
                }
             }
             const multi = redisClient.multi();
-            const reqx = {multi, account, keyspace, accountKey};
+            const reqx = {multi, time, account, keyspace, accountKey};
             if (key) {
                reqx.keyspaceKey = this.keyspaceKey(account, keyspace, key);
             }
@@ -857,6 +928,7 @@ export default class {
          if (errorMessage) {
             return errorMessage;
          }
+      } else if (command.key === 'register-keyspace') {
       } else if (!registered) {
          return 'Unregistered keyspace';
       } else if (isSecureAccount) {
@@ -954,12 +1026,12 @@ export default class {
    }
 
    isCliDomain(req) {
-      return /^(cli|clisecure)\./.test(req.hostname) || !this.isBrowser(req);
+      return /^cli/.test(req.hostname) || !this.isBrowser(req);
    }
 
    sendError(req, res, err) {
-      logger.debug(err.stack);
-      this.sendStatusMessage(req, res, 500, err.message, err);
+      logger.warn(err);
+      //this.sendStatusMessage(req, res, 500, err.message, err);
    }
 
    sendStatusMessage(req, res, statusCode, errorMessage, err) {

@@ -4,6 +4,8 @@ module.exports = {
       redisUrl: 'redis://localhost:6379/1',
       redisKeyspace: 'demo:rquery',
       hostname: 'secure.redishub.com',
+      serviceName: 'redishub-secure',
+      serviceLabel: 'RedisHub Secure',
       port: 4567,
       location: '/',
       indexCommand: 'getconfig',
@@ -14,6 +16,6 @@ module.exports = {
       importLimit: 5,
       adminLimit: 1,
       defaultFormat: 'json',
-      addClientIp: false      
+      addClientIp: false
    }
 };
