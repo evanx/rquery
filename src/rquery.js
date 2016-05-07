@@ -1035,7 +1035,7 @@ export default class {
 
    sendError(req, res, err) {
       logger.warn(err);
-      //this.sendStatusMessage(req, res, 500, err.message, err);
+      this.sendStatusMessage(req, res, 500, err.message, err);
    }
 
    sendStatusMessage(req, res, statusCode, errorMessage, err) {
