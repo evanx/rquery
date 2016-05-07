@@ -43,6 +43,7 @@ export default class {
          if (this.isBrowser(req)) {
             res.redirect(302, ['/ak', account, keyspace, 'help'].join('/'));
          } else {
+            logger.debug('sendErrorRoute', account, keyspace, req.path, req.get('user-agent'));
             res.statusCode(404).send(`Route not found: ${req.path}`);
          }
       } else {
