@@ -36,7 +36,7 @@ export default class {
       logger.info('listen', config.port, Express.getRoutes(expressApp), expressServer);
    }
 
-   async sendErrorRoute(req, res) {
+   sendErrorRoute(req, res) {
       const [account, keyspace] = Strings.matches(req.path, /^\/ak\/([a-z]+)\/([^\/]+)\//);
       logger.debug('sendErrorRoute', account, keyspace, this.isBrowser(req));
       if (account && keyspace) {
