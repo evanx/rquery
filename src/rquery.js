@@ -47,10 +47,10 @@ export default class {
                res.redirect(302, redirectPath);
             } else {
                logger.debug('sendErrorRoute 404', account, keyspace, req.path, req.get('user-agent'));
-               res.status(404).send(`Route not found: ${req.path}\n`);
+               res.status(404).send(`Route not found: ${req.path}. Try /routes or /help.\n`);
             }
          } else {
-            res.status(404).send(`Route not found: ${req.path}\n`);
+            res.status(404).send(`Route not found: ${req.path}. Try /routes or /help.\n`);
          }
       } catch (err) {
          logger.warn(err);
