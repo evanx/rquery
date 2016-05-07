@@ -852,7 +852,7 @@ export default class {
    }
 
    validateRegisterAccount(account) {
-      if (!/^[^\-_a-z0-9]+$/.test(account)) {
+      if (!/^[\-_a-z0-9]+$/.test(account)) {
          return 'Account name is invalid. Try only lowercase/numeric with dash/underscore.';
       }
    }
