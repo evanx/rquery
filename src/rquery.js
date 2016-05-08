@@ -109,6 +109,10 @@ export default class {
       if (config.allowKeyspaces) {
          this.addPublicRoute('keyspaces', () => redisClient.smembersAsync(this.adminKey('keyspaces')));
       }
+      this.addPublicRoute('epoch', async () => {
+         const time = await redisClient.timeAsync();
+         return time[0];
+      });
       this.addPublicRoute('time/seconds', async () => {
          const time = await redisClient.timeAsync();
          return time[0];
