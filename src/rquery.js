@@ -628,10 +628,10 @@ export default class {
 
    generateToken() {
       const bytes = crypto.randomBytes(10);
-      const set = 'abcdefghijklmnopqrstuvwxyz234567';
+      const symbols = 'abcdefghijklmnopqrstuvwxyz234567';
       var output = '';
-      for (var i = 0, l = bytes.length; i < l; i++) {
-         output += set[Math.floor(bytes[i] / 255.0 * (set.length - 1))];
+      for (var i = 0; i < bytes.length; i++) {
+         output += symbols[Math.floor(bytes[i] / 255 * (symbols.length - 1))];
       }
       return output;
    }
