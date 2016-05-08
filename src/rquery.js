@@ -57,7 +57,7 @@ export default class {
    }
 
    addSecureDomain() {
-      this.addPublicRoute(`generate-topt-key/:host/:user/:webhookDomain`, async (req, res) => {
+      this.addPublicRoute(`genkey-topt/:host/:user/:webhookDomain`, async (req, res) => {
          const {user, host, webhook} = req.params;
          if (!/^[a-z][a-z0-9-\.]+\.[a-z]+$/.test(webhookDomain)) {
             throw {message: 'Invalid webhook host'};
@@ -126,14 +126,14 @@ export default class {
          return Math.ceil(time[0] * 1000 * 1000 + parseInt(time[1]));
       });
       this.addPublicRoute('time', () => redisClient.timeAsync());
-      this.addPublicRoute(`generate-topt-key/:user/:host`, async (req, res) => {
+      this.addPublicRoute(`genkey-topt/:user/:host`, async (req, res) => {
          const {user, host} = req.params;
-         logger.debug('generate-topt-key', user, host);
+         logger.debug('genkey-topt', user, host);
          return this.buildQrReply({user, host});
       });
-      this.addPublicRoute(`generate-topt-key-google-authenticator/:account/:issuer`, async (req, res) => {
+      this.addPublicRoute(`genkey-topt-google-authenticator/:account/:issuer`, async (req, res) => {
          const {account, issuer} = req.params;
-         logger.debug('generate-topt-key-google-authenticator', account, issuer);
+         logger.debug('genkey-topt-google-authenticator', account, issuer);
          return this.buildQrReply({account, issuer});
       });
       if (config.isSecureDomain) {
