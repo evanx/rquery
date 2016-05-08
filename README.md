@@ -136,13 +136,18 @@ curl -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/register
 
 We can create a bash function and alias for keyspace commands in `~/.bashrc:`
 ```shell
-curlrh() {
+rhdebug() {
+   [ -t 1 ] && >&2 echo -e "\e[33m${*}\e[39m"   
+}
+
+rhcurl() {
   local tuser=`cat ~/.redishub/tuser`
   local cmd=`echo $@ | tr ' ' '/'`
+  rhdebug "curl -s -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/$cmd"
   curl -s -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/$cmd
 }
 
-alias rh=curlrh
+alias rh=rhcurl
 ```
 
 First we register a keyspace:
