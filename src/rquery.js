@@ -73,8 +73,7 @@ export default class {
             throw {message: `Webhook ` + response.statusCode, url};
          }
          const token = this.generateToken();
-         const qr = this.buildQrUrl({token, user, host});
-         return {token, qr};
+         return this.buildQrReply({token, user, host});
       });
    }
 
@@ -126,15 +125,12 @@ export default class {
       this.addPublicRoute(`gentoken/:user/:host`, async (req, res) => {
          const {user, host} = req.params;
          logger.debug('gentoken', user, host);
-         const token = this.generateToken();
-         const qr = this.buildQrUrl({token, user, host});
-         return {token, qr};
+         return this.buildQrReply({user, host});
       });
       this.addPublicRoute(`gentoken-google-authenticator/:account/:issuer`, async (req, res) => {
          const {account, issuer} = req.params;
          logger.debug('gentoken', account, issuer);
-         const token = this.generateToken();
-         const qr = this.buildQrUrl({token, account, issuer});
+         return this.buildQrReply({account, issuer});
          return {token, qr};
       });
       if (config.isSecureDomain) {
@@ -615,12 +611,12 @@ export default class {
          if (!saddCert) {
             logger.error('sadd cert');
          }
-         const qr = this.buildQrUrl({
+         const result = this.buildQrReply({
             token,
             user: account,
             host: config.hostname
          });
-         await this.sendResult(null, req, res, {token, qr});
+         await this.sendResult(null, req, res, result);
       } catch (err) {
          this.sendError(req, res, err);
       }
@@ -636,8 +632,11 @@ export default class {
       return output;
    }
 
-   buildQrUrl(options) {
+   buildQrReply(options) {
       let {label, account, user, host, token, issuer} = options;
+      if (!token) {
+         token = this.generateToken();
+      }
       if (!issuer) {
          issuer = label || host;
       }
@@ -650,7 +649,7 @@ export default class {
       const uri = `${account}?secret=${token.toUpperCase()}&issuer=${issuer}`;
       const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
       const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + otpauth;
-      return {uri, otpauth, googleChartUrl};
+      return {token, uri, otpauth, googleChartUrl};
    }
 
    validateRegisterTime() {
