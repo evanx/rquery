@@ -26,6 +26,8 @@ We scan the equivalent QR code via Google Charts into our Google Authenticator a
 
 <img src="https://evanx.github.io/images/rquery/gentoken-qrcode-googlecharts.png">
 
+<hr>
+
 And voilà, we have a TOTP two-factor authentication facility via our phone:
 
 <img src="https://evanx.github.io/images/rquery/google-authenticator-app-CHANGED.png" width="375">
