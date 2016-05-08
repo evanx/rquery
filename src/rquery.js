@@ -1019,8 +1019,8 @@ export default class {
                } else {
                   value = '"${value}"';
                }
-               return [key, value].join('=')).join('\n');
-            });
+               return [key, value].join('=');
+            }).join('\n');
          } else if (result === null) {
          } else {
             resultString = result.toString();
