@@ -1012,13 +1012,15 @@ export default class {
          if (lodash.isArray(result)) {
             resultString = result.join('\n');
          } else if (lodash.isObject(result)) {
-            let value = result[key];
-            if (parseInt(value) === value) {
-               value = parseInt(value);
-            } else {
-               value = '"${value}"';
-            }
-            resultString = Object.keys(result).map(key => [key, value].join('=')).join('\n');
+            resultString = Object.keys(result).map(key => {
+               let value = result[key];
+               if (parseInt(value) === value) {
+                  value = parseInt(value);
+               } else {
+                  value = '"${value}"';
+               }
+               return [key, value].join('=')).join('\n');
+            });
          } else if (result === null) {
          } else {
             resultString = result.toString();
