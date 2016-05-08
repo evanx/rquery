@@ -25,7 +25,7 @@ googleChartUrl='http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&ch
 
 Note that the `tokenKey` is the shared secret needed to generate those 6 digit TOTP tokens e.g. at login time.
 
-We cut and paste the `chart.googleapis.com` link to render the QR code for the `otpauth` URL:
+We use the `chart.googleapis.com` link to render the QR code for the `otpauth` URL:
 
 <img src="https://evanx.github.io/images/rquery/gentoken-qrcode-googlecharts.png">
 
