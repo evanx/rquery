@@ -3,7 +3,7 @@
 
 Say we want to use the Google Authenticator app for two-factor authentication of our own site.
 
-The following demo endpoint generates a random token for the Google Authenticator app.
+The following endpoint demonstrates the generation of a secret token for the Google Authenticator app.
 
 https://demo.redishub.com/genkey-topt-google-authenticator/evanx@myserver.com/My%20service
 
@@ -29,7 +29,7 @@ We cut and paste the `chart.googleapis.com` link to render the QR code for the `
 
 <hr>
 
-We scan QR code into our Google Authenticator app, and voilà, we have a TOTP two-factor authentication facility on our phone:
+We scan QR code into our Google Authenticator app, and voilà! We now have a TOTP two-factor authentication facility on our phone:
 
 <img src="https://evanx.github.io/images/rquery/google-authenticator-app-CROPPED.png" width="375">
 
@@ -55,5 +55,32 @@ const uri = `${account}?secret=${token.toUpperCase()}&issuer=${issuer}`;
 const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
 const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + otpauth;
 ```
+
+In practice, you'll want to use an QR code rendering library, and will also need a TOTP library to verify the 6 digit token.
+
+Some time ago, I used the following Java code to generate the token i.e. for a given a secret key and `timeIndex` which is number of 30 second intervals since the epoch.
+
+```java
+private static long getCode(byte[] secret, long timeIndex)
+        throws NoSuchAlgorithmException, InvalidKeyException {
+  SecretKeySpec signKey = new SecretKeySpec(secret, "HmacSHA1");
+  ByteBuffer buffer = ByteBuffer.allocate(8);
+  buffer.putLong(timeIndex);
+  byte[] timeBytes = buffer.array();
+  Mac mac = Mac.getInstance("HmacSHA1");
+  mac.init(signKey);
+  byte[] hash = mac.doFinal(timeBytes);
+  int offset = hash[19] & 0xf;
+  long truncatedHash = hash[offset] & 0x7f;
+  for (int i = 1; i < 4; i++) {
+      truncatedHash <<= 8;
+      truncatedHash |= hash[offset + i] & 0xff;
+  }
+  return (truncatedHash %= 1000000);
+}
+```
+
+For Node, I guess i'd install `npm install otplib` or `notp` or `speakeasy.`
+
 
 https://twitter.com/@evanxsummers
