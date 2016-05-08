@@ -130,11 +130,11 @@ export default class {
          const qr = this.buildQrUrl({token, user, host});
          return {token, qr};
       });
-      this.addPublicRoute(`gentoken/:label/:user/:issuer`, async (req, res) => {
-         const {label, user, issuer} = req.params;
-         logger.debug('gentoken', label, user);
+      this.addPublicRoute(`gentoken/:label/:account/:issuer`, async (req, res) => {
+         const {label, account, issuer} = req.params;
+         logger.debug('gentoken', label, account);
          const token = this.generateToken();
-         const qr = this.buildQrUrl({token, label, user, iuser});
+         const qr = this.buildQrUrl({token, label, account, issuer});
          return {token, qr};
       });
       if (config.isSecureDomain) {
@@ -640,8 +640,8 @@ export default class {
       assert(options.host);
       options = Object.assign({label: options.host, issuer: options.host}, options);
       const {label, user, host, token, issuer} = options;
-      let address = user;
-      if (host) {
+      let address = options.address;
+      if (user && host && !address) {
          address = `${user}@${host}`;
       }
       const uri = `${label}:${address}?secret=${token.toUpperCase()}&issuer=${issuer}`;
