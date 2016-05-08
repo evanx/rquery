@@ -33,6 +33,8 @@ We use the `chart.googleapis.com` link to render the QR code for the `otpauth` U
 
 <hr>
 
+In practice, you'll want to use a QR code rendering library to present this to the user e.g. upon registration.
+
 We scan the QR code into our Google Authenticator app, and voilà! We now have a TOTP two-factor authentication facility on our phone:
 
 <img src="https://evanx.github.io/images/rquery/google-authenticator-app.png" width="375">
@@ -57,7 +59,7 @@ Note that TOTP keys are intended to be written down somewhere as a phsyical back
 
 Cryptographically speaking, you should use a well regarded OTP library to generate the shared secret key on your server.
 
-For the purposes of demonstration, we generate the URL of Google Charts URL:
+For the purposes of demonstration, we generate the URL to render the QR code via Google:
 ```javascript
 const uri = `${account}?secret=${token}&issuer=${issuer}`;
 const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
