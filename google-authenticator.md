@@ -23,7 +23,7 @@ otpauth='otpauth://totp/evan%40test.com%3Fsecret%3DIIM2UPAAWN%26issuer%3DMy%20te
 googleChartUrl='http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth://totp/evan%40test.com%3Fsecret%3DIIM2UPAAWN%26issuer%3DMy%20test%20service'
 ```
 
-The `tokenKey` is the shared secret needed to generate those 6 digit TOTP tokens e.g. at login time.
+Note that the `tokenKey` is the shared secret needed to generate those 6 digit TOTP tokens e.g. at login time.
 
 We cut and paste the `chart.googleapis.com` link to render the QR code for the `otpauth` URL:
 
