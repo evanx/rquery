@@ -130,7 +130,7 @@ export default class {
          const qr = this.buildQrUrl({token, user, host});
          return {token, qr};
       });
-      this.addPublicRoute(`gentoken-google-authenticator/:issuer/:account`, async (req, res) => {
+      this.addPublicRoute(`gentoken-google-authenticator/:account/:issuer`, async (req, res) => {
          const {label, account, issuer} = req.params;
          logger.debug('gentoken', label, account);
          const token = this.generateToken();
