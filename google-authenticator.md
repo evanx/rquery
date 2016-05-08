@@ -7,7 +7,7 @@ The following endpoint demonstrates the generation of a TOTP secret for the Goog
 
 https://demo.redishub.com/genkey-ga/evanx@myserver.com/My%20service
 
-<img src="https://evanx.github.io/images/rquery/genkey-totp-ga.png">
+<img src="https://evanx.github.io/images/rquery/genkey-ga.png">
 
 <hr>
 
@@ -29,7 +29,7 @@ Note that the `tokenKey` is the shared secret needed to generate those 6 digit T
 
 We use the `chart.googleapis.com` link to render the QR code for the `otpauth` URL:
 
-<img src="https://evanx.github.io/images/rquery/gentoken-qrcode-googlecharts.png">
+<img src="https://evanx.github.io/images/rquery/qrcode-googlecharts.png">
 
 <hr>
 
