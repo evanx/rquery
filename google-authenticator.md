@@ -5,7 +5,7 @@ Say we want to use the Google Authenticator app for two-factor authentication of
 
 The following endpoint demonstrates the generation of a TOTP secret for the Google Authenticator app.
 
-https://demo.redishub.com/genkey-ga/evanx@myserver.com/My%20service
+https://demo.redishub.com/genkey-ga/evanz@myserver.com/My%20service
 
 <img src="https://evanx.github.io/images/rquery/genkey-totp-ga.png">
 
@@ -13,10 +13,12 @@ https://demo.redishub.com/genkey-ga/evanx@myserver.com/My%20service
 
 Alternatively, if you don't have a JSON viewer extension installed in your browser, or are using `curl` then try the `clidemo` domain:
 
-https://clidemo.redishub.com/genkey-ga/evanx@myserver.com/My%20service
+https://clidemo.redishub.com/genkey-ga/evanz@myserver.com/My%20service
 
 ```shell
-evans@eowyn:~/rquery$ curl 'https://clidemo.redishub.com/genkey-ga/evan@test.com/My%20test%20service'
+curl 'https://clidemo.redishub.com/genkey-ga/evanz@myserver.com/My%20service'
+```
+```
 tokenKey='iim2upaawn'
 uri='evan@test.com?secret=IIM2UPAAWN&issuer=My test service'
 otpauth='otpauth://totp/evan%40test.com%3Fsecret%3DIIM2UPAAWN%26issuer%3DMy%20test%20service'
