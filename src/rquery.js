@@ -662,7 +662,7 @@ export default class {
    generateTokenKey() {
       const symbols = 'abcdefghijklmnopqrstuvwxyz234567';
       const bytes = crypto.randomBytes(10);
-      return bytes[i].reduce((prev, curr) => prev + symbols[Math.floor(curr * symbols.length / 256)], '');
+      return bytes.reduce((prev, curr) => prev + symbols[Math.floor(curr * symbols.length / 256)], '');
    }
 
    generateTokenCode(tokenKey, time) {
