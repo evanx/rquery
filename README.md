@@ -93,7 +93,7 @@ where `ttl/mykey` returns the TTL decreasing from 180 seconds:
 
 #### Client cert
 
-For a secure access to permanent keyspaces, let's try SSL client cert authentication on `redishub.com.`
+For secure access to permanent keyspaces, let's try SSL client cert authentication on `redishub.com.`
 
 Note that we will register an account using our Telegram.org username. (I like Telegram.org, have an Ubuntu phone, and want to build a Telegram Bot to win one of those prizes, woohoo!)
 
