@@ -56,7 +56,7 @@ export default class {
    }
 
    addSecureDomain() {
-      this.addPublicRoute(`gentoken/:host/:user/:webhookDomain`, async (req, res) => {
+      this.addPublicRoute(`generate-topt-key/:host/:user/:webhookDomain`, async (req, res) => {
          const {user, host, webhook} = req.params;
          if (!/^[a-z][a-z0-9-\.]+\.[a-z]+$/.test(webhookDomain)) {
             throw {message: 'Invalid webhook host'};
@@ -72,8 +72,7 @@ export default class {
          if (response.statusCode !== 200) {
             throw {message: `Webhook ` + response.statusCode, url};
          }
-         const token = this.generateToken();
-         return this.buildQrReply({token, user, host});
+         return this.buildQrReply({user, host});
       });
    }
 
@@ -126,16 +125,15 @@ export default class {
          return Math.ceil(time[0] * 1000 * 1000 + parseInt(time[1]));
       });
       this.addPublicRoute('time', () => redisClient.timeAsync());
-      this.addPublicRoute(`gentoken/:user/:host`, async (req, res) => {
+      this.addPublicRoute(`generate-topt-key/:user/:host`, async (req, res) => {
          const {user, host} = req.params;
-         logger.debug('gentoken', user, host);
+         logger.debug('generate-topt-key', user, host);
          return this.buildQrReply({user, host});
       });
-      this.addPublicRoute(`gentoken-google-authenticator/:account/:issuer`, async (req, res) => {
+      this.addPublicRoute(`generate-topt-key-google-authenticator/:account/:issuer`, async (req, res) => {
          const {account, issuer} = req.params;
-         logger.debug('gentoken', account, issuer);
+         logger.debug('generate-topt-key-google-authenticator', account, issuer);
          return this.buildQrReply({account, issuer});
-         return {token, qr};
       });
       if (config.isSecureDomain) {
          this.addSecureDomain();
@@ -599,15 +597,16 @@ export default class {
             return 'No client cert';
          }
          const clientCertDigest = this.digestPem(clientCert);
-         const token = this.generateToken();
+         const tokenKey = this.generateToken();
          const accountKey = this.adminKey('account', account);
          const [hsetnx, saddAccount, saddCert] = await redisClient.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', new Date().getTime());
             multi.sadd(this.adminKey('accounts'), account);
+            multi.sadd(this.adminKey('account', account, 'topt'), tokenKey);
             multi.sadd(this.adminKey('account', account, 'certs'), clientCertDigest);
          });
          if (!hsetnx) {
-            throw {message: 'Account exists (token)'};
+            throw {message: 'Account exists'};
          }
          if (!saddAccount) {
             logger.error('sadd account');
@@ -616,7 +615,7 @@ export default class {
             logger.error('sadd cert');
          }
          const result = this.buildQrReply({
-            token,
+            tokenKey,
             user: account,
             host: config.hostname
          });
@@ -636,11 +635,16 @@ export default class {
       return output;
    }
 
+   verifyTokenCode(key, token, time) {
+
+   }
+
    buildQrReply(options) {
-      let {label, account, user, host, token, issuer} = options;
-      if (!token) {
-         token = this.generateToken();
+      let {label, account, user, host, tokenKey, issuer} = options;
+      if (!tokenKey) {
+         tokenKey = this.generateToken();
       }
+      logger.debug('code', calculateTokenCode(tokenKey));
       if (!issuer) {
          issuer = label || host;
       }
@@ -650,10 +654,10 @@ export default class {
       if (!account || !issuer) {
          throw {message: 'Invalid'};
       }
-      const uri = `${account}?secret=${token.toUpperCase()}&issuer=${issuer}`;
+      const uri = `${account}?secret=${tokenKey.toUpperCase()}&issuer=${issuer}`;
       const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
       const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + otpauth;
-      return {token, uri, otpauth, googleChartUrl};
+      return {tokenKey, uri, otpauth, googleChartUrl};
    }
 
    validateRegisterTime() {
