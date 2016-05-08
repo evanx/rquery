@@ -1,6 +1,8 @@
 
 ## Google Authenticator demo
 
+Say we want to use the Google Authenticator app for two-factor authentication of our own site.
+
 The following demo endpoint generates a random token for the Google Authenticator app.
 
 https://demo.redishub.com/gentoken-google-authenticator/evanx@myserver.com/My%20service
