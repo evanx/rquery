@@ -638,7 +638,7 @@ export default class {
 
    generateTokenCode(tokenKey, time) {
       time = time || new Date().getTime();
-      logger.info(Object,keys(speakeasy.topt));
+      logger.info(Object.keys(speakeasy.topt));
    }
 
    buildQrReply(options) {
