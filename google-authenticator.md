@@ -30,7 +30,7 @@ We scan the equivalent QR code via Google Charts into our Google Authenticator a
 
 And voilà, we have a TOTP two-factor authentication facility via our phone:
 
-<img src="https://evanx.github.io/images/rquery/google-authenticator-app-CHANGED.png" width="375">
+<img src="https://evanx.github.io/images/rquery/google-authenticator-app-CROPPED.png" width="375">
 
 ### Implementation
 
