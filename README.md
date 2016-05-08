@@ -75,7 +75,7 @@ echo $rdemo
 ```
 where we set `rdemo` environment variable with the keyspace URL:
 ```
-https://demo.redishub.com/ak/@gyu3vn0/ztrp8y8
+https://demo.redishub.com/ak/@xm3gsdixlz/gckt2srrh6
 ```
 where an account and keyspace have been randomly generated. The account name is prefixed with a `@` symbol in this case.
 
