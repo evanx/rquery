@@ -56,11 +56,13 @@ const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
 const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + otpauth;
 ```
 
-In practice, you'll want to use an QR code rendering library, and will also need a TOTP library to verify the 6 digit token.
+In practice, you'll want to use a QR code rendering library.
 
-We notice on Google Authenticator, or the Chrome "Authenticator" extension or what have you, that the token changes every 30 seconds.
+You will also need a TOTP library to verify the 6 digit token that the user reads off their Google Authenticator when they login.
 
-Some time ago, I presented the following Java code to generate a token for a secret (i.e. user) at a given time.
+We notice on Google Authenticator, or the Chrome "Authenticator" extension or what have you, that the token changes every 30 seconds. At login time, the server must similarly generate the token for the current time for verification.
+
+Some time ago, I presented the following Java code to similarly generate the token at login time. It needs the shared secret associated with the user, and the time, in 30 second intervals since the Epoch.
 ```java
 private static long getCode(byte[] secret, long timeIndex)
         throws NoSuchAlgorithmException, InvalidKeyException {
@@ -80,10 +82,11 @@ private static long getCode(byte[] secret, long timeIndex)
   return (truncatedHash %= 1000000);
 }
 ```
-where the `timeIndex` is the number of 30 second intervals since the epoch.
 
 For Node, I guess i'd install `npm install otplib` or `notp` or `speakeasy.`
 
-In practise we compare the 6 digit code that the user enters, against a similarly generated token as above (from the same shared secret) for the current `timeIndex` according to the server's clock. To allow for clock drift, the interval before and after are also compared to the users' submission. So if the client's clock is wrong, or the server's clock is out of whack, that's a problem.
+In practice, to allow for clock drift, the tokens before and after are also compared to the users' submission. If the client's clock is wrong, or the server's clock is out of whack, that's a problem.
+
+Keep safe :)
 
 https://twitter.com/@evanxsummers
