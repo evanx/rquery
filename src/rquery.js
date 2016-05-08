@@ -631,7 +631,7 @@ export default class {
             return 'No client cert';
          }
          const clientCertDigest = this.digestPem(clientCert);
-         const tokenKey = this.generateToken();
+         const tokenKey = this.generateTokenKey();
          const accountKey = this.adminKey('account', account);
          const [hsetnx, saddAccount, saddCert] = await redisClient.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', new Date().getTime());
@@ -659,7 +659,7 @@ export default class {
       }
    }
 
-   generateToken() {
+   generateTokenKey() {
       const bytes = crypto.randomBytes(10);
       const symbols = 'abcdefghijklmnopqrstuvwxyz234567';
       var output = '';
@@ -677,7 +677,7 @@ export default class {
    buildQrReply(options) {
       let {label, account, user, host, tokenKey, issuer} = options;
       if (!tokenKey) {
-         tokenKey = this.generateToken();
+         tokenKey = this.generateTokenKey();
       }
       logger.debug('code', this.generateTokenCode(tokenKey));
       if (!issuer) {
@@ -726,8 +726,8 @@ export default class {
             this.sendError(req, res, {message: errorMessage});
             return;
          }
-         const account = '@' + this.generateToken();
-         const keyspace = this.generateToken();
+         const account = '@' + this.generateTokenKey();
+         const keyspace = this.generateTokenKey();
          let clientIp = req.get('x-forwarded-for');
          const accountKey = this.accountKeyspace(account, keyspace);
          logger.debug('registerExpire clientIp', clientIp, account, keyspace, accountKey);
