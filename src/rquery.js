@@ -660,13 +660,9 @@ export default class {
    }
 
    generateTokenKey() {
-      const bytes = crypto.randomBytes(10);
       const symbols = 'abcdefghijklmnopqrstuvwxyz234567';
-      var output = '';
-      for (var i = 0; i < bytes.length; i++) {
-         output += symbols[Math.floor(bytes[i] / 256 * symbols.length)];
-      }
-      return output;
+      const bytes = crypto.randomBytes(10);
+      return bytes[i].reduce((prev, curr) => prev + symbols[Math.floor(curr * symbols.length / 256)], '');
    }
 
    generateTokenCode(tokenKey, time) {
@@ -819,7 +815,12 @@ export default class {
             const accountKey = this.accountKeyspace(account, keyspace);
             let v;
             //await this.migrateKeyspace(req.params);
-            v = this.validateReqKeyspace(req, account, keyspace);
+            v = this.validateAccount(account);
+            if (v) {
+               this.sendStatusMessage(req, res, 400, 'Invalid account: ' + v);
+               return;
+            }
+            v = this.validateKeyspace(keyspace);
             if (v) {
                this.sendStatusMessage(req, res, 400, 'Invalid keyspace: ' + v);
                return;
@@ -930,7 +931,13 @@ export default class {
       }
    }
 
-   validateReqKeyspace(req, account, keyspace) {
+   validateAccount(account) {
+      if (/^:/.test(account)) {
+         return 'leading colon';
+      }
+   }
+
+   validateKeyspace(keyspace) {
       if (/^:/.test(keyspace)) {
          return 'leading colon';
       }
@@ -939,12 +946,6 @@ export default class {
       }
       if (/:$/.test(keyspace)) {
          return 'trailing colon';
-      }
-      if (/^(KEYSPACE)/.test(keyspace)) {
-         return 'Reserved keyspace for documentation purposes';
-      }
-      if (/^(test)/.test(keyspace)) {
-         return 'Reserved keyspace for testing purposes';
       }
    }
 
