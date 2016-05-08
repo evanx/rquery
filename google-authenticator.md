@@ -37,7 +37,7 @@ We scan the QR code into our Google Authenticator app, and voilà! We now have a
 
 <hr>
 
-The server would have stored the shared secret, and can call on it later for authentication of a submitted time-based token (one-time password).
+The server would have stored the shared secret, and can call on it later for authentication of a submitted time-based token (one-time password). I guess that essentially we are trusting its original randomness, amongst other things.
 
 ### Implementation
 
@@ -55,9 +55,9 @@ For illustration, a random key is generated in base32 encoding as follows:
 ```
 where `0` and `1` are excluded by the relevant standard since they can be confused with `I` and `O.`
 
-In practice, you should use a well regarded OTP library to generate the shared secret key.
+In practice, you should use a well regarded OTP library to generate the shared secret key, and be sure of its optimum randomness.
 
-The URI encoding of Google Charts URL:
+For the purposes of demonstration, we generate the URL of Google Charts URL:
 ```javascript
 const uri = `${account}?secret=${token.toUpperCase()}&issuer=${issuer}`;
 const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
