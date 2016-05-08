@@ -130,11 +130,11 @@ export default class {
          const qr = this.buildQrUrl({token, user, host});
          return {token, qr};
       });
-      this.addPublicRoute(`gentoken/:label/:user/:host/:issuer`, async (req, res) => {
-         const {user, host} = req.params;
-         logger.debug('gentoken', user, host);
+      this.addPublicRoute(`gentoken/:label/:user/:issuer`, async (req, res) => {
+         const {label, user, issuer} = req.params;
+         logger.debug('gentoken', label, user);
          const token = this.generateToken();
-         const qr = this.buildQrUrl({token, label, user, host, iuser});
+         const qr = this.buildQrUrl({token, label, user, iuser});
          return {token, qr};
       });
       if (config.isSecureDomain) {
@@ -640,7 +640,11 @@ export default class {
       assert(options.host);
       options = Object.assign({label: options.host, issuer: options.host}, options);
       const {label, user, host, token, issuer} = options;
-      const uri = `${label}:${user}@${host}?secret=${token.toUpperCase()}&issuer=${issuer}`;
+      let address = user;
+      if (host) {
+         address = `${user}@${host}`;
+      }
+      const uri = `${label}:${address}?secret=${token.toUpperCase()}&issuer=${issuer}`;
       const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
       const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + otpauth;
       return {uri, otpauth, googleChartUrl};
