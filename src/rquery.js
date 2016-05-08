@@ -40,17 +40,14 @@ export default class {
       try {
          const [account, keyspace] = Strings.matches(req.path, /^\/ak\/([a-z]+)\/([^\/]+)\//);
          logger.debug('sendErrorRoute', account, keyspace, this.isBrowser(req));
-         if (account && keyspace) {
-            if (this.isBrowser(req)) {
-               const redirectPath = ['/ak', account, keyspace, 'help'].join('/');
-               logger.debug('sendErrorRoute 32', account, keyspace, req.path, req.get('user-agent'), redirectPath);
-               res.redirect(302, redirectPath);
-            } else {
-               logger.debug('sendErrorRoute 404', account, keyspace, req.path, req.get('user-agent'));
-               res.status(404).send(`Route not found: ${req.path}. Try /routes or /help.\n`);
+         if (this.isBrowser(req)) {
+            let redirectPath = '/routes';
+            if (account && keyspace) {
+               redirectPath = ['/ak', account, keyspace, 'help'].join('/');
             }
+            res.redirect(302, redirectPath);
          } else {
-            res.status(404).send(`Route not found: ${req.path}. Try /routes or /help.\n`);
+            res.status(404).send(`Invalid: ${req.path}. Try /routes or /help.\n`);
          }
       } catch (err) {
          logger.warn(err);
