@@ -637,14 +637,12 @@ export default class {
    }
 
    buildQrUrl(options) {
-      let {account, user, host, token, issuer} = options;
-      if (host) {
-         if (!issuer) {
-            issuer = host;
-         }
-         if (!account && user) {
-            account = `${user}@${host}`;
-         }
+      let {account, user, host, token, issuer, label} = options;
+      if (!issuer) {
+         issuer = label || host;
+      }
+      if (!account && user && host) {
+         account = `${user}@${host}`;
       }
       if (!account || !issuer) {
          throw {message: 'Invalid'};
