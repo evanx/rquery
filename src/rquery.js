@@ -134,7 +134,7 @@ export default class {
          const {user, host} = req.params;
          logger.debug('gentoken', user, host);
          const token = this.generateToken();
-         const qr = this.buildQrUrl({token, user, host});
+         const qr = this.buildQrUrl({token, label, user, host, iuser});
          return {token, qr};
       });
       if (config.isSecureDomain) {
