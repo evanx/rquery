@@ -82,9 +82,8 @@ cd $tmp
 pwd
 
 c0register() {
-  curlx deregister
-  curlv register/github.com/evanx
-  curls importcerts
+  curlx deregister-account/evanxsummers
+  curlv register-account/evanxsummers
 }
 
 c0register

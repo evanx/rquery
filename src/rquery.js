@@ -126,7 +126,14 @@ export default class {
          return Math.ceil(time[0] * 1000 * 1000 + parseInt(time[1]));
       });
       this.addPublicRoute('time', () => redisClient.timeAsync());
-      this.addPublicRoute(`gentoken/:host/:user`, async (req, res) => {
+      this.addPublicRoute(`gentoken/:user/:host`, async (req, res) => {
+         const {user, host} = req.params;
+         logger.debug('gentoken', user, host);
+         const token = this.generateToken();
+         const qr = this.buildQrUrl({token, user, host});
+         return {token, qr};
+      });
+      this.addPublicRoute(`gentoken/:label/:user/:host/:issuer`, async (req, res) => {
          const {user, host} = req.params;
          logger.debug('gentoken', user, host);
          const token = this.generateToken();
@@ -636,9 +643,10 @@ export default class {
       assert(options.host);
       options = Object.assign({label: options.host, issuer: options.host}, options);
       const {label, user, host, token, issuer} = options;
-      const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=';
       const uri = `${label}:${user}@${host}?secret=${token.toUpperCase()}&issuer=${issuer}`;
-      return [uri, 'otpauth://totp/' + encodeURIComponent(uri)];
+      const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
+      const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + otpauth;
+      return {uri, otpauth, googleChartUrl};
    }
 
    validateRegisterTime() {
