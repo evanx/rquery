@@ -128,7 +128,7 @@ Then generate a client cert in bash:
 )
 ```
 
-We can register a keyspace using this privcert:
+We can register an account using this privcert as the initial `admin` authorized cert:
 ```shell
 tuser=`cat ~/.redishub/tuser`
 curl -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/register
@@ -136,13 +136,13 @@ curl -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/register
 
 We can create a bash function an alias for keyspace commands in `~/.bashrc:`
 ```shell
-redishubcli() {
+curlrh() {
   local tuser=`cat ~/.redishub/tuser`
   local cmd=`echo $@ | tr ' ' '/'`
   curl -s -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/$cmd
 }
 
-alias rh=redishubcli
+alias rh=curlrh
 ```
 
 First we register a keyspace:
@@ -158,8 +158,10 @@ rh ks1 smembers myset
 
 <img src="https://evanx.github.io/images/rquery/rhtest.png">
 
+
 ##### Sets
 
+Let's try a few more set commands:
 ```shell
 curl -s $rdemo/sadd/myset/item1
 curl -s $rdemo/sadd/myset/item2
@@ -173,9 +175,7 @@ curl -s $rdemo/smove/myset/myotherset/item4
 curl -s $rdemo/smembers/myotherset
 curl -s $rdemo/spop/myset
 ```
-
 where `smembers/myset` returns:
-
 ```json
 [
     "item1",
