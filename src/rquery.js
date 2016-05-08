@@ -586,7 +586,6 @@ export default class {
       expressApp.get(config.location + uri, async (req, res) => {
          try {
             const result = await fn(req, res);
-            logger.debug('addPublicCommand', command.key, result);
             await this.sendResult(command, req, res, result);
          } catch (err) {
             this.sendError(req, res, err);
@@ -599,7 +598,6 @@ export default class {
       expressApp.get(config.location + uri, async (req, res) => {
          try {
             const result = await fn(req, res);
-            logger.debug('addPublicRoute', uri, result);
             await this.sendResult(null, req, res, result);
          } catch (err) {
             this.sendError(req, res, err);
@@ -1046,7 +1044,7 @@ export default class {
    async sendResult(command, req, res, result) {
       command = command || { command: 'none' };
       if (this.isDebugReq(req)) {
-         logger.debug('sendResult', command.command, req.params, req.query, result);
+         logger.ndebug('sendResult', command.command, req.params, req.query, result);
       }
       let resultString = '';
       if (!Values.isDefined(result)) {
