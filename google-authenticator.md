@@ -49,3 +49,5 @@ const uri = `${account}?secret=${token.toUpperCase()}&issuer=${issuer}`;
 const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
 const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + otpauth;
 ```
+
+https://twitter.com/@evanxsummers
