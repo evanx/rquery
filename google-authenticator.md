@@ -23,7 +23,7 @@ otpauth='otpauth://totp/evan%40test.com%3Fsecret%3DIIM2UPAAWN%26issuer%3DMy%20te
 googleChartUrl='http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth://totp/evan%40test.com%3Fsecret%3DIIM2UPAAWN%26issuer%3DMy%20test%20service'
 ```
 
-The `tokenKey` is the shared secret needed to generate those 6 digit TOTP tokens e.g. at login time. The secret key is
+The `tokenKey` is the shared secret needed to generate those 6 digit TOTP tokens e.g. at login time.
 
 We cut and paste the `chart.googleapis.com` link to render the QR code for the `otpauth` URL:
 
@@ -34,6 +34,10 @@ We cut and paste the `chart.googleapis.com` link to render the QR code for the `
 We scan the QR code into our Google Authenticator app, and voilà! We now have a TOTP two-factor authentication facility on our phone:
 
 <img src="https://evanx.github.io/images/rquery/google-authenticator-app-CROPPED.png" width="375">
+
+<hr>
+
+The server would have stored the shared secret, and can call on it later for authentication of a submitted time-based token (one-time password).
 
 ### Implementation
 
