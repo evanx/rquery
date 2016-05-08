@@ -156,6 +156,8 @@ rh ks1 sadd myset item2
 rh ks1 smembers myset
 ```
 
+<img src="https://evanx.github.io/images/rquery/rhtest.png">
+
 ##### Sets
 
 ```shell

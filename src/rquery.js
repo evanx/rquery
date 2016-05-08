@@ -971,6 +971,10 @@ export default class {
       }, 3);
    }
 
+   accountKey(account) {
+      return this.adminKey('account', account);
+   }
+
    accountKeyspace(account, keyspace) {
       return [config.redisKeyspace, 'ak', account, keyspace].join(':');
    }
