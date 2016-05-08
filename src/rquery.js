@@ -3,6 +3,7 @@ import expressLib from 'express';
 import marked from 'marked';
 import crypto from 'crypto';
 import CSON from 'season';
+import speakeasy from 'speakeasy';
 
 import * as Files from '../lib/Files';
 import * as Express from '../lib/Express';
@@ -636,7 +637,8 @@ export default class {
    }
 
    generateTokenCode(tokenKey, time) {
-
+      time = time || new Date().getTime();
+      logger.info(Object,keys(speakeasy.topt));
    }
 
    buildQrReply(options) {
@@ -644,7 +646,7 @@ export default class {
       if (!tokenKey) {
          tokenKey = this.generateToken();
       }
-      logger.debug('code', this.generateTokenCode(tokenKey, time));
+      logger.debug('code', this.generateTokenCode(tokenKey));
       if (!issuer) {
          issuer = label || host;
       }
