@@ -53,7 +53,7 @@ generateTokenKey() {
 }
 ```
 
-Note that TOTP keys are intended to be written down somewhere as a phsyical back up, and certainly that is a good idea. Base32 facilitates this by excluding `0` and `1` since they can be confused with `0` and `I` (or `l` when lowercase is used). Uppercase is standard. However, I'm foolishly going lowercase as an experiment.
+Note that TOTP keys are intended to be written down somewhere as a phsyical back up, and certainly that is a good idea. Base32 facilitates this by excluding `0` and `1` since they can be confused with `0` and `I` (or `l` when lowercase is used).
 
 Cryptographically speaking, you should use a well regarded OTP library to generate the shared secret key on your server.
 
