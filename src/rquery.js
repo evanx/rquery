@@ -139,11 +139,11 @@ export default class {
          return this.buildQrReply({user, host});
       });
       this.addPublicCommand({
-         key: 'genkey-topt-google-authenticator',
+         key: 'genkey-ga',
          params: ['account', 'issuer']
       }, async (req, res) => {
          const {account, issuer} = req.params;
-         logger.debug('genkey-topt-google-authenticator', account, issuer);
+         logger.debug('genkey-ga', account, issuer);
          return this.buildQrReply({account, issuer});
       });
       if (config.isSecureDomain) {
@@ -661,8 +661,8 @@ export default class {
 
    generateTokenKey() {
       const symbols = 'abcdefghijklmnopqrstuvwxyz234567';
-      const bytes = crypto.randomBytes(10);
-      return bytes.reduce((prev, curr) => prev + symbols[Math.floor(curr * symbols.length / 256)], '');
+      const reducer = (prev, curr) => prev + symbols[Math.floor(curr * symbols.length / 256)];
+      return lodash.reduce(crypto.randomBytes(10), reducer, '');
    }
 
    generateTokenCode(tokenKey, time) {
