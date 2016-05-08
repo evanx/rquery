@@ -24,7 +24,7 @@ The random token is generated as follows:
       const symbols = 'abcdefghijklmnopqrstuvwxyz234567';
       var output = '';
       for (var i = 0; i < bytes.length; i++) {
-         output += symbols[Math.floor(bytes[i] / 255 * (symbols.length - 1))];
+         output += symbols[Math.round(bytes[i] / 255 * (symbols.length - 1))];
       }
       return output;
    }
