@@ -635,7 +635,7 @@ export default class {
       return output;
    }
 
-   verifyTokenCode(key, token, time) {
+   generateTokenCode(tokenKey, time) {
 
    }
 
@@ -644,7 +644,7 @@ export default class {
       if (!tokenKey) {
          tokenKey = this.generateToken();
       }
-      logger.debug('code', calculateTokenCode(tokenKey));
+      logger.debug('code', this.generateTokenCode(tokenKey, time));
       if (!issuer) {
          issuer = label || host;
       }
