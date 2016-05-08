@@ -5,7 +5,7 @@ Say we want to use the Google Authenticator app for two-factor authentication of
 
 The following endpoint demonstrates the generation of a TOTP secret for the Google Authenticator app.
 
-https://demo.redishub.com/genkey-ga/evanz@myserver.com/My%20service
+https://demo.redishub.com/genkey-ga/evanx@myserver.com/My%20service
 
 <img src="https://evanx.github.io/images/rquery/genkey-totp-ga.png">
 
@@ -13,16 +13,16 @@ https://demo.redishub.com/genkey-ga/evanz@myserver.com/My%20service
 
 Alternatively, if you don't have a JSON viewer extension installed in your browser, or are using `curl` then try the `clidemo` domain:
 
-https://clidemo.redishub.com/genkey-ga/evanz@myserver.com/My%20service
+https://clidemo.redishub.com/genkey-ga/evanx@myserver.com/My%20service
 
 ```shell
-curl 'https://clidemo.redishub.com/genkey-ga/evanz@myserver.com/My%20service'
+curl 'https://clidemo.redishub.com/genkey-ga/evanx@myserver.com/My%20service'
 ```
 ```
 tokenKey='vaxozv6rby'
-uri='evanz@myserver.com?secret=VAXOZV6RBY&issuer=My service'
-otpauth='otpauth://totp/evanz%40myserver.com%3Fsecret%3DVAXOZV6RBY%26issuer%3DMy%20service'
-googleChartUrl='http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth://totp/evanz%40myserver.com%3Fsecret%3DVAXOZV6RBY%26issuer%3DMy%20service'
+uri='evanx@myserver.com?secret=VAXOZV6RBY&issuer=My service'
+otpauth='otpauth://totp/evanx%40myserver.com%3Fsecret%3DVAXOZV6RBY%26issuer%3DMy%20service'
+googleChartUrl='http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth://totp/evanx%40myserver.com%3Fsecret%3DVAXOZV6RBY%26issuer%3DMy%20service'
 ```
 
 Note that the `tokenKey` is the shared secret needed to generate those 6 digit TOTP tokens e.g. at login time.
