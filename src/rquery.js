@@ -130,7 +130,7 @@ export default class {
          const qr = this.buildQrUrl({token, user, host});
          return {token, qr};
       });
-      this.addPublicRoute(`gentoken-google-authenticator/:label/:account/:issuer`, async (req, res) => {
+      this.addPublicRoute(`gentoken-google-authenticator/:issuer/:account`, async (req, res) => {
          const {label, account, issuer} = req.params;
          logger.debug('gentoken', label, account);
          const token = this.generateToken();
@@ -637,24 +637,19 @@ export default class {
    }
 
    buildQrUrl(options) {
-      let {label, account, user, host, token, issuer} = options;
+      let {account, user, host, token, issuer} = options;
       if (host) {
          if (!issuer) {
             issuer = host;
          }
-         if (!label) {
-            label = host;
-         }
-      }
-      if (!account) {
-         if (user && host) {
+         if (!account && user) {
             account = `${user}@${host}`;
          }
       }
-      if (!label || !account || !issuer) {
+      if (!account || !issuer) {
          throw {message: 'Invalid'};
       }
-      const uri = `${label}:${account}?secret=${token.toUpperCase()}&issuer=${issuer}`;
+      const uri = `${account}?secret=${token.toUpperCase()}&issuer=${issuer}`;
       const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
       const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + otpauth;
       return {uri, otpauth, googleChartUrl};
