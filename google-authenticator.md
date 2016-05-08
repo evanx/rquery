@@ -7,7 +7,7 @@ The following demo endpoint generates a random token for the Google Authenticato
 
 https://demo.redishub.com/genkey-topt-google-authenticator/evanx@myserver.com/My%20service
 
-<img src="https://evanx.github.io/images/rquery/gentoken-CHANGED.png" style="min-height:164px">
+<img src="https://evanx.github.io/images/rquery/genkey-totp-ga.png">
 
 <hr>
 
