@@ -1017,7 +1017,7 @@ export default class {
                if (parseInt(value) === value) {
                   value = parseInt(value);
                } else {
-                  value = '"${value}"';
+                  value = `'${value}'`;
                }
                return [key, value].join('=');
             }).join('\n');
