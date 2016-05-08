@@ -5,7 +5,7 @@ Say we want to use the Google Authenticator app for two-factor authentication of
 
 The following demo endpoint generates a random token for the Google Authenticator app.
 
-https://demo.redishub.com/gentoken-google-authenticator/evanx@myserver.com/My%20service
+https://demo.redishub.com/generate-topt-key-google-authenticator/evanx@myserver.com/My%20service
 
 <img src="https://evanx.github.io/images/rquery/gentoken-CHANGED.png" style="min-height:164px">
 
@@ -13,10 +13,10 @@ https://demo.redishub.com/gentoken-google-authenticator/evanx@myserver.com/My%20
 
 Alternatively, if you don't have a JSON viewer extension installed in your browser, or are using `curl` then try:
 
-https://clidemo.redishub.com/gentoken-google-authenticator/evan@test.com/My%20test%20service
+https://clidemo.redishub.com/generate-topt-key-google-authenticator/evan@test.com/My%20test%20service
 
 ```shell
-evans@eowyn:~/rquery$ curl https://clidemo.redishub.com/gentoken-google-authenticator/evan@test.com/My%20test%20service
+evans@eowyn:~/rquery$ curl https://clidemo.redishub.com/generate-topt-key-google-authenticator/evan@test.com/My%20test%20service
 token=cltdblm4aw
 uri=evan@test.com?secret=CLTDBLM4AW&issuer=My test service
 otpauth=otpauth://totp/evan%40test.com%3Fsecret%3DCLTDBLM4AW%26issuer%3DMy%20test%20service
