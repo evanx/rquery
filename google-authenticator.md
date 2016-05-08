@@ -9,6 +9,8 @@ https://demo.redishub.com/gentoken-google-authenticator/evanx@myserver.com/My%20
 
 <img src="https://evanx.github.io/images/rquery/gentoken-CHANGED.png" style="min-height:164px">
 
+<hr>
+
 Alternatively, if you don't have a JSON viewer extension installed in your browser, or are using `curl` then try:
 
 https://clidemo.redishub.com/gentoken-google-authenticator/evan@test.com/My%20test%20service
