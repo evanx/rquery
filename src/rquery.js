@@ -661,8 +661,9 @@ export default class {
 
    generateTokenKey() {
       const symbols = 'abcdefghijklmnopqrstuvwxyz234567';
-      const reducer = (prev, curr) => prev + symbols[Math.floor(curr * symbols.length / 256)];
-      return lodash.reduce(crypto.randomBytes(10), reducer, '');
+      return lodash.reduce(crypto.randomBytes(10), (prev, curr) => {
+         return prev + symbols[Math.floor(curr * symbols.length / 256)];
+      }, '');
    }
 
    generateTokenCode(tokenKey, time) {
