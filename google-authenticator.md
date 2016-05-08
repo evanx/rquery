@@ -53,9 +53,11 @@ For illustration, a random key is generated in base32 encoding as follows:
       return output;
    }
 ```
-where `0` and `1` are excluded by the relevant standard since they can be confused with `I` and `O.`
+where `0` and `1` seemed to be excluded by the relevant standard since they can be confused with `I` and `O.`
 
-In practice, you should use a well regarded OTP library to generate the shared secret key, and be sure of its optimum randomness.
+Actually they are traditionally presented in uppercase, so as to be written down somewhere as a phsyical back up, and certainly that is a good idea.
+
+Actually with such things as keys, you should always take a highly conservative approach and use a well regarded OTP library to generate the shared secret key, and ensure its correct configuration.
 
 For the purposes of demonstration, we generate the URL of Google Charts URL:
 ```javascript
