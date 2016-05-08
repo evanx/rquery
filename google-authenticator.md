@@ -11,9 +11,9 @@ https://demo.redishub.com/genkey-topt-google-authenticator/evanx@myserver.com/My
 
 <hr>
 
-Alternatively, if you don't have a JSON viewer extension installed in your browser, or are using `curl` then try:
+Alternatively, if you don't have a JSON viewer extension installed in your browser, or are using `curl` then try the `clidemo` domain:
 
-https://clidemo.redishub.com/genkey-topt-google-authenticator/evan@test.com/My%20test%20service
+https://clidemo.redishub.com/genkey-topt-google-authenticator/evanx@myserver.com/My%20service
 
 ```shell
 evans@eowyn:~/rquery$ curl 'https://clidemo.redishub.com/genkey-topt-google-authenticator/evan@test.com/My%20test%20service'
