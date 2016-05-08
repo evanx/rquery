@@ -37,7 +37,7 @@ We scan the QR code into our Google Authenticator app, and voilà! We now have a
 
 <hr>
 
-The server would have stored the shared secret, and can call on it later for authentication of a submitted time-based token (one-time password). I guess that essentially we are trusting its original randomness, amongst other things.
+The server would have stored the shared secret, and can call on it later for authentication of a submitted time-based token (one-time password). I guess that essentially we are trusting its original randomness, amongst other things ;)
 
 ### Implementation
 
