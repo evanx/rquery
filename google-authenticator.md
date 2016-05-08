@@ -19,10 +19,10 @@ https://clidemo.redishub.com/genkey-ga/evanz@myserver.com/My%20service
 curl 'https://clidemo.redishub.com/genkey-ga/evanz@myserver.com/My%20service'
 ```
 ```
-tokenKey='iim2upaawn'
-uri='evan@test.com?secret=IIM2UPAAWN&issuer=My test service'
-otpauth='otpauth://totp/evan%40test.com%3Fsecret%3DIIM2UPAAWN%26issuer%3DMy%20test%20service'
-googleChartUrl='http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth://totp/evan%40test.com%3Fsecret%3DIIM2UPAAWN%26issuer%3DMy%20test%20service'
+tokenKey='vaxozv6rby'
+uri='evanz@myserver.com?secret=VAXOZV6RBY&issuer=My service'
+otpauth='otpauth://totp/evanz%40myserver.com%3Fsecret%3DVAXOZV6RBY%26issuer%3DMy%20service'
+googleChartUrl='http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth://totp/evanz%40myserver.com%3Fsecret%3DVAXOZV6RBY%26issuer%3DMy%20service'
 ```
 
 Note that the `tokenKey` is the shared secret needed to generate those 6 digit TOTP tokens e.g. at login time.
