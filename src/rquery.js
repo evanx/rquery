@@ -572,7 +572,7 @@ export default class {
    addRegisterRoutes() {
       expressApp.get(config.location + 'register-expire', (req, res) => this.registerExpire(req, res));
       if (config.secureDomain) {
-         expressApp.get(config.location + 'register-account/:account', (req, res) => this.registerAccount(req, res));
+         expressApp.get(config.location + 'register-account-telegram/:account', (req, res) => this.registerAccount(req, res));
       }
    }
 

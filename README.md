@@ -130,7 +130,7 @@ Then generate a client cert in bash:
 We can register an account using this privcert as the initial `admin` authorized cert:
 ```shell
 tuser=`cat ~/.redishub/tuser`
-curl -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/register
+curl -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/register-account-telegram/$tuser
 ```
 
 We can create a bash function and alias for keyspace commands in `~/.bashrc:`
