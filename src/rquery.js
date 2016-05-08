@@ -57,7 +57,10 @@ export default class {
    }
 
    addSecureDomain() {
-      this.addPublicRoute(`genkey-topt/:host/:user/:webhookDomain`, async (req, res) => {
+      this.addPublicCommand({
+         key: 'genkey-topt',
+         params: ['host', 'user', 'webhookDomain']
+      }, async (req, res) => {
          const {user, host, webhook} = req.params;
          if (!/^[a-z][a-z0-9-\.]+\.[a-z]+$/.test(webhookDomain)) {
             throw {message: 'Invalid webhook host'};
@@ -87,7 +90,8 @@ export default class {
          return Express.getRoutes(expressApp);
       });
       this.addPublicRoute('routes', async (req, res) => {
-         return Express.getRoutes(expressApp);
+         return Express.getRoutes(expressApp).map(route => `https://${config.hostname}${route}`);
+         //return Express.getRoutes(expressApp).map(route => `https://${config.hostname}${route}`);
       });
       this.addPublicRoute('help', async (req, res) => {
          if (this.isBrowser(req)) {
@@ -126,12 +130,18 @@ export default class {
          return Math.ceil(time[0] * 1000 * 1000 + parseInt(time[1]));
       });
       this.addPublicRoute('time', () => redisClient.timeAsync());
-      this.addPublicRoute(`genkey-topt/:user/:host`, async (req, res) => {
+      this.addPublicCommand({
+         key: 'genkey-topt',
+         params: ['user', 'host']
+      }, async (req, res) => {
          const {user, host} = req.params;
          logger.debug('genkey-topt', user, host);
          return this.buildQrReply({user, host});
       });
-      this.addPublicRoute(`genkey-topt-google-authenticator/:account/:issuer`, async (req, res) => {
+      this.addPublicCommand({
+         key: 'genkey-topt-google-authenticator',
+         params: ['account', 'issuer']
+      }, async (req, res) => {
          const {account, issuer} = req.params;
          logger.debug('genkey-topt-google-authenticator', account, issuer);
          return this.buildQrReply({account, issuer});
@@ -558,6 +568,31 @@ export default class {
 
    listCommands() {
       return commands.map(command => [command.key].concat(command.params).join(' '));
+   }
+
+   formatCommandUri(command) {
+      if (command.params.length) {
+         return [command.key, ... command.params.map(param => ':' + param)].join('/');
+      } else {
+         return command.key;
+      }
+   }
+
+   addPublicCommand(command, fn) {
+      let uri = command.key;
+      if (command.params) {
+         uri = [command.key, ... command.params.map(param => ':' + param)].join('/');
+      }
+      expressApp.get(config.location + uri, async (req, res) => {
+         try {
+            const result = await fn(req, res);
+            logger.debug('addPublicCommand', command.key, result);
+            await this.sendResult(command, req, res, result);
+         } catch (err) {
+            this.sendError(req, res, err);
+         }
+      });
+      commands.push(command);
    }
 
    addPublicRoute(uri, fn) {
