@@ -45,15 +45,12 @@ The server would have stored the shared secret, and can call on it later for aut
 
 For illustration, a random key is generated in base32 encoding as follows:
 ```javascript
-   generateTokenKey() {
-      const bytes = crypto.randomBytes(10);
-      const symbols = 'abcdefghijklmnopqrstuvwxyz234567';
-      var output = '';
-      for (var i = 0; i < bytes.length; i++) {
-         output += symbols[Math.round(bytes[i] / 255 * (symbols.length - 1))];
-      }
-      return output;
-   }
+generateTokenKey() {
+   const symbols = 'abcdefghijklmnopqrstuvwxyz234567';
+   return lodash.reduce(crypto.randomBytes(10), (prev, curr) => {
+      return prev + symbols[Math.floor(curr * symbols.length / 256)];
+   }, '');
+}
 ```
 where `0` and `1` seemed to be excluded by the relevant standard since they can be confused with `I` and `O.`
 
