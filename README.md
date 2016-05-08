@@ -134,7 +134,7 @@ tuser=`cat ~/.redishub/tuser`
 curl -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/register
 ```
 
-We can create a bash function an alias for keyspace commands in `~/.bashrc:`
+We can create a bash function and alias for keyspace commands in `~/.bashrc:`
 ```shell
 curlrh() {
   local tuser=`cat ~/.redishub/tuser`
