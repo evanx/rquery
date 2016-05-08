@@ -22,13 +22,14 @@ uri=evan@test.com?secret=CLTDBLM4AW&issuer=My test service
 otpauth=otpauth://totp/evan%40test.com%3Fsecret%3DCLTDBLM4AW%26issuer%3DMy%20test%20service
 googleChartUrl=http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth://totp/evan%40test.com%3Fsecret%3DCLTDBLM4AW%26issuer%3DMy%20test%20service
 ```
-We scan the equivalent QR code via Google Charts into our Google Authenticator app:
+
+We cut and paste the `chart.googleapis.com` link to render the QR code for the `otpauth` URL:
 
 <img src="https://evanx.github.io/images/rquery/gentoken-qrcode-googlecharts.png">
 
 <hr>
 
-And voilà, we have a TOTP two-factor authentication facility via our phone:
+We scan QR code into our Google Authenticator app, and voilà, we have a TOTP two-factor authentication facility on our phone:
 
 <img src="https://evanx.github.io/images/rquery/google-authenticator-app-CROPPED.png" width="375">
 
