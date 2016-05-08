@@ -16,7 +16,7 @@ Alternatively, if you don't have a JSON viewer extension installed in your brows
 https://clidemo.redishub.com/genkey-topt-google-authenticator/evan@test.com/My%20test%20service
 
 ```shell
-evans@eowyn:~/rquery$ curl https://clidemo.redishub.com/genkey-topt-google-authenticator/evan@test.com/My%20test%20service
+evans@eowyn:~/rquery$ curl 'https://clidemo.redishub.com/genkey-topt-google-authenticator/evan@test.com/My%20test%20service'
 token=cltdblm4aw
 uri=evan@test.com?secret=CLTDBLM4AW&issuer=My test service
 otpauth=otpauth://totp/evan%40test.com%3Fsecret%3DCLTDBLM4AW%26issuer%3DMy%20test%20service
