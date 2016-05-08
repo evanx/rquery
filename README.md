@@ -110,10 +110,8 @@ Then generate a client cert in bash:
   pwd
   echo -n 'Enter your Telegram.org username: '
   read tuser
-  if curl -s https://cli.redishub.com/verify-user-telegram/$tuser | grep -v 'OK'
+  if curl -s https://cli.redishub.com/verify-user-telegram/$tuser | grep 'OK'
   then
-    echo "Invalid Telegram user '$tuser'"
-  else
     echo $tuser > tuser
     subj="/CN=$tuser"
     echo subj $subj
