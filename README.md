@@ -77,7 +77,7 @@ where we set `rdemo` environment variable with the keyspace URL:
 ```
 https://demo.redishub.com/ak/@gyu3vn0/ztrp8y8
 ```
-where an account and keyspace have been randomly generated (and so better than a password). Note that generated ephemeral account names start with `@.`
+where an account and keyspace have been randomly generated. Note that generated ephemeral account names start with `@.`
 
 Then we can use `curl $rdemo` as follows:
 ```shell
