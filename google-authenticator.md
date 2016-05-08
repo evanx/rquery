@@ -57,7 +57,7 @@ where `0` and `1` seemed to be excluded by the relevant standard since they can 
 
 Actually they are traditionally presented in uppercase, so as to be written down somewhere as a phsyical back up, and certainly that is a good idea.
 
-Actually with such things as keys, you should always take a highly conservative approach and use a well regarded OTP library to generate the shared secret key, and ensure its correct configuration.
+Cryptographically speaking, you should use a well regarded OTP library to generate the shared secret key on your server.
 
 For the purposes of demonstration, we generate the URL of Google Charts URL:
 ```javascript
@@ -66,7 +66,7 @@ const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
 const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + otpauth;
 ```
 
-In practice, you'll want to use a QR code rendering library.
+You'll want to use a QR code rendering library to present this to the user e.g. upon registration.
 
 You will also need a TOTP library to verify the 6 digit token that the user reads off their Google Authenticator when they login.
 
@@ -96,7 +96,5 @@ private static long getCode(byte[] secret, long timeIndex)
 ```
 
 For Node, I guess i'd install `npm install otplib` or `notp` or `speakeasy.`
-
-Keep safe :)
 
 https://twitter.com/@evanxsummers
