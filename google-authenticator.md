@@ -7,6 +7,17 @@ The following demo endpoint generates a random token for the Google Authenticato
 
 https://demo.redishub.com/gentoken-google-authenticator/evanx@myserver.com/My%20service
 
+Alternatively, if you don't have a JSON viewer extension installed in your browser, or are using `curl` then try:
+
+https://clidemo.redishub.com/gentoken-google-authenticator/evan@test.com/My%20test%20service
+
+```shell
+evans@eowyn:~/rquery$ curl https://clidemo.redishub.com/gentoken-google-authenticator/evan@test.com/My%20test%20service
+token=cltdblm4aw
+uri=evan@test.com?secret=CLTDBLM4AW&issuer=My test service
+otpauth=otpauth://totp/evan%40test.com%3Fsecret%3DCLTDBLM4AW%26issuer%3DMy%20test%20service
+googleChartUrl=http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth://totp/evan%40test.com%3Fsecret%3DCLTDBLM4AW%26issuer%3DMy%20test%20service
+```
 <img src="https://evanx.github.io/images/rquery/gentoken.png">
 
 We scan the equivalent QR code via Google Charts into our Google Authenticator app:
