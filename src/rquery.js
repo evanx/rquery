@@ -660,7 +660,7 @@ export default class {
    }
 
    generateTokenKey() {
-      const symbols = 'abcdefghijklmnopqrstuvwxyz234567';
+      const symbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
       return lodash.reduce(crypto.randomBytes(10), (prev, curr) => {
          return prev + symbols[Math.floor(curr * symbols.length / 256)];
       }, '');
@@ -686,7 +686,7 @@ export default class {
       if (!account || !issuer) {
          throw {message: 'Invalid'};
       }
-      const uri = `${account}?secret=${tokenKey.toUpperCase()}&issuer=${issuer}`;
+      const uri = `${account}?secret=${tokenKey}&issuer=${issuer}`;
       const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
       const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + otpauth;
       return {tokenKey, uri, otpauth, googleChartUrl};

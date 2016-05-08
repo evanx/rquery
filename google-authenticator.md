@@ -46,21 +46,20 @@ The server would have stored the shared secret, and can call on it later for aut
 For illustration, a random key is generated in base32 encoding as follows:
 ```javascript
 generateTokenKey() {
-   const symbols = 'abcdefghijklmnopqrstuvwxyz234567';
+   const symbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
    return lodash.reduce(crypto.randomBytes(10), (prev, curr) => {
       return prev + symbols[Math.floor(curr * symbols.length / 256)];
    }, '');
 }
 ```
-where `0` and `1` seemed to be excluded by the relevant standard since they can be confused with `I` and `O.`
 
-Actually they are traditionally presented in uppercase, so as to be written down somewhere as a phsyical back up, and certainly that is a good idea.
+Note that TOTP keys are intended to be written down somewhere as a phsyical back up, and certainly that is a good idea. Base32 facilitates this by excluding `0` and `1` since they can be confused with `0` and `I` (or `l` when lowercase is used). Uppercase is standard. However, I'm foolishly going lowercase as an experiment.
 
 Cryptographically speaking, you should use a well regarded OTP library to generate the shared secret key on your server.
 
 For the purposes of demonstration, we generate the URL of Google Charts URL:
 ```javascript
-const uri = `${account}?secret=${token.toUpperCase()}&issuer=${issuer}`;
+const uri = `${account}?secret=${token}&issuer=${issuer}`;
 const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
 const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + otpauth;
 ```
