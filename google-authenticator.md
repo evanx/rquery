@@ -35,7 +35,7 @@ We use the `chart.googleapis.com` link to render the QR code for the `otpauth` U
 
 We scan the QR code into our Google Authenticator app, and voilà! We now have a TOTP two-factor authentication facility on our phone:
 
-<img src="https://evanx.github.io/images/rquery/google-authenticator-app-CROPPED.png" width="375">
+<img src="https://evanx.github.io/images/rquery/google-authenticator-app.png" width="375">
 
 <hr>
 
