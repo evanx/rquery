@@ -34,7 +34,7 @@ And voilà, we have a TOTP two-factor authentication facility via our phone:
 
 ### Implementation
 
-The random token is generated as follows:
+A random key is generated in base32 encoding:
 ```javascript
    generateToken() {
       const bytes = crypto.randomBytes(10);
@@ -46,6 +46,7 @@ The random token is generated as follows:
       return output;
    }
 ```
+where `0` and `1` are excluded by the relevant standard since they can be confused with `I` and `O.`
 
 The URI encoding of Google Charts URL:
 ```javascript

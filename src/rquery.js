@@ -666,7 +666,7 @@ export default class {
       const symbols = 'abcdefghijklmnopqrstuvwxyz234567';
       var output = '';
       for (var i = 0; i < bytes.length; i++) {
-         output += symbols[Math.round(bytes[i] / 255.0 * (symbols.length - 1))];
+         output += symbols[Math.floor(bytes[i] / 256 * symbols.length)];
       }
       return output;
    }
