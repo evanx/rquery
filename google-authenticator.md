@@ -68,9 +68,11 @@ In practice, you'll want to use a QR code rendering library.
 
 You will also need a TOTP library to verify the 6 digit token that the user reads off their Google Authenticator when they login.
 
-We notice on Google Authenticator, or the Chrome "Authenticator" extension or what have you, that the token changes every 30 seconds. That is according to the device's clock. At login time, the server must similarly generate the token for verification, using the shared secret. In practice, to allow for clock drift, the tokens before and after are also checked. If the client's clock is wrong, or the server's clock is out of whack, that's a problem.
+We notice on Google Authenticator, or the Chrome "Authenticator" extension or what have you, that the token changes every 30 seconds. That is according to the device's clock. At login time, the server must similarly generate the token for verification, using the shared secret. The tokens before and after are also checked, to provide some leeway.
 
-Some time ago, I presented the following Java code to similarly generate the token at login time. It needs the shared secret associated with the user, and the time, in 30 second intervals since the Epoch.
+Beyond that 90 second window, if some clocks are wrong, that's a problem.
+
+Some time ago, I presented the following Java code to similarly generate the 6 digit time-based token on the server. It needs the shared secret associated with the user, and the time, in 30 second intervals since the Epoch.
 ```java
 private static long getCode(byte[] secret, long timeIndex)
         throws NoSuchAlgorithmException, InvalidKeyException {
