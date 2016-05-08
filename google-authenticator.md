@@ -7,7 +7,7 @@ The following demo endpoint generates a random token for the Google Authenticato
 
 https://demo.redishub.com/gentoken-google-authenticator/evanx@myserver.com/My%20service
 
-<img src="https://evanx.github.io/images/rquery/gentoken-CHANGED.png">
+<img src="https://evanx.github.io/images/rquery/gentoken-CHANGED.png" style="min-height:164px">
 
 Alternatively, if you don't have a JSON viewer extension installed in your browser, or are using `curl` then try:
 
