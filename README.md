@@ -120,6 +120,7 @@ Then generate a client cert in bash:
       -out cert.pem \
       -keyout privkey.pem
     cat privkey.pem cert.pem > privcert.pem
+    pwd
     ls -l
     openssl x509 -text -in ~/.redishub/privcert.pem | grep 'CN='    
   fi
