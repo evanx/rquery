@@ -637,14 +637,24 @@ export default class {
    }
 
    buildQrUrl(options) {
-      assert(options.host);
-      options = Object.assign({label: options.host, issuer: options.host}, options);
-      const {label, user, host, token, issuer} = options;
-      let address = options.address;
-      if (user && host && !address) {
-         address = `${user}@${host}`;
+      let {label, account, user, host, token, issuer} = options;
+      if (host) {
+         if (!issuer) {
+            issuer = host;
+         }
+         if (!label) {
+            label = host;
+         }
       }
-      const uri = `${label}:${address}?secret=${token.toUpperCase()}&issuer=${issuer}`;
+      if (!account) {
+         if (user && host) {
+            account = `${user}@${host}`;
+         }
+      }
+      if (!label || !account || !issuer) {
+         throw {message: 'Invalid'};
+      }
+      const uri = `${label}:${account}?secret=${token.toUpperCase()}&issuer=${issuer}`;
       const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
       const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + otpauth;
       return {uri, otpauth, googleChartUrl};
