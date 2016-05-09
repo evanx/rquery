@@ -7,7 +7,7 @@ The following endpoint demonstrates the generation of a TOTP secret for the Goog
 
 https://demo.redishub.com/genkey-ga/evanx@myserver.com/My%20service
 
-<img src="https://evanx.github.io/images/rquery/genkey-ga.png">
+<img src="https://evanx.github.io/images/rquery/genkey-ga-UPDATED.png">
 
 <hr>
 
