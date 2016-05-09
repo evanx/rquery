@@ -631,12 +631,12 @@ export default class {
             return 'No client cert';
          }
          const clientCertDigest = this.digestPem(clientCert);
-         const tokenKey = this.generateTokenKey();
+         const otpSecret = this.generateTokenKey();
          const accountKey = this.adminKey('account', account);
          const [hsetnx, saddAccount, saddCert] = await redisClient.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', new Date().getTime());
             multi.sadd(this.adminKey('accounts'), account);
-            multi.sadd(this.adminKey('account', account, 'topt'), tokenKey);
+            multi.sadd(this.adminKey('account', account, 'topt'), otpSecret);
             multi.sadd(this.adminKey('account', account, 'certs'), clientCertDigest);
          });
          if (!hsetnx) {
@@ -649,7 +649,7 @@ export default class {
             logger.error('sadd cert');
          }
          const result = this.buildQrReply({
-            tokenKey,
+            otpSecret,
             user: account,
             host: config.hostname
          });
@@ -666,17 +666,17 @@ export default class {
       }, '');
    }
 
-   generateTokenCode(tokenKey, time) {
+   generateTokenCode(otpSecret, time) {
       time = time || new Date().getTime();
       logger.info(Object.keys(speakeasy));
    }
 
    buildQrReply(options) {
-      let {label, account, user, host, tokenKey, issuer} = options;
-      if (!tokenKey) {
-         tokenKey = this.generateTokenKey();
+      let {label, account, user, host, otpSecret, issuer} = options;
+      if (!otpSecret) {
+         otpSecret = this.generateTokenKey();
       }
-      logger.debug('code', this.generateTokenCode(tokenKey));
+      logger.debug('code', this.generateTokenCode(otpSecret));
       if (!issuer) {
          issuer = label || host;
       }
@@ -686,10 +686,10 @@ export default class {
       if (!account || !issuer) {
          throw {message: 'Invalid'};
       }
-      const uri = `${account}?secret=${tokenKey}&issuer=${issuer}`;
+      const uri = `${account}?secret=${otpSecret}&issuer=${issuer}`;
       const otpauth = 'otpauth://totp/' + encodeURIComponent(uri);
       const googleChartUrl = 'http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + otpauth;
-      return {tokenKey, uri, otpauth, googleChartUrl};
+      return {otpSecret, uri, otpauth, googleChartUrl};
    }
 
    validateRegisterTime() {

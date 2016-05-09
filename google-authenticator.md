@@ -19,13 +19,13 @@ https://clidemo.redishub.com/genkey-ga/evanx@myserver.com/My%20service
 curl 'https://clidemo.redishub.com/genkey-ga/evanx@myserver.com/My%20service'
 ```
 ```
-tokenKey='RYFK3TJDMY'
+otpSecret='RYFK3TJDMY'
 uri='evanx@myserver.com?secret=RYFK3TJDMY&issuer=My service'
 otpauth='otpauth://totp/evanx%40myserver.com%3Fsecret%3DRYFK3TJDMY%26issuer%3DMy%20service'
 googleChartUrl='http://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth://totp/evanx%40myserver.com%3Fsecret%3DRYFK3TJDMY%26issuer%3DMy%20service'
 ```
 
-Note that the `tokenKey` is the shared secret needed to generate those 6 digit TOTP tokens e.g. at login time.
+Note that the `otpSecret` is the shared secret needed to generate those 6 digit TOTP tokens e.g. at login time.
 
 We use the `chart.googleapis.com` link to render the QR code for the `otpauth` URL:
 
