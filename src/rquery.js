@@ -58,7 +58,7 @@ export default class {
 
    addSecureDomain() {
       this.addPublicCommand({
-         key: 'genkey-topt',
+         key: 'genkey-otp',
          params: ['host', 'user', 'webhookDomain']
       }, async (req, res) => {
          const {user, host, webhook} = req.params;
@@ -131,11 +131,11 @@ export default class {
       });
       this.addPublicRoute('time', () => redisClient.timeAsync());
       this.addPublicCommand({
-         key: 'genkey-topt',
+         key: 'genkey-otp',
          params: ['user', 'host']
       }, async (req, res) => {
          const {user, host} = req.params;
-         logger.debug('genkey-topt', user, host);
+         logger.debug('genkey-otp', user, host);
          return this.buildQrReply({user, host});
       });
       this.addPublicCommand({
