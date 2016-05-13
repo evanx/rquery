@@ -243,7 +243,7 @@ export default class {
          ).concat(accountOnlyRoutes.length? ['', 'Account only routes:'] : [])
          .concat(
             accountOnlyRoutes.map(route => `${route}`)
-         ).concat(['', 'Account/keyspace routes', `https://${this.config.hostname}/register-expire`])
+         ).concat(['', 'Account/keyspace routes:', `https://${this.config.hostname}/register-expire`])
          .concat(
             routes.filter(route => route.includes(':account') && route.includes(':keyspace'))
             .map(route => `${route}`)

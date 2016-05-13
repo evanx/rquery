@@ -596,7 +596,7 @@ var _class = function () {
                               return '' + route;
                            })).concat(accountOnlyRoutes.length ? ['', 'Account only routes:'] : []).concat(accountOnlyRoutes.map(function (route) {
                               return '' + route;
-                           })).concat(['', 'Account/keyspace routes', 'https://' + _this5.config.hostname + '/register-expire']).concat(routes.filter(function (route) {
+                           })).concat(['', 'Account/keyspace routes:', 'https://' + _this5.config.hostname + '/register-expire']).concat(routes.filter(function (route) {
                               return route.includes(':account') && route.includes(':keyspace');
                            }).map(function (route) {
                               return '' + route;
