@@ -220,17 +220,10 @@ export default class {
    }
 
    addRoutes() {
-      if (this.config.location !== '/') {
-         this.expressApp.get('/', async (req, res) => {
-            res.json(Express.getRoutes(this.expressApp));
-         });
-      }
-      this.addPublicRoute('', async (req, res) => {
-         return Express.getRoutes(this.expressApp);
-      });
       this.addPublicCommand({
          key: 'routes',
-         access: 'debug'
+         access: 'debug',
+         aliases: ['/']
       }, async (req, res, reqx) => {
          const routes = Express.getRoutes(this.expressApp)
          .filter(route => !['/', '/routes', '/webhook-telegram/*'].includes(route));
@@ -792,7 +785,7 @@ addPublicCommand(command, fn) {
    if (command.params) {
       uri = [command.key, ... command.params.map(param => ':' + param)].join('/');
    }
-   this.expressApp.get(this.config.location + uri, async (req, res) => {
+   this.expressApp.get([this.config.location, uri].join('/'), async (req, res) => {
       try {
          const result = await fn(req, res);
          if (command.access === 'redirect') {
@@ -807,7 +800,7 @@ addPublicCommand(command, fn) {
 }
 
 addPublicRoute(uri, fn) {
-   this.expressApp.get(this.config.location + uri, async (req, res) => {
+   this.expressApp.get([this.config.location, uri].join('/'), async (req, res) => {
       try {
          const result = await fn(req, res);
          await this.sendResult(null, req, res, result);
@@ -818,9 +811,9 @@ addPublicRoute(uri, fn) {
 }
 
 addRegisterRoutes() {
-   this.expressApp.get(this.config.location + 'register-expire', (req, res) => this.registerExpire(req, res));
+   this.expressApp.get(this.config.location + '/register-expire', (req, res) => this.registerExpire(req, res));
    if (this.config.secureDomain) {
-      this.expressApp.get(this.config.location + 'register-account-telegram/:account', (req, res) => this.registerAccount(req, res));
+      this.expressApp.get(this.config.location + '/register-account-telegram/:account', (req, res) => this.registerAccount(req, res));
    }
 }
 
@@ -1021,14 +1014,14 @@ addKeyspaceCommand(command, fn) {
    this.commands.push(command);
    const handler = this.createKeyspaceHandler(command, fn);
    if (command.key === this.config.indexCommand) {
-      this.expressApp.get(this.config.location + uri, handler);
+      this.expressApp.get([this.config.location, uri].join('/'), handler);
    }
    uri += '/' + command.key;
    if (command.params.length) {
       assert(command.key !== this.config.indexCommand, 'indexCommand');
       uri += '/' + command.params.map(param => ':' + param).join('/');
    }
-   this.expressApp.get(this.config.location + uri, handler);
+   this.expressApp.get([this.config.location, uri].join('/'), handler);
    this.logger.debug('add', command.key, uri);
 }
 

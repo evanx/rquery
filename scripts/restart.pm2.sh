@@ -27,3 +27,6 @@ rquery_botUrl=$botUrl rquery_botSecret=$botSecret rquery_port=$port pm2 restart 
 
 sleep 1
 ls -lh ~/.pm2/logs/${name}*
+log=`ls -t ~/.pm2/logs/${name}-out-* | head -1`
+tail $log
+

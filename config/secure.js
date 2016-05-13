@@ -7,7 +7,7 @@ module.exports = {
       serviceName: 'redishub-secure',
       serviceLabel: 'RedisHub Secure',
       port: 4567,
-      location: '/',
+      location: '',
       indexCommand: 'getconfig',
       expire: 180,
       certLimit: 4,
