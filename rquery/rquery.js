@@ -369,7 +369,8 @@ export default class {
          `https://${this.config.hostname}/ak/${account}/${keyspace}/smembers/myset`,
          `https://${this.config.hostname}/ak/${account}/${keyspace}/lpush/mylist/myvalue`,
          `https://${this.config.hostname}/ak/${account}/${keyspace}/lrange/mylist/0/-1`,
-         `https://${this.config.hostname}/ak/${account}/${keyspace}/ttls`
+         `https://${this.config.hostname}/ak/${account}/${keyspace}/ttls`,
+         'All keyspace commands:'
       ];
       return [usage, ...examples, ...this.listCommands('keyspace')];
    });
