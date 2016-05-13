@@ -1,0 +1,20 @@
+
+rhdebug() {
+   [ -t 1 ] && >&2 echo -e "\e[33m${*}\e[39m"   
+}
+
+rhcurl() {
+  local tuser=`cat ~/.redishub/tuser`
+  local cmd=`echo $@ | tr ' ' '/'`
+  cn=`openssl x509 -text -in ~/.redishub/privcert.pem | grep 'CN=' | sed 's/^.*\(CN=.*\)$/\1/' | head -1`
+  if ! echo $cn | grep -q "${tuser}$"
+  then
+    echo "ERROR $cn does not match telegram user $tuser"
+  else
+    rhdebug "$cn https://cli.redishub.com/ak/$tuser/$cmd"
+    curl -s -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/$cmd
+  fi
+}
+
+alias rh=rhcurl
+

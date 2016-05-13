@@ -1,0 +1,5 @@
+[alias]
+    # the acronym stands for "subtree add"
+    add-subtree = "!f() { git subtree add --prefix $2 $1 master --squash; }; f"
+    # the acronym stands for "subtree update"
+    pull-subtree = "!f() { git subtree pull --prefix $2 $1 master --squash; }; f"

@@ -1,0 +1,68 @@
+spec: 'component-validator#0.1.2'
+config:
+   redisUrl:
+      type: 'string'
+   redisKeyspace:
+      type: 'string'
+   hostname:
+      type: 'string'
+   location:
+      defaultValue: '/'
+   keyspaceHostname:
+      optional: true
+      type: 'string'
+   port:
+      defaultValue: 8080
+   expire:
+      type: 'duration'
+      unit: 'seconds'
+      max: 999
+   registerLimit:
+      defaultValue: 2000
+      type: 'duration'
+      unit: 'millis'
+      max: 9000
+   defaultFormat:
+      defaultValue: 'plain'
+      allowedValues: ['html', 'plain', 'line']
+   indexCommand:
+      defaultValue: 'getconfig'
+   secureDomain:
+      type: 'boolean'
+      defaultValue: false
+   certLimit:
+      defaultValue: 4
+      max: 99
+   registerLimit:
+      defaultValue: 2
+      unit: 'per second'
+   importLimit:
+      defaultValue: 2
+      unit: 'per second'
+   adminLimit:
+      defaultValue: 1
+      unit: 'seconds'
+   addClientIp:
+      defaultValue: false
+   serviceName:
+      type: 'string'
+   serviceLabel:
+      type: 'string'
+   botSecret:
+      type: 'string'
+      optional: true
+   botUrl:
+      type: 'string'
+      optional: true
+   webhookTimeout:
+      defaultValue: 8000
+   disableValidateCert:
+      defaultValue: false
+   disableTelegramHook:
+      defaultValue: false
+
+state:
+   redis: {}
+   expressApp: {}
+   expressServer: {}
+   commands: []
