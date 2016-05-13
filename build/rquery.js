@@ -292,7 +292,7 @@ var _class = function () {
                         if (!content.chat) {} else if (!content.chat.id) {} else {
                            message.chatId = content.chat.id;
                         }
-                        logger.debug('tcm', { telegram: telegram, content: content, message: message });
+                        this.logger.debug('tcm', { telegram: telegram, content: content, message: message });
 
                         if (content.from) {
                            _context4.next = 22;

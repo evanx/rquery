@@ -119,7 +119,7 @@ export default class {
       } else {
          message.chatId = content.chat.id;
       }
-      logger.debug('tcm', {telegram, content, message});
+      this.logger.debug('tcm', {telegram, content, message});
       if (!content.from) {
       } else if (!content.from.username) {
       } else if (!content.from.id) {
