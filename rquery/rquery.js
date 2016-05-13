@@ -235,7 +235,7 @@ export default class {
          const routes = Express.getRoutes(this.expressApp)
          .filter(route => !['/', '/routes', '/webhook-telegram/*'].includes(route));
          return [...routes.filter(route => !route.includes(':'))
-         .map(route => `https://${this.config.hostname}/${route}`),
+         .map(route => `https://${this.config.hostname}${route}`),
          ...routes.filter(route => route.includes(':'))
          .map(route => `${route}`)
       ];

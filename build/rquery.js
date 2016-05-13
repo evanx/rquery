@@ -621,7 +621,7 @@ var _class = function () {
                            return _context10.abrupt('return', [].concat(_toConsumableArray(routes.filter(function (route) {
                               return !route.includes(':');
                            }).map(function (route) {
-                              return 'https://' + _this5.config.hostname + '/' + route;
+                              return 'https://' + _this5.config.hostname + route;
                            })), _toConsumableArray(routes.filter(function (route) {
                               return route.includes(':');
                            }).map(function (route) {
