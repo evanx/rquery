@@ -18,7 +18,7 @@ rquery_botUrl=$botUrl rquery_botSecret=$botSecret rquery_port=$port NODE_ENV=pro
   ls -l ~/.pm2/logs/${name}*
   log=`ls -t ~/.pm2/logs/${name}-output-* | head -1`
   echo log $log
-  tail $log | sed '/ started/q'
+  tail -f $log | sed '/ started/q'
 )
 
 
