@@ -292,34 +292,35 @@ var _class = function () {
                         if (!content.chat) {} else if (!content.chat.id) {} else {
                            message.chatId = content.chat.id;
                         }
+                        logger.debug('tcm', { telegram: telegram, content: content, message: message });
 
                         if (content.from) {
-                           _context4.next = 21;
+                           _context4.next = 22;
                            break;
                         }
 
-                        _context4.next = 45;
+                        _context4.next = 46;
                         break;
 
-                     case 21:
+                     case 22:
                         if (content.from.username) {
-                           _context4.next = 24;
+                           _context4.next = 25;
                            break;
                         }
 
-                        _context4.next = 45;
+                        _context4.next = 46;
                         break;
 
-                     case 24:
+                     case 25:
                         if (content.from.id) {
-                           _context4.next = 27;
+                           _context4.next = 28;
                            break;
                         }
 
-                        _context4.next = 45;
+                        _context4.next = 46;
                         break;
 
-                     case 27:
+                     case 28:
                         message.fromId = content.from.id;
                         message.greetName = content.from.username;
                         if (true && content.from.first_name) {
@@ -330,42 +331,42 @@ var _class = function () {
                         message.username = content.from.username;
 
                         if (!/verify/.test(content.text)) {
-                           _context4.next = 37;
+                           _context4.next = 38;
                            break;
                         }
 
                         message.action = 'verify';
-                        _context4.next = 35;
+                        _context4.next = 36;
                         return this.handleTelegramVerify(message);
 
-                     case 35:
-                        _context4.next = 45;
+                     case 36:
+                        _context4.next = 46;
                         break;
 
-                     case 37:
+                     case 38:
                         if (!/grant/.test(content.text)) {
-                           _context4.next = 43;
+                           _context4.next = 44;
                            break;
                         }
 
                         message.action = 'grant';
-                        _context4.next = 41;
+                        _context4.next = 42;
                         return this.handleTelegramGrant(message);
 
-                     case 41:
-                        _context4.next = 45;
+                     case 42:
+                        _context4.next = 46;
                         break;
 
-                     case 43:
-                        _context4.next = 45;
+                     case 44:
+                        _context4.next = 46;
                         return this.sendTelegramReply(message, {
                            content: 'Commands:\n               /verify - verify your Telegram identity to redishub.com\n               '
                         });
 
-                     case 45:
+                     case 46:
                         this.logger.info('telegram message', message, telegram);
 
-                     case 46:
+                     case 47:
                      case 'end':
                         return _context4.stop();
                   }
@@ -413,7 +414,7 @@ var _class = function () {
                            secret = this.generateTokenKey();
                         }
 
-                        if (!sadd) {
+                        if (!(sadd || !verified)) {
                            _context5.next = 21;
                            break;
                         }
