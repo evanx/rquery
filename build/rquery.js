@@ -584,7 +584,11 @@ var _class = function () {
                            }).map(function (route) {
                               return 'https://' + _this5.config.hostname + route;
                            })).concat(['', 'Miscellaneous parameterized routes:']).concat(routes.filter(function (route) {
-                              return route.includes(':') && !/\:(keyspace|account)/.test(route);
+                              return route.includes(':') && !route.includes('telegram') && !/\:(keyspace|account)/.test(route);
+                           }).map(function (route) {
+                              return '' + route;
+                           })).concat(['', 'Telegram routes:']).concat(routes.filter(function (route) {
+                              return route.includes('telegram');
                            }).map(function (route) {
                               return '' + route;
                            })).concat(['', 'Account only routes:']).concat(routes.filter(function (route) {
@@ -842,21 +846,21 @@ var _class = function () {
          }());
          this.addPublicCommand({
             key: 'genkey-ga',
-            params: ['account', 'issuer']
+            params: ['address', 'issuer']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee18(req, res) {
-               var _req$params2, account, issuer;
+               var _req$params2, address, issuer;
 
                return regeneratorRuntime.wrap(function _callee18$(_context18) {
                   while (1) {
                      switch (_context18.prev = _context18.next) {
                         case 0:
                            _req$params2 = req.params;
-                           account = _req$params2.account;
+                           address = _req$params2.address;
                            issuer = _req$params2.issuer;
 
-                           _this5.logger.debug('genkey-ga', account, issuer);
-                           return _context18.abrupt('return', _this5.buildQrReply({ account: account, issuer: issuer }));
+                           _this5.logger.debug('genkey-ga', address, issuer);
+                           return _context18.abrupt('return', _this5.buildQrReply({ account: address, issuer: issuer }));
 
                         case 5:
                         case 'end':

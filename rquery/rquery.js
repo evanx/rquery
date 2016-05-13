@@ -233,7 +233,11 @@ export default class {
             .map(route => `https://${this.config.hostname}${route}`)
          ).concat(['', 'Miscellaneous parameterized routes:'])
          .concat(
-            routes.filter(route => route.includes(':') && !/\:(keyspace|account)/.test(route))
+            routes.filter(route => route.includes(':') && !route.includes('telegram') && !/\:(keyspace|account)/.test(route))
+            .map(route => `${route}`)
+         ).concat(['', 'Telegram routes:'])
+         .concat(
+            routes.filter(route => route.includes('telegram'))
             .map(route => `${route}`)
          ).concat(['', 'Account only routes:'])
          .concat(
@@ -301,11 +305,11 @@ export default class {
       });
       this.addPublicCommand({
          key: 'genkey-ga',
-         params: ['account', 'issuer']
+         params: ['address', 'issuer']
       }, async (req, res) => {
-         const {account, issuer} = req.params;
-         this.logger.debug('genkey-ga', account, issuer);
-         return this.buildQrReply({account, issuer});
+         const {address, issuer} = req.params;
+         this.logger.debug('genkey-ga', address, issuer);
+         return this.buildQrReply({account: address, issuer});
       });
       if (!this.config.secureDomain) {
          this.logger.warn('insecure mode');
