@@ -373,7 +373,7 @@ export default class {
       }, async (req, res, reqx) => {
          const {account, keyspace} = req.params;
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
-         const usage = `Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows`;
+         const usage = `Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows:`;
          const examples = [
             `https://${this.config.hostname}/ak/${account}/${keyspace}/set/mykey/myvalue`,
             `https://${this.config.hostname}/ak/${account}/${keyspace}/get/mykey`,
@@ -382,6 +382,7 @@ export default class {
             `https://${this.config.hostname}/ak/${account}/${keyspace}/lpush/mylist/myvalue`,
             `https://${this.config.hostname}/ak/${account}/${keyspace}/lrange/mylist/0/-1`,
             `https://${this.config.hostname}/ak/${account}/${keyspace}/ttls`,
+            '',
             'All keyspace commands:'
          ];
          return [usage, ...examples, ...this.listCommands('keyspace')];
@@ -481,6 +482,7 @@ export default class {
          params: ['key'],
          access: 'debug'
       }, async (req, res, {keyspaceKey}) => {
+         logger.debug('type', keyspaceKey);
          return await this.redis.typeAsync(keyspaceKey);
       });
       this.addKeyspaceCommand({

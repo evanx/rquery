@@ -1033,8 +1033,8 @@ var _class = function () {
                            _this5.logger.ndebug('help', req.params, _this5.commands.map(function (command) {
                               return command.key;
                            }).join('/'));
-                           usage = 'Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows';
-                           examples = ['https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/get/mykey', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/smembers/myset', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/ttls', 'All keyspace commands:'];
+                           usage = 'Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows:';
+                           examples = ['https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/get/mykey', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/smembers/myset', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/ttls', '', 'All keyspace commands:'];
                            return _context21.abrupt('return', [usage].concat(examples, _toConsumableArray(_this5.listCommands('keyspace'))));
 
                         case 7:
@@ -1386,13 +1386,14 @@ var _class = function () {
                   while (1) {
                      switch (_context30.prev = _context30.next) {
                         case 0:
-                           _context30.next = 2;
+                           logger.debug('type', keyspaceKey);
+                           _context30.next = 3;
                            return _this5.redis.typeAsync(keyspaceKey);
 
-                        case 2:
+                        case 3:
                            return _context30.abrupt('return', _context30.sent);
 
-                        case 3:
+                        case 4:
                         case 'end':
                            return _context30.stop();
                      }
