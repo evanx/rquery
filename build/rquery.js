@@ -579,15 +579,23 @@ var _class = function () {
                            routes = Express.getRoutes(_this5.expressApp).filter(function (route) {
                               return !['/', '/routes', '/webhook-telegram/*'].includes(route);
                            });
-                           return _context8.abrupt('return', [].concat(_toConsumableArray(routes.filter(function (route) {
+                           return _context8.abrupt('return', ['Common routes:'].concat(routes.filter(function (route) {
                               return !route.includes(':');
                            }).map(function (route) {
                               return 'https://' + _this5.config.hostname + route;
-                           })), _toConsumableArray(routes.filter(function (route) {
-                              return route.includes(':');
+                           })).concat(['', 'Miscellaneous parameterized routes:']).concat(routes.filter(function (route) {
+                              return route.includes(':') && !/\:(keyspace|account)/.test(route);
                            }).map(function (route) {
                               return '' + route;
-                           }))));
+                           })).concat(['', 'Account only routes:']).concat(routes.filter(function (route) {
+                              return route.includes(':account') && !route.includes(':keyspace');
+                           }).map(function (route) {
+                              return '' + route;
+                           })).concat(['', 'Account/keyspace routes', 'https://' + _this5.config.hostname + '/register-expire']).concat(routes.filter(function (route) {
+                              return route.includes(':account') && route.includes(':keyspace');
+                           }).map(function (route) {
+                              return '' + route;
+                           })));
 
                         case 2:
                         case 'end':
