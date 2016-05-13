@@ -229,7 +229,7 @@ export default class {
          .filter(route => !['/', '/routes', '/webhook-telegram/*'].includes(route));
          return ['Common routes:']
          .concat(
-            routes.filter(route => !route.includes(':'))
+            routes.filter(route => route && !route.includes(':'))
             .map(route => `https://${this.config.hostname}${route}`)
          ).concat(['', 'Miscellaneous parameterized routes:'])
          .concat(
@@ -250,6 +250,9 @@ export default class {
          access: 'redirect',
       }, async (req, res) => {
          res.redirect(302, 'https://github.com/evanx/redishub/blob/master/README.md');
+      });
+      this.expressApp.get('', async (req, res) => {
+         res.redirect(302, '/routes');
       });
       this.addPublicRoute('help', async (req, res) => {
          if (this.isBrowser(req)) {
