@@ -227,6 +227,7 @@ export default class {
       }, async (req, res, reqx) => {
          const routes = Express.getRoutes(this.expressApp)
          .filter(route => !['/', '/routes', '/webhook-telegram/*'].includes(route));
+         const accountOnlyRoutes = routes.filter(route => route.includes(':account') && !route.includes(':keyspace'));
          return ['Common routes:']
          .concat(
             routes.filter(route => route && !route.includes(':'))
@@ -239,10 +240,9 @@ export default class {
          .concat(
             routes.filter(route => route.includes('telegram'))
             .map(route => `${route}`)
-         ).concat(['', 'Account only routes:'])
+         ).concat(accountOnlyRoutes.length? ['', 'Account only routes:'] : [])
          .concat(
-            routes.filter(route => route.includes(':account') && !route.includes(':keyspace'))
-            .map(route => `${route}`)
+            accountOnlyRoutes.map(route => `${route}`)
          ).concat(['', 'Account/keyspace routes', `https://${this.config.hostname}/register-expire`])
          .concat(
             routes.filter(route => route.includes(':account') && route.includes(':keyspace'))

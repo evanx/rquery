@@ -571,13 +571,16 @@ var _class = function () {
             aliases: ['/']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee8(req, res, reqx) {
-               var routes;
+               var routes, accountOnlyRoutes;
                return regeneratorRuntime.wrap(function _callee8$(_context8) {
                   while (1) {
                      switch (_context8.prev = _context8.next) {
                         case 0:
                            routes = Express.getRoutes(_this5.expressApp).filter(function (route) {
                               return !['/', '/routes', '/webhook-telegram/*'].includes(route);
+                           });
+                           accountOnlyRoutes = routes.filter(function (route) {
+                              return route.includes(':account') && !route.includes(':keyspace');
                            });
                            return _context8.abrupt('return', ['Common routes:'].concat(routes.filter(function (route) {
                               return route && !route.includes(':');
@@ -591,9 +594,7 @@ var _class = function () {
                               return route.includes('telegram');
                            }).map(function (route) {
                               return '' + route;
-                           })).concat(['', 'Account only routes:']).concat(routes.filter(function (route) {
-                              return route.includes(':account') && !route.includes(':keyspace');
-                           }).map(function (route) {
+                           })).concat(accountOnlyRoutes.length ? ['', 'Account only routes:'] : []).concat(accountOnlyRoutes.map(function (route) {
                               return '' + route;
                            })).concat(['', 'Account/keyspace routes', 'https://' + _this5.config.hostname + '/register-expire']).concat(routes.filter(function (route) {
                               return route.includes(':account') && route.includes(':keyspace');
@@ -601,7 +602,7 @@ var _class = function () {
                               return '' + route;
                            })));
 
-                        case 2:
+                        case 3:
                         case 'end':
                            return _context8.stop();
                      }
