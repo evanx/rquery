@@ -5,8 +5,8 @@
 
 Notable features (June 2016):
 - Register-expire for adhoc ephemeral keyspaces
-- Identity verification via Telegram.org chat bot @redishub_bot`
-- Access secured via client-authenticated SSL (secure.redishub.com)
+- Identity verification via Telegram.org chat bot `@redishub_bot`
+- Access secured via client-authenticated SSL for `secure.redishub.com` and `cli.redishub.com`
 - Generate tokens for Google Authenticator
 
 TODO (June 2016):
@@ -106,7 +106,7 @@ where `ttl/mykey` returns the TTL decreasing from 180 seconds:
 
 #### Client cert
 
-For secure access to permanent keyspaces, let's try SSL client cert authentication on `redishub.com.`
+For secure access to permanent keyspaces, let's try SSL client cert authentication on `cli.redishub.com.` Incidently, this is the same server as `secure.redishub.com` but with different a default format, in particular plain text rather than JSON.
 
 Note that we will register an account using our Telegram.org username. (I like Telegram.org, have an Ubuntu phone, and want to build a Telegram Bot to win one of those prizes, woohoo!)
 
@@ -205,12 +205,12 @@ cd ~/.redishub
 openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem
 ```
 
-We can then import this into our browser.
+We can then import this cert into our browser.
 
 <img src="https://evanx.github.io/images/rquery/browser-cert.png">
 <hr>
 
-Testing the same URL in another browser with our `privcert` installed:
+Testing the same URL in another browser without our `privcert` installed:
 
 <img src="https://evanx.github.io/images/rquery/browser-cert-none.png">
 <hr>
@@ -219,6 +219,7 @@ Testing the same URL with a different `privcert` installed:
 
 <img src="https://evanx.github.io/images/rquery/browser-cert-other.png">
 <hr>
+
 
 ##### Browser access via Telegram.org
 
