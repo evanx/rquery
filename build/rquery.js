@@ -605,27 +605,40 @@ var _class = function () {
                return ref.apply(this, arguments);
             };
          }());
-         this.addPublicRoute('routes', function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee10(req, res) {
+         this.addPublicCommand({
+            key: 'routes',
+            access: 'debug'
+         }, function () {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee10(req, res, reqx) {
+               var routes;
                return regeneratorRuntime.wrap(function _callee10$(_context10) {
                   while (1) {
                      switch (_context10.prev = _context10.next) {
                         case 0:
-                           return _context10.abrupt('return', Express.getRoutes(_this5.expressApp));
+                           routes = Express.getRoutes(_this5.expressApp).filter(function (route) {
+                              return !['/', '/routes', '/webhook-telegram/*'].includes(route);
+                           });
+                           return _context10.abrupt('return', [].concat(_toConsumableArray(routes.filter(function (route) {
+                              return !route.includes(':');
+                           }).map(function (route) {
+                              return 'https://' + _this5.config.hostname + '/' + route;
+                           })), _toConsumableArray(routes.filter(function (route) {
+                              return route.includes(':');
+                           }).map(function (route) {
+                              return '' + route;
+                           }))));
 
-                        case 1:
+                        case 2:
                         case 'end':
                            return _context10.stop();
                      }
                   }
                }, _callee10, _this5);
             }));
-            return function (_x14, _x15) {
+            return function (_x14, _x15, _x16) {
                return ref.apply(this, arguments);
             };
          }());
-
-         //return Express.getRoutes(this.expressApp).map(route => `https://${this.config.hostname}${route}`);
          this.addPublicCommand({
             key: 'about',
             access: 'redirect'
@@ -644,7 +657,7 @@ var _class = function () {
                   }
                }, _callee11, _this5);
             }));
-            return function (_x16, _x17) {
+            return function (_x17, _x18) {
                return ref.apply(this, arguments);
             };
          }());
@@ -689,7 +702,7 @@ var _class = function () {
                   }
                }, _callee12, _this5);
             }));
-            return function (_x18, _x19) {
+            return function (_x19, _x20) {
                return ref.apply(this, arguments);
             };
          }());
@@ -717,7 +730,7 @@ var _class = function () {
                      }
                   }, _callee13, _this5);
                }));
-               return function (_x20, _x21) {
+               return function (_x21, _x22) {
                   return ref.apply(this, arguments);
                };
             }());
@@ -835,7 +848,7 @@ var _class = function () {
                   }
                }, _callee18, _this5);
             }));
-            return function (_x22, _x23) {
+            return function (_x23, _x24) {
                return ref.apply(this, arguments);
             };
          }());
@@ -864,7 +877,7 @@ var _class = function () {
                   }
                }, _callee19, _this5);
             }));
-            return function (_x24, _x25) {
+            return function (_x25, _x26) {
                return ref.apply(this, arguments);
             };
          }());
@@ -937,7 +950,7 @@ var _class = function () {
                      }
                   }, _callee20, _this5);
                }));
-               return function (_x26, _x27) {
+               return function (_x27, _x28) {
                   return ref.apply(this, arguments);
                };
             }());
@@ -1003,7 +1016,7 @@ var _class = function () {
                   }
                }, _callee21, _this5);
             }));
-            return function (_x28, _x29) {
+            return function (_x29, _x30) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1038,7 +1051,7 @@ var _class = function () {
                   }
                }, _callee22, _this5);
             }));
-            return function (_x30, _x31, _x32) {
+            return function (_x31, _x32, _x33) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1072,7 +1085,7 @@ var _class = function () {
                   }
                }, _callee23, _this5);
             }));
-            return function (_x33, _x34, _x35) {
+            return function (_x34, _x35, _x36) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1136,7 +1149,7 @@ var _class = function () {
                   }
                }, _callee24, _this5);
             }));
-            return function (_x36, _x37, _x38) {
+            return function (_x37, _x38, _x39) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1181,7 +1194,7 @@ var _class = function () {
                   }
                }, _callee25, _this5);
             }));
-            return function (_x39, _x40) {
+            return function (_x40, _x41) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1208,7 +1221,7 @@ var _class = function () {
                   }
                }, _callee26, _this5);
             }));
-            return function (_x41, _x42, _x43) {
+            return function (_x42, _x43, _x44) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1241,7 +1254,7 @@ var _class = function () {
                   }
                }, _callee27, _this5);
             }));
-            return function (_x44, _x45, _x46) {
+            return function (_x45, _x46, _x47) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1289,7 +1302,7 @@ var _class = function () {
                   }
                }, _callee28, _this5);
             }));
-            return function (_x47, _x48, _x49) {
+            return function (_x48, _x49, _x50) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1317,7 +1330,7 @@ var _class = function () {
                   }
                }, _callee29, _this5);
             }));
-            return function (_x50, _x51, _x52) {
+            return function (_x51, _x52, _x53) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1365,7 +1378,7 @@ var _class = function () {
                   }
                }, _callee30, _this5);
             }));
-            return function (_x53, _x54, _x55) {
+            return function (_x54, _x55, _x56) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1393,7 +1406,7 @@ var _class = function () {
                   }
                }, _callee31, _this5);
             }));
-            return function (_x56, _x57, _x58) {
+            return function (_x57, _x58, _x59) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1421,7 +1434,7 @@ var _class = function () {
                   }
                }, _callee32, _this5);
             }));
-            return function (_x59, _x60, _x61) {
+            return function (_x60, _x61, _x62) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1455,7 +1468,7 @@ var _class = function () {
                   }
                }, _callee33, _this5);
             }));
-            return function (_x62, _x63, _x64) {
+            return function (_x63, _x64, _x65) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1483,7 +1496,7 @@ var _class = function () {
                   }
                }, _callee34, _this5);
             }));
-            return function (_x65, _x66, _x67) {
+            return function (_x66, _x67, _x68) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1510,7 +1523,7 @@ var _class = function () {
                   }
                }, _callee35, _this5);
             }));
-            return function (_x68, _x69, _x70) {
+            return function (_x69, _x70, _x71) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1538,7 +1551,7 @@ var _class = function () {
                   }
                }, _callee36, _this5);
             }));
-            return function (_x71, _x72, _x73) {
+            return function (_x72, _x73, _x74) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1565,7 +1578,7 @@ var _class = function () {
                   }
                }, _callee37, _this5);
             }));
-            return function (_x74, _x75, _x76) {
+            return function (_x75, _x76, _x77) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1593,7 +1606,7 @@ var _class = function () {
                   }
                }, _callee38, _this5);
             }));
-            return function (_x77, _x78, _x79) {
+            return function (_x78, _x79, _x80) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1621,7 +1634,7 @@ var _class = function () {
                   }
                }, _callee39, _this5);
             }));
-            return function (_x80, _x81, _x82) {
+            return function (_x81, _x82, _x83) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1649,7 +1662,7 @@ var _class = function () {
                   }
                }, _callee40, _this5);
             }));
-            return function (_x83, _x84, _x85) {
+            return function (_x84, _x85, _x86) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1689,7 +1702,7 @@ var _class = function () {
                   }
                }, _callee41, _this5);
             }));
-            return function (_x86, _x87, _x88) {
+            return function (_x87, _x88, _x89) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1717,7 +1730,7 @@ var _class = function () {
                   }
                }, _callee42, _this5);
             }));
-            return function (_x89, _x90, _x91) {
+            return function (_x90, _x91, _x92) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1744,7 +1757,7 @@ var _class = function () {
                   }
                }, _callee43, _this5);
             }));
-            return function (_x92, _x93, _x94) {
+            return function (_x93, _x94, _x95) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1771,7 +1784,7 @@ var _class = function () {
                   }
                }, _callee44, _this5);
             }));
-            return function (_x95, _x96, _x97) {
+            return function (_x96, _x97, _x98) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1798,7 +1811,7 @@ var _class = function () {
                   }
                }, _callee45, _this5);
             }));
-            return function (_x98, _x99, _x100) {
+            return function (_x99, _x100, _x101) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1826,7 +1839,7 @@ var _class = function () {
                   }
                }, _callee46, _this5);
             }));
-            return function (_x101, _x102, _x103) {
+            return function (_x102, _x103, _x104) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1859,7 +1872,7 @@ var _class = function () {
                   }
                }, _callee47, _this5);
             }));
-            return function (_x104, _x105, _x106) {
+            return function (_x105, _x106, _x107) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1887,7 +1900,7 @@ var _class = function () {
                   }
                }, _callee48, _this5);
             }));
-            return function (_x107, _x108, _x109) {
+            return function (_x108, _x109, _x110) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1915,7 +1928,7 @@ var _class = function () {
                   }
                }, _callee49, _this5);
             }));
-            return function (_x110, _x111, _x112) {
+            return function (_x111, _x112, _x113) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1954,7 +1967,7 @@ var _class = function () {
                   }
                }, _callee50, _this5);
             }));
-            return function (_x113, _x114, _x115) {
+            return function (_x114, _x115, _x116) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1993,7 +2006,7 @@ var _class = function () {
                   }
                }, _callee51, _this5);
             }));
-            return function (_x116, _x117, _x118) {
+            return function (_x117, _x118, _x119) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2021,7 +2034,7 @@ var _class = function () {
                   }
                }, _callee52, _this5);
             }));
-            return function (_x119, _x120, _x121) {
+            return function (_x120, _x121, _x122) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2062,7 +2075,7 @@ var _class = function () {
                   }
                }, _callee53, _this5);
             }));
-            return function (_x122, _x123, _x124) {
+            return function (_x123, _x124, _x125) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2090,7 +2103,7 @@ var _class = function () {
                   }
                }, _callee54, _this5);
             }));
-            return function (_x125, _x126, _x127) {
+            return function (_x126, _x127, _x128) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2117,7 +2130,7 @@ var _class = function () {
                   }
                }, _callee55, _this5);
             }));
-            return function (_x128, _x129, _x130) {
+            return function (_x129, _x130, _x131) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2145,7 +2158,7 @@ var _class = function () {
                   }
                }, _callee56, _this5);
             }));
-            return function (_x131, _x132, _x133) {
+            return function (_x132, _x133, _x134) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2173,7 +2186,7 @@ var _class = function () {
                   }
                }, _callee57, _this5);
             }));
-            return function (_x134, _x135, _x136) {
+            return function (_x135, _x136, _x137) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2201,7 +2214,7 @@ var _class = function () {
                   }
                }, _callee58, _this5);
             }));
-            return function (_x137, _x138, _x139) {
+            return function (_x138, _x139, _x140) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2228,7 +2241,7 @@ var _class = function () {
                   }
                }, _callee59, _this5);
             }));
-            return function (_x140, _x141, _x142) {
+            return function (_x141, _x142, _x143) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2256,7 +2269,7 @@ var _class = function () {
                   }
                }, _callee60, _this5);
             }));
-            return function (_x143, _x144, _x145) {
+            return function (_x144, _x145, _x146) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2284,7 +2297,7 @@ var _class = function () {
                   }
                }, _callee61, _this5);
             }));
-            return function (_x146, _x147, _x148) {
+            return function (_x147, _x148, _x149) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2311,7 +2324,7 @@ var _class = function () {
                   }
                }, _callee62, _this5);
             }));
-            return function (_x149, _x150, _x151) {
+            return function (_x150, _x151, _x152) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2339,7 +2352,7 @@ var _class = function () {
                   }
                }, _callee63, _this5);
             }));
-            return function (_x152, _x153, _x154) {
+            return function (_x153, _x154, _x155) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2367,7 +2380,7 @@ var _class = function () {
                   }
                }, _callee64, _this5);
             }));
-            return function (_x155, _x156, _x157) {
+            return function (_x156, _x157, _x158) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2394,7 +2407,7 @@ var _class = function () {
                   }
                }, _callee65, _this5);
             }));
-            return function (_x158, _x159, _x160) {
+            return function (_x159, _x160, _x161) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2421,7 +2434,7 @@ var _class = function () {
                   }
                }, _callee66, _this5);
             }));
-            return function (_x161, _x162, _x163) {
+            return function (_x162, _x163, _x164) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2448,7 +2461,7 @@ var _class = function () {
                   }
                }, _callee67, _this5);
             }));
-            return function (_x164, _x165, _x166) {
+            return function (_x165, _x166, _x167) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2475,7 +2488,7 @@ var _class = function () {
                   }
                }, _callee68, _this5);
             }));
-            return function (_x167, _x168, _x169) {
+            return function (_x168, _x169, _x170) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2502,7 +2515,7 @@ var _class = function () {
                   }
                }, _callee69, _this5);
             }));
-            return function (_x170, _x171, _x172) {
+            return function (_x171, _x172, _x173) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2530,7 +2543,7 @@ var _class = function () {
                   }
                }, _callee70, _this5);
             }));
-            return function (_x173, _x174, _x175) {
+            return function (_x174, _x175, _x176) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2558,7 +2571,7 @@ var _class = function () {
                   }
                }, _callee71, _this5);
             }));
-            return function (_x176, _x177, _x178) {
+            return function (_x177, _x178, _x179) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2585,7 +2598,7 @@ var _class = function () {
                   }
                }, _callee72, _this5);
             }));
-            return function (_x179, _x180, _x181) {
+            return function (_x180, _x181, _x182) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2612,7 +2625,7 @@ var _class = function () {
                   }
                }, _callee73, _this5);
             }));
-            return function (_x182, _x183, _x184) {
+            return function (_x183, _x184, _x185) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2693,7 +2706,7 @@ var _class = function () {
                   }
                }, _callee74, _this6, [[0, 11]]);
             }));
-            return function (_x185, _x186) {
+            return function (_x186, _x187) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2737,7 +2750,7 @@ var _class = function () {
                   }
                }, _callee75, _this7, [[0, 8]]);
             }));
-            return function (_x187, _x188) {
+            return function (_x188, _x189) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2892,7 +2905,7 @@ var _class = function () {
             }, _callee77, this, [[0, 7]]);
          }));
 
-         function registerAccount(_x189, _x190) {
+         function registerAccount(_x190, _x191) {
             return ref.apply(this, arguments);
          }
 
@@ -3112,7 +3125,7 @@ var _class = function () {
             }, _callee79, this, [[1, 8]]);
          }));
 
-         function registerExpire(_x192, _x193, _x194) {
+         function registerExpire(_x193, _x194, _x195) {
             return ref.apply(this, arguments);
          }
 
@@ -3430,7 +3443,7 @@ var _class = function () {
                   }
                }, _callee81, _this11, [[0, 7]]);
             }));
-            return function (_x195, _x196) {
+            return function (_x196, _x197) {
                return ref.apply(this, arguments);
             };
          }();
@@ -3501,7 +3514,7 @@ var _class = function () {
             }, _callee82, this);
          }));
 
-         function migrateKeyspace(_x197) {
+         function migrateKeyspace(_x198) {
             return ref.apply(this, arguments);
          }
 
@@ -3764,7 +3777,7 @@ var _class = function () {
             }, _callee83, this);
          }));
 
-         function sendResult(_x198, _x199, _x200, _x201) {
+         function sendResult(_x199, _x200, _x201, _x202) {
             return ref.apply(this, arguments);
          }
 

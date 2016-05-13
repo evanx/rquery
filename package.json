@@ -36,5 +36,8 @@
     "season": "^5.3.0",
     "speakeasy": "^2.0.0",
     "thirty-two": "^1.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.9.2"
   }
 }
