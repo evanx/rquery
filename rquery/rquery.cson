@@ -6,6 +6,8 @@ config:
       type: 'string'
    hostname:
       type: 'string'
+   hostUrl:
+      type: 'string'
    location:
       defaultValue: '/'
    keyspaceHostname:

@@ -231,7 +231,7 @@ export default class {
          return ['Common routes:']
          .concat(
             routes.filter(route => route && !route.includes(':'))
-            .map(route => `https://${this.config.hostname}${route}`)
+            .map(route => `${this.config.hostUrl}${route}`)
          ).concat(['', 'Miscellaneous parameterized routes:'])
          .concat(
             routes.filter(route => route.includes(':') && !route.includes('telegram') && !/\:(keyspace|account)/.test(route))
@@ -243,7 +243,7 @@ export default class {
          ).concat(accountOnlyRoutes.length? ['', 'Account only routes:'] : [])
          .concat(
             accountOnlyRoutes.map(route => `${route}`)
-         ).concat(['', 'Account/keyspace routes:', `https://${this.config.hostname}/register-expire`])
+         ).concat(['', 'Account/keyspace routes:', `${this.config.hostUrl}/register-expire`])
          .concat(
             routes.filter(route => route.includes(':account') && route.includes(':keyspace'))
             .map(route => `${route}`)
@@ -375,13 +375,13 @@ export default class {
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
          const usage = `Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows:`;
          const examples = [
-            `https://${this.config.hostname}/ak/${account}/${keyspace}/set/mykey/myvalue`,
-            `https://${this.config.hostname}/ak/${account}/${keyspace}/get/mykey`,
-            `https://${this.config.hostname}/ak/${account}/${keyspace}/sadd/myset/myvalue`,
-            `https://${this.config.hostname}/ak/${account}/${keyspace}/smembers/myset`,
-            `https://${this.config.hostname}/ak/${account}/${keyspace}/lpush/mylist/myvalue`,
-            `https://${this.config.hostname}/ak/${account}/${keyspace}/lrange/mylist/0/-1`,
-            `https://${this.config.hostname}/ak/${account}/${keyspace}/ttls`,
+            `${this.config.hostUrl}/ak/${account}/${keyspace}/set/mykey/myvalue`,
+            `${this.config.hostUrl}/ak/${account}/${keyspace}/get/mykey`,
+            `${this.config.hostUrl}/ak/${account}/${keyspace}/sadd/myset/myvalue`,
+            `${this.config.hostUrl}/ak/${account}/${keyspace}/smembers/myset`,
+            `${this.config.hostUrl}/ak/${account}/${keyspace}/lpush/mylist/myvalue`,
+            `${this.config.hostUrl}/ak/${account}/${keyspace}/lrange/mylist/0/-1`,
+            `${this.config.hostUrl}/ak/${account}/${keyspace}/ttls`,
             '',
             'All keyspace commands:'
          ];
@@ -482,7 +482,7 @@ export default class {
          params: ['key'],
          access: 'debug'
       }, async (req, res, {keyspaceKey}) => {
-         logger.debug('type', keyspaceKey);
+         this.logger.debug('type', keyspaceKey);
          return await this.redis.typeAsync(keyspaceKey);
       });
       this.addKeyspaceCommand({
@@ -969,7 +969,7 @@ export default class {
          this.logger.debug('registerExpire clientIp', clientIp, account, keyspace, accountKey);
          const replies = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', new Date().getTime());
-            multi.expire(accountKey, 10*this.config.expire);
+            multi.expire(accountKey, 10*this.config.shortExpire);
             if (clientIp) {
                multi.hsetnx(accountKey, 'clientIp', clientIp);
                if (this.config.addClientIp) {
@@ -1128,7 +1128,7 @@ export default class {
             }
             if (key) {
                assert(reqx.keyspaceKey);
-               multi.expire(reqx.keyspaceKey, this.config.expire);
+               multi.expire(reqx.keyspaceKey, this.getKeyExpire(account));
             }
             if (!this.config.secureDomain && account[0] === '@') {
                multi.expire(accountKey, this.config.expire);
@@ -1138,6 +1138,14 @@ export default class {
             this.sendError(req, res, err);
          }
       };
+   }
+
+   async getKeyExpire(account) {
+      if (account[0] === '@') {
+         return this.config.shortExpire;
+      } else {
+         return this.config.expire;
+      }
    }
 
    async migrateKeyspace({account, keyspace}) {

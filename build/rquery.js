@@ -585,7 +585,7 @@ var _class = function () {
                            return _context8.abrupt('return', ['Common routes:'].concat(routes.filter(function (route) {
                               return route && !route.includes(':');
                            }).map(function (route) {
-                              return 'https://' + _this5.config.hostname + route;
+                              return '' + _this5.config.hostUrl + route;
                            })).concat(['', 'Miscellaneous parameterized routes:']).concat(routes.filter(function (route) {
                               return route.includes(':') && !route.includes('telegram') && !/\:(keyspace|account)/.test(route);
                            }).map(function (route) {
@@ -596,7 +596,7 @@ var _class = function () {
                               return '' + route;
                            })).concat(accountOnlyRoutes.length ? ['', 'Account only routes:'] : []).concat(accountOnlyRoutes.map(function (route) {
                               return '' + route;
-                           })).concat(['', 'Account/keyspace routes:', 'https://' + _this5.config.hostname + '/register-expire']).concat(routes.filter(function (route) {
+                           })).concat(['', 'Account/keyspace routes:', _this5.config.hostUrl + '/register-expire']).concat(routes.filter(function (route) {
                               return route.includes(':account') && route.includes(':keyspace');
                            }).map(function (route) {
                               return '' + route;
@@ -1034,7 +1034,7 @@ var _class = function () {
                               return command.key;
                            }).join('/'));
                            usage = 'Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows:';
-                           examples = ['https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/get/mykey', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/smembers/myset', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', 'https://' + _this5.config.hostname + '/ak/' + account + '/' + keyspace + '/ttls', '', 'All keyspace commands:'];
+                           examples = [_this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/ttls', '', 'All keyspace commands:'];
                            return _context21.abrupt('return', [usage].concat(examples, _toConsumableArray(_this5.listCommands('keyspace'))));
 
                         case 7:
@@ -1386,7 +1386,7 @@ var _class = function () {
                   while (1) {
                      switch (_context30.prev = _context30.next) {
                         case 0:
-                           logger.debug('type', keyspaceKey);
+                           _this5.logger.debug('type', keyspaceKey);
                            _context30.next = 3;
                            return _this5.redis.typeAsync(keyspaceKey);
 
@@ -3029,7 +3029,7 @@ var _class = function () {
                                        _context77.next = 12;
                                        return _this10.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', new Date().getTime());
-                                          multi.expire(accountKey, 10 * _this10.config.expire);
+                                          multi.expire(accountKey, 10 * _this10.config.shortExpire);
                                           if (clientIp) {
                                              multi.hsetnx(accountKey, 'clientIp', clientIp);
                                              if (_this10.config.addClientIp) {
@@ -3394,7 +3394,7 @@ var _class = function () {
                                           }
                                           if (key) {
                                              assert(reqx.keyspaceKey);
-                                             multi.expire(reqx.keyspaceKey, _this11.config.expire);
+                                             multi.expire(reqx.keyspaceKey, _this11.getKeyExpire(account));
                                           }
                                           if (!_this11.config.secureDomain && account[0] === '@') {
                                              multi.expire(accountKey, _this11.config.expire);
@@ -3443,64 +3443,24 @@ var _class = function () {
          }();
       }
    }, {
-      key: 'migrateKeyspace',
+      key: 'getKeyExpire',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee81(_ref69) {
-            var account = _ref69.account;
-            var keyspace = _ref69.keyspace;
-
-            var accountKey, _ref70, _ref71, accessToken, token, _ref72, _ref73, hsetnx, hdel;
-
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee81(account) {
             return regeneratorRuntime.wrap(function _callee81$(_context81) {
                while (1) {
                   switch (_context81.prev = _context81.next) {
                      case 0:
-                        accountKey = this.accountKeyspace(account, keyspace);
-                        _context81.next = 3;
-                        return this.redis.multiExecAsync(function (multi) {
-                           multi.hget(accountKey, 'accessToken');
-                           multi.hget(accountKey, 'token');
-                        });
-
-                     case 3:
-                        _ref70 = _context81.sent;
-                        _ref71 = _slicedToArray(_ref70, 2);
-                        accessToken = _ref71[0];
-                        token = _ref71[1];
-
-                        if (!(!token && accessToken)) {
-                           _context81.next = 20;
+                        if (!(account[0] === '@')) {
+                           _context81.next = 4;
                            break;
                         }
 
-                        _context81.next = 10;
-                        return this.redis.multiExecAsync(function (multi) {
-                           multi.hsetnx(accountKey, 'token', accessToken);
-                           multi.hdel(accountKey, 'accessToken');
-                        });
+                        return _context81.abrupt('return', this.config.shortExpire);
 
-                     case 10:
-                        _ref72 = _context81.sent;
-                        _ref73 = _slicedToArray(_ref72, 2);
-                        hsetnx = _ref73[0];
-                        hdel = _ref73[1];
+                     case 4:
+                        return _context81.abrupt('return', this.config.expire);
 
-                        if (hsetnx) {
-                           _context81.next = 18;
-                           break;
-                        }
-
-                        throw new Error('Migrate keyspace hset failed');
-
-                     case 18:
-                        if (hdel) {
-                           _context81.next = 20;
-                           break;
-                        }
-
-                        throw new Error('Migrate keyspace hdel failed');
-
-                     case 20:
+                     case 5:
                      case 'end':
                         return _context81.stop();
                   }
@@ -3508,7 +3468,79 @@ var _class = function () {
             }, _callee81, this);
          }));
 
-         function migrateKeyspace(_x196) {
+         function getKeyExpire(_x196) {
+            return ref.apply(this, arguments);
+         }
+
+         return getKeyExpire;
+      }()
+   }, {
+      key: 'migrateKeyspace',
+      value: function () {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee82(_ref69) {
+            var account = _ref69.account;
+            var keyspace = _ref69.keyspace;
+
+            var accountKey, _ref70, _ref71, accessToken, token, _ref72, _ref73, hsetnx, hdel;
+
+            return regeneratorRuntime.wrap(function _callee82$(_context82) {
+               while (1) {
+                  switch (_context82.prev = _context82.next) {
+                     case 0:
+                        accountKey = this.accountKeyspace(account, keyspace);
+                        _context82.next = 3;
+                        return this.redis.multiExecAsync(function (multi) {
+                           multi.hget(accountKey, 'accessToken');
+                           multi.hget(accountKey, 'token');
+                        });
+
+                     case 3:
+                        _ref70 = _context82.sent;
+                        _ref71 = _slicedToArray(_ref70, 2);
+                        accessToken = _ref71[0];
+                        token = _ref71[1];
+
+                        if (!(!token && accessToken)) {
+                           _context82.next = 20;
+                           break;
+                        }
+
+                        _context82.next = 10;
+                        return this.redis.multiExecAsync(function (multi) {
+                           multi.hsetnx(accountKey, 'token', accessToken);
+                           multi.hdel(accountKey, 'accessToken');
+                        });
+
+                     case 10:
+                        _ref72 = _context82.sent;
+                        _ref73 = _slicedToArray(_ref72, 2);
+                        hsetnx = _ref73[0];
+                        hdel = _ref73[1];
+
+                        if (hsetnx) {
+                           _context82.next = 18;
+                           break;
+                        }
+
+                        throw new Error('Migrate keyspace hset failed');
+
+                     case 18:
+                        if (hdel) {
+                           _context82.next = 20;
+                           break;
+                        }
+
+                        throw new Error('Migrate keyspace hdel failed');
+
+                     case 20:
+                     case 'end':
+                        return _context82.stop();
+                  }
+               }
+            }, _callee82, this);
+         }));
+
+         function migrateKeyspace(_x197) {
             return ref.apply(this, arguments);
          }
 
@@ -3670,11 +3702,11 @@ var _class = function () {
    }, {
       key: 'sendResult',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee82(command, req, res, result) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee83(command, req, res, result) {
             var resultString;
-            return regeneratorRuntime.wrap(function _callee82$(_context82) {
+            return regeneratorRuntime.wrap(function _callee83$(_context83) {
                while (1) {
-                  switch (_context82.prev = _context82.next) {
+                  switch (_context83.prev = _context83.next) {
                      case 0:
                         command = command || { command: 'none' };
                         if (this.isDebugReq(req)) {
@@ -3683,25 +3715,25 @@ var _class = function () {
                         resultString = '';
 
                         if (Values.isDefined(result)) {
-                           _context82.next = 6;
+                           _context83.next = 6;
                            break;
                         }
 
-                        _context82.next = 30;
+                        _context83.next = 30;
                         break;
 
                      case 6:
                         if (!Values.isDefined(req.query.quiet)) {
-                           _context82.next = 9;
+                           _context83.next = 9;
                            break;
                         }
 
-                        _context82.next = 30;
+                        _context83.next = 30;
                         break;
 
                      case 9:
                         if (!(this.config.defaultFormat === 'cli' || Values.isDefined(req.query.line) || this.isCliDomain(req) || command.format === 'cli')) {
-                           _context82.next = 14;
+                           _context83.next = 14;
                            break;
                         }
 
@@ -3721,57 +3753,57 @@ var _class = function () {
                         } else if (result === null) {} else {
                            resultString = result.toString();
                         }
-                        _context82.next = 30;
+                        _context83.next = 30;
                         break;
 
                      case 14:
                         if (!(this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain) || command.format === 'plain')) {
-                           _context82.next = 19;
+                           _context83.next = 19;
                            break;
                         }
 
                         res.set('Content-Type', 'text/plain');
                         resultString = result.toString();
-                        _context82.next = 30;
+                        _context83.next = 30;
                         break;
 
                      case 19:
                         if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html')) {
-                           _context82.next = 24;
+                           _context83.next = 24;
                            break;
                         }
 
                         res.set('Content-Type', 'text/html');
                         resultString = result.toString();
-                        _context82.next = 30;
+                        _context83.next = 30;
                         break;
 
                      case 24:
                         if (!(this.config.defaultFormat !== 'json')) {
-                           _context82.next = 28;
+                           _context83.next = 28;
                            break;
                         }
 
                         this.sendError(req, res, { message: 'Invalid default format: ' + this.config.defaultFormat });
-                        _context82.next = 30;
+                        _context83.next = 30;
                         break;
 
                      case 28:
                         res.json(result);
-                        return _context82.abrupt('return');
+                        return _context83.abrupt('return');
 
                      case 30:
                         res.send(resultString + '\n');
 
                      case 31:
                      case 'end':
-                        return _context82.stop();
+                        return _context83.stop();
                   }
                }
-            }, _callee82, this);
+            }, _callee83, this);
          }));
 
-         function sendResult(_x197, _x198, _x199, _x200) {
+         function sendResult(_x198, _x199, _x200, _x201) {
             return ref.apply(this, arguments);
          }
 
@@ -3852,19 +3884,19 @@ var _class = function () {
    }, {
       key: 'end',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee83() {
-            return regeneratorRuntime.wrap(function _callee83$(_context83) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee84() {
+            return regeneratorRuntime.wrap(function _callee84$(_context84) {
                while (1) {
-                  switch (_context83.prev = _context83.next) {
+                  switch (_context84.prev = _context84.next) {
                      case 0:
                         this.logger.info('end');
 
                         if (!redis) {
-                           _context83.next = 4;
+                           _context84.next = 4;
                            break;
                         }
 
-                        _context83.next = 4;
+                        _context84.next = 4;
                         return this.redis.quitAsync();
 
                      case 4:
@@ -3874,10 +3906,10 @@ var _class = function () {
 
                      case 5:
                      case 'end':
-                        return _context83.stop();
+                        return _context84.stop();
                   }
                }
-            }, _callee83, this);
+            }, _callee84, this);
          }));
 
          function end() {

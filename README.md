@@ -176,7 +176,7 @@ rhcurl() {
     echo "ERROR $cn does not match Telegram user $tuser"
   else
     rhdebug "$cn https://cli.redishub.com/ak/$tuser$cmd"
-    curl -s -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser$cmd
+    curl -s -E ~/.redishub/privcert.pem "https://cli.redishub.com/ak/$tuser$cmd"
   fi
 }
 
