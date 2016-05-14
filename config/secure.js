@@ -10,7 +10,8 @@ module.exports = {
       port: 4567,
       location: '',
       indexCommand: 'getconfig',
-      keyExpire: 2764800,
+      //keyExpire: 2764800, // 31 days
+      keyExpire: 604800, // 7 days
       ephemeralKeyExpire: 600,
       ephemeralAccountExpire: 1200,
       certLimit: 4,

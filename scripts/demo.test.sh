@@ -75,14 +75,11 @@ curl1() {
   curle $1 1
 }
 
-if echo $rurl | grep -q ^localhost
-then
-  ruri=`curl -s $rurl/register-expire`
-  echo ruri $ruri
-  rurl="$rurl/$ruri"
-  echo rurl $rurl
-  echo $rurl > ~/.redishub/test.url
-fi
+ruri=`curl -s $rurl/register-expire`
+echo ruri $ruri
+rurl="$rurl/$ruri"
+echo rurl $rurl
+echo $rurl > ~/.redishub/test.url
 
 . scripts/_test.sh
 
