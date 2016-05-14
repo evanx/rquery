@@ -15,7 +15,15 @@ config:
       type: 'string'
    port:
       defaultValue: 8080
-   expire:
+   keyExpire:
+      type: 'duration'
+      unit: 'seconds'
+      max: 999
+   ephemeralKeyExpire:
+      type: 'duration'
+      unit: 'seconds'
+      max: 999
+   ephemeralAccountExpire:
       type: 'duration'
       unit: 'seconds'
       max: 999

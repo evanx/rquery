@@ -7,7 +7,7 @@ curla() {
   curle set/mykey/myvalue OK
   curl1 exists/mykey
   curle get/mykey myvalue
-  curlr ttl/mykey '^1[78][0-9]$'
+  curlr ttl/mykey '^[1-9][0-9]*$'
   curlv sadd/myset/item1
   curlv sadd/myset/item2
   curle type/myset set

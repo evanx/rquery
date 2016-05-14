@@ -337,7 +337,7 @@ export default class {
                return errorMessage;
             }
             const token = this.generateTokenKey(6);
-            await this.redis.setexAsync([accountKey, token].join(':'), this.config.expire, token);
+            await this.redis.setexAsync([accountKey, token].join(':'), this.config.keyExpire, token);
             return token;
          });
          this.addSecureDomain();
@@ -551,11 +551,11 @@ export default class {
          key: 'smove',
          params: ['key', 'dest', 'member'],
          access: 'set'
-      }, async (req, res, {multi, keyspace, keyspaceKey}) => {
+      }, async (req, res, {multi, account, keyspace, keyspaceKey}) => {
          const {dest, member} = req.params;
          const destKey = this.keyspaceKey(account, keyspace, dest);
          let result = await this.redis.smoveAsync(keyspaceKey, destKey, member);
-         multi.expire(destKey, this.config.expire);
+         multi.expire(destKey, this.getKeyExpire(account));
          return result;
       });
       this.addKeyspaceCommand({
@@ -652,7 +652,7 @@ export default class {
          const {dest, timeout} = req.params;
          const destKey = this.keyspaceKey(account, keyspace, dest);
          const result = await this.redis.brpoplpushAsync(keyspaceKey, destKey, timeout);
-         multi.expire(destKey, this.config.expire);
+         multi.expire(destKey, this.getKeyExpire(account));
          return result;
       });
       this.addKeyspaceCommand({
@@ -969,7 +969,7 @@ export default class {
          this.logger.debug('registerExpire clientIp', clientIp, account, keyspace, accountKey);
          const replies = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', new Date().getTime());
-            multi.expire(accountKey, 10*this.config.shortExpire);
+            multi.expire(accountKey, this.config.ephemeralAccountExpire);
             if (clientIp) {
                multi.hsetnx(accountKey, 'clientIp', clientIp);
                if (this.config.addClientIp) {
@@ -1130,8 +1130,8 @@ export default class {
                assert(reqx.keyspaceKey);
                multi.expire(reqx.keyspaceKey, this.getKeyExpire(account));
             }
-            if (!this.config.secureDomain && account[0] === '@') {
-               multi.expire(accountKey, this.config.expire);
+            if (account[0] === '@') {
+               multi.expire(accountKey, this.config.ephemeralAccountExpire);
             }
             await multi.execAsync();
          } catch (err) {
@@ -1140,11 +1140,11 @@ export default class {
       };
    }
 
-   async getKeyExpire(account) {
+   getKeyExpire(account) {
       if (account[0] === '@') {
-         return this.config.shortExpire;
+         return this.config.ephemeralKeyExpire;
       } else {
-         return this.config.expire;
+         return this.config.keyExpire;
       }
    }
 
