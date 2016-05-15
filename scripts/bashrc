@@ -3,6 +3,10 @@ rhdebug() {
    [ -t 1 ] && >&2 echo -e "\e[33m${*}\e[39m"   
 }
 
+rhdebug() {
+   [ -t 1 ] && >&2 echo -e "\e[33m${*}\e[39m"   
+}
+
 rhcurl() {
   local tuser=`cat ~/.redishub/tuser`
   local cmd=`echo $@ | tr ' ' '/'`
