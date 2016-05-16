@@ -1309,7 +1309,7 @@ export default class {
       if (!Values.isDefined(result)) {
       } else if (Values.isDefined(req.query.quiet)) {
       } else if (this.config.defaultFormat === 'cli' || Values.isDefined(req.query.line)
-      || this.isCliDomain(req) || command.format === 'cli') {
+      || this.isCliDomain(req) || command.format === 'cli' || /Mobile/.test(userAgent)) {
          res.set('Content-Type', 'text/plain');
          if (lodash.isArray(result)) {
             resultString = result.join('\n');
@@ -1328,7 +1328,7 @@ export default class {
             resultString = result.toString();
          }
       } else if (this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain)
-      || command.format === 'plain' || /Mobile/.test(userAgent)) {
+      || command.format === 'plain') {
          res.set('Content-Type', 'text/plain');
          resultString = result.toString();
       } else if (this.config.defaultFormat === 'html' || Values.isDefined(req.query.html)

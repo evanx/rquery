@@ -3713,7 +3713,7 @@ var _class = function () {
                         break;
 
                      case 11:
-                        if (!(this.config.defaultFormat === 'cli' || Values.isDefined(req.query.line) || this.isCliDomain(req) || command.format === 'cli')) {
+                        if (!(this.config.defaultFormat === 'cli' || Values.isDefined(req.query.line) || this.isCliDomain(req) || command.format === 'cli' || /Mobile/.test(userAgent))) {
                            _context82.next = 16;
                            break;
                         }
@@ -3738,7 +3738,7 @@ var _class = function () {
                         break;
 
                      case 16:
-                        if (!(this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain) || command.format === 'plain' || /Mobile/.test(userAgent))) {
+                        if (!(this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain) || command.format === 'plain')) {
                            _context82.next = 21;
                            break;
                         }
