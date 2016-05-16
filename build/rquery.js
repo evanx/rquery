@@ -3681,11 +3681,14 @@ var _class = function () {
       key: 'sendResult',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee82(command, req, res, result) {
-            var resultString;
+            var userAgent, resultString;
             return regeneratorRuntime.wrap(function _callee82$(_context82) {
                while (1) {
                   switch (_context82.prev = _context82.next) {
                      case 0:
+                        userAgent = req.get('User-Agent');
+
+                        this.logger.debug('sendResult ua', userAgent);
                         command = command || { command: 'none' };
                         if (this.isDebugReq(req)) {
                            this.logger.ndebug('sendResult', command.command, req.params, req.query, result);
@@ -3693,25 +3696,25 @@ var _class = function () {
                         resultString = '';
 
                         if (Values.isDefined(result)) {
-                           _context82.next = 6;
+                           _context82.next = 8;
                            break;
                         }
 
-                        _context82.next = 30;
+                        _context82.next = 32;
                         break;
 
-                     case 6:
+                     case 8:
                         if (!Values.isDefined(req.query.quiet)) {
-                           _context82.next = 9;
+                           _context82.next = 11;
                            break;
                         }
 
-                        _context82.next = 30;
+                        _context82.next = 32;
                         break;
 
-                     case 9:
+                     case 11:
                         if (!(this.config.defaultFormat === 'cli' || Values.isDefined(req.query.line) || this.isCliDomain(req) || command.format === 'cli')) {
-                           _context82.next = 14;
+                           _context82.next = 16;
                            break;
                         }
 
@@ -3731,49 +3734,49 @@ var _class = function () {
                         } else if (result === null) {} else {
                            resultString = result.toString();
                         }
-                        _context82.next = 30;
+                        _context82.next = 32;
                         break;
 
-                     case 14:
-                        if (!(this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain) || command.format === 'plain')) {
-                           _context82.next = 19;
+                     case 16:
+                        if (!(this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain) || command.format === 'plain' || /Mobile/.test(userAgent))) {
+                           _context82.next = 21;
                            break;
                         }
 
                         res.set('Content-Type', 'text/plain');
                         resultString = result.toString();
-                        _context82.next = 30;
+                        _context82.next = 32;
                         break;
 
-                     case 19:
+                     case 21:
                         if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html')) {
-                           _context82.next = 24;
+                           _context82.next = 26;
                            break;
                         }
 
                         res.set('Content-Type', 'text/html');
                         resultString = result.toString();
-                        _context82.next = 30;
+                        _context82.next = 32;
                         break;
 
-                     case 24:
+                     case 26:
                         if (!(this.config.defaultFormat !== 'json')) {
-                           _context82.next = 28;
+                           _context82.next = 30;
                            break;
                         }
 
                         this.sendError(req, res, { message: 'Invalid default format: ' + this.config.defaultFormat });
-                        _context82.next = 30;
+                        _context82.next = 32;
                         break;
 
-                     case 28:
+                     case 30:
                         res.json(result);
                         return _context82.abrupt('return');
 
-                     case 30:
+                     case 32:
                         res.send(resultString + '\n');
 
-                     case 31:
+                     case 33:
                      case 'end':
                         return _context82.stop();
                   }

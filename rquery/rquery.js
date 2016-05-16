@@ -1299,6 +1299,8 @@ export default class {
    }
 
    async sendResult(command, req, res, result) {
+      const userAgent = req.get('User-Agent');
+      this.logger.debug('sendResult ua', userAgent);
       command = command || { command: 'none' };
       if (this.isDebugReq(req)) {
          this.logger.ndebug('sendResult', command.command, req.params, req.query, result);
@@ -1326,7 +1328,7 @@ export default class {
             resultString = result.toString();
          }
       } else if (this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain)
-      || command.format === 'plain') {
+      || command.format === 'plain' || /Mobile/.test(userAgent)) {
          res.set('Content-Type', 'text/plain');
          resultString = result.toString();
       } else if (this.config.defaultFormat === 'html' || Values.isDefined(req.query.html)
