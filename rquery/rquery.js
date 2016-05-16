@@ -369,11 +369,16 @@ export default class {
       this.addKeyspaceCommand({
          key: 'help',
          access: 'debug',
-         //format: 'plain'
+         resultObjectType: 'KeyedArrays',
+         render: async (req, res, reqx, result) => {
+            if (this.isMobile(req)) {
+               return 'Not supported';
+            }
+         }
       }, async (req, res, reqx) => {
          const {account, keyspace} = req.params;
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
-         const usage = `Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows:`;
+         const message = `Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows:`;
          const examples = [
             `${this.config.hostUrl}/ak/${account}/${keyspace}/set/mykey/myvalue`,
             `${this.config.hostUrl}/ak/${account}/${keyspace}/get/mykey`,
@@ -382,10 +387,8 @@ export default class {
             `${this.config.hostUrl}/ak/${account}/${keyspace}/lpush/mylist/myvalue`,
             `${this.config.hostUrl}/ak/${account}/${keyspace}/lrange/mylist/0/-1`,
             `${this.config.hostUrl}/ak/${account}/${keyspace}/ttls`,
-            '',
-            'All keyspace commands:'
          ];
-         return [usage, ...examples, ...this.listCommands('keyspace')];
+         return {message, examples, keyspaceCommands: this.listCommands('keyspace')};
       });
       this.addKeyspaceCommand({
          key: 'register-keyspace',
@@ -811,7 +814,7 @@ export default class {
             const result = await fn(req, res);
             if (command.access === 'redirect') {
             } else {
-               await this.sendResult(command, req, res, result);
+               await this.sendResult(command, req, res, {}, result);
             }
          } catch (err) {
             this.sendError(req, res, err);
@@ -824,7 +827,7 @@ export default class {
       this.expressApp.get([this.config.location, uri].join('/'), async (req, res) => {
          try {
             const result = await fn(req, res);
-            await this.sendResult(null, req, res, result);
+            await this.sendResult({}, req, res, {}, result);
          } catch (err) {
             this.sendError(req, res, err);
          }
@@ -880,7 +883,7 @@ export default class {
             host: this.config.hostname,
             label: this.config.serviceLabel
          });
-         await this.sendResult(null, req, res, result);
+         await this.sendResult({}, req, res, {}, result);
       } catch (err) {
          this.sendError(req, res, err);
       }
@@ -994,7 +997,7 @@ export default class {
                res.send(replyPath);
             }
          } else {
-            await this.sendResult(null, req, res, replyPath);
+            await this.sendResult({}, req, res, {}, replyPath);
          }
       } catch (err) {
          this.sendError(req, res, err);
@@ -1120,7 +1123,7 @@ export default class {
             if (key) {
                reqx.keyspaceKey = this.keyspaceKey(account, keyspace, key);
             }
-            await this.sendResult(command, req, res, await fn(req, res, reqx));
+            await this.sendResult(command, req, res, reqx, await fn(req, res, reqx));
             multi.sadd(this.adminKey('keyspaces'), keyspace);
             multi.hset(accountKey, 'accessed', time);
             if (command && command.access === 'admin') {
@@ -1298,31 +1301,62 @@ export default class {
       return [this.config.redisKeyspace, ...parts].join(':');
    }
 
-   async sendResult(command, req, res, result) {
+   async sendResult(command, req, res, reqx, result) {
       const userAgent = req.get('User-Agent');
       this.logger.debug('sendResult ua', userAgent);
-      command = command || { command: 'none' };
+      command = command || {};
       if (this.isDebugReq(req)) {
          this.logger.ndebug('sendResult', command.command, req.params, req.query, result);
+      }
+      const mobile = this.isMobile(req);
+      if (command.render) {
+         if (lodash.isFunction(command.render)) {
+            const otherResult = await command.render(req, res, reqx, result);
+            if (otherResult !== undefined) {
+               result = otherResult;
+            }
+         } else {
+            throw 'command.render type: ' + typeof command.render;
+         }
       }
       let resultString = '';
       if (!Values.isDefined(result)) {
       } else if (Values.isDefined(req.query.quiet)) {
       } else if (this.config.defaultFormat === 'cli' || Values.isDefined(req.query.line)
-      || this.isCliDomain(req) || command.format === 'cli' || /Mobile/.test(userAgent)) {
+      || this.isCliDomain(req) || command.format === 'cli') {
          res.set('Content-Type', 'text/plain');
          if (lodash.isArray(result)) {
-            resultString = result.join('\n');
+            if (mobile) {
+            } else {
+               resultString = result.join('\n');
+            }
          } else if (lodash.isObject(result)) {
-            resultString = Object.keys(result).map(key => {
-               let value = result[key];
-               if (parseInt(value) === value) {
-                  value = parseInt(value);
-               } else {
-                  value = `'${value}'`;
-               }
-               return [key, value].join('=');
-            }).join('\n');
+            if (command.resultObjectType === 'KeyedArrays') {
+               resultString = lodash.flatten(Object.keys(result).map(key => {
+                  let value = result[key];
+                  if (lodash.isArray(value)) {
+                     return ['', key + ':', ...value];
+                  } else if (typeof value === 'string') {
+                     if (key === 'message') {
+                        return value;
+                     } else {
+                        return key + ': ' + value;
+                     }
+                  } else {
+                     return ['', key + ':', 'type:' + typeof value];
+                  }
+               })).join('\n');
+            } else {
+               resultString = Object.keys(result).map(key => {
+                  let value = result[key];
+                  if (parseInt(value) === value) {
+                     value = parseInt(value);
+                  } else {
+                     value = `'${value}'`;
+                  }
+                  return [key, value].join('=');
+               }).join('\n');
+            }
          } else if (result === null) {
          } else {
             resultString = result.toString();
@@ -1357,6 +1391,10 @@ export default class {
          return true;
       }
       return false;
+   }
+
+   isMobile(req) {
+      return /Mobile/.test(req.get('User-Agent'));
    }
 
    isBrowser(req) {
