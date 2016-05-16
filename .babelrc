@@ -1,5 +1,5 @@
 {
   "sourceMaps": true,
   "presets": ["es2015", "stage-0", "es2015-generators-async"],
-  "plugins": ["transform-class-properties"]
+  "plugins": ["transform-class-properties", "transform-react-jsx"]
 }

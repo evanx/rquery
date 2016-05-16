@@ -7,9 +7,13 @@ import base32 from 'thirty-two';
 import speakeasy from 'speakeasy';
 import otp from 'otplib/lib/totp';
 import concatStream from 'concat-stream';
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
 
 import * as Files from './Files';
 import * as Express from './Express';
+
+import KeyspaceHelpPage from './KeyspaceHelpPage';
 
 const unsupportedAuth = ['twitter.com', 'github.com', 'gitlab.com', 'bitbucket.org'];
 const supportedAuth = ['telegram.org'];
@@ -370,16 +374,19 @@ export default class {
          key: 'help',
          access: 'debug',
          resultObjectType: 'KeyedArrays',
-         render: async (req, res, reqx, result) => {
+         sendResult: async (req, res, reqx, result) => {
             if (this.isMobile(req)) {
-               return 'Not supported';
+               res.set('Content-Type', 'text/html');
+               res.send(ReactDOMServer.renderToString(<KeyspaceHelpPage {...reqx} {...result}/>));
+            } else {
+               return result;
             }
          }
       }, async (req, res, reqx) => {
          const {account, keyspace} = req.params;
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
          const message = `Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows:`;
-         const examples = [
+         const exampleUrls = [
             `${this.config.hostUrl}/ak/${account}/${keyspace}/set/mykey/myvalue`,
             `${this.config.hostUrl}/ak/${account}/${keyspace}/get/mykey`,
             `${this.config.hostUrl}/ak/${account}/${keyspace}/sadd/myset/myvalue`,
@@ -388,7 +395,7 @@ export default class {
             `${this.config.hostUrl}/ak/${account}/${keyspace}/lrange/mylist/0/-1`,
             `${this.config.hostUrl}/ak/${account}/${keyspace}/ttls`,
          ];
-         return {message, examples, keyspaceCommands: this.listCommands('keyspace')};
+         return {message, exampleUrls, keyspaceCommands: this.listCommands('keyspace')};
       });
       this.addKeyspaceCommand({
          key: 'register-keyspace',
@@ -968,7 +975,6 @@ export default class {
          const keyspace = this.generateTokenKey().substring(0, 6).toLowerCase();
          let clientIp = req.get('x-forwarded-for');
          const accountKey = this.accountKeyspace(account, keyspace);
-
          this.logger.debug('registerExpire clientIp', clientIp, account, keyspace, accountKey);
          const replies = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', new Date().getTime());
@@ -1309,14 +1315,16 @@ export default class {
          this.logger.ndebug('sendResult', command.command, req.params, req.query, result);
       }
       const mobile = this.isMobile(req);
-      if (command.render) {
-         if (lodash.isFunction(command.render)) {
-            const otherResult = await command.render(req, res, reqx, result);
-            if (otherResult !== undefined) {
+      if (command.sendResult) {
+         if (lodash.isFunction(command.sendResult)) {
+            const otherResult = await command.sendResult(req, res, reqx, result);
+            if (otherResult === undefined) {
+               return;
+            } else {
                result = otherResult;
             }
          } else {
-            throw 'command.render type: ' + typeof command.render;
+            throw 'command.sendResult type: ' + typeof command.sendResult;
          }
       }
       let resultString = '';

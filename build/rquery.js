@@ -8,6 +8,8 @@ var _bluebird = require('bluebird');
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -44,6 +46,14 @@ var _concatStream = require('concat-stream');
 
 var _concatStream2 = _interopRequireDefault(_concatStream);
 
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _server = require('react-dom/server');
+
+var _server2 = _interopRequireDefault(_server);
+
 var _Files = require('./Files');
 
 var Files = _interopRequireWildcard(_Files);
@@ -51,6 +61,10 @@ var Files = _interopRequireWildcard(_Files);
 var _Express = require('./Express');
 
 var Express = _interopRequireWildcard(_Express);
+
+var _KeyspaceHelpPage = require('./KeyspaceHelpPage');
+
+var _KeyspaceHelpPage2 = _interopRequireDefault(_KeyspaceHelpPage);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -1018,20 +1032,26 @@ var _class = function () {
             key: 'help',
             access: 'debug',
             resultObjectType: 'KeyedArrays',
-            render: function () {
+            sendResult: function () {
                var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee21(req, res, reqx, result) {
                   return regeneratorRuntime.wrap(function _callee21$(_context21) {
                      while (1) {
                         switch (_context21.prev = _context21.next) {
                            case 0:
                               if (!_this5.isMobile(req)) {
-                                 _context21.next = 2;
+                                 _context21.next = 5;
                                  break;
                               }
 
-                              return _context21.abrupt('return', 'Not supported');
+                              res.set('Content-Type', 'text/html');
+                              res.send(_server2.default.renderToString(_react2.default.createElement(_KeyspaceHelpPage2.default, _extends({}, reqx, result))));
+                              _context21.next = 6;
+                              break;
 
-                           case 2:
+                           case 5:
+                              return _context21.abrupt('return', result);
+
+                           case 6:
                            case 'end':
                               return _context21.stop();
                         }
@@ -1039,15 +1059,15 @@ var _class = function () {
                   }, _callee21, _this5);
                }));
 
-               function render(_x29, _x30, _x31, _x32) {
+               function sendResult(_x29, _x30, _x31, _x32) {
                   return ref.apply(this, arguments);
                }
 
-               return render;
+               return sendResult;
             }()
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee22(req, res, reqx) {
-               var _req$params3, account, keyspace, message, examples;
+               var _req$params3, account, keyspace, message, exampleUrls;
 
                return regeneratorRuntime.wrap(function _callee22$(_context22) {
                   while (1) {
@@ -1061,8 +1081,8 @@ var _class = function () {
                               return command.key;
                            }).join('/'));
                            message = 'Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows:';
-                           examples = [_this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
-                           return _context22.abrupt('return', { message: message, examples: examples, keyspaceCommands: _this5.listCommands('keyspace') });
+                           exampleUrls = [_this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
+                           return _context22.abrupt('return', { message: message, exampleUrls: exampleUrls, keyspaceCommands: _this5.listCommands('keyspace') });
 
                         case 7:
                         case 'end':
@@ -3052,7 +3072,6 @@ var _class = function () {
                                        clientIp = req.get('x-forwarded-for');
                                        accountKey = _this10.accountKeyspace(account, keyspace);
 
-
                                        _this10.logger.debug('registerExpire clientIp', clientIp, account, keyspace, accountKey);
                                        _context78.next = 12;
                                        return _this10.redis.multiExecAsync(function (multi) {
@@ -3723,54 +3742,62 @@ var _class = function () {
                         }
                         mobile = this.isMobile(req);
 
-                        if (!command.render) {
-                           _context83.next = 14;
-                           break;
-                        }
-
-                        if (!lodash.isFunction(command.render)) {
-                           _context83.next = 13;
-                           break;
-                        }
-
-                        _context83.next = 9;
-                        return command.render(req, res, reqx, result);
-
-                     case 9:
-                        otherResult = _context83.sent;
-
-                        if (otherResult !== undefined) {
-                           result = otherResult;
-                        }
-                        _context83.next = 14;
-                        break;
-
-                     case 13:
-                        throw 'command.render type: ' + _typeof(command.render);
-
-                     case 14:
-                        resultString = '';
-
-                        if (Values.isDefined(result)) {
+                        if (!command.sendResult) {
                            _context83.next = 18;
                            break;
                         }
 
-                        _context83.next = 42;
-                        break;
-
-                     case 18:
-                        if (!Values.isDefined(req.query.quiet)) {
-                           _context83.next = 21;
+                        if (!lodash.isFunction(command.sendResult)) {
+                           _context83.next = 17;
                            break;
                         }
 
-                        _context83.next = 42;
+                        _context83.next = 9;
+                        return command.sendResult(req, res, reqx, result);
+
+                     case 9:
+                        otherResult = _context83.sent;
+
+                        if (!(otherResult === undefined)) {
+                           _context83.next = 14;
+                           break;
+                        }
+
+                        return _context83.abrupt('return');
+
+                     case 14:
+                        result = otherResult;
+
+                     case 15:
+                        _context83.next = 18;
                         break;
 
-                     case 21:
+                     case 17:
+                        throw 'command.sendResult type: ' + _typeof(command.sendResult);
+
+                     case 18:
+                        resultString = '';
+
+                        if (Values.isDefined(result)) {
+                           _context83.next = 22;
+                           break;
+                        }
+
+                        _context83.next = 46;
+                        break;
+
+                     case 22:
+                        if (!Values.isDefined(req.query.quiet)) {
+                           _context83.next = 25;
+                           break;
+                        }
+
+                        _context83.next = 46;
+                        break;
+
+                     case 25:
                         if (!(this.config.defaultFormat === 'cli' || Values.isDefined(req.query.line) || this.isCliDomain(req) || command.format === 'cli')) {
-                           _context83.next = 26;
+                           _context83.next = 30;
                            break;
                         }
 
@@ -3809,49 +3836,49 @@ var _class = function () {
                         } else if (result === null) {} else {
                            resultString = result.toString();
                         }
-                        _context83.next = 42;
+                        _context83.next = 46;
                         break;
 
-                     case 26:
+                     case 30:
                         if (!(this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain) || command.format === 'plain')) {
-                           _context83.next = 31;
+                           _context83.next = 35;
                            break;
                         }
 
                         res.set('Content-Type', 'text/plain');
                         resultString = result.toString();
-                        _context83.next = 42;
+                        _context83.next = 46;
                         break;
 
-                     case 31:
+                     case 35:
                         if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html')) {
-                           _context83.next = 36;
+                           _context83.next = 40;
                            break;
                         }
 
                         res.set('Content-Type', 'text/html');
                         resultString = result.toString();
-                        _context83.next = 42;
+                        _context83.next = 46;
                         break;
 
-                     case 36:
+                     case 40:
                         if (!(this.config.defaultFormat !== 'json')) {
-                           _context83.next = 40;
+                           _context83.next = 44;
                            break;
                         }
 
                         this.sendError(req, res, { message: 'Invalid default format: ' + this.config.defaultFormat });
-                        _context83.next = 42;
+                        _context83.next = 46;
                         break;
 
-                     case 40:
+                     case 44:
                         res.json(result);
                         return _context83.abrupt('return');
 
-                     case 42:
+                     case 46:
                         res.send(resultString + '\n');
 
-                     case 43:
+                     case 47:
                      case 'end':
                         return _context83.stop();
                   }
