@@ -11,7 +11,6 @@ const viewportContentArray = [
    'user-scalable=no'
 ];
 
-
 export default class extends React.Component {
 
    render() {
