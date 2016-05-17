@@ -18,6 +18,10 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
+var _brucedown = require('brucedown');
+
+var _brucedown2 = _interopRequireDefault(_brucedown);
+
 var _marked = require('marked');
 
 var _marked2 = _interopRequireDefault(_marked);
@@ -65,6 +69,10 @@ var Express = _interopRequireWildcard(_Express);
 var _KeyspaceHelpPage = require('./KeyspaceHelpPage');
 
 var _KeyspaceHelpPage2 = _interopRequireDefault(_KeyspaceHelpPage);
+
+var _KeyspaceHelpTemplate = require('./KeyspaceHelpTemplate');
+
+var _KeyspaceHelpTemplate2 = _interopRequireDefault(_KeyspaceHelpTemplate);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -676,7 +684,7 @@ var _class = function () {
                      switch (_context11.prev = _context11.next) {
                         case 0:
                            if (!_this5.isBrowser(req)) {
-                              _context11.next = 8;
+                              _context11.next = 7;
                               break;
                            }
 
@@ -686,23 +694,29 @@ var _class = function () {
                         case 3:
                            content = _context11.sent;
 
-                           res.set('Content-Type', 'text/html');
-                           res.send((0, _marked2.default)(content.toString()));
-                           _context11.next = 13;
+                           if (false) {
+                              (0, _brucedown2.default)('README.md', function (err, htmlResult) {
+                                 _this5.logger.debug('brucedown', htmlResult);
+                              });
+                           } else {
+                              res.set('Content-Type', 'text/html');
+                              res.send((0, _marked2.default)(content.toString()));
+                           }
+                           _context11.next = 12;
                            break;
 
-                        case 8:
+                        case 7:
                            if (!_this5.isCliDomain(req)) {
-                              _context11.next = 12;
+                              _context11.next = 11;
                               break;
                            }
 
                            return _context11.abrupt('return', _this5.listCommands());
 
-                        case 12:
+                        case 11:
                            return _context11.abrupt('return', _this5.listCommands());
 
-                        case 13:
+                        case 12:
                         case 'end':
                            return _context11.stop();
                      }
@@ -1038,20 +1052,31 @@ var _class = function () {
                      while (1) {
                         switch (_context21.prev = _context21.next) {
                            case 0:
-                              if (!_this5.isMobile(req)) {
+                              if (!true) {
                                  _context21.next = 5;
                                  break;
                               }
 
                               res.set('Content-Type', 'text/html');
-                              res.send(_server2.default.renderToString(_react2.default.createElement(_KeyspaceHelpPage2.default, _extends({}, reqx, result))));
-                              _context21.next = 6;
+                              res.send(new _KeyspaceHelpTemplate2.default().render({ reqx: reqx, result: result }));
+                              _context21.next = 11;
                               break;
 
                            case 5:
+                              if (!_this5.isMobile(req)) {
+                                 _context21.next = 10;
+                                 break;
+                              }
+
+                              res.set('Content-Type', 'text/html');
+                              res.send(_server2.default.renderToString(_react2.default.createElement(_KeyspaceHelpPage2.default, _extends({}, reqx, result))));
+                              _context21.next = 11;
+                              break;
+
+                           case 10:
                               return _context21.abrupt('return', result);
 
-                           case 6:
+                           case 11:
                            case 'end':
                               return _context21.stop();
                         }
@@ -2772,25 +2797,31 @@ var _class = function () {
 
                         case 3:
                            result = _context75.sent;
-                           _context75.next = 6;
+
+                           if (!(result !== undefined)) {
+                              _context75.next = 7;
+                              break;
+                           }
+
+                           _context75.next = 7;
                            return _this7.sendResult({}, req, res, {}, result);
 
-                        case 6:
-                           _context75.next = 11;
+                        case 7:
+                           _context75.next = 12;
                            break;
 
-                        case 8:
-                           _context75.prev = 8;
+                        case 9:
+                           _context75.prev = 9;
                            _context75.t0 = _context75['catch'](0);
 
                            _this7.sendError(req, res, _context75.t0);
 
-                        case 11:
+                        case 12:
                         case 'end':
                            return _context75.stop();
                      }
                   }
-               }, _callee75, _this7, [[0, 8]]);
+               }, _callee75, _this7, [[0, 9]]);
             }));
             return function (_x190, _x191) {
                return ref.apply(this, arguments);

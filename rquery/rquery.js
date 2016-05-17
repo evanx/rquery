@@ -1,5 +1,6 @@
 
 import expressLib from 'express';
+import brucedown from 'brucedown';
 import marked from 'marked';
 import crypto from 'crypto';
 import CSON from 'season';
@@ -14,6 +15,7 @@ import * as Files from './Files';
 import * as Express from './Express';
 
 import KeyspaceHelpPage from './KeyspaceHelpPage';
+import KeyspaceHelpTemplate from './KeyspaceHelpTemplate';
 
 const unsupportedAuth = ['twitter.com', 'github.com', 'gitlab.com', 'bitbucket.org'];
 const supportedAuth = ['telegram.org'];
@@ -265,8 +267,14 @@ export default class {
       this.addPublicRoute('help', async (req, res) => {
          if (this.isBrowser(req)) {
             let content = await Files.readFile('README.md');
-            res.set('Content-Type', 'text/html');
-            res.send(marked(content.toString()));
+            if (false) {
+               brucedown('README.md', (err, htmlResult) => {
+                  this.logger.debug('brucedown', htmlResult);
+               });
+            } else {
+               res.set('Content-Type', 'text/html');
+               res.send(marked(content.toString()));
+            }
          } else if (this.isCliDomain(req)) {
             return this.listCommands();
          } else {
@@ -375,7 +383,10 @@ export default class {
          access: 'debug',
          resultObjectType: 'KeyedArrays',
          sendResult: async (req, res, reqx, result) => {
-            if (this.isMobile(req)) {
+            if (true) {
+               res.set('Content-Type', 'text/html');
+               res.send(new KeyspaceHelpTemplate().render({reqx, result}));
+            } else if (this.isMobile(req)) {
                res.set('Content-Type', 'text/html');
                res.send(ReactDOMServer.renderToString(<KeyspaceHelpPage {...reqx} {...result}/>));
             } else {
@@ -834,7 +845,9 @@ export default class {
       this.expressApp.get([this.config.location, uri].join('/'), async (req, res) => {
          try {
             const result = await fn(req, res);
-            await this.sendResult({}, req, res, {}, result);
+            if (result !== undefined) {
+               await this.sendResult({}, req, res, {}, result);
+            }
          } catch (err) {
             this.sendError(req, res, err);
          }
