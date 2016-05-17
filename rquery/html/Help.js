@@ -28,15 +28,15 @@ export default class {
          logger.debug('renderUrls', url, match);
          if (match) {
             return `
-            <p>
+            <div>
             <a href=${url}>${match.pop()}</a>
-            </p>
+            </div>
             `;
          } else {
             return `
-            <p>
+            <div>
             <a href=${url}>${url}</a>
-            </p>
+            </div>
             `;
          }
       });

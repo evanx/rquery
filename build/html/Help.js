@@ -32,9 +32,9 @@ var _class = function () {
             var match = url.match(/^https:\/\/[^\/]+(\/\S+)$/);
             logger.debug('renderUrls', url, match);
             if (match) {
-               return '\n            <p>\n            <a href=' + url + '>' + match.pop() + '</a>\n            </p>\n            ';
+               return '\n            <div>\n            <a href=' + url + '>' + match.pop() + '</a>\n            </div>\n            ';
             } else {
-               return '\n            <p>\n            <a href=' + url + '>' + url + '</a>\n            </p>\n            ';
+               return '\n            <div>\n            <a href=' + url + '>' + url + '</a>\n            </div>\n            ';
             }
          });
       }
