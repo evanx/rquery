@@ -1547,17 +1547,15 @@ var _class = function () {
 
                         case 6:
                            cert = cert.replace(/\t/g, '\n');
-                           encrypted = _crypto2.default.publicEncrypt(cert, new Buffer(value));
-
-                           _this5.logger.debug('encrypted', encrypted.length, encrypted.toString('base64').length);
-                           _context33.next = 11;
+                           encrypted = _crypto2.default.publicEncrypt(cert, new Buffer(value)).toString('base64');
+                           _context33.next = 10;
                            return _this5.redis.setAsync(keyspaceKey, encrypted);
 
-                        case 11:
+                        case 10:
                            reply = _context33.sent;
                            return _context33.abrupt('return', { key: key, encrypted: encrypted, reply: reply });
 
-                        case 13:
+                        case 12:
                         case 'end':
                            return _context33.stop();
                      }
