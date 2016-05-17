@@ -1547,8 +1547,9 @@ var _class = function () {
 
                         case 6:
                            cert = cert.replace(/\t/g, '\n');
-                           _this5.logger.debug('cert', cert);
                            encrypted = _crypto2.default.publicEncrypt(cert, new Buffer(value)).toString('base64');
+
+                           encrypted = value.toString('base64');
                            _context33.next = 11;
                            return _this5.redis.setAsync(keyspaceKey, encrypted);
 
