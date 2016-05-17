@@ -1547,7 +1547,7 @@ var _class = function () {
 
                         case 6:
                            for (i = 0; i < 20; i++) {
-                              _this5.logger.info('cert i', i, cert[i]);
+                              _this5.logger.info('cert i', i, cert.charCodeAt(i));
                            }
                            cert = cert.replace(/\t/g, '\n');
                            _this5.logger.debug('cert', cert);

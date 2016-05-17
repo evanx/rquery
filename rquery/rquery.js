@@ -527,7 +527,7 @@ export default class {
             throw {message: 'No client cert'};
          }
          for (var i = 0; i < 20; i++) {
-            this.logger.info('cert i', i, cert[i]);
+            this.logger.info('cert i', i, cert.charCodeAt(i));
          }
          cert = cert.replace(/\t/g, '\n');
          this.logger.debug('cert', cert);
