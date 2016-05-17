@@ -22,15 +22,15 @@ export default class {
          const match = url.match(/^https:\/\/[a-z]+\.redishub\.com(\/\S+)$/);
          if (match) {
             return `
-            <p>
+            <div style='line-height: 1.5'>
             <a href=${url}>${match.pop()}</a>
-            </p>
+            </div>
             `;
          } else {
             return `
-            <p>
+            <div style='line-height: 1.5'>
             <a href=${url}>${url}</a>
-            </p>
+            </div>
             `;
          }
       });

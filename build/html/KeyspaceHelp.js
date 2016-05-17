@@ -31,9 +31,9 @@ var _class = function () {
          return urls.map(function (url, index) {
             var match = url.match(/^https:\/\/[a-z]+\.redishub\.com(\/\S+)$/);
             if (match) {
-               return '\n            <p>\n            <a href=' + url + '>' + match.pop() + '</a>\n            </p>\n            ';
+               return '\n            <div style=\'line-height: 1.5\'>\n            <a href=' + url + '>' + match.pop() + '</a>\n            </div>\n            ';
             } else {
-               return '\n            <p>\n            <a href=' + url + '>' + url + '</a>\n            </p>\n            ';
+               return '\n            <div style=\'line-height: 1.5\'>\n            <a href=' + url + '>' + url + '</a>\n            </div>\n            ';
             }
          });
       }
