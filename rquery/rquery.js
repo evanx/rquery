@@ -528,7 +528,7 @@ export default class {
          }
          cert = cert.replace(/\t/g, '\n');
          let encrypted = crypto.publicEncrypt(cert, new Buffer(value)).toString('base64');
-         encrypted = value.toString('base64');
+         encrypted = new Buffer(value).toString('base64');
          const reply = await this.redis.setAsync(keyspaceKey, encrypted);
          return {key, encrypted, reply};
       });
