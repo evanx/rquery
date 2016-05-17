@@ -526,7 +526,7 @@ export default class {
          if (!cert) {
             throw {message: 'No client cert'};
          }
-         this.logger.debug('cert', cert);
+         this.logger.debug('cert', cert.replace(/\s+/g, '\n'));
          const encrypted = crypto.publicEncrypt(cert, new Buffer(value)).toString('base64');
          const reply = await this.redis.setAsync(keyspaceKey, encrypted);
          return {encrypted, reply};
