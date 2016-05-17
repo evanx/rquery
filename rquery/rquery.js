@@ -14,8 +14,10 @@ import ReactDOMServer from 'react-dom/server';
 import * as Files from './Files';
 import * as Express from './Express';
 
-import KeyspaceHelpPage from './KeyspaceHelpPage';
-import KeyspaceHelpTemplate from './KeyspaceHelpTemplate';
+import Page from './html/Page';
+import Help from './html/Help';
+import KeyspaceHelp from './html/KeyspaceHelp';
+import KeyspaceHelpPage from './jsx/KeyspaceHelpPage';
 
 const unsupportedAuth = ['twitter.com', 'github.com', 'gitlab.com', 'bitbucket.org'];
 const supportedAuth = ['telegram.org'];
@@ -229,31 +231,39 @@ export default class {
       this.addPublicCommand({
          key: 'routes',
          access: 'debug',
-         aliases: ['/']
+         aliases: ['/'],
+         sendResult: async (req, res, reqx, result) => {
+            res.set('Content-Type', 'text/html');
+            res.send(new Page().render(new Help().render({
+               result, config: this.config
+            })));
+         }
       }, async (req, res, reqx) => {
          const routes = Express.getRoutes(this.expressApp)
          .filter(route => !['/', '/routes', '/webhook-telegram/*'].includes(route));
-         const accountOnlyRoutes = routes.filter(route => route.includes(':account') && !route.includes(':keyspace'));
-         return ['Common routes:']
-         .concat(
-            routes.filter(route => route && !route.includes(':'))
+         const accountOnlyRoutes = routes
+         .filter(route => route.includes(':account') && !route.includes(':keyspace'));
+         return {
+            common: routes
+            .filter(route => route && !route.includes(':') && !['/epoch'].includes(route))
             .map(route => `${this.config.hostUrl}${route}`)
-         ).concat(['', 'Miscellaneous parameterized routes:'])
-         .concat(
-            routes.filter(route => route.includes(':') && !route.includes('telegram') && !/\:(keyspace|account)/.test(route))
+            ,
+            misc: routes
+            .filter(route => route.includes(':') && !route.includes('telegram') && !/\:(keyspace|account)/.test(route))
             .map(route => `${route}`)
-         ).concat(['', 'Telegram routes:'])
-         .concat(
-            routes.filter(route => route.includes('telegram'))
+            ,
+            telegram: routes
+            .filter(route => route.includes('telegram'))
             .map(route => `${route}`)
-         ).concat(accountOnlyRoutes.length? ['', 'Account only routes:'] : [])
-         .concat(
-            accountOnlyRoutes.map(route => `${route}`)
-         ).concat(['', 'Account/keyspace routes:', `${this.config.hostUrl}/register-expire`])
-         .concat(
-            routes.filter(route => route.includes(':account') && route.includes(':keyspace'))
-            .map(route => `${route}`)
-         );
+            ,
+            account: accountOnlyRoutes.map(route => `${route}`)
+            ,
+            accountKeyspace: [`${this.config.hostUrl}/register-expire`]
+            .concat(
+               routes.filter(route => route.includes(':account') && route.includes(':keyspace'))
+               .map(route => `${route}`)
+            )
+         };
       });
       this.addPublicCommand({
          key: 'about',
@@ -385,10 +395,12 @@ export default class {
          sendResult: async (req, res, reqx, result) => {
             if (true) {
                res.set('Content-Type', 'text/html');
-               res.send(new KeyspaceHelpTemplate().render({reqx, result}));
-            } else if (this.isMobile(req)) {
+               res.send(new Page().render(new KeyspaceHelp().render({
+                  reqx, result, config: this.config
+               })));
+            } else if (!this.isMobile(req)) {
                res.set('Content-Type', 'text/html');
-               res.send(ReactDOMServer.renderToString(<KeyspaceHelpPage {...reqx} {...result}/>));
+               res.send(ReactDOMServer.renderToString(<KeyspaceHelpPage reqx={reqx} result={result}/>));
             } else {
                return result;
             }
@@ -411,7 +423,7 @@ export default class {
       this.addKeyspaceCommand({
          key: 'register-keyspace',
          access: 'admin'
-      }, async (req, res, {time, account, keyspace, accountKey}) => {
+      }, async (req, res, {time, account, keyspace, accountKey}, multi) => {
          const replies = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', time);
          });
@@ -420,7 +432,7 @@ export default class {
       this.addKeyspaceCommand({
          key: 'deregister-keyspace',
          access: 'admin'
-      }, async (req, res, {account, keyspace, accountKey, keyspaceKey}) => {
+      }, async (req, res, {account, keyspace, accountKey, keyspaceKey}, multi) => {
          const [keys] = await this.redis.multiExecAsync(multi => {
             multi.keys(this.keyspaceKey(account, keyspace, '*'));
          });
@@ -572,7 +584,7 @@ export default class {
          key: 'smove',
          params: ['key', 'dest', 'member'],
          access: 'set'
-      }, async (req, res, {multi, account, keyspace, keyspaceKey}) => {
+      }, async (req, res, {account, keyspace, keyspaceKey}, multi) => {
          const {dest, member} = req.params;
          const destKey = this.keyspaceKey(account, keyspace, dest);
          let result = await this.redis.smoveAsync(keyspaceKey, destKey, member);
@@ -615,7 +627,7 @@ export default class {
          key: 'lpushtrim',
          params: ['key', 'length', 'value'],
          access: 'set'
-      }, async (req, res, {multi, keyspaceKey}) => {
+      }, async (req, res, {keyspaceKey}, multi) => {
          const {value, length} = req.params;
          multi.lpush(keyspaceKey, value);
          multi.trim(keyspaceKey, length);
@@ -669,7 +681,7 @@ export default class {
          key: 'brpoplpush',
          params: ['key', 'dest', 'timeout'],
          access: 'set'
-      }, async (req, res, {multi, account, keyspace, keyspaceKey}) => {
+      }, async (req, res, {account, keyspace, keyspaceKey}, multi) => {
          const {dest, timeout} = req.params;
          const destKey = this.keyspaceKey(account, keyspace, dest);
          const result = await this.redis.brpoplpushAsync(keyspaceKey, destKey, timeout);
@@ -829,6 +841,10 @@ export default class {
       }
       this.expressApp.get([this.config.location, uri].join('/'), async (req, res) => {
          try {
+            const match = req.path.match(/\/:([^\/]+)/);
+            if (match) {
+               throw {message: 'Invalid path: leading colon. Try substituting parameter: ' + match.pop()};
+            }
             const result = await fn(req, res);
             if (command.access === 'redirect') {
             } else {
@@ -1138,11 +1154,11 @@ export default class {
                }
             }
             const multi = this.redis.multi();
-            const reqx = {multi, time, account, keyspace, accountKey};
+            const reqx = {time, account, keyspace, accountKey};
             if (key) {
                reqx.keyspaceKey = this.keyspaceKey(account, keyspace, key);
             }
-            await this.sendResult(command, req, res, reqx, await fn(req, res, reqx));
+            await this.sendResult(command, req, res, reqx, await fn(req, res, reqx, multi));
             multi.sadd(this.adminKey('keyspaces'), keyspace);
             multi.hset(accountKey, 'accessed', time);
             if (command && command.access === 'admin') {
@@ -1272,7 +1288,11 @@ export default class {
          }
       } else if (command.key === 'register-keyspace') {
       } else if (!registered) {
-         return 'Unregistered keyspace';
+         if (account[0] === '@') {
+            return 'Expired keyspace';
+         } else {
+            return 'Unregistered keyspace';
+         }
       } else if (isSecureAccount) {
          this.logger.error('validateAccess', account, keyspace);
          return 'Invalid access';
