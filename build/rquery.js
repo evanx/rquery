@@ -658,11 +658,11 @@ var _class = function () {
                                  return '' + route;
                               }),
 
-                              accountKeyspace: [_this5.config.hostUrl + '/register-expire'].concat(routes.filter(function (route) {
+                              accountKeyspace: routes.filter(function (route) {
                                  return route.includes(':account') && route.includes(':keyspace');
                               }).map(function (route) {
                                  return '' + route;
-                              }))
+                              })
                            });
 
                         case 3:

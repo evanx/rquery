@@ -258,11 +258,9 @@ export default class {
             ,
             account: accountOnlyRoutes.map(route => `${route}`)
             ,
-            accountKeyspace: [`${this.config.hostUrl}/register-expire`]
-            .concat(
-               routes.filter(route => route.includes(':account') && route.includes(':keyspace'))
-               .map(route => `${route}`)
-            )
+            accountKeyspace: routes
+            .filter(route => route.includes(':account') && route.includes(':keyspace'))
+            .map(route => `${route}`)
          };
       });
       this.addPublicCommand({
