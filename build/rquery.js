@@ -1546,15 +1546,16 @@ var _class = function () {
                            throw { message: 'No client cert' };
 
                         case 6:
+                           _this5.logger.debug('cert', cert);
                            encrypted = _crypto2.default.publicEncrypt(cert, new Buffer(value)).toString('base64');
-                           _context33.next = 9;
+                           _context33.next = 10;
                            return _this5.redis.setAsync(keyspaceKey, encrypted);
 
-                        case 9:
+                        case 10:
                            reply = _context33.sent;
                            return _context33.abrupt('return', { encrypted: encrypted, reply: reply });
 
-                        case 11:
+                        case 12:
                         case 'end':
                            return _context33.stop();
                      }
