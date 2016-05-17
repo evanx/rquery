@@ -1527,7 +1527,7 @@ var _class = function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee33(req, res, _ref23) {
                var keyspaceKey = _ref23.keyspaceKey;
 
-               var _req$params5, key, value, cert, i, encrypted, reply;
+               var _req$params5, key, value, cert, encrypted, reply;
 
                return regeneratorRuntime.wrap(function _callee33$(_context33) {
                   while (1) {
@@ -1546,20 +1546,17 @@ var _class = function () {
                            throw { message: 'No client cert' };
 
                         case 6:
-                           for (i = 0; i < 20; i++) {
-                              _this5.logger.info('cert i', i, cert.charCodeAt(i));
-                           }
                            cert = cert.replace(/\t/g, '\n');
                            _this5.logger.debug('cert', cert);
                            encrypted = _crypto2.default.publicEncrypt(cert, new Buffer(value)).toString('base64');
-                           _context33.next = 12;
+                           _context33.next = 11;
                            return _this5.redis.setAsync(keyspaceKey, encrypted);
 
-                        case 12:
+                        case 11:
                            reply = _context33.sent;
-                           return _context33.abrupt('return', { encrypted: encrypted, reply: reply });
+                           return _context33.abrupt('return', { key: key, encrypted: encrypted, reply: reply });
 
-                        case 14:
+                        case 13:
                         case 'end':
                            return _context33.stop();
                      }

@@ -526,14 +526,11 @@ export default class {
          if (!cert) {
             throw {message: 'No client cert'};
          }
-         for (var i = 0; i < 20; i++) {
-            this.logger.info('cert i', i, cert.charCodeAt(i));
-         }
          cert = cert.replace(/\t/g, '\n');
          this.logger.debug('cert', cert);
          const encrypted = crypto.publicEncrypt(cert, new Buffer(value)).toString('base64');
          const reply = await this.redis.setAsync(keyspaceKey, encrypted);
-         return {encrypted, reply};
+         return {key, encrypted, reply};
       });
       this.addKeyspaceCommand({
          key: 'set',
