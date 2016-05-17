@@ -517,6 +517,19 @@ export default class {
          return await this.redis.typeAsync(keyspaceKey);
       });
       this.addKeyspaceCommand({
+         key: 'set-encrypt',
+         params: ['key', 'value'],
+         access: 'set'
+      }, async (req, res, {keyspaceKey}) => {
+         const cert = req.get('ssl_client_cert');
+         if (!cert) {
+            throw {message: 'No client cert'};
+         }
+         const encrypted = crypto.publicEncrypt(cert, new Buffer(value)).toString('base64');
+         const reply = await this.redis.setAsync(keyspaceKey, encrypted);
+         return {encrypted, reply};
+      });
+      this.addKeyspaceCommand({
          key: 'set',
          params: ['key', 'value'],
          access: 'set'
