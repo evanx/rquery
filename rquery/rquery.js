@@ -522,11 +522,15 @@ export default class {
          access: 'set'
       }, async (req, res, {keyspaceKey}) => {
          const {key, value} = req.params;
-         const cert = req.get('ssl_client_cert');
+         let cert = req.get('ssl_client_cert');
          if (!cert) {
             throw {message: 'No client cert'};
          }
-         this.logger.debug('cert', cert.replace(/\s+/g, '\n'));
+         for (var i = 0; i < 20; i++) {
+            this.logger.info('cert i', i, cert[i]);
+         }
+         cert = cert.replace(/\t/g, '\n');
+         this.logger.debug('cert', cert);
          const encrypted = crypto.publicEncrypt(cert, new Buffer(value)).toString('base64');
          const reply = await this.redis.setAsync(keyspaceKey, encrypted);
          return {encrypted, reply};
