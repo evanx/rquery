@@ -22,8 +22,17 @@ var _class = function () {
          logger.debug('props', props);
          return {
             title: 'Help | ' + props.config.serviceLabel,
-            content: '\n         <h1>' + props.config.serviceLabel + '</h1>\n         <h3>Basic</h3>\n         ' + this.renderUrls(props.result.common).join('\n') + '\n         <h3>Telegram</h3>\n         ' + this.renderPaths(props.result.telegram).join('\n') + '\n         <h3>Account</h3>\n         ' + this.renderPaths(props.result.account).join('\n') + '\n         <h3>Account keyspace</h3>\n         ' + this.renderPaths(props.result.accountKeyspace).join('\n') + '\n         '
+            content: '\n         <h1>' + props.config.serviceLabel + '</h1>\n         <h3>Basic</h3>\n         ' + this.renderUrls(props.result.common).join('\n') + '\n         <h3>Telegram</h3>\n         ' + this.renderPaths(props.result.telegram).join('\n') + '\n         ' + this.renderAccount(props.result.account) + '\n         <h3>Account keyspace</h3>\n         ' + this.renderPaths(props.result.accountKeyspace).join('\n') + '\n         '
          };
+      }
+   }, {
+      key: 'renderAccount',
+      value: function renderAccount(account) {
+         if (!account.length) {
+            return '';
+         } else {
+            return '<h3>Account</h3>\n         ' + this.renderPaths(account).join('\n') + '\n         ';
+         }
       }
    }, {
       key: 'renderUrls',
@@ -32,9 +41,9 @@ var _class = function () {
             var match = url.match(/^https:\/\/[^\/]+(\/\S+)$/);
             logger.debug('renderUrls', url, match);
             if (match) {
-               return '\n            <div>\n            <a href=' + url + '>' + match.pop() + '</a>\n            </div>\n            ';
+               return '\n            <div style=\'line-height: 1.5\'>\n            <a href=' + url + '>' + match.pop() + '</a>\n            </div>\n            ';
             } else {
-               return '\n            <div>\n            <a href=' + url + '>' + url + '</a>\n            </div>\n            ';
+               return '\n            <div style=\'line-height: 1.5\'>\n            <a href=' + url + '>' + url + '</a>\n            </div>\n            ';
             }
          });
       }

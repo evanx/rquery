@@ -14,12 +14,21 @@ export default class {
          ${this.renderUrls(props.result.common).join('\n')}
          <h3>Telegram</h3>
          ${this.renderPaths(props.result.telegram).join('\n')}
-         <h3>Account</h3>
-         ${this.renderPaths(props.result.account).join('\n')}
+         ${this.renderAccount(props.result.account)}
          <h3>Account keyspace</h3>
          ${this.renderPaths(props.result.accountKeyspace).join('\n')}
          `
       };
+   }
+
+   renderAccount(account) {
+      if (!account.length) {
+         return '';
+      } else {
+         return `<h3>Account</h3>
+         ${this.renderPaths(account).join('\n')}
+         `;
+      }
    }
 
    renderUrls(urls) {
@@ -28,13 +37,13 @@ export default class {
          logger.debug('renderUrls', url, match);
          if (match) {
             return `
-            <div>
+            <div style='line-height: 1.5'>
             <a href=${url}>${match.pop()}</a>
             </div>
             `;
          } else {
             return `
-            <div>
+            <div style='line-height: 1.5'>
             <a href=${url}>${url}</a>
             </div>
             `;
