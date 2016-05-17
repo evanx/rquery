@@ -521,6 +521,7 @@ export default class {
          params: ['key', 'value'],
          access: 'set'
       }, async (req, res, {keyspaceKey}) => {
+         const {key, value} = req.params;
          const cert = req.get('ssl_client_cert');
          if (!cert) {
             throw {message: 'No client cert'};
