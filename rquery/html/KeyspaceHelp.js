@@ -12,6 +12,7 @@ export default class {
          <h1>/ak/${props.reqx.account}/${props.reqx.keyspace}</h1>
          <h3>${props.result.message}</h3>
          ${this.renderUrls(this.props.result.exampleUrls).join('\n')}
+         <br/>
          ${this.renderCommands(this.props.result.keyspaceCommands).join('\n')}
          `
       };

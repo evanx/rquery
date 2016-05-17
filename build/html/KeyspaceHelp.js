@@ -22,7 +22,7 @@ var _class = function () {
          logger.debug('props', props);
          return {
             title: props.config.serviceLabel + ' | ' + props.reqx.account + '/' + props.reqx.keyspace,
-            content: '\n         <h1>/ak/' + props.reqx.account + '/' + props.reqx.keyspace + '</h1>\n         <h3>' + props.result.message + '</h3>\n         ' + this.renderUrls(this.props.result.exampleUrls).join('\n') + '\n         ' + this.renderCommands(this.props.result.keyspaceCommands).join('\n') + '\n         '
+            content: '\n         <h1>/ak/' + props.reqx.account + '/' + props.reqx.keyspace + '</h1>\n         <h3>' + props.result.message + '</h3>\n         ' + this.renderUrls(this.props.result.exampleUrls).join('\n') + '\n         <br/>\n         ' + this.renderCommands(this.props.result.keyspaceCommands).join('\n') + '\n         '
          };
       }
    }, {
