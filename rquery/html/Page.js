@@ -13,7 +13,7 @@ export default class {
 
    render(props) {
       this.props = props;
-      logger.debug('props', props);
+      logger.debug('props', Object.keys(props));
       const content = props.content.replace(/\n\s*/g, '\n');
       return `
       <html>

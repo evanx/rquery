@@ -21,7 +21,7 @@ var _class = function () {
       key: 'render',
       value: function render(props) {
          this.props = props;
-         logger.debug('props', props);
+         logger.debug('props', Object.keys(props));
          var content = props.content.replace(/\n\s*/g, '\n');
          return '\n      <html>\n      <head>\n      <title>' + props.title + '</title>\n      <style>\n         pre {\n            background-color: #f2f2f2;\n         }\n      </style>\n      <meta name=\'viewport\' content=' + viewportContentArray.join(', ') + '/>\n      </head>\n      <body style=\'padding: ' + this.bodyPadding(props.req) + '; max-width: 768px\'>\n      ' + content + '\n      </body>\n      </html>\n      ';
       }
