@@ -36,6 +36,8 @@ function isValid(meta, value) {
    logger.debug('isValid', value, meta);
    if (value === undefined) {
       return meta.optional;
+   } else if (meta.type === 'url') {
+      return typeof value === 'string' && value.match(/^http/);
    } else if (meta.type === 'string') {
       return typeof value === 'string';
    } else if (meta.type === 'duration') {

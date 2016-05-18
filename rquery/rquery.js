@@ -267,21 +267,32 @@ export default class {
          key: 'about',
          access: 'redirect',
       }, async (req, res) => {
-         res.redirect(302, 'https://github.com/evanx/redishub/blob/master/README.md');
+         if (this.config.aboutUrl) {
+            res.redirect(302, this.config.aboutUrl);
+         }
       });
       this.expressApp.get('', async (req, res) => {
          res.redirect(302, '/routes');
       });
       this.addPublicRoute('help', async (req, res) => {
          if (this.isBrowser(req)) {
-            let content = await Files.readFile('README.md');
-            if (false) {
-               brucedown('README.md', (err, htmlResult) => {
-                  this.logger.debug('brucedown', htmlResult);
-               });
-            } else {
-               res.set('Content-Type', 'text/html');
-               res.send(marked(content.toString()));
+            if (this.config.helpUrl) {
+               res.redirect(302, this.config.helpUrl);
+            } else if (false) {
+               let content = await Files.readFile('README.md');
+               if (false) {
+                  brucedown('README.md', (err, htmlResult) => {
+                     this.logger.debug('brucedown', htmlResult);
+                  });
+               } else {
+                  content = new Page().render({
+                     req: req,
+                     title: this.config.serviceLabel,
+                     content: marked(content.toString())
+                  });
+                  res.set('Content-Type', 'text/html');
+                  res.send(content);
+               }
             }
          } else if (this.isCliDomain(req)) {
             return this.listCommands();
@@ -1302,9 +1313,9 @@ export default class {
       } else if (command.key === 'register-keyspace') {
       } else if (!registered) {
          if (account[0] === '@') {
-            return 'Expired keyspace';
+            return {message: 'Expired (or unregistered) keyspace', hintUri: 'register-expire'};
          } else {
-            return 'Unregistered keyspace';
+            return {message: 'Unregistered keyspace', hintUri: 'register-expire'};
          }
       } else if (isSecureAccount) {
          this.logger.error('validateAccess', account, keyspace);
@@ -1420,7 +1431,7 @@ export default class {
          res.set('Content-Type', 'text/plain');
          resultString = result.toString();
       } else if (this.config.defaultFormat === 'html' || Values.isDefined(req.query.html)
-      || command.format === 'html') {
+      || command.format === 'html' || this.isHtmlDomain(req)) {
          res.set('Content-Type', 'text/html');
          resultString = result.toString();
       } else if (this.config.defaultFormat !== 'json') {
@@ -1455,24 +1466,74 @@ export default class {
       return !/^curl\//.test(req.get('User-Agent'));
    }
 
+   isHtmlDomain(req) {
+      return /^web/.test(req.hostname);
+   }
+
+   isJsonDomain(req) {
+      return /^json/.test(req.hostname);
+   }
+
    isCliDomain(req) {
       return /^cli/.test(req.hostname) || !this.isBrowser(req);
    }
 
    sendError(req, res, err) {
       this.logger.warn(err);
-      this.sendStatusMessage(req, res, 500, err.message, err);
+      this.sendStatusMessage(req, res, 500, err);
    }
 
-   sendStatusMessage(req, res, statusCode, errorMessage, err) {
-      if (this.isCliDomain(req)) {
-         if (err) {
-            if (err.stack) {
-               errorMessage = err.stack.toString();
-            }
-         }
+   sendStatusMessage(req, res, statusCode, err) {
+      let messageLines = [];
+      if (!err) {
+         logger.error('sendStatusMessage empty');
+         err = 'empty error message';
       }
-      res.status(statusCode).send(errorMessage + '\n');
+      let title = req.path;
+      if (lodash.isString(err)) {
+         title = err;
+      } else if (lodash.isArray(err)) {
+         messageLines = messageLines.concat(err);
+      } else if (err.message) {
+         if (err.message) {
+            title = err.message;
+         }
+         if (err.hintUri) {
+            let url;
+            if (this.isBrowser(req)) {
+               url = `/${err.hintUri}`;
+            } else if (/localhost/.test(req.hostname)) {
+               url = `http://localhost:8765/${err.hintUri}`;
+            } else {
+               url = `https://${req.hostname}/${err.hintUri}`;
+            }
+            if (this.isBrowser(req)) {
+               url = `Try <a href="${url}">${url}</a>`;
+            }
+            messageLines.push(url);
+         }
+         if (err.stack) {
+            messageLines = messageLines.concat(err.stack.split('\n').slice(0, 5));
+         }
+      } else {
+         logger.error('sendStatusMessage type', typeof err, err);
+         err = 'unexpected error type: ' + typeof err;
+         messageLines.push(err);
+      }
+      if (this.isBrowser(req)) {
+         res.set('Content-Type', 'text/html');
+         res.status(statusCode).send(new Page().render({
+            title,
+            content: `
+            <h2>Status ${statusCode}: ${title}</h2>
+            <pre>
+            ${messageLines.join('\n')}
+            </pre>
+            `
+         }));
+      } else {
+         res.status(statusCode).send(messageLines.join('\n') + '\n');
+      }
    }
 
    digestPem(pem) {

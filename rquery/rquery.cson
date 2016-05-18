@@ -15,6 +15,10 @@ config:
       type: 'string'
    port:
       defaultValue: 8080
+   helpUrl:
+      type: 'url'
+   aboutUrl:
+      type: 'url'
    keyExpire:
       type: 'duration'
       unit: 'seconds'

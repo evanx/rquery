@@ -5,10 +5,12 @@ module.exports = {
       redisKeyspace: 'demo:rquery',
       hostname: 'secure.redishub.com',
       hostUrl: 'https://secure.redishub.com',
-      serviceName: 'redishub-secure',
-      serviceLabel: 'RedisHub Secure',
+      serviceName: 'redishub-prod',
+      serviceLabel: 'RedisHub Prod',
       port: 4567,
       location: '',
+      aboutUrl: 'https://github.com/evanx/redishub/blob/master/README.md',
+      helpUrl: 'https://github.com/evanx/redishub/blob/master/README.md',
       indexCommand: 'getconfig',
       //keyExpire: 2764800, // 31 days
       keyExpire: 604800, // 7 days

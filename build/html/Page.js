@@ -22,7 +22,18 @@ var _class = function () {
       value: function render(props) {
          this.props = props;
          logger.debug('props', props);
-         return '\n      <html>\n         <head>\n            <title>' + props.title + '</title>\n            <meta name=\'viewport\' content=' + viewportContentArray.join(', ') + '/>\n         </head>\n         <body style=\'padding: 10pt\'>\n         ' + props.content + '\n         </body>\n      </html>\n      ';
+         var content = props.content.replace(/\n\s*/g, '\n');
+         return '\n      <html>\n      <head>\n      <title>' + props.title + '</title>\n      <style>\n         pre {\n            background-color: #f2f2f2;\n         }\n      </style>\n      <meta name=\'viewport\' content=' + viewportContentArray.join(', ') + '/>\n      </head>\n      <body style=\'padding: ' + this.bodyPadding(props.req) + '; max-width: 768px\'>\n      ' + content + '\n      </body>\n      </html>\n      ';
+      }
+   }, {
+      key: 'bodyPadding',
+      value: function bodyPadding(req) {
+         if (req) {
+            if (req.get('user-agent').match(/Mobile/)) {} else {
+               return '10px 10px 10px 100px';
+            }
+         }
+         return '10px';
       }
    }]);
 

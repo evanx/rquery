@@ -685,7 +685,9 @@ var _class = function () {
                   while (1) {
                      switch (_context10.prev = _context10.next) {
                         case 0:
-                           res.redirect(302, 'https://github.com/evanx/redishub/blob/master/README.md');
+                           if (_this5.config.aboutUrl) {
+                              res.redirect(302, _this5.config.aboutUrl);
+                           }
 
                         case 1:
                         case 'end':
@@ -725,14 +727,29 @@ var _class = function () {
                      switch (_context12.prev = _context12.next) {
                         case 0:
                            if (!_this5.isBrowser(req)) {
-                              _context12.next = 7;
+                              _context12.next = 12;
                               break;
                            }
 
-                           _context12.next = 3;
+                           if (!_this5.config.helpUrl) {
+                              _context12.next = 5;
+                              break;
+                           }
+
+                           res.redirect(302, _this5.config.helpUrl);
+                           _context12.next = 10;
+                           break;
+
+                        case 5:
+                           if (!false) {
+                              _context12.next = 10;
+                              break;
+                           }
+
+                           _context12.next = 8;
                            return Files.readFile('README.md');
 
-                        case 3:
+                        case 8:
                            content = _context12.sent;
 
                            if (false) {
@@ -740,24 +757,31 @@ var _class = function () {
                                  _this5.logger.debug('brucedown', htmlResult);
                               });
                            } else {
+                              content = new _Page2.default().render({
+                                 req: req,
+                                 title: _this5.config.serviceLabel,
+                                 content: (0, _marked2.default)(content.toString())
+                              });
                               res.set('Content-Type', 'text/html');
-                              res.send((0, _marked2.default)(content.toString()));
+                              res.send(content);
                            }
-                           _context12.next = 12;
+
+                        case 10:
+                           _context12.next = 17;
                            break;
 
-                        case 7:
+                        case 12:
                            if (!_this5.isCliDomain(req)) {
-                              _context12.next = 11;
+                              _context12.next = 16;
                               break;
                            }
 
                            return _context12.abrupt('return', _this5.listCommands());
 
-                        case 11:
+                        case 16:
                            return _context12.abrupt('return', _this5.listCommands());
 
-                        case 12:
+                        case 17:
                         case 'end':
                            return _context12.stop();
                      }
@@ -3796,9 +3820,9 @@ var _class = function () {
             }
          } else if (command.key === 'register-keyspace') {} else if (!registered) {
             if (account[0] === '@') {
-               return 'Expired keyspace';
+               return { message: 'Expired (or unregistered) keyspace', hintUri: 'register-expire' };
             } else {
-               return 'Unregistered keyspace';
+               return { message: 'Unregistered keyspace', hintUri: 'register-expire' };
             }
          } else if (isSecureAccount) {
             this.logger.error('validateAccess', account, keyspace);
@@ -3983,7 +4007,7 @@ var _class = function () {
                         break;
 
                      case 35:
-                        if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html')) {
+                        if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html' || this.isHtmlDomain(req))) {
                            _context85.next = 40;
                            break;
                         }
@@ -4053,6 +4077,18 @@ var _class = function () {
          return !/^curl\//.test(req.get('User-Agent'));
       }
    }, {
+      key: 'isHtmlDomain',
+      value: function isHtmlDomain(req) {
+         return (/^web/.test(req.hostname)
+         );
+      }
+   }, {
+      key: 'isJsonDomain',
+      value: function isJsonDomain(req) {
+         return (/^json/.test(req.hostname)
+         );
+      }
+   }, {
       key: 'isCliDomain',
       value: function isCliDomain(req) {
          return (/^cli/.test(req.hostname) || !this.isBrowser(req)
@@ -4062,19 +4098,56 @@ var _class = function () {
       key: 'sendError',
       value: function sendError(req, res, err) {
          this.logger.warn(err);
-         this.sendStatusMessage(req, res, 500, err.message, err);
+         this.sendStatusMessage(req, res, 500, err);
       }
    }, {
       key: 'sendStatusMessage',
-      value: function sendStatusMessage(req, res, statusCode, errorMessage, err) {
-         if (this.isCliDomain(req)) {
-            if (err) {
-               if (err.stack) {
-                  errorMessage = err.stack.toString();
-               }
-            }
+      value: function sendStatusMessage(req, res, statusCode, err) {
+         var messageLines = [];
+         if (!err) {
+            logger.error('sendStatusMessage empty');
+            err = 'empty error message';
          }
-         res.status(statusCode).send(errorMessage + '\n');
+         var title = req.path;
+         if (lodash.isString(err)) {
+            title = err;
+         } else if (lodash.isArray(err)) {
+            messageLines = messageLines.concat(err);
+         } else if (err.message) {
+            if (err.message) {
+               title = err.message;
+            }
+            if (err.hintUri) {
+               var url = void 0;
+               if (this.isBrowser(req)) {
+                  url = '/' + err.hintUri;
+               } else if (/localhost/.test(req.hostname)) {
+                  url = 'http://localhost:8765/' + err.hintUri;
+               } else {
+                  url = 'https://' + req.hostname + '/' + err.hintUri;
+               }
+               if (this.isBrowser(req)) {
+                  url = 'Try <a href="' + url + '">' + url + '</a>';
+               }
+               messageLines.push(url);
+            }
+            if (err.stack) {
+               messageLines = messageLines.concat(err.stack.split('\n').slice(0, 5));
+            }
+         } else {
+            logger.error('sendStatusMessage type', typeof err === 'undefined' ? 'undefined' : _typeof(err), err);
+            err = 'unexpected error type: ' + (typeof err === 'undefined' ? 'undefined' : _typeof(err));
+            messageLines.push(err);
+         }
+         if (this.isBrowser(req)) {
+            res.set('Content-Type', 'text/html');
+            res.status(statusCode).send(new _Page2.default().render({
+               title: title,
+               content: '\n            <h2>Status ' + statusCode + ': ' + title + '</h2>\n            <pre>\n            ' + messageLines.join('\n') + '\n            </pre>\n            '
+            }));
+         } else {
+            res.status(statusCode).send(messageLines.join('\n') + '\n');
+         }
       }
    }, {
       key: 'digestPem',
