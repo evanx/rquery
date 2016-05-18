@@ -630,7 +630,7 @@ var _class = function () {
                      switch (_context9.prev = _context9.next) {
                         case 0:
                            routes = Express.getRoutes(_this5.expressApp).filter(function (route) {
-                              return !['/', '/routes', '/webhook-telegram/*', '/help', '/about'].includes(route);
+                              return !['/', '/routes', '/webhook-telegram/*', '/help'].includes(route);
                            });
                            accountOnlyRoutes = routes.filter(function (route) {
                               return route.includes(':account') && !route.includes(':keyspace');

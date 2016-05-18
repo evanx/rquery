@@ -240,7 +240,7 @@ export default class {
          }
       }, async (req, res, reqx) => {
          const routes = Express.getRoutes(this.expressApp)
-         .filter(route => !['/', '/routes', '/webhook-telegram/*', '/help', '/about'].includes(route));
+         .filter(route => !['/', '/routes', '/webhook-telegram/*', '/help'].includes(route));
          const accountOnlyRoutes = routes
          .filter(route => route.includes(':account') && !route.includes(':keyspace'));
          return {
