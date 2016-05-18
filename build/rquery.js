@@ -630,7 +630,7 @@ var _class = function () {
                      switch (_context9.prev = _context9.next) {
                         case 0:
                            routes = Express.getRoutes(_this5.expressApp).filter(function (route) {
-                              return !['/', '/routes', '/webhook-telegram/*'].includes(route);
+                              return !['/', '/routes', '/webhook-telegram/*', '/help', '/about'].includes(route);
                            });
                            accountOnlyRoutes = routes.filter(function (route) {
                               return route.includes(':account') && !route.includes(':keyspace');
@@ -4105,7 +4105,7 @@ var _class = function () {
       value: function sendStatusMessage(req, res, statusCode, err) {
          var messageLines = [];
          if (!err) {
-            logger.error('sendStatusMessage empty');
+            this.logger.error('sendStatusMessage empty');
             err = 'empty error message';
          }
          var title = req.path;
@@ -4135,7 +4135,7 @@ var _class = function () {
                messageLines = messageLines.concat(err.stack.split('\n').slice(0, 5));
             }
          } else {
-            logger.error('sendStatusMessage type', typeof err === 'undefined' ? 'undefined' : _typeof(err), err);
+            this.logger.error('sendStatusMessage type', typeof err === 'undefined' ? 'undefined' : _typeof(err), err);
             err = 'unexpected error type: ' + (typeof err === 'undefined' ? 'undefined' : _typeof(err));
             messageLines.push(err);
          }

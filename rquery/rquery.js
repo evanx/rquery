@@ -240,7 +240,7 @@ export default class {
          }
       }, async (req, res, reqx) => {
          const routes = Express.getRoutes(this.expressApp)
-         .filter(route => !['/', '/routes', '/webhook-telegram/*'].includes(route));
+         .filter(route => !['/', '/routes', '/webhook-telegram/*', '/help', '/about'].includes(route));
          const accountOnlyRoutes = routes
          .filter(route => route.includes(':account') && !route.includes(':keyspace'));
          return {
@@ -1486,7 +1486,7 @@ export default class {
    sendStatusMessage(req, res, statusCode, err) {
       let messageLines = [];
       if (!err) {
-         logger.error('sendStatusMessage empty');
+         this.logger.error('sendStatusMessage empty');
          err = 'empty error message';
       }
       let title = req.path;
@@ -1516,7 +1516,7 @@ export default class {
             messageLines = messageLines.concat(err.stack.split('\n').slice(0, 5));
          }
       } else {
-         logger.error('sendStatusMessage type', typeof err, err);
+         this.logger.error('sendStatusMessage type', typeof err, err);
          err = 'unexpected error type: ' + typeof err;
          messageLines.push(err);
       }
