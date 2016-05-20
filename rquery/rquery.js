@@ -233,10 +233,14 @@ export default class {
          access: 'debug',
          aliases: ['/'],
          sendResult: async (req, res, reqx, result) => {
-            res.set('Content-Type', 'text/html');
-            res.send(new Page().render(new Help().render({
-               result, config: this.config
-            })));
+            if (this.isCliDomain(req)) {
+               return result;
+            } else {
+               res.set('Content-Type', 'text/html');
+               res.send(new Page().render(new Help().render({
+                  req, result, config: this.config
+               })));
+            }
          }
       }, async (req, res, reqx) => {
          const routes = Express.getRoutes(this.expressApp)
@@ -286,7 +290,7 @@ export default class {
                   });
                } else {
                   content = new Page().render({
-                     req: req,
+                     req,
                      title: this.config.serviceLabel,
                      content: marked(content.toString())
                   });
@@ -405,7 +409,7 @@ export default class {
             if (true) {
                res.set('Content-Type', 'text/html');
                res.send(new Page().render(new KeyspaceHelp().render({
-                  reqx, result, config: this.config
+                  req, reqx, result, config: this.config
                })));
             } else if (!this.isMobile(req)) {
                res.set('Content-Type', 'text/html');
@@ -1523,6 +1527,7 @@ export default class {
       if (this.isBrowser(req)) {
          res.set('Content-Type', 'text/html');
          res.status(statusCode).send(new Page().render({
+            req,
             title,
             content: `
             <h2>Status ${statusCode}: ${title}</h2>

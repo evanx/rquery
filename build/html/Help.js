@@ -21,6 +21,7 @@ var _class = function () {
          this.props = props;
          logger.debug('props', props);
          return {
+            req: props.req,
             title: 'Help | ' + props.config.serviceLabel,
             content: '\n         <h1>' + props.config.serviceLabel + '</h1>\n         <h3>Basic</h3>\n         ' + this.renderUrls(props.result.common).join('\n') + '\n         <h3>Telegram</h3>\n         ' + this.renderPaths(props.result.telegram).join('\n') + '\n         ' + this.renderAccount(props.result.account) + '\n         <h3>Account keyspace</h3>\n         ' + this.renderPaths(props.result.accountKeyspace).join('\n') + '\n         '
          };

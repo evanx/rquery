@@ -7,6 +7,7 @@ export default class {
       this.props = props;
       logger.debug('props', props);
       return {
+         req: props.req,
          title: `Help | ${props.config.serviceLabel}`,
          content: `
          <h1>${props.config.serviceLabel}</h1>

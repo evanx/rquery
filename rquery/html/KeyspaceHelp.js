@@ -5,8 +5,9 @@ export default class {
 
    render(props) {
       this.props = props;
-      logger.debug('props', props);
+      logger.debug('props', Object.keys(props));
       return {
+         req: props.req,
          title: `${props.config.serviceLabel} | ${props.reqx.account}/${props.reqx.keyspace}`,
          content: `
          <h1>/ak/${props.reqx.account}/${props.reqx.keyspace}</h1>

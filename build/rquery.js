@@ -603,12 +603,20 @@ var _class = function () {
                      while (1) {
                         switch (_context8.prev = _context8.next) {
                            case 0:
+                              if (!_this5.isCliDomain(req)) {
+                                 _context8.next = 4;
+                                 break;
+                              }
+
+                              return _context8.abrupt('return', result);
+
+                           case 4:
                               res.set('Content-Type', 'text/html');
                               res.send(new _Page2.default().render(new _Help2.default().render({
-                                 result: result, config: _this5.config
+                                 req: req, result: result, config: _this5.config
                               })));
 
-                           case 2:
+                           case 6:
                            case 'end':
                               return _context8.stop();
                         }
@@ -1124,7 +1132,7 @@ var _class = function () {
 
                               res.set('Content-Type', 'text/html');
                               res.send(new _Page2.default().render(new _KeyspaceHelp2.default().render({
-                                 reqx: reqx, result: result, config: _this5.config
+                                 req: req, reqx: reqx, result: result, config: _this5.config
                               })));
                               _context22.next = 11;
                               break;
@@ -4142,6 +4150,7 @@ var _class = function () {
          if (this.isBrowser(req)) {
             res.set('Content-Type', 'text/html');
             res.status(statusCode).send(new _Page2.default().render({
+               req: req,
                title: title,
                content: '\n            <h2>Status ' + statusCode + ': ' + title + '</h2>\n            <pre>\n            ' + messageLines.join('\n') + '\n            </pre>\n            '
             }));
