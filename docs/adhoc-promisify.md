@@ -42,8 +42,20 @@ export function mkdirp(directory) {
 export function readFile(file) {
    return Promises.promisify(callback => fs.readFile(file, callback));
 }
+
+export function writeFile(file, content) {
+   return Promises.promisify(callback => fs.writeFile(file, content, callback));
+}
 ```
 
-We can then use ES2016 `await` on these functions since they return a `Promise.`
+Since they return a `Promise` they are compatible with ES2016 "async" functions, even though they are not declared with the `async` keyword per se.
+
+We can then use ES2016 `await` on these functions as follows.
+
+```javascript
+   await Files.mkdirp('mydir');
+   await Files.writeFile('mydir/hello.txt', 'Hello!');
+   const content = await Files.readFile('mydir/hello.txt');   
+```
 
 https://twitter.com/evanxsummers
