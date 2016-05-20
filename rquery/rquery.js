@@ -24,8 +24,19 @@ const supportedAuth = ['telegram.org'];
 
 export default class {
 
+   async test() {
+      await Files.mkdirp('tmp');
+      await Files.writeFile('tmp/hello.txt', 'Hello!');
+      this.logger.error('exists', await Files.existsFile('tmp/hello.txt'));
+      assert(await Files.existsFile('tmp/hello.txt'), 'exists: tmp/hello.txt');
+      const content = (await Files.readFile('tmp/hello.txt')).toString();
+      assert.equal(content, 'Hello!', 'content: tmp/hello.txt');
+      this.logger.warn('content', typeof content, content);
+   }
+
    async init() {
       this.logger.info('init');
+      await this.test();
    }
 
    async start() {

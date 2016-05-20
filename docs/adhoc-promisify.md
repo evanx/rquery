@@ -39,6 +39,16 @@ export function mkdirp(directory) {
    return Promises.promisify(callback => mkdirp(directory, callback));
 }
 
+export function stat(file) {
+   return Promises.promisify(callback => fs.stat(file, callback));
+}
+
+export function existsFile(file) {
+   return stat(file).then(stats => stats.isFile()).catch(err => {
+      return false;
+   });
+}
+
 export function readFile(file) {
    return Promises.promisify(callback => fs.readFile(file, callback));
 }
@@ -47,15 +57,19 @@ export function writeFile(file, content) {
    return Promises.promisify(callback => fs.writeFile(file, content, callback));
 }
 ```
+where we promisify specific functions individually.
 
 Since they return a `Promise` they are compatible with ES2016 "async" functions, even though they are not declared with the `async` keyword per se.
 
-We can then use ES2016 `await` on these functions as follows.
-
+We can then use ES2016 `await` on these functions:
 ```javascript
-   await Files.mkdirp('mydir');
-   await Files.writeFile('mydir/hello.txt', 'Hello!');
-   const content = await Files.readFile('mydir/hello.txt');   
+async function testFiles() {
+   await Files.mkdirp('tmp');
+   await Files.writeFile('tmp/hello.txt', 'Hello!');
+   assert(await Files.existsFile('tmp/hello.txt'), 'exists: tmp/hello.txt');
+   const content = (await Files.readFile('tmp/hello.txt')).toString();
+   assert.equal(content, 'Hello!', 'content: tmp/hello.txt');
+}
 ```
 
 https://twitter.com/evanxsummers
