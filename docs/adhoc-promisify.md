@@ -27,7 +27,9 @@ export function promisify(fn) {
    });
 }
 ```
-where we invoke the passed `fn` with the prepared callback i.e. with arguments `(err, result)` and the callback will `resolve` or `reject` the `Promise.`
+where we invoke the passed `fn` with the prepared callback i.e. with arguments `(err, result).`
+
+The callback will `resolve` or `reject` the `Promise.`
 
 Then we can promisify specific functions e.g. our `Files` module:
 ```javascript
