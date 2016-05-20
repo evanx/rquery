@@ -12,7 +12,7 @@ In this case, it mixes in new async functions e.g. `llenAsync` et al for all Red
 
 However we sometimes promisify specific functions.
 
-For this purpose we have a `Promises` module with the following function:
+For this purpose we have a `Promises` module with the following `promisify` function:
 
 ```javascript
 export function promisify(fn) {
