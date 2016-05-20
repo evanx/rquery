@@ -29,14 +29,8 @@ function mkdirp(directory) {
 }
 
 function readFile(file) {
-   return new Promise(function (resolve, reject) {
-      _fs2.default.readFile(file, function (err, content) {
-         if (err) {
-            reject(err);
-         } else {
-            resolve(content);
-         }
-      });
+   return Promises.promisify(function (callback) {
+      return _fs2.default.readFile(file, callback);
    });
 }
 //# sourceMappingURL=Files.js.map
