@@ -4,8 +4,8 @@
 One can use `bluebird` to `promisifyAll` e.g. on the `redis` client library as follows:
 
 ```javascript
-bluebird.promisifyAll(redisLib.RedisClient.prototype);
-bluebird.promisifyAll(redisLib.Multi.prototype);
+bluebird.promisifyAll(redis.RedisClient.prototype);
+bluebird.promisifyAll(redis.Multi.prototype);
 ```
 
 In this case, it mixes in new async functions e.g. `llenAsync` et al for all Redis commands.
