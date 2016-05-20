@@ -45,14 +45,4 @@ export function readFile(file) {
 
 We can then use ES2016 `await` on these functions since they return a `Promise.`
 
-#### HTTP Requests
-
-We create `Requests` module:
-
-```javascript
-import requestf from 'request';
-
-export function request(options) {
-   return Promises.promisify(callback => requestf(options, callback));
-}
-```
+https://twitter.com/evanxsummers
