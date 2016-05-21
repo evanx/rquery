@@ -4556,7 +4556,7 @@ var _class = function () {
                         if (lodash.isString(result)) {
                            resultString = result;
                         } else if (lodash.isArray(result)) {
-                           //resultString = `<b>length</b> ${result.length}`;
+                           resultString = '<b>length</b> ' + result.length;
                            resultArray = result;
                         } else if (lodash.isObject(result)) {
                            //resultString = `<b>keys</b> ${Object.keys(result).join(' ')}`;
