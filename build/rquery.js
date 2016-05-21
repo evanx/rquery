@@ -4514,7 +4514,7 @@ var _class = function () {
          } else if (err.message) {
             if (err.message) {
                title = err.message;
-               messageLines.push(err);
+               messageLines.push('' + err);
             }
             if (err.hintUri) {
                var url = void 0;

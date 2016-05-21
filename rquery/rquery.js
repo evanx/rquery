@@ -1645,7 +1645,7 @@ export default class {
       } else if (err.message) {
          if (err.message) {
             title = err.message;
-            messageLines.push(err);
+            messageLines.push('' + err);
          }
          if (err.hintUri) {
             let url;
