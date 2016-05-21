@@ -4490,11 +4490,16 @@ var _class = function () {
       key: 'sendError',
       value: function sendError(req, res, err) {
          this.logger.warn(err);
-         this.sendStatusMessage(req, res, 500, err);
+         try {
+            this.sendStatusMessage(req, res, 500, err);
+         } catch (error) {
+            this.logger.error(error);
+         }
       }
    }, {
       key: 'sendStatusMessage',
       value: function sendStatusMessage(req, res, statusCode, err) {
+         this.logger.warn('status', req.path, statusCode, typeof err === 'undefined' ? 'undefined' : _typeof(err), err);
          var messageLines = [];
          if (!err) {
             this.logger.error('sendStatusMessage empty');
@@ -4540,6 +4545,7 @@ var _class = function () {
                content: '\n            <h2>Status ' + statusCode + ': ' + title + '</h2>\n            <pre>\n            ' + messageLines.join('\n') + '\n            </pre>\n            '
             }));
          } else {
+            this.logger.warn('status lines', req.path, statusCode, typeof err === 'undefined' ? 'undefined' : _typeof(err), messageLines.length);
             res.status(statusCode).send(messageLines.join('\n') + '\n');
          }
       }

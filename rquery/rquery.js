@@ -1622,10 +1622,15 @@ export default class {
 
    sendError(req, res, err) {
       this.logger.warn(err);
-      this.sendStatusMessage(req, res, 500, err);
+      try {
+         this.sendStatusMessage(req, res, 500, err);
+      } catch (error) {
+         this.logger.error(error);
+      }
    }
 
    sendStatusMessage(req, res, statusCode, err) {
+      this.logger.warn('status', req.path, statusCode, typeof err, err);
       let messageLines = [];
       if (!err) {
          this.logger.error('sendStatusMessage empty');
@@ -1676,6 +1681,7 @@ export default class {
             `
          }));
       } else {
+         this.logger.warn('status lines', req.path, statusCode, typeof err, messageLines.length);
          res.status(statusCode).send(messageLines.join('\n') + '\n');
       }
    }
