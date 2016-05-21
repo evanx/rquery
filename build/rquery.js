@@ -4514,7 +4514,7 @@ var _class = function () {
          } else if (err.message) {
             if (err.message) {
                title = err.message;
-               messageLines.push('zz ' + err);
+               messageLines.push(err);
             }
             if (err.hintUri) {
                var url = void 0;
@@ -4536,7 +4536,7 @@ var _class = function () {
          } else {
             this.logger.error('sendStatusMessage type', typeof err === 'undefined' ? 'undefined' : _typeof(err), err);
             err = 'unexpected error type: ' + (typeof err === 'undefined' ? 'undefined' : _typeof(err));
-            messageLines.push(err);
+            messageLines.push(Object.keys(err).join(' '));
          }
          if (this.isBrowser(req)) {
             res.set('Content-Type', 'text/html');
