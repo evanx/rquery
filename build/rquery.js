@@ -3629,7 +3629,7 @@ var _class = function () {
 
                                     case 5:
                                        account = 'pub';
-                                       keyspace = _this13.generateTokenKey().substring(0, 6).toLowerCase();
+                                       keyspace = _this13.generateTokenKey(12).toLowerCase();
                                        clientIp = req.get('x-forwarded-for');
                                        accountKey = _this13.accountKeyspace(account, keyspace);
 

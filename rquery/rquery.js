@@ -1136,7 +1136,7 @@ export default class {
             return;
          }
          const account = 'pub';
-         const keyspace = this.generateTokenKey().substring(0, 6).toLowerCase();
+         const keyspace = this.generateTokenKey(12).toLowerCase();
          let clientIp = req.get('x-forwarded-for');
          const accountKey = this.accountKeyspace(account, keyspace);
          this.logger.debug('registerEphemeral clientIp', clientIp, account, keyspace, accountKey);
