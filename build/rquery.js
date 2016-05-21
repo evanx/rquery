@@ -1228,7 +1228,7 @@ var _class = function () {
                               return command.key;
                            }).join('/'));
                            message = 'Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows:';
-                           exampleUrls = [hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
+                           exampleUrls = [hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/hset/hashes1/field1/value1', hostUrl + '/ak/' + account + '/' + keyspace + '/hgetall/hashes1', hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
                            return _context24.abrupt('return', { message: message, exampleUrls: exampleUrls, keyspaceCommands: _this5.listCommands('keyspace') });
 
                         case 9:
@@ -4556,12 +4556,12 @@ var _class = function () {
                         if (lodash.isString(result)) {
                            resultString = result;
                         } else if (lodash.isArray(result)) {
-                           resultString = '[' + result.length + ']';
+                           //resultString = `<b>length</b> ${result.length}`;
                            resultArray = result;
                         } else if (lodash.isObject(result)) {
-                           resultString = 'keys {' + Object.keys(result).join(', ') + '}';
+                           //resultString = `<b>keys</b> ${Object.keys(result).join(' ')}`;
                            resultArray = Object.keys(result).map(function (key) {
-                              return key + ': ' + result[key];
+                              return '<b>' + key + '</b> ' + result[key];
                            });
                         } else {
                            resultString = result.toString();
@@ -4573,7 +4573,7 @@ var _class = function () {
                            res.send(new _Page2.default().render({
                               req: req,
                               title: reqx.key,
-                              content: '<h3>' + command.key + ' ' + reqx.key + ': ' + resultString + '</h3>\n               <pre>\n               ' + resultArray.join('\n') + '\n               </pre>\n               '
+                              content: '\n               <div style=\'font-size: 12pt; font-style: italic\'>' + command.key + '</div>\n               <div style=\'padding-top: 4px; font-size: 16pt; font-weight: bold;\'>' + reqx.key + '</div>\n               <div style=\'padding-top: 8px; font-size: 12pt; font-family: monospace\'>' + resultString + '</div>\n               <pre style=\'line-height: 2\'>\n               ' + resultArray.join('\n') + '\n               </pre>\n               '
                            }));
                         } else {
                            res.send(new _Page2.default().render({

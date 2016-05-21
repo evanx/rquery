@@ -21,7 +21,7 @@ export default class {
       <title>${props.title}</title>
       <style>
          pre {
-            background-color: #f2f2f2;
+            background-color: #f8f8f8;
             padding: 5px;
          }
       </style>

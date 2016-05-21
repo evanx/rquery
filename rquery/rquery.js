@@ -443,6 +443,8 @@ export default class {
             `${hostUrl}/ak/${account}/${keyspace}/smembers/myset`,
             `${hostUrl}/ak/${account}/${keyspace}/lpush/mylist/myvalue`,
             `${hostUrl}/ak/${account}/${keyspace}/lrange/mylist/0/-1`,
+            `${hostUrl}/ak/${account}/${keyspace}/hset/hashes1/field1/value1`,
+            `${hostUrl}/ak/${account}/${keyspace}/hgetall/hashes1`,
             `${hostUrl}/ak/${account}/${keyspace}/ttls`,
          ];
          return {message, exampleUrls, keyspaceCommands: this.listCommands('keyspace')};
@@ -1602,11 +1604,11 @@ export default class {
          } else if (lodash.isString(result)) {
             resultString = result;
          } else if (lodash.isArray(result)) {
-            resultString = `[${result.length}]`;
+            //resultString = `<b>length</b> ${result.length}`;
             resultArray = result;
          } else if (lodash.isObject(result)) {
-            resultString = `keys {${Object.keys(result).join(', ')}}`;
-            resultArray = Object.keys(result).map(key => `${key}: ${result[key]}`);
+            //resultString = `<b>keys</b> ${Object.keys(result).join(' ')}`;
+            resultArray = Object.keys(result).map(key => `<b>${key}</b> ${result[key]}`);
          } else {
             resultString = result.toString();
          }
@@ -1615,8 +1617,11 @@ export default class {
             res.send(new Page().render({
                req,
                title: reqx.key,
-               content: `<h3>${command.key} ${reqx.key}: ${resultString}</h3>
-               <pre>
+               content: `
+               <div style='font-size: 12pt; font-style: italic'>${command.key}</div>
+               <div style='padding-top: 4px; font-size: 16pt; font-weight: bold;'>${reqx.key}</div>
+               <div style='padding-top: 8px; font-size: 12pt; font-family: monospace'>${resultString}</div>
+               <pre style='line-height: 2'>
                ${resultArray.join('\n')}
                </pre>
                `

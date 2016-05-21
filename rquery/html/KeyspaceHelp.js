@@ -21,11 +21,11 @@ export default class {
 
    renderUrls(urls) {
       return urls.map((url, index) => {
-         const match = url.match(/^https:\/\/[a-z]+\.redishub\.com(\/\S+)$/);
-         if (match) {
+         const [matching, hostUrl, path] = url.match(/^(https?:\/\/[^\/]+)(\/\S+)$/);
+         if (matching) {
             return `
             <div style='line-height: 1.5'>
-            <a href=${url}>${match.pop()}</a>
+            <a href=${url}>${path}</a>
             </div>
             `;
          } else {
