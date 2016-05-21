@@ -3017,38 +3017,80 @@ var _class = function () {
             this.expressApp.get(this.config.location + '/register-account-telegram/:account', function (req, res) {
                return _this8.registerAccount(req, res);
             });
-         }
-      }
-   }, {
-      key: 'addAccountRoutes',
-      value: function addAccountRoutes() {
-         var _this9 = this;
-
-         if (this.config.secureDomain) {
             this.addPublicCommand({
                key: 'register-cert'
             }, function () {
                var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee79(req, res) {
-                  var dn, clientCert;
+                  var dn, clientCert, dns;
                   return regeneratorRuntime.wrap(function _callee79$(_context80) {
                      while (1) {
                         switch (_context80.prev = _context80.next) {
                            case 0:
                               dn = req.get('ssl_client_s_dn');
                               clientCert = req.get('ssl_client_cert');
-                              throw { message: 'Unimplemented', dn: dn, clientCert: clientCert };
 
-                           case 3:
+                              if (clientCert) {
+                                 _context80.next = 4;
+                                 break;
+                              }
+
+                              throw { message: 'No client cert' };
+
+                           case 4:
+                              if (dn) {
+                                 _context80.next = 6;
+                                 break;
+                              }
+
+                              throw { message: 'No client cert DN' };
+
+                           case 6:
+                              dns = _this8.parseDn(dn);
+                              throw { message: 'Unimplemented', dn: dn, dns: dns, clientCert: clientCert };
+
+                           case 8:
                            case 'end':
                               return _context80.stop();
                         }
                      }
-                  }, _callee79, _this9);
+                  }, _callee79, _this8);
                }));
                return function (_x207, _x208) {
                   return ref.apply(this, arguments);
                };
             }());
+         }
+      }
+   }, {
+      key: 'parseDn',
+      value: function parseDn(dn) {
+         var _this9 = this;
+
+         var parts = {};
+         dn.split('/').filter(function (part) {
+            return part.length;
+         }).forEach(function (part) {
+            var _part$split = part.split('=');
+
+            var _part$split2 = _slicedToArray(_part$split, 2);
+
+            var name = _part$split2[0];
+            var value = _part$split2[1];
+
+            if (name && value) {
+               parts[name] = value;
+            } else {
+               _this9.logger.warn('parseDn', dn, part, name, value);
+            }
+         });
+         return parts;
+      }
+   }, {
+      key: 'addAccountRoutes',
+      value: function addAccountRoutes() {
+         var _this10 = this;
+
+         if (this.config.secureDomain) {
             this.addAccountCommand({
                key: 'grant-cert',
                params: ['account', 'role', 'certId'],
@@ -3070,8 +3112,8 @@ var _class = function () {
                         switch (_context81.prev = _context81.next) {
                            case 0:
                               _context81.next = 2;
-                              return _this9.redis.multiExecAsync(function (multi) {
-                                 multi.hgetall(_this9.adminKey('cert', certId));
+                              return _this10.redis.multiExecAsync(function (multi) {
+                                 multi.hgetall(_this10.adminKey('cert', certId));
                               });
 
                            case 2:
@@ -3085,7 +3127,7 @@ var _class = function () {
                               return _context81.stop();
                         }
                      }
-                  }, _callee80, _this9);
+                  }, _callee80, _this10);
                }));
                return function (_x209, _x210, _x211) {
                   return ref.apply(this, arguments);
@@ -3097,7 +3139,7 @@ var _class = function () {
       key: 'registerAccount',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee82(req, res) {
-            var _this10 = this;
+            var _this11 = this;
 
             var _ret;
 
@@ -3113,21 +3155,21 @@ var _class = function () {
                               while (1) {
                                  switch (_context82.prev = _context82.next) {
                                     case 0:
-                                       errorMessage = _this10.validateRegisterTime();
+                                       errorMessage = _this11.validateRegisterTime();
 
                                        if (!errorMessage) {
                                           _context82.next = 4;
                                           break;
                                        }
 
-                                       _this10.sendError(req, res, { message: errorMessage });
+                                       _this11.sendError(req, res, { message: errorMessage });
                                        return _context82.abrupt('return', {
                                           v: void 0
                                        });
 
                                     case 4:
                                        account = req.params.account;
-                                       v = _this10.validateRegisterAccount(account);
+                                       v = _this11.validateRegisterAccount(account);
 
                                        if (!v) {
                                           _context82.next = 8;
@@ -3140,7 +3182,7 @@ var _class = function () {
                                        dn = req.get('ssl_client_s_dn');
                                        clientCert = req.get('ssl_client_cert');
 
-                                       _this10.logger.info('registerAccount dn', dn);
+                                       _this11.logger.info('registerAccount dn', dn);
 
                                        if (clientCert) {
                                           _context82.next = 13;
@@ -3150,15 +3192,15 @@ var _class = function () {
                                        throw { message: 'No client cert' };
 
                                     case 13:
-                                       clientCertDigest = _this10.digestPem(clientCert);
-                                       otpSecret = _this10.generateTokenKey();
-                                       accountKey = _this10.adminKey('account', account);
+                                       clientCertDigest = _this11.digestPem(clientCert);
+                                       otpSecret = _this11.generateTokenKey();
+                                       accountKey = _this11.adminKey('account', account);
                                        _context82.next = 18;
-                                       return _this10.redis.multiExecAsync(function (multi) {
+                                       return _this11.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', new Date().getTime());
-                                          multi.sadd(_this10.adminKey('accounts'), account);
-                                          multi.sadd(_this10.adminKey('account', account, 'topt'), otpSecret);
-                                          multi.sadd(_this10.adminKey('account', account, 'certs'), clientCertDigest);
+                                          multi.sadd(_this11.adminKey('accounts'), account);
+                                          multi.sadd(_this11.adminKey('account', account, 'topt'), otpSecret);
+                                          multi.sadd(_this11.adminKey('account', account, 'certs'), clientCertDigest);
                                        });
 
                                     case 18:
@@ -3177,26 +3219,26 @@ var _class = function () {
 
                                     case 25:
                                        if (!saddAccount) {
-                                          _this10.logger.error('sadd account');
+                                          _this11.logger.error('sadd account');
                                        }
                                        if (!saddCert) {
-                                          _this10.logger.error('sadd cert');
+                                          _this11.logger.error('sadd cert');
                                        }
-                                       result = _this10.buildQrReply({
+                                       result = _this11.buildQrReply({
                                           otpSecret: otpSecret,
                                           user: account,
-                                          host: _this10.config.hostname,
-                                          label: _this10.config.serviceLabel
+                                          host: _this11.config.hostname,
+                                          label: _this11.config.serviceLabel
                                        });
                                        _context82.next = 30;
-                                       return _this10.sendResult({}, req, res, {}, result);
+                                       return _this11.sendResult({}, req, res, {}, result);
 
                                     case 30:
                                     case 'end':
                                        return _context82.stop();
                                  }
                               }
-                           }, _callee81, _this10);
+                           }, _callee81, _this11);
                         })(), 't0', 2);
 
                      case 2:
@@ -3237,7 +3279,7 @@ var _class = function () {
       key: 'addAccountCommand',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee85(command, fn) {
-            var _this11 = this;
+            var _this12 = this;
 
             var uri;
             return regeneratorRuntime.wrap(function _callee85$(_context86) {
@@ -3267,7 +3309,7 @@ var _class = function () {
                                                 while (1) {
                                                    switch (_context84.prev = _context84.next) {
                                                       case 0:
-                                                         message = _this11.validatePath(req);
+                                                         message = _this12.validatePath(req);
 
                                                          if (!message) {
                                                             _context84.next = 3;
@@ -3278,12 +3320,12 @@ var _class = function () {
 
                                                       case 3:
                                                          account = req.params.account;
-                                                         accountKey = _this11.adminKey('account', account);
+                                                         accountKey = _this12.adminKey('account', account);
                                                          _context84.next = 7;
-                                                         return _this11.redis.multiExecAsync(function (multi) {
+                                                         return _this12.redis.multiExecAsync(function (multi) {
                                                             multi.time();
                                                             multi.hget(accountKey, 'admined');
-                                                            multi.smembers(_this11.adminKey('account', account, 'certs'));
+                                                            multi.smembers(_this12.adminKey('account', account, 'certs'));
                                                          });
 
                                                       case 7:
@@ -3312,17 +3354,17 @@ var _class = function () {
                                                       case 17:
                                                          duration = time - admined;
 
-                                                         if (!(duration < _this11.config.adminLimit)) {
+                                                         if (!(duration < _this12.config.adminLimit)) {
                                                             _context84.next = 20;
                                                             break;
                                                          }
 
                                                          return _context84.abrupt('return', {
-                                                            v: 'Admin command interval not elapsed: ' + _this11.config.adminLimit + 's'
+                                                            v: 'Admin command interval not elapsed: ' + _this12.config.adminLimit + 's'
                                                          });
 
                                                       case 20:
-                                                         message = _this11.validateCert(req, certs, account);
+                                                         message = _this12.validateCert(req, certs, account);
 
                                                          if (!message) {
                                                             _context84.next = 23;
@@ -3334,7 +3376,7 @@ var _class = function () {
                                                       case 23:
                                                          dn = req.get('ssl_client_s_dn');
 
-                                                         _this11.logger.error('zz dn', dn);
+                                                         _this12.logger.error('zz dn', dn);
                                                          _context84.next = 27;
                                                          return fn(req, res, { account: account, accountKey: accountKey, time: time, admined: admined, clientCertDigest: clientCertDigest });
 
@@ -3347,14 +3389,14 @@ var _class = function () {
                                                          }
 
                                                          _context84.next = 31;
-                                                         return _this11.sendResult({}, req, res, {}, result);
+                                                         return _this12.sendResult({}, req, res, {}, result);
 
                                                       case 31:
                                                       case 'end':
                                                          return _context84.stop();
                                                    }
                                                 }
-                                             }, _callee83, _this11);
+                                             }, _callee83, _this12);
                                           })(), 't0', 2);
 
                                        case 2:
@@ -3375,14 +3417,14 @@ var _class = function () {
                                           _context85.prev = 7;
                                           _context85.t1 = _context85['catch'](0);
 
-                                          _this11.sendError(req, res, _context85.t1);
+                                          _this12.sendError(req, res, _context85.t1);
 
                                        case 10:
                                        case 'end':
                                           return _context85.stop();
                                     }
                                  }
-                              }, _callee84, _this11, [[0, 7]]);
+                              }, _callee84, _this12, [[0, 7]]);
                            }));
                            return function (_x216, _x217) {
                               return ref.apply(this, arguments);
@@ -3485,7 +3527,7 @@ var _class = function () {
       key: 'registerExpire',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee87(req, res, previousError) {
-            var _this12 = this;
+            var _this13 = this;
 
             var _ret3;
 
@@ -3503,37 +3545,37 @@ var _class = function () {
                               while (1) {
                                  switch (_context87.prev = _context87.next) {
                                     case 0:
-                                       _this12.logger.debug('registerExpire');
-                                       errorMessage = _this12.validateRegisterTime();
+                                       _this13.logger.debug('registerExpire');
+                                       errorMessage = _this13.validateRegisterTime();
 
                                        if (!errorMessage) {
                                           _context87.next = 5;
                                           break;
                                        }
 
-                                       _this12.sendError(req, res, { message: errorMessage });
+                                       _this13.sendError(req, res, { message: errorMessage });
                                        return _context87.abrupt('return', {
                                           v: void 0
                                        });
 
                                     case 5:
-                                       account = '@' + _this12.generateTokenKey().substring(0, 6).toLowerCase();
-                                       keyspace = _this12.generateTokenKey().substring(0, 6).toLowerCase();
+                                       account = '@' + _this13.generateTokenKey().substring(0, 6).toLowerCase();
+                                       keyspace = _this13.generateTokenKey().substring(0, 6).toLowerCase();
                                        clientIp = req.get('x-forwarded-for');
-                                       accountKey = _this12.accountKeyspace(account, keyspace);
+                                       accountKey = _this13.accountKeyspace(account, keyspace);
 
-                                       _this12.logger.debug('registerExpire clientIp', clientIp, account, keyspace, accountKey);
+                                       _this13.logger.debug('registerExpire clientIp', clientIp, account, keyspace, accountKey);
                                        _context87.next = 12;
-                                       return _this12.redis.multiExecAsync(function (multi) {
+                                       return _this13.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', new Date().getTime());
-                                          multi.expire(accountKey, _this12.config.ephemeralAccountExpire);
+                                          multi.expire(accountKey, _this13.config.ephemeralAccountExpire);
                                           if (clientIp) {
                                              multi.hsetnx(accountKey, 'clientIp', clientIp);
-                                             if (_this12.config.addClientIp) {
-                                                multi.sadd(_this12.adminKey('keyspaces:expire:ips'), clientIp);
+                                             if (_this13.config.addClientIp) {
+                                                multi.sadd(_this13.adminKey('keyspaces:expire:ips'), clientIp);
                                              }
                                           }
-                                          _this12.count(multi, 'keyspaces:expire');
+                                          _this13.count(multi, 'keyspaces:expire');
                                        });
 
                                     case 12:
@@ -3544,7 +3586,7 @@ var _class = function () {
                                           break;
                                        }
 
-                                       _this12.logger.error('keyspace clash', account, keyspace);
+                                       _this13.logger.error('keyspace clash', account, keyspace);
 
                                        if (previousError) {
                                           _context87.next = 17;
@@ -3552,7 +3594,7 @@ var _class = function () {
                                        }
 
                                        return _context87.abrupt('return', {
-                                          v: _this12.registerExpire(req, res, { message: 'keyspace clash' })
+                                          v: _this13.registerExpire(req, res, { message: 'keyspace clash' })
                                        });
 
                                     case 17:
@@ -3561,9 +3603,9 @@ var _class = function () {
                                     case 18:
                                        replyPath = ['ak', account, keyspace].join('/');
 
-                                       _this12.logger.debug('registerExpire', keyspace, clientIp, replyPath);
+                                       _this13.logger.debug('registerExpire', keyspace, clientIp, replyPath);
 
-                                       if (!_this12.isBrowser(req)) {
+                                       if (!_this13.isBrowser(req)) {
                                           _context87.next = 24;
                                           break;
                                        }
@@ -3578,14 +3620,14 @@ var _class = function () {
 
                                     case 24:
                                        _context87.next = 26;
-                                       return _this12.sendResult({}, req, res, {}, replyPath);
+                                       return _this13.sendResult({}, req, res, {}, replyPath);
 
                                     case 26:
                                     case 'end':
                                        return _context87.stop();
                                  }
                               }
-                           }, _callee86, _this12);
+                           }, _callee86, _this13);
                         })(), 't0', 3);
 
                      case 3:
@@ -3675,7 +3717,7 @@ var _class = function () {
    }, {
       key: 'createKeyspaceHandler',
       value: function createKeyspaceHandler(command, fn) {
-         var _this13 = this;
+         var _this14 = this;
 
          return function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee89(req, res) {
@@ -3701,44 +3743,44 @@ var _class = function () {
 
                                           assert(account, 'account');
                                           assert(keyspace, 'keyspace');
-                                          accountKey = _this13.accountKeyspace(account, keyspace);
+                                          accountKey = _this14.accountKeyspace(account, keyspace);
                                           v = void 0;
                                           //await this.migrateKeyspace(req.params);
 
-                                          v = _this13.validateAccount(account);
+                                          v = _this14.validateAccount(account);
 
                                           if (!v) {
                                              _context89.next = 13;
                                              break;
                                           }
 
-                                          _this13.sendStatusMessage(req, res, 400, 'Invalid account: ' + v);
+                                          _this14.sendStatusMessage(req, res, 400, 'Invalid account: ' + v);
                                           return _context89.abrupt('return', {
                                              v: void 0
                                           });
 
                                        case 13:
-                                          v = _this13.validateKeyspace(keyspace);
+                                          v = _this14.validateKeyspace(keyspace);
 
                                           if (!v) {
                                              _context89.next = 17;
                                              break;
                                           }
 
-                                          _this13.sendStatusMessage(req, res, 400, 'Invalid keyspace: ' + v);
+                                          _this14.sendStatusMessage(req, res, 400, 'Invalid keyspace: ' + v);
                                           return _context89.abrupt('return', {
                                              v: void 0
                                           });
 
                                        case 17:
-                                          v = _this13.validateKey(key);
+                                          v = _this14.validateKey(key);
 
                                           if (!v) {
                                              _context89.next = 21;
                                              break;
                                           }
 
-                                          _this13.sendStatusMessage(req, res, 400, 'Invalid key: ' + v);
+                                          _this14.sendStatusMessage(req, res, 400, 'Invalid key: ' + v);
                                           return _context89.abrupt('return', {
                                              v: void 0
                                           });
@@ -3754,7 +3796,7 @@ var _class = function () {
                                              break;
                                           }
 
-                                          _this13.sendStatusMessage(req, res, 400, 'Invalid timeout: require range 1 to 9 seconds');
+                                          _this14.sendStatusMessage(req, res, 400, 'Invalid timeout: require range 1 to 9 seconds');
                                           return _context89.abrupt('return', {
                                              v: void 0
                                           });
@@ -3762,13 +3804,13 @@ var _class = function () {
                                        case 25:
                                           isSecureAccount = !/^@/.test(account);
                                           _context89.next = 28;
-                                          return _this13.redis.multiExecAsync(function (multi) {
+                                          return _this14.redis.multiExecAsync(function (multi) {
                                              multi.time();
                                              multi.hget(accountKey, 'registered');
                                              multi.hget(accountKey, 'admined');
                                              multi.hget(accountKey, 'accessed');
                                              if (isSecureAccount) {
-                                                multi.smembers(_this13.adminKey('account', account, 'certs'));
+                                                multi.smembers(_this14.adminKey('account', account, 'certs'));
                                              }
                                           });
 
@@ -3782,14 +3824,14 @@ var _class = function () {
                                           accessed = _ref75[3];
                                           certs = _ref75[4];
 
-                                          v = _this13.validateAccess({ command: command, req: req, account: account, keyspace: keyspace, time: time, registered: registered, admined: admined, accessed: accessed, certs: certs });
+                                          v = _this14.validateAccess({ command: command, req: req, account: account, keyspace: keyspace, time: time, registered: registered, admined: admined, accessed: accessed, certs: certs });
 
                                           if (!v) {
                                              _context89.next = 40;
                                              break;
                                           }
 
-                                          _this13.sendStatusMessage(req, res, 403, v);
+                                          _this14.sendStatusMessage(req, res, 403, v);
                                           return _context89.abrupt('return', {
                                              v: void 0
                                           });
@@ -3797,7 +3839,7 @@ var _class = function () {
                                        case 40:
                                           hostname = void 0;
 
-                                          if (!(req.hostname === _this13.config.hostname)) {
+                                          if (!(req.hostname === _this14.config.hostname)) {
                                              _context89.next = 44;
                                              break;
                                           }
@@ -3806,14 +3848,14 @@ var _class = function () {
                                           break;
 
                                        case 44:
-                                          if (!lodash.endsWith(req.hostname, _this13.config.keyspaceHostname)) {
+                                          if (!lodash.endsWith(req.hostname, _this14.config.keyspaceHostname)) {
                                              _context89.next = 56;
                                              break;
                                           }
 
                                           hostname = req.hostname.replace(/\..*$/, '');
                                           _context89.next = 48;
-                                          return _this13.redis.hgetallAsync(_this13.adminKey('host', hostname));
+                                          return _this14.redis.hgetallAsync(_this14.adminKey('host', hostname));
 
                                        case 48:
                                           hostHashes = _context89.sent;
@@ -3826,7 +3868,7 @@ var _class = function () {
                                           throw new ValidationError('Invalid hostname: ' + hostname);
 
                                        case 51:
-                                          _this13.logger.debug('hostHashes', hostHashes);
+                                          _this14.logger.debug('hostHashes', hostHashes);
 
                                           if (hostHashes.keyspaces) {
                                              _context89.next = 54;
@@ -3865,23 +3907,23 @@ var _class = function () {
                                           throw new ValidationError('Timeout must range from 1 to 10 seconds: ' + timeout);
 
                                        case 61:
-                                          multi = _this13.redis.multi();
+                                          multi = _this14.redis.multi();
                                           reqx = { time: time, account: account, keyspace: keyspace, accountKey: accountKey, key: key };
 
                                           if (key) {
-                                             reqx.keyspaceKey = _this13.keyspaceKey(account, keyspace, key);
+                                             reqx.keyspaceKey = _this14.keyspaceKey(account, keyspace, key);
                                           }
-                                          multi.sadd(_this13.adminKey('keyspaces'), keyspace);
+                                          multi.sadd(_this14.adminKey('keyspaces'), keyspace);
                                           multi.hset(accountKey, 'accessed', time);
                                           if (command && command.access === 'admin') {
                                              multi.hset(accountKey, 'admined', time);
                                           }
                                           if (key) {
                                              assert(reqx.keyspaceKey);
-                                             multi.expire(reqx.keyspaceKey, _this13.getKeyExpire(account));
+                                             multi.expire(reqx.keyspaceKey, _this14.getKeyExpire(account));
                                           }
                                           if (account[0] === '@') {
-                                             multi.expire(accountKey, _this13.config.ephemeralAccountExpire);
+                                             multi.expire(accountKey, _this14.config.ephemeralAccountExpire);
                                           }
                                           _context89.next = 71;
                                           return multi.execAsync();
@@ -3899,14 +3941,14 @@ var _class = function () {
                                           }
 
                                           _context89.next = 77;
-                                          return _this13.sendResult(command, req, res, reqx, result);
+                                          return _this14.sendResult(command, req, res, reqx, result);
 
                                        case 77:
                                        case 'end':
                                           return _context89.stop();
                                     }
                                  }
-                              }, _callee88, _this13);
+                              }, _callee88, _this14);
                            })(), 't0', 2);
 
                         case 2:
@@ -3927,14 +3969,14 @@ var _class = function () {
                            _context90.prev = 7;
                            _context90.t1 = _context90['catch'](0);
 
-                           _this13.sendError(req, res, _context90.t1);
+                           _this14.sendError(req, res, _context90.t1);
 
                         case 10:
                         case 'end':
                            return _context90.stop();
                      }
                   }
-               }, _callee89, _this13, [[0, 7]]);
+               }, _callee89, _this14, [[0, 7]]);
             }));
             return function (_x222, _x223) {
                return ref.apply(this, arguments);
@@ -4053,6 +4095,9 @@ var _class = function () {
       value: function validateAccount(account) {
          if (/^:/.test(account)) {
             return 'leading colon';
+         }
+         if (/^@/.test(account)) {
+            return 'leading symbol';
          }
       }
    }, {

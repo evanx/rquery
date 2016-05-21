@@ -915,18 +915,35 @@ export default class {
       this.expressApp.get(this.config.location + '/register-expire', (req, res) => this.registerExpire(req, res));
       if (this.config.secureDomain) {
          this.expressApp.get(this.config.location + '/register-account-telegram/:account', (req, res) => this.registerAccount(req, res));
-      }
-   }
-
-   addAccountRoutes() {
-      if (this.config.secureDomain) {
          this.addPublicCommand({
             key: 'register-cert'
          }, async (req, res) => {
             const dn = req.get('ssl_client_s_dn');
             const clientCert = req.get('ssl_client_cert');
-            throw {message: 'Unimplemented', dn, clientCert};
+            if (!clientCert) throw {message: 'No client cert'};
+            if (!dn) throw {message: 'No client cert DN'};
+            const dns = this.parseDn(dn);
+            throw {message: 'Unimplemented', dn, dns, clientCert};
          });
+      }
+   }
+
+   parseDn(dn) {
+      const parts = {};
+      dn.split('/').filter(part => part.length)
+      .forEach(part => {
+         const [name, value] = part.split('=');
+         if (name && value) {
+            parts[name] = value;
+         } else {
+            this.logger.warn('parseDn', dn, part, name, value);
+         }
+      });
+      return parts;
+   }
+
+   addAccountRoutes() {
+      if (this.config.secureDomain) {
          this.addAccountCommand({
             key: 'grant-cert',
             params: ['account', 'role', 'certId'],
@@ -1340,6 +1357,9 @@ export default class {
    validateAccount(account) {
       if (/^:/.test(account)) {
          return 'leading colon';
+      }
+      if (/^@/.test(account)) {
+         return 'leading symbol';
       }
    }
 
