@@ -3047,10 +3047,18 @@ var _class = function () {
       value: function addRegisterRoutes() {
          var _this8 = this;
 
-         this.expressApp.get(this.config.location + '/register-ephemeral', function (req, res) {
-            _this8.registerEphemeral(req, res, {
-               account: 'pub'
-            });
+         this.addPublicCommand({
+            key: 'register-ephemeral'
+         }, function (req, res) {
+            req.account = 'pub';
+            return _this8.registerEphemeral(req, res);
+         });
+         this.addPublicCommand({
+            key: 'register-ephemeral-access',
+            params: ['access']
+         }, function (req, res) {
+            req.account = 'pub';
+            return _this8.registerEphemeral(req, res);
          });
          if (this.config.secureDomain) {
             this.expressApp.get(this.config.location + '/register-account-telegram/:account', function (req, res) {
@@ -3597,21 +3605,19 @@ var _class = function () {
    }, {
       key: 'registerEphemeral',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee88(req, res) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee88(req, res, previousError) {
             var _this13 = this;
 
-            var reqx = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-            var previousError = arguments[3];
-
-            var account, keyspace, additive, _ret3;
+            var _req$params10, keyspace, access, account, _ret3;
 
             return regeneratorRuntime.wrap(function _callee88$(_context89) {
                while (1) {
                   switch (_context89.prev = _context89.next) {
                      case 0:
-                        account = reqx.account;
-                        keyspace = reqx.keyspace;
-                        additive = reqx.additive;
+                        _req$params10 = req.params;
+                        keyspace = _req$params10.keyspace;
+                        access = _req$params10.access;
+                        account = _req$params10.account;
 
                         assert(account, 'account');
                         if (!keyspace) {
@@ -3620,7 +3626,7 @@ var _class = function () {
                         if (previousError) {
                            this.logger.warn('registerEphemeral retry');
                         }
-                        _context89.prev = 6;
+                        _context89.prev = 7;
                         return _context89.delegateYield(regeneratorRuntime.mark(function _callee87() {
                            var errorMessage, clientIp, accountKey, replies, replyPath;
                            return regeneratorRuntime.wrap(function _callee87$(_context88) {
@@ -3648,14 +3654,13 @@ var _class = function () {
                                        _context88.next = 10;
                                        return _this13.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', new Date().getTime());
-                                          multi.expire(accountKey, _this13.config.ephemeralAccountExpire);
                                           if (clientIp) {
                                              multi.hsetnx(accountKey, 'clientIp', clientIp);
                                              if (_this13.config.addClientIp) {
-                                                multi.sadd(_this13.adminKey('keyspaces:expire:ips'), clientIp);
+                                                multi.sadd(_this13.adminKey('keyspaces:ephemeral:ips'), clientIp);
                                              }
                                           }
-                                          _this13.count(multi, 'keyspaces:expire');
+                                          _this13.count(multi, 'keyspaces:ephemeral'); // TODO del old keyspaces:expire
                                        });
 
                                     case 10:
@@ -3674,7 +3679,7 @@ var _class = function () {
                                        }
 
                                        return _context88.abrupt('return', {
-                                          v: _this13.registerEphemeral(req, res, reqx, { message: 'keyspace clash' })
+                                          v: _this13.registerEphemeral(req, res, { message: 'keyspace clash' })
                                        });
 
                                     case 15:
@@ -3708,37 +3713,37 @@ var _class = function () {
                                  }
                               }
                            }, _callee87, _this13);
-                        })(), 't0', 8);
+                        })(), 't0', 9);
 
-                     case 8:
+                     case 9:
                         _ret3 = _context89.t0;
 
                         if (!((typeof _ret3 === 'undefined' ? 'undefined' : _typeof(_ret3)) === "object")) {
-                           _context89.next = 11;
+                           _context89.next = 12;
                            break;
                         }
 
                         return _context89.abrupt('return', _ret3.v);
 
-                     case 11:
-                        _context89.next = 16;
+                     case 12:
+                        _context89.next = 17;
                         break;
 
-                     case 13:
-                        _context89.prev = 13;
-                        _context89.t1 = _context89['catch'](6);
+                     case 14:
+                        _context89.prev = 14;
+                        _context89.t1 = _context89['catch'](7);
 
                         this.sendError(req, res, _context89.t1);
 
-                     case 16:
+                     case 17:
                      case 'end':
                         return _context89.stop();
                   }
                }
-            }, _callee88, this, [[6, 13]]);
+            }, _callee88, this, [[7, 14]]);
          }));
 
-         function registerEphemeral(_x222, _x223) {
+         function registerEphemeral(_x221, _x222, _x223) {
             return ref.apply(this, arguments);
          }
 
@@ -3809,17 +3814,17 @@ var _class = function () {
                         case 0:
                            _context91.prev = 0;
                            return _context91.delegateYield(regeneratorRuntime.mark(function _callee89() {
-                              var _req$params10, account, keyspace, key, timeout, accountKey, v, isSecureAccount, _ref75, _ref76, _ref76$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, reqx, result;
+                              var _req$params11, account, keyspace, key, timeout, accountKey, v, isSecureAccount, _ref75, _ref76, _ref76$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, reqx, result;
 
                               return regeneratorRuntime.wrap(function _callee89$(_context90) {
                                  while (1) {
                                     switch (_context90.prev = _context90.next) {
                                        case 0:
-                                          _req$params10 = req.params;
-                                          account = _req$params10.account;
-                                          keyspace = _req$params10.keyspace;
-                                          key = _req$params10.key;
-                                          timeout = _req$params10.timeout;
+                                          _req$params11 = req.params;
+                                          account = _req$params11.account;
+                                          keyspace = _req$params11.keyspace;
+                                          key = _req$params11.key;
+                                          timeout = _req$params11.timeout;
 
                                           assert(account, 'account');
                                           assert(keyspace, 'keyspace');
@@ -4002,28 +4007,25 @@ var _class = function () {
                                              assert(reqx.keyspaceKey);
                                              multi.expire(reqx.keyspaceKey, _this14.getKeyExpire(account));
                                           }
-                                          if (account === 'pub') {
-                                             multi.expire(accountKey, _this14.config.ephemeralAccountExpire);
-                                          }
-                                          _context90.next = 71;
+                                          _context90.next = 70;
                                           return multi.execAsync();
 
-                                       case 71:
-                                          _context90.next = 73;
+                                       case 70:
+                                          _context90.next = 72;
                                           return fn(req, res, reqx, multi);
 
-                                       case 73:
+                                       case 72:
                                           result = _context90.sent;
 
                                           if (!(result !== undefined)) {
-                                             _context90.next = 77;
+                                             _context90.next = 76;
                                              break;
                                           }
 
-                                          _context90.next = 77;
+                                          _context90.next = 76;
                                           return _this14.sendResult(command, req, res, reqx, result);
 
-                                       case 77:
+                                       case 76:
                                        case 'end':
                                           return _context90.stop();
                                     }
@@ -4255,7 +4257,7 @@ var _class = function () {
                   return;
                }
             } else if (command.access === 'set') {
-               if (/^+/.test(keyspace)) {
+               if (/^\+/.test(keyspace)) {
                   return 'Append-only keyspace';
                }
             } else if (command.access === 'get') {} else {}

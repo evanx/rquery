@@ -917,10 +917,18 @@ export default class {
    }
 
    addRegisterRoutes() {
-      this.expressApp.get(this.config.location + '/register-ephemeral', (req, res) => {
-         this.registerEphemeral(req, res, {
-            account: 'pub'
-         });
+      this.addPublicCommand({
+         key: 'register-ephemeral'
+      }, (req, res) => {
+         req.account = 'pub';
+         return this.registerEphemeral(req, res);
+      });
+      this.addPublicCommand({
+         key: 'register-ephemeral-access',
+         params: ['access']
+      }, (req, res) => {
+         req.account = 'pub';
+         return this.registerEphemeral(req, res);
       });
       if (this.config.secureDomain) {
          this.expressApp.get(this.config.location + '/register-account-telegram/:account', (req, res) => {
@@ -1126,8 +1134,8 @@ export default class {
       this.registerTime = time;
    }
 
-   async registerEphemeral(req, res, reqx = {}, previousError) {
-      let {account, keyspace, additive} = reqx;
+   async registerEphemeral(req, res, previousError) {
+      let {keyspace, access, account} = req.params;
       assert(account, 'account');
       if (!keyspace) {
          keyspace = this.generateTokenKey(12).toLowerCase();
@@ -1147,19 +1155,18 @@ export default class {
          this.logger.debug('registerEphemeral clientIp', clientIp, account, keyspace, accountKey);
          const replies = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', new Date().getTime());
-            multi.expire(accountKey, this.config.ephemeralAccountExpire);
             if (clientIp) {
                multi.hsetnx(accountKey, 'clientIp', clientIp);
                if (this.config.addClientIp) {
-                  multi.sadd(this.adminKey('keyspaces:expire:ips'), clientIp);
+                  multi.sadd(this.adminKey('keyspaces:ephemeral:ips'), clientIp);
                }
             }
-            this.count(multi, 'keyspaces:expire');
+            this.count(multi, 'keyspaces:ephemeral'); // TODO del old keyspaces:expire
          });
          if (!replies[0]) {
             this.logger.error('keyspace clash', account, keyspace);
             if (!previousError) {
-               return this.registerEphemeral(req, res, reqx, {message: 'keyspace clash'});
+               return this.registerEphemeral(req, res, {message: 'keyspace clash'});
             }
             throw {message: 'Keyspace already exists'};
          }
@@ -1307,9 +1314,6 @@ export default class {
                assert(reqx.keyspaceKey);
                multi.expire(reqx.keyspaceKey, this.getKeyExpire(account));
             }
-            if (account === 'pub') {
-               multi.expire(accountKey, this.config.ephemeralAccountExpire);
-            }
             await multi.execAsync();
             const result = await fn(req, res, reqx, multi);
             if (result !== undefined) {
@@ -1441,7 +1445,7 @@ export default class {
                return;
             }
          } else if (command.access === 'set') {
-            if (/^+/.test(keyspace)) {
+            if (/^\+/.test(keyspace)) {
                return 'Append-only keyspace';
             }
          } else if (command.access === 'get') {
