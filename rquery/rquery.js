@@ -430,16 +430,20 @@ export default class {
          }
       }, async (req, res, reqx) => {
          const {account, keyspace} = req.params;
+         let hostUrl = this.config.hostUrl;
+         if (this.config.hostname !== 'localhost') {
+            hostUrl = `https://${req.hostname}`;
+         }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
          const message = `Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows:`;
          const exampleUrls = [
-            `${this.config.hostUrl}/ak/${account}/${keyspace}/set/mykey/myvalue`,
-            `${this.config.hostUrl}/ak/${account}/${keyspace}/get/mykey`,
-            `${this.config.hostUrl}/ak/${account}/${keyspace}/sadd/myset/myvalue`,
-            `${this.config.hostUrl}/ak/${account}/${keyspace}/smembers/myset`,
-            `${this.config.hostUrl}/ak/${account}/${keyspace}/lpush/mylist/myvalue`,
-            `${this.config.hostUrl}/ak/${account}/${keyspace}/lrange/mylist/0/-1`,
-            `${this.config.hostUrl}/ak/${account}/${keyspace}/ttls`,
+            `${hostUrl}/ak/${account}/${keyspace}/set/mykey/myvalue`,
+            `${hostUrl}/ak/${account}/${keyspace}/get/mykey`,
+            `${hostUrl}/ak/${account}/${keyspace}/sadd/myset/myvalue`,
+            `${hostUrl}/ak/${account}/${keyspace}/smembers/myset`,
+            `${hostUrl}/ak/${account}/${keyspace}/lpush/mylist/myvalue`,
+            `${hostUrl}/ak/${account}/${keyspace}/lrange/mylist/0/-1`,
+            `${hostUrl}/ak/${account}/${keyspace}/ttls`,
          ];
          return {message, exampleUrls, keyspaceCommands: this.listCommands('keyspace')};
       });

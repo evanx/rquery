@@ -17,4 +17,3 @@ function filterKeys(object, other, fn) {
       return fn(key, object[key], other[key]);
    });
 }
-//# sourceMappingURL=Values.js.map

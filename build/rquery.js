@@ -1210,7 +1210,7 @@ var _class = function () {
             }()
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee24(req, res, reqx) {
-               var _req$params3, account, keyspace, message, exampleUrls;
+               var _req$params3, account, keyspace, hostUrl, message, exampleUrls;
 
                return regeneratorRuntime.wrap(function _callee24$(_context24) {
                   while (1) {
@@ -1219,15 +1219,19 @@ var _class = function () {
                            _req$params3 = req.params;
                            account = _req$params3.account;
                            keyspace = _req$params3.keyspace;
+                           hostUrl = _this5.config.hostUrl;
 
+                           if (_this5.config.hostname !== 'localhost') {
+                              hostUrl = 'https://' + req.hostname;
+                           }
                            _this5.logger.ndebug('help', req.params, _this5.commands.map(function (command) {
                               return command.key;
                            }).join('/'));
                            message = 'Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows:';
-                           exampleUrls = [_this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', _this5.config.hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
+                           exampleUrls = [hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
                            return _context24.abrupt('return', { message: message, exampleUrls: exampleUrls, keyspaceCommands: _this5.listCommands('keyspace') });
 
-                        case 7:
+                        case 9:
                         case 'end':
                            return _context24.stop();
                      }
