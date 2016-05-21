@@ -3010,8 +3010,8 @@ var _class = function () {
       value: function addRegisterRoutes() {
          var _this8 = this;
 
-         this.expressApp.get(this.config.location + '/register-expire', function (req, res) {
-            return _this8.registerExpire(req, res);
+         this.expressApp.get(this.config.location + '/register-ephemeral', function (req, res) {
+            return _this8.registerEphemeral(req, res);
          });
          if (this.config.secureDomain) {
             this.expressApp.get(this.config.location + '/register-account-telegram/:account', function (req, res) {
@@ -3522,7 +3522,7 @@ var _class = function () {
          this.registerTime = time;
       }
    }, {
-      key: 'registerExpire',
+      key: 'registerEphemeral',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee87(req, res, previousError) {
             var _this13 = this;
@@ -3534,7 +3534,7 @@ var _class = function () {
                   switch (_context88.prev = _context88.next) {
                      case 0:
                         if (previousError) {
-                           this.logger.warn('registerExpire retry');
+                           this.logger.warn('registerEphemeral retry');
                         }
                         _context88.prev = 1;
                         return _context88.delegateYield(regeneratorRuntime.mark(function _callee86() {
@@ -3543,7 +3543,7 @@ var _class = function () {
                               while (1) {
                                  switch (_context87.prev = _context87.next) {
                                     case 0:
-                                       _this13.logger.debug('registerExpire');
+                                       _this13.logger.debug('registerEphemeral');
                                        errorMessage = _this13.validateRegisterTime();
 
                                        if (!errorMessage) {
@@ -3562,7 +3562,7 @@ var _class = function () {
                                        clientIp = req.get('x-forwarded-for');
                                        accountKey = _this13.accountKeyspace(account, keyspace);
 
-                                       _this13.logger.debug('registerExpire clientIp', clientIp, account, keyspace, accountKey);
+                                       _this13.logger.debug('registerEphemeral clientIp', clientIp, account, keyspace, accountKey);
                                        _context87.next = 12;
                                        return _this13.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', new Date().getTime());
@@ -3592,7 +3592,7 @@ var _class = function () {
                                        }
 
                                        return _context87.abrupt('return', {
-                                          v: _this13.registerExpire(req, res, { message: 'keyspace clash' })
+                                          v: _this13.registerEphemeral(req, res, { message: 'keyspace clash' })
                                        });
 
                                     case 17:
@@ -3601,7 +3601,7 @@ var _class = function () {
                                     case 18:
                                        replyPath = ['ak', account, keyspace].join('/');
 
-                                       _this13.logger.debug('registerExpire', keyspace, clientIp, replyPath);
+                                       _this13.logger.debug('registerEphemeral', keyspace, clientIp, replyPath);
 
                                        if (!_this13.isBrowser(req)) {
                                           _context87.next = 24;
@@ -3656,11 +3656,11 @@ var _class = function () {
             }, _callee87, this, [[1, 8]]);
          }));
 
-         function registerExpire(_x219, _x220, _x221) {
+         function registerEphemeral(_x219, _x220, _x221) {
             return ref.apply(this, arguments);
          }
 
-         return registerExpire;
+         return registerEphemeral;
       }()
    }, {
       key: 'count',
@@ -4167,9 +4167,9 @@ var _class = function () {
             }
          } else if (command.key === 'register-keyspace') {} else if (!registered) {
             if (account[0] === '@') {
-               return { message: 'Expired (or unregistered) keyspace', hintUri: 'register-expire' };
+               return { message: 'Expired (or unregistered) keyspace', hintUri: 'register-ephemeral' };
             } else {
-               return { message: 'Unregistered keyspace', hintUri: 'register-expire' };
+               return { message: 'Unregistered keyspace', hintUri: 'register-ephemeral' };
             }
          } else if (isSecureAccount) {
             this.logger.error('validateAccess', account, keyspace);
@@ -4612,3 +4612,4 @@ var _class = function () {
 }();
 
 exports.default = _class;
+//# sourceMappingURL=rquery.js.map

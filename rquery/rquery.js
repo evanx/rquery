@@ -912,7 +912,7 @@ export default class {
    }
 
    addRegisterRoutes() {
-      this.expressApp.get(this.config.location + '/register-expire', (req, res) => this.registerExpire(req, res));
+      this.expressApp.get(this.config.location + '/register-ephemeral', (req, res) => this.registerEphemeral(req, res));
       if (this.config.secureDomain) {
          this.expressApp.get(this.config.location + '/register-account-telegram/:account', (req, res) => this.registerAccount(req, res));
          this.addPublicCommand({
@@ -1111,12 +1111,12 @@ export default class {
       this.registerTime = time;
    }
 
-   async registerExpire(req, res, previousError) {
+   async registerEphemeral(req, res, previousError) {
       if (previousError) {
-         this.logger.warn('registerExpire retry');
+         this.logger.warn('registerEphemeral retry');
       }
       try {
-         this.logger.debug('registerExpire');
+         this.logger.debug('registerEphemeral');
          let errorMessage = this.validateRegisterTime();
          if (errorMessage) {
             this.sendError(req, res, {message: errorMessage});
@@ -1126,7 +1126,7 @@ export default class {
          const keyspace = this.generateTokenKey().substring(0, 6).toLowerCase();
          let clientIp = req.get('x-forwarded-for');
          const accountKey = this.accountKeyspace(account, keyspace);
-         this.logger.debug('registerExpire clientIp', clientIp, account, keyspace, accountKey);
+         this.logger.debug('registerEphemeral clientIp', clientIp, account, keyspace, accountKey);
          const replies = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', new Date().getTime());
             multi.expire(accountKey, this.config.ephemeralAccountExpire);
@@ -1141,12 +1141,12 @@ export default class {
          if (!replies[0]) {
             this.logger.error('keyspace clash', account, keyspace);
             if (!previousError) {
-               return this.registerExpire(req, res, {message: 'keyspace clash'});
+               return this.registerEphemeral(req, res, {message: 'keyspace clash'});
             }
             throw {message: 'Expire keyspace clash'};
          }
          const replyPath = ['ak', account, keyspace].join('/');
-         this.logger.debug('registerExpire', keyspace, clientIp, replyPath);
+         this.logger.debug('registerEphemeral', keyspace, clientIp, replyPath);
          if (this.isBrowser(req)) {
             if (true) {
                res.redirect(302, [replyPath, 'help'].join('/'));
@@ -1421,9 +1421,9 @@ export default class {
       } else if (command.key === 'register-keyspace') {
       } else if (!registered) {
          if (account[0] === '@') {
-            return {message: 'Expired (or unregistered) keyspace', hintUri: 'register-expire'};
+            return {message: 'Expired (or unregistered) keyspace', hintUri: 'register-ephemeral'};
          } else {
-            return {message: 'Unregistered keyspace', hintUri: 'register-expire'};
+            return {message: 'Unregistered keyspace', hintUri: 'register-ephemeral'};
          }
       } else if (isSecureAccount) {
          this.logger.error('validateAccess', account, keyspace);
