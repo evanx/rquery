@@ -3700,7 +3700,7 @@ var _class = function () {
 
                                        _this13.logger.debug('registerEphemeral', keyspace, clientIp, replyPath);
 
-                                       if (!_this13.isHtmlDomain(req)) {
+                                       if (!_this13.isBrowser(req)) {
                                           _context88.next = 22;
                                           break;
                                        }
@@ -4335,7 +4335,7 @@ var _class = function () {
       key: 'sendResult',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee92(command, req, res, reqx, result) {
-            var userAgent, uaMatch, mobile, otherResult, resultString;
+            var userAgent, uaMatch, mobile, otherResult, resultString, resultArray;
             return regeneratorRuntime.wrap(function _callee92$(_context93) {
                while (1) {
                   switch (_context93.prev = _context93.next) {
@@ -4387,34 +4387,35 @@ var _class = function () {
                         resultString = '';
 
                         if (Values.isDefined(result)) {
-                           _context93.next = 23;
+                           _context93.next = 24;
                            break;
                         }
 
-                        _context93.next = 60;
+                        this.logger.error('sendResult none');
+                        _context93.next = 62;
                         break;
 
-                     case 23:
+                     case 24:
                         if (!Values.isDefined(req.query.json)) {
-                           _context93.next = 28;
+                           _context93.next = 29;
                            break;
                         }
 
                         res.json(result);
                         return _context93.abrupt('return');
 
-                     case 28:
+                     case 29:
                         if (!Values.isDefined(req.query.quiet)) {
-                           _context93.next = 31;
+                           _context93.next = 32;
                            break;
                         }
 
-                        _context93.next = 60;
+                        _context93.next = 62;
                         break;
 
-                     case 31:
+                     case 32:
                         if (!(this.config.defaultFormat === 'cli' || Values.isDefined(req.query.line) || this.isCliDomain(req) || command.format === 'cli')) {
-                           _context93.next = 36;
+                           _context93.next = 37;
                            break;
                         }
 
@@ -4453,79 +4454,85 @@ var _class = function () {
                         } else if (result === null) {} else {
                            resultString = result.toString();
                         }
-                        _context93.next = 60;
+                        _context93.next = 62;
                         break;
 
-                     case 36:
+                     case 37:
                         if (!(this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain) || command.format === 'plain')) {
-                           _context93.next = 41;
+                           _context93.next = 42;
                            break;
                         }
 
                         res.set('Content-Type', 'text/plain');
                         resultString = result.toString();
-                        _context93.next = 60;
+                        _context93.next = 62;
                         break;
 
-                     case 41:
-                        if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html' || this.isHtmlDomain(req))) {
-                           _context93.next = 53;
+                     case 42:
+                        if (!(this.config.defaultFormat === 'json')) {
+                           _context93.next = 47;
                            break;
                         }
 
+                        res.json(result);
+                        return _context93.abrupt('return');
+
+                     case 47:
+                        if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html' || this.isHtmlDomain(req))) {
+                           _context93.next = 60;
+                           break;
+                        }
+
+                        resultArray = [];
+
                         if (!(result === null)) {
-                           _context93.next = 47;
+                           _context93.next = 54;
                            break;
                         }
 
                         this.sendStatusMessage(req, res, 404, reqx.key ? '\'' + reqx.key + '\' is empty' : 'Empty');
                         return _context93.abrupt('return');
 
-                     case 47:
+                     case 54:
                         if (lodash.isString(result)) {
                            resultString = result;
                         } else if (lodash.isArray(result)) {
-                           resultString = result.toString();
+                           resultString = '[' + result.length + ']';
+                           resultArray = result;
                         } else if (lodash.isObject(result)) {
-                           resultString = result.toString();
+                           resultString = 'keys {' + Object.keys(result).join(', ') + '}';
+                           resultArray = Object.keys(result).map(function (key) {
+                              return key + ': ' + result[key];
+                           });
                         } else {
                            resultString = result.toString();
                         }
 
-                     case 48:
+                     case 55:
                         res.set('Content-Type', 'text/html');
                         if (reqx.key) {
                            res.send(new _Page2.default().render({
                               req: req,
                               title: reqx.key,
-                              content: '<h3>' + reqx.key + ': ' + resultString + '</h3>'
+                              content: '<h3>' + command.key + ' ' + reqx.key + ': ' + resultString + '</h3>\n               <pre>\n               ' + resultArray.join('\n') + '\n               </pre>\n               '
                            }));
                         } else {
                            res.send(new _Page2.default().render({
                               req: req,
                               title: req.path,
-                              content: '<h3>' + resultString + '</h3>'
+                              content: '<h3>' + resultString + '</h3>\n               <pre>\n               ' + resultArray.join('\n') + '\n               </pre>\n               '
                            }));
                         }
                         return _context93.abrupt('return');
 
-                     case 53:
-                        if (!(this.config.defaultFormat !== 'json')) {
-                           _context93.next = 58;
-                           break;
-                        }
-
+                     case 60:
                         this.sendError(req, res, { message: 'Invalid default format: ' + this.config.defaultFormat });
                         return _context93.abrupt('return');
 
-                     case 58:
-                        res.json(result);
-                        return _context93.abrupt('return');
-
-                     case 60:
+                     case 62:
                         res.send(resultString + '\n');
 
-                     case 61:
+                     case 63:
                      case 'end':
                         return _context93.stop();
                   }
@@ -4570,9 +4577,8 @@ var _class = function () {
    }, {
       key: 'isHtmlDomain',
       value: function isHtmlDomain(req) {
-         if (/^cli/.test(req.hostname)) return false;
-         if (/^web/.test(req.hostname)) return true;
-         return this.config.htmlDomain;
+         return (/^web/.test(req.hostname)
+         );
       }
    }, {
       key: 'isJsonDomain',

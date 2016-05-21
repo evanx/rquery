@@ -1176,7 +1176,7 @@ export default class {
          }
          const replyPath = ['ak', account, keyspace].join('/');
          this.logger.debug('registerEphemeral', keyspace, clientIp, replyPath);
-         if (this.isHtmlDomain(req)) {
+         if (this.isBrowser(req)) {
             res.redirect(302, [replyPath, 'help'].join('/'));
          } else {
             return replyPath;
@@ -1527,6 +1527,7 @@ export default class {
       }
       let resultString = '';
       if (!Values.isDefined(result)) {
+         this.logger.error('sendResult none');
       } else if (Values.isDefined(req.query.json)) {
          res.json(result);
          return;
@@ -1574,17 +1575,23 @@ export default class {
       || command.format === 'plain') {
          res.set('Content-Type', 'text/plain');
          resultString = result.toString();
+      } else if (this.config.defaultFormat === 'json') {
+         res.json(result);
+         return;
       } else if (this.config.defaultFormat === 'html' || Values.isDefined(req.query.html)
       || command.format === 'html' || this.isHtmlDomain(req)) {
+         let resultArray = [];
          if (result === null) {
             this.sendStatusMessage(req, res, 404, reqx.key? `'${reqx.key}' is empty` : 'Empty');
             return;
          } else if (lodash.isString(result)) {
             resultString = result;
          } else if (lodash.isArray(result)) {
-            resultString = result.toString();
+            resultString = `[${result.length}]`;
+            resultArray = result;
          } else if (lodash.isObject(result)) {
-            resultString = result.toString();
+            resultString = `keys {${Object.keys(result).join(', ')}}`;
+            resultArray = Object.keys(result).map(key => `${key}: ${result[key]}`);
          } else {
             resultString = result.toString();
          }
@@ -1593,21 +1600,26 @@ export default class {
             res.send(new Page().render({
                req,
                title: reqx.key,
-               content: `<h3>${reqx.key}: ${resultString}</h3>`
+               content: `<h3>${command.key} ${reqx.key}: ${resultString}</h3>
+               <pre>
+               ${resultArray.join('\n')}
+               </pre>
+               `
             }));
          } else {
             res.send(new Page().render({
                req,
                title: req.path,
-               content: `<h3>${resultString}</h3>`
+               content: `<h3>${resultString}</h3>
+               <pre>
+               ${resultArray.join('\n')}
+               </pre>
+               `
             }));
          }
          return;
-      } else if (this.config.defaultFormat !== 'json') {
-         this.sendError(req, res, {message: `Invalid default format: ${this.config.defaultFormat}`});
-         return;
       } else {
-         res.json(result);
+         this.sendError(req, res, {message: `Invalid default format: ${this.config.defaultFormat}`});
          return;
       }
       res.send(resultString + '\n');
@@ -1637,9 +1649,7 @@ export default class {
    }
 
    isHtmlDomain(req) {
-      if (/^cli/.test(req.hostname)) return false;
-      if (/^web/.test(req.hostname)) return true;
-      return this.config.htmlDomain;
+      return /^web/.test(req.hostname);
    }
 
    isJsonDomain(req) {
