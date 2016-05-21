@@ -570,7 +570,7 @@ export default class {
       this.addKeyspaceCommand({
          key: 'setnx',
          params: ['key', 'value'],
-         access: 'set'
+         access: 'add'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.setnxAsync(keyspaceKey, req.params.value);
       });
@@ -595,7 +595,7 @@ export default class {
       this.addKeyspaceCommand({
          key: 'incr',
          params: ['key'],
-         access: 'set'
+         access: 'add'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.incrAsync(keyspaceKey);
       });
@@ -615,7 +615,7 @@ export default class {
       this.addKeyspaceCommand({
          key: 'sadd',
          params: ['key', 'member'],
-         access: 'set'
+         access: 'add'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.saddAsync(keyspaceKey, req.params.member);
       });
@@ -665,7 +665,7 @@ export default class {
       this.addKeyspaceCommand({
          key: 'lpush',
          params: ['key', 'value'],
-         access: 'set'
+         access: 'add'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.lpushAsync(keyspaceKey, req.params.value);
       });
@@ -681,7 +681,7 @@ export default class {
       this.addKeyspaceCommand({
          key: 'rpush',
          params: ['key', 'value'],
-         access: 'set'
+         access: 'add'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.rpushAsync(keyspaceKey, req.params.value);
       });
@@ -784,7 +784,7 @@ export default class {
       this.addKeyspaceCommand({
          key: 'hsetnx',
          params: ['key', 'field', 'value'],
-         access: 'set'
+         access: 'add'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.hsetnxAsync(keyspaceKey, req.params.field, req.params.value);
       });
@@ -804,7 +804,7 @@ export default class {
       this.addKeyspaceCommand({
          key: 'hincrby',
          params: ['key', 'field', 'increment'],
-         access: 'set'
+         access: 'add'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.hincrbyAsync(keyspaceKey, req.params.field, req.params.increment);
       });
@@ -841,7 +841,7 @@ export default class {
       this.addKeyspaceCommand({
          key: 'zadd',
          params: ['key', 'score', 'member'],
-         access: 'set'
+         access: 'add'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.zaddAsync(keyspaceKey, req.params.score, req.params.member);
       });
@@ -1249,7 +1249,7 @@ export default class {
                   return;
                }
             }
-            const isSecureAccount = !/^@/.test(account);
+            const isSecureAccount = !/^pub$/.test(account);
             const [[time], registered, admined, accessed, certs] = await this.redis.multiExecAsync(multi => {
                multi.time();
                multi.hget(accountKey, 'registered');
@@ -1302,7 +1302,7 @@ export default class {
                assert(reqx.keyspaceKey);
                multi.expire(reqx.keyspaceKey, this.getKeyExpire(account));
             }
-            if (account[0] === '@') {
+            if (account === 'pub') {
                multi.expire(accountKey, this.config.ephemeralAccountExpire);
             }
             await multi.execAsync();
@@ -1317,7 +1317,7 @@ export default class {
    }
 
    getKeyExpire(account) {
-      if (account[0] === '@') {
+      if (account === 'pub') {
          return this.config.ephemeralKeyExpire;
       } else {
          return this.config.keyExpire;
@@ -1346,7 +1346,7 @@ export default class {
    validateRegisterAccount(account) {
       if (lodash.isEmpty(account)) {
          return 'Invalid account (empty)';
-      } else if (account[0] === '@') {
+      } else if (account === 'pub') {
          return 'Invalid account (leading @ symbol reserved for ephemeral keyspaces)';
       } else if (!/^[\-_a-z0-9]+$/.test(account)) {
          return 'Account name is invalid. Try only lowercase/numeric with dash/underscore.';
@@ -1409,6 +1409,17 @@ export default class {
             return `Insecure scheme ${scheme}: ${req.hostname}`;
          }
       }
+      if (command.key === 'register-keyspace') {
+         if (registered) {
+            return {message: 'Already registered'};
+         }
+      } else if (!registered) {
+         if (account === 'pub') {
+            return {message: 'Expired (or unregistered) keyspace', hintUri: 'register-ephemeral'};
+         } else {
+            return {message: 'Unregistered keyspace', hintUri: 'register-ephemeral'};
+         }
+      }
       if (command.access) {
          if (command.access === 'admin') {
             if (!admined) {
@@ -1420,27 +1431,24 @@ export default class {
                }
             }
          } else if (command.access === 'debug') {
+         } else if (command.access === 'add') {
+            if (!/^[a-z]/.test(keyspace)) {
+               return;
+            }
          } else if (command.access === 'set') {
+            if (/^+/.test(keyspace)) {
+               return 'Append-only keyspace';
+            }
          } else if (command.access === 'get') {
          } else {
          }
       }
-      const isSecureAccount = !/^@/.test(account);
-      if (this.isSecureDomain(req) && account[0] !== '@') {
+      const isSecureAccount = !/^pub$/.test(account);
+      if (isSecureAccount) {
          const errorMessage = this.validateCert(req, certs, account);
          if (errorMessage) {
             return errorMessage;
          }
-      } else if (command.key === 'register-keyspace') {
-      } else if (!registered) {
-         if (account[0] === '@') {
-            return {message: 'Expired (or unregistered) keyspace', hintUri: 'register-ephemeral'};
-         } else {
-            return {message: 'Unregistered keyspace', hintUri: 'register-ephemeral'};
-         }
-      } else if (isSecureAccount) {
-         this.logger.error('validateAccess', account, keyspace);
-         return 'Invalid access';
       }
    }
 

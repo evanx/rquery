@@ -1701,7 +1701,7 @@ var _class = function () {
          this.addKeyspaceCommand({
             key: 'setnx',
             params: ['key', 'value'],
-            access: 'set'
+            access: 'add'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee37(req, res, _ref26) {
                var keyspaceKey = _ref26.keyspaceKey;
@@ -1792,7 +1792,7 @@ var _class = function () {
          this.addKeyspaceCommand({
             key: 'incr',
             params: ['key'],
-            access: 'set'
+            access: 'add'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee40(req, res, _ref29) {
                var keyspaceKey = _ref29.keyspaceKey;
@@ -1875,7 +1875,7 @@ var _class = function () {
          this.addKeyspaceCommand({
             key: 'sadd',
             params: ['key', 'member'],
-            access: 'set'
+            access: 'add'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee43(req, res, _ref32) {
                var keyspaceKey = _ref32.keyspaceKey;
@@ -2080,7 +2080,7 @@ var _class = function () {
          this.addKeyspaceCommand({
             key: 'lpush',
             params: ['key', 'value'],
-            access: 'set'
+            access: 'add'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee50(req, res, _ref39) {
                var keyspaceKey = _ref39.keyspaceKey;
@@ -2140,7 +2140,7 @@ var _class = function () {
          this.addKeyspaceCommand({
             key: 'rpush',
             params: ['key', 'value'],
-            access: 'set'
+            access: 'add'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee52(req, res, _ref41) {
                var keyspaceKey = _ref41.keyspaceKey;
@@ -2536,7 +2536,7 @@ var _class = function () {
          this.addKeyspaceCommand({
             key: 'hsetnx',
             params: ['key', 'field', 'value'],
-            access: 'set'
+            access: 'add'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee65(req, res, _ref54) {
                var keyspaceKey = _ref54.keyspaceKey;
@@ -2619,7 +2619,7 @@ var _class = function () {
          this.addKeyspaceCommand({
             key: 'hincrby',
             params: ['key', 'field', 'increment'],
-            access: 'set'
+            access: 'add'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee68(req, res, _ref57) {
                var keyspaceKey = _ref57.keyspaceKey;
@@ -2782,7 +2782,7 @@ var _class = function () {
          this.addKeyspaceCommand({
             key: 'zadd',
             params: ['key', 'score', 'member'],
-            access: 'set'
+            access: 'add'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee74(req, res, _ref63) {
                var keyspaceKey = _ref63.keyspaceKey;
@@ -3871,7 +3871,7 @@ var _class = function () {
                                           });
 
                                        case 25:
-                                          isSecureAccount = !/^@/.test(account);
+                                          isSecureAccount = !/^pub$/.test(account);
                                           _context90.next = 28;
                                           return _this14.redis.multiExecAsync(function (multi) {
                                              multi.time();
@@ -3991,7 +3991,7 @@ var _class = function () {
                                              assert(reqx.keyspaceKey);
                                              multi.expire(reqx.keyspaceKey, _this14.getKeyExpire(account));
                                           }
-                                          if (account[0] === '@') {
+                                          if (account === 'pub') {
                                              multi.expire(accountKey, _this14.config.ephemeralAccountExpire);
                                           }
                                           _context90.next = 71;
@@ -4055,7 +4055,7 @@ var _class = function () {
    }, {
       key: 'getKeyExpire',
       value: function getKeyExpire(account) {
-         if (account[0] === '@') {
+         if (account === 'pub') {
             return this.config.ephemeralKeyExpire;
          } else {
             return this.config.keyExpire;
@@ -4138,7 +4138,7 @@ var _class = function () {
       value: function validateRegisterAccount(account) {
          if (lodash.isEmpty(account)) {
             return 'Invalid account (empty)';
-         } else if (account[0] === '@') {
+         } else if (account === 'pub') {
             return 'Invalid account (leading @ symbol reserved for ephemeral keyspaces)';
          } else if (!/^[\-_a-z0-9]+$/.test(account)) {
             return 'Account name is invalid. Try only lowercase/numeric with dash/underscore.';
@@ -4218,6 +4218,17 @@ var _class = function () {
                return 'Insecure scheme ' + scheme + ': ' + req.hostname;
             }
          }
+         if (command.key === 'register-keyspace') {
+            if (registered) {
+               return { message: 'Already registered' };
+            }
+         } else if (!registered) {
+            if (account === 'pub') {
+               return { message: 'Expired (or unregistered) keyspace', hintUri: 'register-ephemeral' };
+            } else {
+               return { message: 'Unregistered keyspace', hintUri: 'register-ephemeral' };
+            }
+         }
          if (command.access) {
             if (command.access === 'admin') {
                if (!admined) {
@@ -4228,23 +4239,22 @@ var _class = function () {
                      return 'Admin command interval not elapsed: ' + this.config.adminLimit + 's';
                   }
                }
-            } else if (command.access === 'debug') {} else if (command.access === 'set') {} else if (command.access === 'get') {} else {}
+            } else if (command.access === 'debug') {} else if (command.access === 'add') {
+               if (!/^[a-z]/.test(keyspace)) {
+                  return;
+               }
+            } else if (command.access === 'set') {
+               if (/^+/.test(keyspace)) {
+                  return 'Append-only keyspace';
+               }
+            } else if (command.access === 'get') {} else {}
          }
-         var isSecureAccount = !/^@/.test(account);
-         if (this.isSecureDomain(req) && account[0] !== '@') {
+         var isSecureAccount = !/^pub$/.test(account);
+         if (isSecureAccount) {
             var errorMessage = this.validateCert(req, certs, account);
             if (errorMessage) {
                return errorMessage;
             }
-         } else if (command.key === 'register-keyspace') {} else if (!registered) {
-            if (account[0] === '@') {
-               return { message: 'Expired (or unregistered) keyspace', hintUri: 'register-ephemeral' };
-            } else {
-               return { message: 'Unregistered keyspace', hintUri: 'register-ephemeral' };
-            }
-         } else if (isSecureAccount) {
-            this.logger.error('validateAccess', account, keyspace);
-            return 'Invalid access';
          }
       }
    }, {
