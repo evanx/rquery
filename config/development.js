@@ -19,6 +19,7 @@ module.exports = {
          ephemeralAccountExpire: 1200,
          certLimit: 4,
          secureDomain: true,
+         htmlDomain: true,
          disableValidateCert: true,
          disableTelegramHook: true,
          registerLimit: 10,

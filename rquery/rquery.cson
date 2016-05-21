@@ -44,6 +44,9 @@ config:
    secureDomain:
       type: 'boolean'
       defaultValue: false
+   htmlDomain:
+      type: 'boolean'
+      defaultValue: false
    certLimit:
       defaultValue: 4
       max: 99

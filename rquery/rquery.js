@@ -248,6 +248,10 @@ export default class {
             }
          }
       }, async (req, res, reqx) => {
+         let hostUrl = this.config.hostUrl;
+         if (this.config.hostname != 'localhost') {
+            hostUrl = 'https://' + req.hostname;
+         }
          const routes = Express.getRoutes(this.expressApp)
          .filter(route => !['/', '/routes', '/webhook-telegram/*', '/help'].includes(route));
          const accountOnlyRoutes = routes
@@ -255,7 +259,7 @@ export default class {
          return {
             common: routes
             .filter(route => route && !route.includes(':') && !['/epoch'].includes(route))
-            .map(route => `${this.config.hostUrl}${route}`)
+            .map(route => `${hostUrl}${route}`)
             ,
             misc: routes
             .filter(route => route.includes(':') && !route.includes('telegram') && !/\:(keyspace|account)/.test(route))
@@ -893,7 +897,7 @@ export default class {
             }
             const result = await fn(req, res);
             if (command.access === 'redirect') {
-            } else {
+            } else if (result !== undefined) {
                await this.sendResult(command, req, res, {}, result);
             }
          } catch (err) {
@@ -1172,14 +1176,10 @@ export default class {
          }
          const replyPath = ['ak', account, keyspace].join('/');
          this.logger.debug('registerEphemeral', keyspace, clientIp, replyPath);
-         if (this.isBrowser(req)) {
-            if (true) {
-               res.redirect(302, [replyPath, 'help'].join('/'));
-            } else {
-               res.send(replyPath);
-            }
+         if (this.isHtmlDomain(req)) {
+            res.redirect(302, [replyPath, 'help'].join('/'));
          } else {
-            await this.sendResult({}, req, res, {}, replyPath);
+            return replyPath;
          }
       } catch (err) {
          this.sendError(req, res, err);
@@ -1312,7 +1312,9 @@ export default class {
             }
             if (key) {
                assert(reqx.keyspaceKey);
-               multi.expire(reqx.keyspaceKey, this.getKeyExpire(account));
+               const expire = this.getKeyExpire(account);
+               multi.expire(reqx.keyspaceKey, expire);
+               this.logger.debug('expire', reqx.keyspaceKey, expire);
             }
             await multi.execAsync();
             const result = await fn(req, res, reqx, multi);
@@ -1635,7 +1637,7 @@ export default class {
    }
 
    isHtmlDomain(req) {
-      return /^web/.test(req.hostname);
+      return this.config.htmlDomain || /^web/.test(req.hostname);
    }
 
    isJsonDomain(req) {
