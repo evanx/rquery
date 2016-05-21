@@ -1621,7 +1621,7 @@ export default class {
                <div style='font-size: 12pt; font-style: italic'>${command.key}</div>
                <div style='padding-top: 4px; font-size: 16pt; font-weight: bold;'>${reqx.key}</div>
                <div style='padding-top: 8px; font-size: 12pt; font-family: monospace'>${resultString}</div>
-               <pre style='line-height: 2'>
+               <pre style='line-height: 2; margin: 0'>
                ${resultArray.join('\n')}
                </pre>
                `

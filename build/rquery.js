@@ -4573,7 +4573,7 @@ var _class = function () {
                            res.send(new _Page2.default().render({
                               req: req,
                               title: reqx.key,
-                              content: '\n               <div style=\'font-size: 12pt; font-style: italic\'>' + command.key + '</div>\n               <div style=\'padding-top: 4px; font-size: 16pt; font-weight: bold;\'>' + reqx.key + '</div>\n               <div style=\'padding-top: 8px; font-size: 12pt; font-family: monospace\'>' + resultString + '</div>\n               <pre style=\'line-height: 2\'>\n               ' + resultArray.join('\n') + '\n               </pre>\n               '
+                              content: '\n               <div style=\'font-size: 12pt; font-style: italic\'>' + command.key + '</div>\n               <div style=\'padding-top: 4px; font-size: 16pt; font-weight: bold;\'>' + reqx.key + '</div>\n               <div style=\'padding-top: 8px; font-size: 12pt; font-family: monospace\'>' + resultString + '</div>\n               <pre style=\'line-height: 2; margin: 0\'>\n               ' + resultArray.join('\n') + '\n               </pre>\n               '
                            }));
                         } else {
                            res.send(new _Page2.default().render({
