@@ -19,7 +19,7 @@ module.exports = {
          ephemeralAccountExpire: 1200,
          certLimit: 4,
          secureDomain: false,
-         htmlDomain: false,
+         htmlDomain: true,
          registerLimit: 10,
          importLimit: 5,
          adminLimit: 1,

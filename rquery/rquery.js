@@ -1637,7 +1637,9 @@ export default class {
    }
 
    isHtmlDomain(req) {
-      return this.config.htmlDomain || /^web/.test(req.hostname);
+      if (/^cli/.test(req.hostname)) return false;
+      if (/^web/.test(req.hostname)) return true;
+      return this.config.htmlDomain;
    }
 
    isJsonDomain(req) {
