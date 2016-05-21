@@ -921,7 +921,7 @@ export default class {
          const clientCert = req.get('ssl_client_cert');
          this.logger.info('registerAccount dn', dn);
          if (!clientCert) {
-            return 'No client cert';
+            throw {message: 'No client cert'};
          }
          const clientCertDigest = this.digestPem(clientCert);
          const otpSecret = this.generateTokenKey();

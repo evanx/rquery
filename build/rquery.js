@@ -3025,9 +3025,7 @@ var _class = function () {
                                           break;
                                        }
 
-                                       return _context78.abrupt('return', {
-                                          v: 'No client cert'
-                                       });
+                                       throw { message: 'No client cert' };
 
                                     case 13:
                                        clientCertDigest = _this9.digestPem(clientCert);

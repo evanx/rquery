@@ -10,52 +10,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-exports.promisify = promisify;
-exports.request = request;
-exports.delay = delay;
 exports.create = create;
-
-var _request = require('request');
-
-var _request2 = _interopRequireDefault(_request);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var config = {
-   errorLimit: 30000
+   errorLimit: 30
 };
-
-// promises
-
-function promisify(fn) {
-   return new Promise(function (resolve, reject) {
-      fn(function (err, result) {
-         if (err) {
-            reject(err);
-         } else {
-            resolve(result);
-         }
-      });
-   });
-}
-
-function request(options) {
-   return promisify(function (callback) {
-      return (0, _request2.default)(options, callback);
-   });
-}
-
-function delay(millis) {
-   return new Promise(function (resolve, reject) {
-      setTimeout(function () {
-         resolve();
-      }, millis);
-   });
-}
-
-//
 
 var Logger = function () {
    function Logger(options) {
@@ -122,7 +83,7 @@ var Logger = function () {
                         (_logger5 = this.logger).error.apply(_logger5, _args);
                         now = new Date().getTime();
 
-                        if (!(this.errorTime && now - this.errorTime > config.errorLimit)) {
+                        if (!(!this.errorTime || now - this.errorTime > config.errorLimit * 1000)) {
                            _context.next = 16;
                            break;
                         }
@@ -139,7 +100,7 @@ var Logger = function () {
                         url = [loggingUrl, 'lpushtrim', message, 100].join('/');
                         _context.prev = 8;
                         _context.next = 11;
-                        return request({ url: url, method: 'head' });
+                        return Promises.request({ url: url, method: 'head' });
 
                      case 11:
                         _context.next = 16;

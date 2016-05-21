@@ -16,21 +16,23 @@ var createSupervisor = function () {
          while (1) {
             switch (_context.prev = _context.next) {
                case 0:
+                  logger.debug('createSupervisor', supervisorMeta);
+
                   if (!/\Wicp\W/.test(supervisorMeta.spec)) {
-                     _context.next = 4;
+                     _context.next = 5;
                      break;
                   }
 
                   // TODO babel class transform, rather than fragile regex transformation
                   logger.debug('createSupervisor', supervisorMeta.spec);
-                  _context.next = 4;
+                  _context.next = 5;
                   return ClassPreprocessor.buildSync('./lib/Supervisor.js', ['logger', 'context', 'config'].concat(Object.keys(supervisorMeta.state)));
 
-               case 4:
+               case 5:
                   Supervisor = require('../build/Supervisor').default;
                   return _context.abrupt('return', new Supervisor());
 
-               case 6:
+               case 7:
                case 'end':
                   return _context.stop();
             }
@@ -105,6 +107,10 @@ var startSupervisor = exports.startSupervisor = function () {
       return ref.apply(this, arguments);
    };
 }();
+
+// messages
+
+var Messages = require('./SupervisorStarter.messages.js');
 
 // create context for Supervisor and components
 
@@ -186,6 +192,7 @@ function assignDeps(g) {
    g.Asserts = require('./Asserts');
    g.ClassPreprocessor = require('./ClassPreprocessor');
    g.CsonFiles = require('./CsonFiles');
+   g.Files = require('./Files');
    g.Metas = require('./Metas');
    g.Millis = require('./Millis');
    g.Promises = require('./Promises');
@@ -198,10 +205,27 @@ assignDeps(global);
 
 // supervisor configuration
 
+function getSupervisorMeta() {
+   logger.debug('getSupervisorMeta');
+   var componentsConfig = getComponentsConfig();
+   logger.debug('config.spec', componentsConfig.spec);
+   var componentsMeta = CsonFiles.readFileSync('./components.cson');
+   logger.debug('components.spec', componentsMeta.spec);
+   if (!Metas.isSpecType(componentsMeta, 'components')) {
+      throw { message: 'components.cson spec: ' + componentsMeta.spec };
+   }
+   Object.assign(config, {
+      availableComponents: componentsMeta.components,
+      components: componentsConfig.components
+   });
+   return Object.assign(CsonFiles.readFileSync('./lib/Supervisor.cson'), { config: config });
+}
+
 function getComponentsConfig() {
    if (!process.env.configModule) {
-      throw 'Specify configModule e.g. configModule=./demo/config.js, or try: npm run demo';
+      throw Messages.missingConfigModule();
    }
+   logger.info('env.configModule', process.env.configModule);
    var config = require('.' + process.env.configModule);
    Object.keys(config).forEach(function (name) {
       var componentConfig = config[name];
@@ -213,20 +237,5 @@ function getComponentsConfig() {
       });
    });
    return config;
-}
-
-function getSupervisorMeta() {
-   logger.debug('getSupervisorMeta');
-   var componentsConfig = getComponentsConfig();
-   var componentsMeta = CsonFiles.readFileSync('./components.cson');
-   logger.debug('components.spec', componentsMeta.spec);
-   if (!Metas.isSpecType(componentsMeta, 'components')) {
-      throw { message: 'components.cson spec: ' + componentsMeta.spec };
-   }
-   Object.assign(config, {
-      availableComponents: componentsMeta.components,
-      components: componentsConfig // TODO support external module
-   });
-   return Object.assign(CsonFiles.readFileSync('./lib/Supervisor.cson'), { config: config });
 }
 //# sourceMappingURL=SupervisorStarter.js.map

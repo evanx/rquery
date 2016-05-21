@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _bluebird = require('bluebird');
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -120,42 +122,54 @@ var Supervisor = function () {
                            components: this.components
                         }, meta.state);
 
+                        this.componentStates[componentName] = componentState;
                         this.logger.debug('componentModule', componentModule);
 
                         if (!Metas.isSpecType(meta, 'icp')) {
-                           _context2.next = 15;
+                           _context2.next = 16;
                            break;
                         }
 
-                        _context2.next = 14;
+                        _context2.next = 15;
                         return ClassPreprocessor.buildSync(componentModule + '.js', Object.keys(componentState));
 
-                     case 14:
+                     case 15:
                         componentModule = _context2.sent;
 
-                     case 15:
-                        componentClass = require('./' + componentModule).default; // TODO support external modules
+                     case 16:
+                        componentClass = require('./' + componentModule);
 
-                        component = new componentClass();
+                        if (componentClass.default) {
+                           componentClass = componentClass.default;
+                        }
+                        component = void 0;
 
-                        this.logger.info('initComponents state', componentName, Object.keys(componentState));
-                        Object.assign(component, { name: componentName }, componentState);
+                        if (componentClass.start) {
+                           component = componentClass;
+                           component.config = componentConfig;
+                        } else {
+                           component = new componentClass();
+                           this.logger.info('initComponents state', componentName, Object.keys(componentState));
+                           Object.assign(component, { name: componentName }, componentState);
+                        }
+                        component.name = componentName;
+                        this.validateComponent(component);
 
                         if (!component.init) {
-                           _context2.next = 23;
+                           _context2.next = 26;
                            break;
                         }
 
                         assert(lodash.isFunction(component.init), 'init function: ' + componentName);
-                        _context2.next = 23;
-                        return component.init();
+                        _context2.next = 26;
+                        return component.init(componentState);
 
-                     case 23:
+                     case 26:
                         this.initedComponents.push(component);
                         this.components[componentName] = component;
                         this.logger.info('initComponents components', componentName, Object.keys(this.components));
 
-                     case 26:
+                     case 29:
                      case 'end':
                         return _context2.stop();
                   }
@@ -169,6 +183,12 @@ var Supervisor = function () {
 
          return initComponent;
       }()
+   }, {
+      key: 'validateComponent',
+      value: function validateComponent(component) {
+         assert(component.name, 'component.name');
+         assert(lodash.isFunction(component.start), 'start function: ' + component.name);
+      }
    }, {
       key: 'startComponents',
       value: function () {
@@ -185,28 +205,29 @@ var Supervisor = function () {
 
                      case 3:
                         if (!(_i < _arr.length)) {
-                           _context3.next = 13;
+                           _context3.next = 14;
                            break;
                         }
 
                         component = _arr[_i];
 
                         if (!component.start) {
-                           _context3.next = 10;
+                           _context3.next = 11;
                            break;
                         }
 
                         assert(lodash.isFunction(component.start), 'start function: ' + component.name);
+                        assert(lodash.isString(component.name), 'name type: ' + _typeof(component.name));
                         this.logger.debug('start', component.name);
-                        _context3.next = 10;
-                        return component.start();
+                        _context3.next = 11;
+                        return component.start(this.componentStates[component.name]);
 
-                     case 10:
+                     case 11:
                         _i++;
                         _context3.next = 3;
                         break;
 
-                     case 13:
+                     case 14:
                      case 'end':
                         return _context3.stop();
                   }

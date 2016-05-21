@@ -8,7 +8,8 @@
     "build": "node_modules/.bin/babel lib rquery telegram -d build -s",
     "watch": "node_modules/.bin/babel -w lib -w rquery -w telegram -d build -s",
     "test": "scripts/test.sh",
-    "demo": "NODE_ENV=development configModule=./config/demo.js redisUrl='redis://localhost:6379/13' npm start | ./node_modules/.bin/bunyan -o short"
+    "demo": "NODE_ENV=development configModule=./config/demo.js redisUrl='redis://localhost:6379/13' npm start | ./node_modules/.bin/bunyan -o short",
+    "secure": "NODE_ENV=production configModule=./config/secure.js redisUrl='redis://localhost:6379/1' npm start | ./node_modules/.bin/bunyan -o short"
   },
   "author": "@evanxsummers",
   "license": "ISC",

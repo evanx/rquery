@@ -13,9 +13,9 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
-var _mkdirp = require('mkdirp');
+var _mkdirp2 = require('mkdirp');
 
-var _mkdirp2 = _interopRequireDefault(_mkdirp);
+var _mkdirp3 = _interopRequireDefault(_mkdirp2);
 
 var _Promises = require('./Promises');
 
@@ -27,7 +27,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function mkdirp(directory) {
    return Promises.promisify(function (callback) {
-      (0, _mkdirp2.default)(directory, callback);
+      (0, _mkdirp3.default)(directory, callback);
    });
 }
 

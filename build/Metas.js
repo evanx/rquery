@@ -28,16 +28,18 @@ function pickEnv(meta, env) {
 
 function getErrorKeys(meta, props) {
    return Object.keys(meta).filter(function (key) {
-      return !isValid(meta[key], props[key]);
+      return !isValid(meta[key], key, props[key]);
    });
 }
 
-function isValid(meta, value) {
-   logger.debug('isValid', value, meta);
+function isValid(meta, key, value) {
+   logger.debug('isValid', key, value, meta);
    if (value === undefined) {
       return meta.optional;
    } else if (meta.type === 'url') {
       return typeof value === 'string' && value.match(/^http/);
+   } else if (meta.type === 'file') {
+      return typeof value === 'string' && Files.existsFile(value);
    } else if (meta.type === 'string') {
       return typeof value === 'string';
    } else if (meta.type === 'duration') {
