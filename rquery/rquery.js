@@ -59,7 +59,7 @@ export default class {
             res.status(404).send(`Invalid path: ${req.path}\n`);
             return;
          }
-         const [matching, account, keyspace] = req.path.match(/^\/ak\/([^\/]+)\/([^\/]+)\//);
+         const [matching, account, keyspace] = req.path.match(/^\/ak\/([^\/]+)\/([^\/]+)\//) || [];
          this.logger.debug('sendErrorRoute', req.path,  account, keyspace, this.isBrowser(req));
          if (this.isBrowser(req)) {
             let redirectPath = '/routes';
@@ -927,14 +927,14 @@ export default class {
    addRegisterRoutes() {
       this.addPublicCommand({
          key: 'register-ephemeral'
-      }, (req, res) => {
+      }, async (req, res) => {
          req.params = {account: 'pub'};
          return this.registerEphemeral(req, res);
       });
       this.addPublicCommand({
          key: 'register-ephemeral-access',
          params: ['access']
-      }, (req, res) => {
+      }, async (req, res) => {
          req.params.account = 'pub';
          return this.registerEphemeral(req, res);
       });
@@ -1169,7 +1169,7 @@ export default class {
                   multi.sadd(this.adminKey('keyspaces:ephemeral:ips'), clientIp);
                }
             }
-            this.count(multi, 'keyspaces:ephemeral'); // TODO del old keyspaces:expire
+            //this.count(multi, 'keyspaces:ephemeral'); // TODO del old keyspaces:expire
          });
          if (!replies[0]) {
             this.logger.error('keyspace clash', account, keyspace);
