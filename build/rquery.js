@@ -3046,7 +3046,7 @@ var _class = function () {
 
                            case 6:
                               dns = _this8.parseDn(dn);
-                              throw { message: 'Unimplemented', dn: dn, dns: dns, clientCert: clientCert };
+                              throw { message: 'Unimplemented', dns: dns };
 
                            case 8:
                            case 'end':
@@ -4509,7 +4509,8 @@ var _class = function () {
             messageLines.push(err);
          } else if (lodash.isArray(err)) {
             messageLines = messageLines.concat(err);
-         } else if (lodash.isObject(err)) {
+         } else if ((typeof err === 'undefined' ? 'undefined' : _typeof(err)) === 'object') {
+            this.logger.warn('zz', _typeof(err.message));
             if (err.message) {
                title = err.message;
                messageLines.push(err);

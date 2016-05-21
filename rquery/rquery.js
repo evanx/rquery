@@ -923,7 +923,7 @@ export default class {
             if (!clientCert) throw {message: 'No client cert'};
             if (!dn) throw {message: 'No client cert DN'};
             const dns = this.parseDn(dn);
-            throw {message: 'Unimplemented', dn, dns, clientCert};
+            throw {message: 'Unimplemented', dns};
          });
       }
    }
@@ -1641,7 +1641,8 @@ export default class {
          messageLines.push(err);
       } else if (lodash.isArray(err)) {
          messageLines = messageLines.concat(err);
-      } else if (lodash.isObject(err)) {
+      } else if (typeof err === 'object') {
+         this.logger.warn('zz', typeof err.message);
          if (err.message) {
             title = err.message;
             messageLines.push(err);
