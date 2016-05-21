@@ -146,12 +146,13 @@ var _class = function () {
                return;
             }
 
-            var _Strings$matches = Strings.matches(req.path, /^\/ak\/([a-z]+)\/([^\/]+)\//);
+            var _req$path$match = req.path.match(/^\/ak\/([a-z]+)\/([^\/]+)\//);
 
-            var _Strings$matches2 = _slicedToArray(_Strings$matches, 2);
+            var _req$path$match2 = _slicedToArray(_req$path$match, 3);
 
-            var account = _Strings$matches2[0];
-            var keyspace = _Strings$matches2[1];
+            var matching = _req$path$match2[0];
+            var account = _req$path$match2[1];
+            var keyspace = _req$path$match2[2];
 
             this.logger.debug('sendErrorRoute', req.path, account, keyspace, this.isBrowser(req));
             if (this.isBrowser(req)) {

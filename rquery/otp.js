@@ -46,7 +46,7 @@ export default class {
             res.status(404).send(`Invalid path: ${req.path}\n`);
             return;
          }
-         const [account, keyspace] = Strings.matches(req.path, /^\/ak\/([a-z]+)\/([^\/]+)\//);
+         const [matching, account, keyspace] = req.path.match(/^\/ak\/([a-z]+)\/([^\/]+)\//);
          this.logger.debug('sendErrorRoute', req.path,  account, keyspace, this.isBrowser(req));
          if (this.isBrowser(req)) {
             let redirectPath = '/routes';

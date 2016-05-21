@@ -24,8 +24,13 @@ const supportedAuth = ['telegram.org'];
 
 export default class {
 
+   async testExit() {
+      return false;
+   }
+
    async init() {
       this.logger.info('init');
+      if (await this.testExit()) process.exit(1);
    }
 
    async start() {
@@ -54,7 +59,7 @@ export default class {
             res.status(404).send(`Invalid path: ${req.path}\n`);
             return;
          }
-         const [account, keyspace] = Strings.matches(req.path, /^\/ak\/([^\/]+)\/([^\/]+)\//);
+         const [matching, account, keyspace] = req.path.match(/^\/ak\/([^\/]+)\/([^\/]+)\//);
          this.logger.debug('sendErrorRoute', req.path,  account, keyspace, this.isBrowser(req));
          if (this.isBrowser(req)) {
             let redirectPath = '/routes';
@@ -912,18 +917,26 @@ export default class {
    }
 
    addRegisterRoutes() {
-      this.expressApp.get(this.config.location + '/register-ephemeral', (req, res) => this.registerEphemeral(req, res));
+      this.expressApp.get(this.config.location + '/register-ephemeral', (req, res) => {
+         this.registerEphemeral(req, res);
+      });
       if (this.config.secureDomain) {
-         this.expressApp.get(this.config.location + '/register-account-telegram/:account', (req, res) => this.registerAccount(req, res));
+         this.expressApp.get(this.config.location + '/register-account-telegram/:account', (req, res) => {
+            this.registerAccount(req, res);
+         });
          this.addPublicCommand({
             key: 'register-cert'
-         }, async (req, res) => {
+         }, async (req, res, {}, multi) => {
             const dn = req.get('ssl_client_s_dn');
             const clientCert = req.get('ssl_client_cert');
             if (!clientCert) throw {message: 'No client cert'};
             if (!dn) throw {message: 'No client cert DN'};
             const dns = this.parseDn(dn);
-            throw {message: 'Unimplemented', dns};
+            if (!dns.o) throw {message: 'No client cert O name'};
+            const [oMatching, account, domain] = dns.o.match(/^([\-_a-z]+)@(.*)$/);
+            if (!oMatching) throw {message: 'Cert O name not matching "account @ service domain"'};
+            if (!domain.match(req.hostname)) throw {message: 'O domain not matching: ' + req.hostname};
+            return {account, domain};
          });
       }
    }
@@ -1122,7 +1135,7 @@ export default class {
             this.sendError(req, res, {message: errorMessage});
             return;
          }
-         const account = '@' + this.generateTokenKey().substring(0, 6).toLowerCase();
+         const account = 'pub';
          const keyspace = this.generateTokenKey().substring(0, 6).toLowerCase();
          let clientIp = req.get('x-forwarded-for');
          const accountKey = this.accountKeyspace(account, keyspace);
