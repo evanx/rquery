@@ -3025,7 +3025,7 @@ var _class = function () {
          var _this9 = this;
 
          if (this.config.secureDomain) {
-            addPublicCommand({
+            this.addPublicCommand({
                key: 'register-cert'
             }, function () {
                var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee79(req, res) {
@@ -3049,7 +3049,7 @@ var _class = function () {
                   return ref.apply(this, arguments);
                };
             }());
-            addAccountCommand({
+            this.addAccountCommand({
                key: 'grant-cert',
                params: ['account', 'role', 'certId'],
                defaultParams: {

@@ -920,14 +920,14 @@ export default class {
 
    addAccountRoutes() {
       if (this.config.secureDomain) {
-         addPublicCommand({
+         this.addPublicCommand({
             key: 'register-cert'
          }, async (req, res) => {
             const dn = req.get('ssl_client_s_dn');
             const clientCert = req.get('ssl_client_cert');
             throw {message: 'Unimplemented', dn, clientCert};
          });
-         addAccountCommand({
+         this.addAccountCommand({
             key: 'grant-cert',
             params: ['account', 'role', 'certId'],
             defaultParams: {
