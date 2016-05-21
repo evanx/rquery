@@ -920,14 +920,14 @@ export default class {
       this.addPublicCommand({
          key: 'register-ephemeral'
       }, (req, res) => {
-         req.account = 'pub';
+         req.params = {account: 'pub'};
          return this.registerEphemeral(req, res);
       });
       this.addPublicCommand({
          key: 'register-ephemeral-access',
          params: ['access']
       }, (req, res) => {
-         req.account = 'pub';
+         req.params.account = 'pub';
          return this.registerEphemeral(req, res);
       });
       if (this.config.secureDomain) {
@@ -1135,7 +1135,7 @@ export default class {
    }
 
    async registerEphemeral(req, res, previousError) {
-      let {keyspace, access, account} = req.params;
+      let {account, keyspace, access} = req.params;
       assert(account, 'account');
       if (!keyspace) {
          keyspace = this.generateTokenKey(12).toLowerCase();

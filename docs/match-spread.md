@@ -3,7 +3,7 @@
 
 It's convenient to use ES6 destructuring for matching regexp groups:
 ```javascript
-const email = 'user.name@gmail.com';
+   const email = 'user.name@gmail.com';
    const [matching, user, domain] = email.match(
       /^([A-Z0-9._%+-]+)@([A-Z0-9.-]+\.[A-Z]{2,})$/i
    ) || [];

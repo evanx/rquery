@@ -3050,14 +3050,14 @@ var _class = function () {
          this.addPublicCommand({
             key: 'register-ephemeral'
          }, function (req, res) {
-            req.account = 'pub';
+            req.params = { account: 'pub' };
             return _this8.registerEphemeral(req, res);
          });
          this.addPublicCommand({
             key: 'register-ephemeral-access',
             params: ['access']
          }, function (req, res) {
-            req.account = 'pub';
+            req.params.account = 'pub';
             return _this8.registerEphemeral(req, res);
          });
          if (this.config.secureDomain) {
@@ -3608,16 +3608,16 @@ var _class = function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee88(req, res, previousError) {
             var _this13 = this;
 
-            var _req$params10, keyspace, access, account, _ret3;
+            var _req$params10, account, keyspace, access, _ret3;
 
             return regeneratorRuntime.wrap(function _callee88$(_context89) {
                while (1) {
                   switch (_context89.prev = _context89.next) {
                      case 0:
                         _req$params10 = req.params;
+                        account = _req$params10.account;
                         keyspace = _req$params10.keyspace;
                         access = _req$params10.access;
-                        account = _req$params10.account;
 
                         assert(account, 'account');
                         if (!keyspace) {
