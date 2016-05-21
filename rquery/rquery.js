@@ -1635,13 +1635,11 @@ export default class {
       let title = req.path;
       if (lodash.isString(err)) {
          title = err;
-         messageLines.push(err);
       } else if (lodash.isArray(err)) {
          messageLines = messageLines.concat(err);
       } else if (typeof err === 'object') {
          if (err.message) {
             title = err.message;
-            messageLines.push(err.message);
          }
          if (err.hintUri) {
             let url;
@@ -1679,7 +1677,7 @@ export default class {
          }));
       } else {
          this.logger.warn('status lines', req.path, statusCode, typeof err, Object.keys(err), messageLines.length);
-         res.status(statusCode).send(messageLines.join('\n') + '\n');
+         res.status(statusCode).send([title, ...messageLines].join('\n') + '\n');
       }
    }
 

@@ -4503,13 +4503,11 @@ var _class = function () {
          var title = req.path;
          if (lodash.isString(err)) {
             title = err;
-            messageLines.push(err);
          } else if (lodash.isArray(err)) {
             messageLines = messageLines.concat(err);
          } else if ((typeof err === 'undefined' ? 'undefined' : _typeof(err)) === 'object') {
             if (err.message) {
                title = err.message;
-               messageLines.push(err.message);
             }
             if (err.hintUri) {
                var url = void 0;
@@ -4542,7 +4540,7 @@ var _class = function () {
             }));
          } else {
             this.logger.warn('status lines', req.path, statusCode, typeof err === 'undefined' ? 'undefined' : _typeof(err), Object.keys(err), messageLines.length);
-            res.status(statusCode).send(messageLines.join('\n') + '\n');
+            res.status(statusCode).send([title].concat(_toConsumableArray(messageLines)).join('\n') + '\n');
          }
       }
    }, {
@@ -4614,4 +4612,3 @@ var _class = function () {
 }();
 
 exports.default = _class;
-//# sourceMappingURL=rquery.js.map
