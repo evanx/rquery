@@ -3375,23 +3375,21 @@ var _class = function () {
 
                                                       case 23:
                                                          dn = req.get('ssl_client_s_dn');
-
-                                                         _this12.logger.error('zz dn', dn);
-                                                         _context84.next = 27;
+                                                         _context84.next = 26;
                                                          return fn(req, res, { account: account, accountKey: accountKey, time: time, admined: admined, clientCertDigest: clientCertDigest });
 
-                                                      case 27:
+                                                      case 26:
                                                          result = _context84.sent;
 
                                                          if (!(result !== undefined)) {
-                                                            _context84.next = 31;
+                                                            _context84.next = 30;
                                                             break;
                                                          }
 
-                                                         _context84.next = 31;
+                                                         _context84.next = 30;
                                                          return _this12.sendResult({}, req, res, {}, result);
 
-                                                      case 31:
+                                                      case 30:
                                                       case 'end':
                                                          return _context84.stop();
                                                    }

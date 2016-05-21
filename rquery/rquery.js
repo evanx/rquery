@@ -1037,7 +1037,6 @@ export default class {
             message = this.validateCert(req, certs, account);
             if (message) throw {message};
             const dn = req.get('ssl_client_s_dn');
-            this.logger.error('zz dn', dn);
             const result = await fn(req, res, {account, accountKey, time, admined, clientCertDigest});
             if (result !== undefined) {
                await this.sendResult({}, req, res, {}, result);
