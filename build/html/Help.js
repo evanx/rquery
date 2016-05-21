@@ -61,3 +61,4 @@ var _class = function () {
 }();
 
 exports.default = _class;
+//# sourceMappingURL=Help.js.map
