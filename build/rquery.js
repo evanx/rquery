@@ -4510,10 +4510,9 @@ var _class = function () {
          } else if (lodash.isArray(err)) {
             messageLines = messageLines.concat(err);
          } else if ((typeof err === 'undefined' ? 'undefined' : _typeof(err)) === 'object') {
-            this.logger.warn('zz', _typeof(err.message));
             if (err.message) {
                title = err.message;
-               messageLines.push(err);
+               messageLines.push(err.message);
             }
             if (err.hintUri) {
                var url = void 0;
