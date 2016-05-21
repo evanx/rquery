@@ -922,8 +922,7 @@ export default class {
          this.logger.info('registerAccount dn', dn);
          if (!clientCert) {
             throw {message: 'No client cert'};
-         }
-         
+         }         
          const clientCertDigest = this.digestPem(clientCert);
          const otpSecret = this.generateTokenKey();
          const accountKey = this.adminKey('account', account);
