@@ -4544,7 +4544,7 @@ var _class = function () {
                content: '\n            <h2>Status ' + statusCode + ': ' + title + '</h2>\n            <pre>\n            ' + messageLines.join('\n') + '\n            </pre>\n            '
             }));
          } else {
-            this.logger.warn('status lines', req.path, statusCode, typeof err === 'undefined' ? 'undefined' : _typeof(err), Object, keys(err), messageLines.length);
+            this.logger.warn('status lines', req.path, statusCode, typeof err === 'undefined' ? 'undefined' : _typeof(err), Object.keys(err), messageLines.length);
             res.status(statusCode).send(messageLines.join('\n') + '\n');
          }
       }

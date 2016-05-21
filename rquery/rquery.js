@@ -1681,7 +1681,7 @@ export default class {
             `
          }));
       } else {
-         this.logger.warn('status lines', req.path, statusCode, typeof err, Object,keys(err), messageLines.length);
+         this.logger.warn('status lines', req.path, statusCode, typeof err, Object.keys(err), messageLines.length);
          res.status(statusCode).send(messageLines.join('\n') + '\n');
       }
    }
