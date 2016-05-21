@@ -23,13 +23,16 @@ var _class = function () {
          this.props = props;
          logger.debug('props', Object.keys(props));
          var content = props.content.replace(/\n\s*/g, '\n');
-         return '\n      <html>\n      <head>\n      <title>' + props.title + '</title>\n      <style>\n         pre {\n            background-color: #f2f2f2;\n         }\n      </style>\n      <meta name=\'viewport\' content=' + viewportContentArray.join(', ') + '/>\n      </head>\n      <body style=\'padding: ' + this.bodyPadding(props.req) + '; max-width: 768px\'>\n      ' + content + '\n      </body>\n      </html>\n      ';
+         return '\n      <html>\n      <head>\n      <title>' + props.title + '</title>\n      <style>\n         pre {\n            background-color: #f2f2f2;\n            padding: 5px;\n         }\n      </style>\n      <meta name=\'viewport\' content=' + viewportContentArray.join(', ') + '/>\n      </head>\n      <body style=\'padding: ' + this.bodyPadding(props) + '; max-width: 768px\'>\n      ' + content + '\n      </body>\n      </html>\n      ';
       }
    }, {
       key: 'bodyPadding',
-      value: function bodyPadding(req) {
+      value: function bodyPadding(_ref) {
+         var req = _ref.req;
+
          if (req) {
-            if (req.get('user-agent').match(/Mobile/)) {} else {
+            var ua = req.get('user-agent');
+            if (ua.match(/Mobile/)) {} else {
                return '10px 10px 10px 100px';
             }
          }

@@ -22,20 +22,22 @@ export default class {
       <style>
          pre {
             background-color: #f2f2f2;
+            padding: 5px;
          }
       </style>
       <meta name='viewport' content=${viewportContentArray.join(', ')}/>
       </head>
-      <body style='padding: ${this.bodyPadding(props.req)}; max-width: 768px'>
+      <body style='padding: ${this.bodyPadding(props)}; max-width: 768px'>
       ${content}
       </body>
       </html>
       `;
    }
 
-   bodyPadding(req) {
+   bodyPadding({req}) {
       if (req) {
-         if (req.get('user-agent').match(/Mobile/)) {
+         const ua = req.get('user-agent');
+         if (ua.match(/Mobile/)) {
          } else {
             return '10px 10px 10px 100px';
          }

@@ -401,6 +401,7 @@ export default class {
          }
       });
       this.addRegisterRoutes();
+      this.addAccountRoutes();
       this.addKeyspaceCommand({
          key: 'help',
          access: 'debug',
@@ -573,6 +574,18 @@ export default class {
          params: ['key']
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.getAsync(keyspaceKey);
+      });
+      this.addKeyspaceCommand({
+         key: 'getjson',
+         params: ['key']
+      }, async (req, res, {key, keyspaceKey}) => {
+         const value = await this.redis.getAsync(keyspaceKey);
+         this.logger.info('getjson', typeof value, value);
+         if (value) {
+            res.json(JSON.parse(value));
+         } else {
+            res.status(404).send('Not found: ' + key);
+         }
       });
       this.addKeyspaceCommand({
          key: 'incr',
@@ -884,7 +897,7 @@ export default class {
       });
       this.commands.push(command);
    }
-
+*
    addPublicRoute(uri, fn) {
       this.expressApp.get([this.config.location, uri].join('/'), async (req, res) => {
          try {
@@ -905,6 +918,31 @@ export default class {
       }
    }
 
+   addAccountRoutes() {
+      if (this.config.secureDomain) {
+         addPublicCommand({
+            key: 'register-cert'
+         }, async (req, res) => {
+            const dn = req.get('ssl_client_s_dn');
+            const clientCert = req.get('ssl_client_cert');
+            throw {message: 'Unimplemented', dn, clientCert};
+         });
+         addAccountCommand({
+            key: 'grant-cert',
+            params: ['account', 'role', 'certId'],
+            defaultParams: {
+               group: 'admin'
+            },
+            access: 'admin'
+         }, async (req, res, {account, accountKey, time, clientCertDigest}) => {
+            const [cert] = await this.redis.multiExecAsync(multi => {
+               multi.hgetall(this.adminKey('cert', certId));
+            });
+            throw {message: 'Unimplemented'};
+         });
+      }
+   }
+
    async registerAccount(req, res) {
       try {
          let errorMessage = this.validateRegisterTime();
@@ -922,7 +960,7 @@ export default class {
          this.logger.info('registerAccount dn', dn);
          if (!clientCert) {
             throw {message: 'No client cert'};
-         }         
+         }
          const clientCertDigest = this.digestPem(clientCert);
          const otpSecret = this.generateTokenKey();
          const accountKey = this.adminKey('account', account);
@@ -951,6 +989,46 @@ export default class {
       } catch (err) {
          this.sendError(req, res, err);
       }
+   }
+
+   async addAccountCommand(command, fn) {
+      let uri = [command.key];
+      if (command.params) {
+         uri = [command.key, ...command.params.map(param => ':' + param)];
+      }
+      this.expressApp.get([this.config.location, ...uri].join('/'), async (req, res) => {
+         try {
+            let message = this.validatePath(req);
+            if (message) throw {message};
+            const {account} = req.params;
+            const accountKey = this.adminKey('account', account);
+            const [[time], admined, certs] = await this.redis.multiExecAsync(multi => {
+               multi.time();
+               multi.hget(accountKey, 'admined');
+               multi.smembers(this.adminKey('account', account, 'certs'));
+            });
+            if (!admined) {
+               throw {message: 'Invalid account'};
+            }
+            if (lodash.isEmpty(certs)) {
+               throw {message: 'No certs'};
+            }
+            const duration = time - admined;
+            if (duration < this.config.adminLimit) {
+               return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
+            }
+            message = this.validateCert(req, certs, account);
+            if (message) throw {message};
+            const dn = req.get('ssl_client_s_dn');
+            this.logger.error('zz dn', dn);
+            const result = await fn(req, res, {account, accountKey, time, admined, clientCertDigest});
+            if (result !== undefined) {
+               await this.sendResult({}, req, res, {}, result);
+            }
+         } catch (err) {
+            this.sendError(req, res, err);
+         }
+      });
    }
 
    generateTokenKey(length = 16) {
@@ -1182,11 +1260,10 @@ export default class {
                }
             }
             const multi = this.redis.multi();
-            const reqx = {time, account, keyspace, accountKey};
+            const reqx = {time, account, keyspace, accountKey, key};
             if (key) {
                reqx.keyspaceKey = this.keyspaceKey(account, keyspace, key);
             }
-            await this.sendResult(command, req, res, reqx, await fn(req, res, reqx, multi));
             multi.sadd(this.adminKey('keyspaces'), keyspace);
             multi.hset(accountKey, 'accessed', time);
             if (command && command.access === 'admin') {
@@ -1200,6 +1277,10 @@ export default class {
                multi.expire(accountKey, this.config.ephemeralAccountExpire);
             }
             await multi.execAsync();
+            const result = await fn(req, res, reqx, multi);
+            if (result !== undefined) {
+               await this.sendResult(command, req, res, reqx, result);
+            }
          } catch (err) {
             this.sendError(req, res, err);
          }
@@ -1240,6 +1321,13 @@ export default class {
          return 'Invalid account (leading @ symbol reserved for ephemeral keyspaces)';
       } else if (!/^[\-_a-z0-9]+$/.test(account)) {
          return 'Account name is invalid. Try only lowercase/numeric with dash/underscore.';
+      }
+   }
+
+   validatePath(req) {
+      const match = req.path.match(/\/:([^\/]+)/);
+      if (match) {
+         return 'Invalid path: leading colon. Try substituting parameter: ' + match.pop();
       }
    }
 
@@ -1370,7 +1458,8 @@ export default class {
 
    async sendResult(command, req, res, reqx, result) {
       const userAgent = req.get('User-Agent');
-      this.logger.debug('sendResult ua', userAgent);
+      const uaMatch = userAgent.match(/\s([A-Z][a-z]*\/[\.0-9]+)\s/);
+      this.logger.debug('sendResult ua', !uaMatch? userAgent: uaMatch[1]);
       command = command || {};
       if (this.isDebugReq(req)) {
          this.logger.ndebug('sendResult', command.command, req.params, req.query, result);
@@ -1390,6 +1479,9 @@ export default class {
       }
       let resultString = '';
       if (!Values.isDefined(result)) {
+      } else if (Values.isDefined(req.query.json)) {
+         res.json(result);
+         return;
       } else if (Values.isDefined(req.query.quiet)) {
       } else if (this.config.defaultFormat === 'cli' || Values.isDefined(req.query.line)
       || this.isCliDomain(req) || command.format === 'cli') {
@@ -1436,10 +1528,36 @@ export default class {
          resultString = result.toString();
       } else if (this.config.defaultFormat === 'html' || Values.isDefined(req.query.html)
       || command.format === 'html' || this.isHtmlDomain(req)) {
+         if (result === null) {
+            this.sendStatusMessage(req, res, 404, reqx.key? `'${reqx.key}' is empty` : 'Empty');
+            return;
+         } else if (lodash.isString(result)) {
+            resultString = result;
+         } else if (lodash.isArray(result)) {
+            resultString = result.toString();
+         } else if (lodash.isObject(result)) {
+            resultString = result.toString();
+         } else {
+            resultString = result.toString();
+         }
          res.set('Content-Type', 'text/html');
-         resultString = result.toString();
+         if (reqx.key) {
+            res.send(new Page().render({
+               req,
+               title: reqx.key,
+               content: `<h3>${reqx.key}: ${resultString}</h3>`
+            }));
+         } else {
+            res.send(new Page().render({
+               req,
+               title: req.path,
+               content: `<h3>${resultString}</h3>`
+            }));
+         }
+         return;
       } else if (this.config.defaultFormat !== 'json') {
          this.sendError(req, res, {message: `Invalid default format: ${this.config.defaultFormat}`});
+         return;
       } else {
          res.json(result);
          return;
