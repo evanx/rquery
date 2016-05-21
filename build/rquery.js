@@ -4094,9 +4094,6 @@ var _class = function () {
          if (/^:/.test(account)) {
             return 'leading colon';
          }
-         if (/^@/.test(account)) {
-            return 'leading symbol';
-         }
       }
    }, {
       key: 'validateKeyspace',

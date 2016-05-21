@@ -1357,9 +1357,6 @@ export default class {
       if (/^:/.test(account)) {
          return 'leading colon';
       }
-      if (/^@/.test(account)) {
-         return 'leading symbol';
-      }
    }
 
    validateKeyspace(keyspace) {
