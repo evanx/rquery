@@ -1634,6 +1634,7 @@ export default class {
       let title = req.path;
       if (lodash.isString(err)) {
          title = err;
+         messageLines.push(err);
       } else if (lodash.isArray(err)) {
          messageLines = messageLines.concat(err);
       } else if (err.message) {
