@@ -1147,6 +1147,17 @@ export default class {
       assert(account, 'account');
       if (!keyspace) {
          keyspace = this.generateTokenKey(12).toLowerCase();
+      } else {
+         const v = this.validateRegisterKeyspace(keyspace);
+         if (v) {
+            throw {message: v, keyspace};
+         }
+      }
+      if (!access) {
+      } else if (access === 'add') {
+         keyspace = '+' + keyspace;
+      } else if (access) {
+         this.sendError(req, res, {message: 'Access Unimplemented: ' + access});
       }
       if (previousError) {
          this.logger.warn('registerEphemeral retry');

@@ -3654,7 +3654,7 @@ var _class = function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee90(req, res, previousError) {
             var _this13 = this;
 
-            var _req$params10, account, keyspace, access, _ret3;
+            var _req$params10, account, keyspace, access, v, _ret3;
 
             return regeneratorRuntime.wrap(function _callee90$(_context91) {
                while (1) {
@@ -3666,13 +3666,36 @@ var _class = function () {
                         access = _req$params10.access;
 
                         assert(account, 'account');
-                        if (!keyspace) {
-                           keyspace = this.generateTokenKey(12).toLowerCase();
+
+                        if (keyspace) {
+                           _context91.next = 9;
+                           break;
+                        }
+
+                        keyspace = this.generateTokenKey(12).toLowerCase();
+                        _context91.next = 12;
+                        break;
+
+                     case 9:
+                        v = this.validateRegisterKeyspace(keyspace);
+
+                        if (!v) {
+                           _context91.next = 12;
+                           break;
+                        }
+
+                        throw { message: v, keyspace: keyspace };
+
+                     case 12:
+                        if (!access) {} else if (access === 'add') {
+                           keyspace = '+' + keyspace;
+                        } else if (access) {
+                           this.sendError(req, res, { message: 'Access Unimplemented: ' + access });
                         }
                         if (previousError) {
                            this.logger.warn('registerEphemeral retry');
                         }
-                        _context91.prev = 7;
+                        _context91.prev = 14;
                         return _context91.delegateYield(regeneratorRuntime.mark(function _callee89() {
                            var errorMessage, clientIp, accountKey, replies, replyPath;
                            return regeneratorRuntime.wrap(function _callee89$(_context90) {
@@ -3756,34 +3779,34 @@ var _class = function () {
                                  }
                               }
                            }, _callee89, _this13);
-                        })(), 't0', 9);
+                        })(), 't0', 16);
 
-                     case 9:
+                     case 16:
                         _ret3 = _context91.t0;
 
                         if (!((typeof _ret3 === 'undefined' ? 'undefined' : _typeof(_ret3)) === "object")) {
-                           _context91.next = 12;
+                           _context91.next = 19;
                            break;
                         }
 
                         return _context91.abrupt('return', _ret3.v);
 
-                     case 12:
-                        _context91.next = 17;
+                     case 19:
+                        _context91.next = 24;
                         break;
 
-                     case 14:
-                        _context91.prev = 14;
-                        _context91.t1 = _context91['catch'](7);
+                     case 21:
+                        _context91.prev = 21;
+                        _context91.t1 = _context91['catch'](14);
 
                         this.sendError(req, res, _context91.t1);
 
-                     case 17:
+                     case 24:
                      case 'end':
                         return _context91.stop();
                   }
                }
-            }, _callee90, this, [[7, 14]]);
+            }, _callee90, this, [[14, 21]]);
          }));
 
          function registerEphemeral(_x225, _x226, _x227) {

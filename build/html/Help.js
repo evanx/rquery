@@ -19,7 +19,7 @@ var _class = function () {
       key: 'render',
       value: function render(props) {
          this.props = props;
-         logger.debug('props', props);
+         logger.debug('props', Object.keys(props));
          return {
             req: props.req,
             title: 'Help | ' + props.config.serviceLabel,
