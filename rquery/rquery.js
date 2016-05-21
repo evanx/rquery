@@ -918,7 +918,9 @@ export default class {
 
    addRegisterRoutes() {
       this.expressApp.get(this.config.location + '/register-ephemeral', (req, res) => {
-         this.registerEphemeral(req, res);
+         this.registerEphemeral(req, res, {
+            account: 'pub'
+         });
       });
       if (this.config.secureDomain) {
          this.expressApp.get(this.config.location + '/register-account-telegram/:account', (req, res) => {
@@ -1124,7 +1126,12 @@ export default class {
       this.registerTime = time;
    }
 
-   async registerEphemeral(req, res, previousError) {
+   async registerEphemeral(req, res, reqx = {}, previousError) {
+      let {account, keyspace, additive} = reqx;
+      assert(account, 'account');
+      if (!keyspace) {
+         keyspace = this.generateTokenKey(12).toLowerCase();
+      }
       if (previousError) {
          this.logger.warn('registerEphemeral retry');
       }
@@ -1135,8 +1142,6 @@ export default class {
             this.sendError(req, res, {message: errorMessage});
             return;
          }
-         const account = 'pub';
-         const keyspace = this.generateTokenKey(12).toLowerCase();
          let clientIp = req.get('x-forwarded-for');
          const accountKey = this.accountKeyspace(account, keyspace);
          this.logger.debug('registerEphemeral clientIp', clientIp, account, keyspace, accountKey);
@@ -1154,9 +1159,9 @@ export default class {
          if (!replies[0]) {
             this.logger.error('keyspace clash', account, keyspace);
             if (!previousError) {
-               return this.registerEphemeral(req, res, {message: 'keyspace clash'});
+               return this.registerEphemeral(req, res, reqx, {message: 'keyspace clash'});
             }
-            throw {message: 'Expire keyspace clash'};
+            throw {message: 'Keyspace already exists'};
          }
          const replyPath = ['ak', account, keyspace].join('/');
          this.logger.debug('registerEphemeral', keyspace, clientIp, replyPath);

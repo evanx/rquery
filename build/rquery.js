@@ -3048,7 +3048,9 @@ var _class = function () {
          var _this8 = this;
 
          this.expressApp.get(this.config.location + '/register-ephemeral', function (req, res) {
-            _this8.registerEphemeral(req, res);
+            _this8.registerEphemeral(req, res, {
+               account: 'pub'
+            });
          });
          if (this.config.secureDomain) {
             this.expressApp.get(this.config.location + '/register-account-telegram/:account', function (req, res) {
@@ -3595,21 +3597,32 @@ var _class = function () {
    }, {
       key: 'registerEphemeral',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee88(req, res, previousError) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee88(req, res) {
             var _this13 = this;
 
-            var _ret3;
+            var reqx = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+            var previousError = arguments[3];
+
+            var account, keyspace, additive, _ret3;
 
             return regeneratorRuntime.wrap(function _callee88$(_context89) {
                while (1) {
                   switch (_context89.prev = _context89.next) {
                      case 0:
+                        account = reqx.account;
+                        keyspace = reqx.keyspace;
+                        additive = reqx.additive;
+
+                        assert(account, 'account');
+                        if (!keyspace) {
+                           keyspace = this.generateTokenKey(12).toLowerCase();
+                        }
                         if (previousError) {
                            this.logger.warn('registerEphemeral retry');
                         }
-                        _context89.prev = 1;
+                        _context89.prev = 6;
                         return _context89.delegateYield(regeneratorRuntime.mark(function _callee87() {
-                           var errorMessage, account, keyspace, clientIp, accountKey, replies, replyPath;
+                           var errorMessage, clientIp, accountKey, replies, replyPath;
                            return regeneratorRuntime.wrap(function _callee87$(_context88) {
                               while (1) {
                                  switch (_context88.prev = _context88.next) {
@@ -3628,13 +3641,11 @@ var _class = function () {
                                        });
 
                                     case 5:
-                                       account = 'pub';
-                                       keyspace = _this13.generateTokenKey(12).toLowerCase();
                                        clientIp = req.get('x-forwarded-for');
                                        accountKey = _this13.accountKeyspace(account, keyspace);
 
                                        _this13.logger.debug('registerEphemeral clientIp', clientIp, account, keyspace, accountKey);
-                                       _context88.next = 12;
+                                       _context88.next = 10;
                                        return _this13.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', new Date().getTime());
                                           multi.expire(accountKey, _this13.config.ephemeralAccountExpire);
@@ -3647,35 +3658,35 @@ var _class = function () {
                                           _this13.count(multi, 'keyspaces:expire');
                                        });
 
-                                    case 12:
+                                    case 10:
                                        replies = _context88.sent;
 
                                        if (replies[0]) {
-                                          _context88.next = 18;
+                                          _context88.next = 16;
                                           break;
                                        }
 
                                        _this13.logger.error('keyspace clash', account, keyspace);
 
                                        if (previousError) {
-                                          _context88.next = 17;
+                                          _context88.next = 15;
                                           break;
                                        }
 
                                        return _context88.abrupt('return', {
-                                          v: _this13.registerEphemeral(req, res, { message: 'keyspace clash' })
+                                          v: _this13.registerEphemeral(req, res, reqx, { message: 'keyspace clash' })
                                        });
 
-                                    case 17:
-                                       throw { message: 'Expire keyspace clash' };
+                                    case 15:
+                                       throw { message: 'Keyspace already exists' };
 
-                                    case 18:
+                                    case 16:
                                        replyPath = ['ak', account, keyspace].join('/');
 
                                        _this13.logger.debug('registerEphemeral', keyspace, clientIp, replyPath);
 
                                        if (!_this13.isBrowser(req)) {
-                                          _context88.next = 24;
+                                          _context88.next = 22;
                                           break;
                                        }
 
@@ -3684,50 +3695,50 @@ var _class = function () {
                                        } else {
                                           res.send(replyPath);
                                        }
-                                       _context88.next = 26;
+                                       _context88.next = 24;
                                        break;
 
-                                    case 24:
-                                       _context88.next = 26;
+                                    case 22:
+                                       _context88.next = 24;
                                        return _this13.sendResult({}, req, res, {}, replyPath);
 
-                                    case 26:
+                                    case 24:
                                     case 'end':
                                        return _context88.stop();
                                  }
                               }
                            }, _callee87, _this13);
-                        })(), 't0', 3);
+                        })(), 't0', 8);
 
-                     case 3:
+                     case 8:
                         _ret3 = _context89.t0;
 
                         if (!((typeof _ret3 === 'undefined' ? 'undefined' : _typeof(_ret3)) === "object")) {
-                           _context89.next = 6;
+                           _context89.next = 11;
                            break;
                         }
 
                         return _context89.abrupt('return', _ret3.v);
 
-                     case 6:
-                        _context89.next = 11;
+                     case 11:
+                        _context89.next = 16;
                         break;
 
-                     case 8:
-                        _context89.prev = 8;
-                        _context89.t1 = _context89['catch'](1);
+                     case 13:
+                        _context89.prev = 13;
+                        _context89.t1 = _context89['catch'](6);
 
                         this.sendError(req, res, _context89.t1);
 
-                     case 11:
+                     case 16:
                      case 'end':
                         return _context89.stop();
                   }
                }
-            }, _callee88, this, [[1, 8]]);
+            }, _callee88, this, [[6, 13]]);
          }));
 
-         function registerEphemeral(_x221, _x222, _x223) {
+         function registerEphemeral(_x222, _x223) {
             return ref.apply(this, arguments);
          }
 
