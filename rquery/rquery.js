@@ -1641,7 +1641,7 @@ export default class {
          messageLines.push(err);
       } else if (lodash.isArray(err)) {
          messageLines = messageLines.concat(err);
-      } else if (err.message) {
+      } else if (lodash.isObject(err)) {
          if (err.message) {
             title = err.message;
             messageLines.push(err);
