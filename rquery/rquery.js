@@ -923,6 +923,7 @@ export default class {
          if (!clientCert) {
             throw {message: 'No client cert'};
          }
+         
          const clientCertDigest = this.digestPem(clientCert);
          const otpSecret = this.generateTokenKey();
          const accountKey = this.adminKey('account', account);
