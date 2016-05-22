@@ -441,7 +441,7 @@ export default class {
             hostUrl = `https://${req.hostname}`;
          }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
-         const message = `Try endpoints e.g.:`;
+         const message = `Try endpoints below. Click anywhere on the result to return.`;
          const exampleUrls = [
             `${hostUrl}/ak/${account}/${keyspace}/set/mykey/myvalue`,
             `${hostUrl}/ak/${account}/${keyspace}/get/mykey`,
@@ -1348,16 +1348,19 @@ export default class {
             if (command && command.access === 'admin') {
                multi.hset(accountKey, 'admined', time);
             }
+            const result = await fn(req, res, reqx, multi);
+            if (result !== undefined) {
+               await this.sendResult(command, req, res, reqx, result);
+            }
             if (key) {
                assert(reqx.keyspaceKey);
                const expire = this.getKeyExpire(account);
                multi.expire(reqx.keyspaceKey, expire);
                this.logger.debug('expire', reqx.keyspaceKey, expire);
             }
-            await multi.execAsync();
-            const result = await fn(req, res, reqx, multi);
-            if (result !== undefined) {
-               await this.sendResult(command, req, res, reqx, result);
+            const [...expire] = await multi.execAsync();
+            if (!expire) {
+               throw new ApplicationError('expire: ' + reqx.keyspaceKey);
             }
          } catch (err) {
             this.sendError(req, res, err);

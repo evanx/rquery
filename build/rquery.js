@@ -88,6 +88,8 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
+
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1235,7 +1237,7 @@ var _class = function () {
                            _this5.logger.ndebug('help', req.params, _this5.commands.map(function (command) {
                               return command.key;
                            }).join('/'));
-                           message = 'Try endpoints e.g.:';
+                           message = 'Try endpoints below. Click anywhere on the result to return.';
                            exampleUrls = [hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/hset/hashes1/field1/value1', hostUrl + '/ak/' + account + '/' + keyspace + '/hgetall/hashes1', hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
                            return _context24.abrupt('return', { message: message, exampleUrls: exampleUrls, keyspaceCommands: _this5.listCommands('keyspace') });
 
@@ -3928,7 +3930,7 @@ var _class = function () {
                         case 0:
                            _context95.prev = 0;
                            return _context95.delegateYield(regeneratorRuntime.mark(function _callee93() {
-                              var _req$params11, account, keyspace, key, timeout, accountKey, helpPath, reqx, v, isSecureAccount, _ref76, _ref77, _ref77$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, expire, result;
+                              var _req$params11, account, keyspace, key, timeout, accountKey, helpPath, reqx, v, isSecureAccount, _ref76, _ref77, _ref77$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref78, _ref79, expire;
 
                               return regeneratorRuntime.wrap(function _callee93$(_context94) {
                                  while (1) {
@@ -4123,32 +4125,44 @@ var _class = function () {
                                           if (command && command.access === 'admin') {
                                              multi.hset(accountKey, 'admined', time);
                                           }
-                                          if (key) {
-                                             assert(reqx.keyspaceKey);
-                                             expire = _this14.getKeyExpire(account);
-
-                                             multi.expire(reqx.keyspaceKey, expire);
-                                             _this14.logger.debug('expire', reqx.keyspaceKey, expire);
-                                          }
-                                          _context94.next = 73;
-                                          return multi.execAsync();
-
-                                       case 73:
-                                          _context94.next = 75;
+                                          _context94.next = 72;
                                           return fn(req, res, reqx, multi);
 
-                                       case 75:
+                                       case 72:
                                           result = _context94.sent;
 
                                           if (!(result !== undefined)) {
-                                             _context94.next = 79;
+                                             _context94.next = 76;
                                              break;
                                           }
 
-                                          _context94.next = 79;
+                                          _context94.next = 76;
                                           return _this14.sendResult(command, req, res, reqx, result);
 
+                                       case 76:
+                                          if (key) {
+                                             assert(reqx.keyspaceKey);
+                                             _expire = _this14.getKeyExpire(account);
+
+                                             multi.expire(reqx.keyspaceKey, _expire);
+                                             _this14.logger.debug('expire', reqx.keyspaceKey, _expire);
+                                          }
+                                          _context94.next = 79;
+                                          return multi.execAsync();
+
                                        case 79:
+                                          _ref78 = _context94.sent;
+                                          _ref79 = _toArray(_ref78);
+                                          expire = _ref79;
+
+                                          if (expire) {
+                                             _context94.next = 84;
+                                             break;
+                                          }
+
+                                          throw new ApplicationError('expire: ' + reqx.keyspaceKey);
+
+                                       case 84:
                                        case 'end':
                                           return _context94.stop();
                                     }
@@ -4200,11 +4214,11 @@ var _class = function () {
    }, {
       key: 'migrateKeyspace',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee95(_ref78) {
-            var account = _ref78.account;
-            var keyspace = _ref78.keyspace;
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee95(_ref80) {
+            var account = _ref80.account;
+            var keyspace = _ref80.keyspace;
 
-            var accountKey, _ref79, _ref80, accessToken, token, _ref81, _ref82, hsetnx, hdel;
+            var accountKey, _ref81, _ref82, accessToken, token, _ref83, _ref84, hsetnx, hdel;
 
             return regeneratorRuntime.wrap(function _callee95$(_context96) {
                while (1) {
@@ -4218,10 +4232,10 @@ var _class = function () {
                         });
 
                      case 3:
-                        _ref79 = _context96.sent;
-                        _ref80 = _slicedToArray(_ref79, 2);
-                        accessToken = _ref80[0];
-                        token = _ref80[1];
+                        _ref81 = _context96.sent;
+                        _ref82 = _slicedToArray(_ref81, 2);
+                        accessToken = _ref82[0];
+                        token = _ref82[1];
 
                         if (!(!token && accessToken)) {
                            _context96.next = 20;
@@ -4235,10 +4249,10 @@ var _class = function () {
                         });
 
                      case 10:
-                        _ref81 = _context96.sent;
-                        _ref82 = _slicedToArray(_ref81, 2);
-                        hsetnx = _ref82[0];
-                        hdel = _ref82[1];
+                        _ref83 = _context96.sent;
+                        _ref84 = _slicedToArray(_ref83, 2);
+                        hsetnx = _ref84[0];
+                        hdel = _ref84[1];
 
                         if (hsetnx) {
                            _context96.next = 18;
@@ -4336,16 +4350,16 @@ var _class = function () {
       }
    }, {
       key: 'validateAccess',
-      value: function validateAccess(_ref83) {
-         var req = _ref83.req;
-         var command = _ref83.command;
-         var account = _ref83.account;
-         var keyspace = _ref83.keyspace;
-         var time = _ref83.time;
-         var registered = _ref83.registered;
-         var admined = _ref83.admined;
-         var accessed = _ref83.accessed;
-         var certs = _ref83.certs;
+      value: function validateAccess(_ref85) {
+         var req = _ref85.req;
+         var command = _ref85.command;
+         var account = _ref85.account;
+         var keyspace = _ref85.keyspace;
+         var time = _ref85.time;
+         var registered = _ref85.registered;
+         var admined = _ref85.admined;
+         var accessed = _ref85.accessed;
+         var certs = _ref85.certs;
 
          var scheme = req.get('X-Forwarded-Proto');
          this.logger.debug('validateAccess scheme', scheme, account, keyspace, command);
