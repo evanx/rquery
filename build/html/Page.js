@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
    value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22,8 +24,22 @@ var _class = function () {
       value: function render(props) {
          this.props = props;
          logger.debug('props', Object.keys(props));
-         var content = props.content.replace(/\n\s*/g, '\n');
-         return '\n      <html>\n      <head>\n      <title>' + props.title + '</title>\n      <style>\n         pre {\n            background-color: #f8f8f8;\n            padding: 5px;\n         }\n      </style>\n      <meta name=\'viewport\' content=' + viewportContentArray.join(', ') + '/>\n      </head>\n      <body style=\'padding: ' + this.bodyPadding(props) + '; max-width: 768px\'>\n      ' + content + '\n      </body>\n      </html>\n      ';
+         var content = '';
+         if (lodash.isArray(props.content)) {
+            content = props.content.join('\n');
+         } else if (lodash.isString(props.content)) {
+            content = props.content;
+         } else {
+            logger.error('props.content type', _typeof(props.content));
+            content = props.content.toString();
+         }
+         content = content.replace(/\n\s*/g, '\n');
+         this.reqx = props.reqx || {};
+         var helpScript = '';
+         if (this.reqx.helpPath) {
+            helpScript = 'window.location.pathname = \'' + this.reqx.helpPath + '\'';
+         }
+         return '\n      <html>\n      <head>\n      <title>' + props.title + '</title>\n      <style>\n         a {\n            text-decoration: none;\n         }\n         pre {\n            background-color: #f8f8f8;\n            padding: 5px;\n         }\n      </style>\n      <meta name=\'viewport\' content=' + viewportContentArray.join(', ') + '/>\n      </head>\n      <body style=\'padding: ' + this.bodyPadding(props) + '; max-width: 768px\'>\n      <header>\n      </header>\n      <article onClick="' + helpScript + '">\n      ' + content + '\n      </article>\n      </body>\n      </html>\n      ';
       }
    }, {
       key: 'bodyPadding',

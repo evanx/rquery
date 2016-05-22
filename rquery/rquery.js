@@ -19,6 +19,8 @@ import Help from './html/Help';
 import KeyspaceHelp from './html/KeyspaceHelp';
 import KeyspaceHelpPage from './jsx/KeyspaceHelpPage';
 
+import styles from './styles';
+
 const unsupportedAuth = ['twitter.com', 'github.com', 'gitlab.com', 'bitbucket.org'];
 const supportedAuth = ['telegram.org'];
 
@@ -258,7 +260,7 @@ export default class {
          .filter(route => route.includes(':account') && !route.includes(':keyspace'));
          return {
             common: routes
-            .filter(route => route && !route.includes(':') && !['/epoch'].includes(route))
+            .filter(route => route && !route.includes(':') && !['/epoch', '/register-cert'].includes(route))
             .map(route => `${hostUrl}${route}`)
             ,
             misc: routes
@@ -916,7 +918,7 @@ export default class {
       });
       this.commands.push(command);
    }
-*
+   *
    addPublicRoute(uri, fn) {
       this.expressApp.get([this.config.location, uri].join('/'), async (req, res) => {
          try {
@@ -1332,7 +1334,8 @@ export default class {
                }
             }
             const multi = this.redis.multi();
-            const reqx = {time, account, keyspace, accountKey, key};
+            const helpPath = `/ak/${account}/${keyspace}/help`;
+            const reqx = {time, account, keyspace, accountKey, key, helpPath};
             if (key) {
                reqx.keyspaceKey = this.keyspaceKey(account, keyspace, key);
             }
@@ -1611,6 +1614,7 @@ export default class {
          return;
       } else if (this.config.defaultFormat === 'html' || Values.isDefined(req.query.html)
       || command.format === 'html' || this.isHtmlDomain(req)) {
+         let title = req.path;
          let resultArray = [];
          if (result === null) {
             this.sendStatusMessage(req, res, 404, reqx.key? `'${reqx.key}' is empty` : 'Empty');
@@ -1618,7 +1622,7 @@ export default class {
          } else if (lodash.isString(result)) {
             resultString = result;
          } else if (lodash.isArray(result)) {
-            resultString = `<b>length</b> ${result.length}`;
+            //resultString = `${result.length} items`;
             resultArray = result;
          } else if (lodash.isObject(result)) {
             //resultString = `<b>keys</b> ${Object.keys(result).join(' ')}`;
@@ -1627,28 +1631,30 @@ export default class {
             resultString = result.toString();
          }
          res.set('Content-Type', 'text/html');
+         const content = [];
+         this.logger.debug('sendResult reqx', reqx, command.key, reqx.key, resultString, resultArray.length);
+         if (command.key) {
+            content.push(`<div style='${styles.result.commandKey}'>${command.key}</div>`);
+         }
+         if (reqx.key) {
+            title = reqx.key;
+            content.push(`<div style='${styles.result.reqKey}'>${reqx.key}</div>`);
+         }
+         if (resultString) {
+            content.push(`<div style='${styles.result.resultString}'>${resultString}</div>`);
+         }
+         if (resultArray.length) {
+            content.push(`<pre style='${styles.result.resultArray}'>${resultArray.join('\n')}</pre>`);
+         }
          if (reqx.key) {
             res.send(new Page().render({
-               req,
-               title: reqx.key,
-               content: `
-               <div style='font-size: 12pt; font-style: italic'>${command.key}</div>
-               <div style='padding-top: 4px; font-size: 16pt; font-weight: bold;'>${reqx.key}</div>
-               <div style='padding-top: 8px; font-size: 12pt; font-family: monospace'>${resultString}</div>
-               <pre style='line-height: 2; margin: 0'>
-               ${resultArray.join('\n')}
-               </pre>
-               `
+               req, reqx, title,
+               content: content.join('\n')
             }));
          } else {
             res.send(new Page().render({
-               req,
-               title: req.path,
-               content: `<h3>${resultString}</h3>
-               <pre>
-               ${resultArray.join('\n')}
-               </pre>
-               `
+               req, reqx, title,
+               content: content.join('\n')
             }));
          }
          return;

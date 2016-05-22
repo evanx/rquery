@@ -21,11 +21,11 @@ export default class {
 
    renderUrls(urls) {
       return urls.map((url, index) => {
-         const [matching, hostUrl, path] = url.match(/^(https?:\/\/[^\/]+)\/ak\/[^\/]+\/[^\/]+\/(\S+)$/) || [];
+         const [matching, hostUrl, command, params] = url.match(/^(https?:\/\/[^\/]+)\/ak\/[^\/]+\/[^\/]+\/([^\/]+)(\/\S+)?$/) || [];
          if (matching) {
             return `
             <div style='line-height: 1.5'>
-            <a href=${url}>${path}</a>
+            <a href=${url}><b>${command}</b>${params || ''}</a>
             </div>
             `;
          } else {

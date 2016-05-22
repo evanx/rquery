@@ -32,16 +32,17 @@ var _class = function () {
       key: 'renderUrls',
       value: function renderUrls(urls) {
          return urls.map(function (url, index) {
-            var _ref = url.match(/^(https?:\/\/[^\/]+)\/ak\/[^\/]+\/[^\/]+\/(\S+)$/) || [];
+            var _ref = url.match(/^(https?:\/\/[^\/]+)\/ak\/[^\/]+\/[^\/]+\/([^\/]+)(\/\S+)?$/) || [];
 
-            var _ref2 = _slicedToArray(_ref, 3);
+            var _ref2 = _slicedToArray(_ref, 4);
 
             var matching = _ref2[0];
             var hostUrl = _ref2[1];
-            var path = _ref2[2];
+            var command = _ref2[2];
+            var params = _ref2[3];
 
             if (matching) {
-               return '\n            <div style=\'line-height: 1.5\'>\n            <a href=' + url + '>' + path + '</a>\n            </div>\n            ';
+               return '\n            <div style=\'line-height: 1.5\'>\n            <a href=' + url + '><b>' + command + '</b>' + (params || '') + '</a>\n            </div>\n            ';
             } else {
                return '\n            <div style=\'line-height: 1.5\'>\n            <a href=' + url + '>' + url + '</a>\n            </div>\n            ';
             }

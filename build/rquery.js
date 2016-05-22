@@ -80,6 +80,10 @@ var _KeyspaceHelpPage = require('./jsx/KeyspaceHelpPage');
 
 var _KeyspaceHelpPage2 = _interopRequireDefault(_KeyspaceHelpPage);
 
+var _styles = require('./styles');
+
+var _styles2 = _interopRequireDefault(_styles);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -685,7 +689,7 @@ var _class = function () {
                            });
                            return _context10.abrupt('return', {
                               common: routes.filter(function (route) {
-                                 return route && !route.includes(':') && !['/epoch'].includes(route);
+                                 return route && !route.includes(':') && !['/epoch', '/register-cert'].includes(route);
                               }).map(function (route) {
                                  return '' + hostUrl + route;
                               }),
@@ -3924,7 +3928,7 @@ var _class = function () {
                         case 0:
                            _context95.prev = 0;
                            return _context95.delegateYield(regeneratorRuntime.mark(function _callee93() {
-                              var _req$params11, account, keyspace, key, timeout, accountKey, v, isSecureAccount, _ref76, _ref77, _ref77$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, reqx, expire, result;
+                              var _req$params11, account, keyspace, key, timeout, accountKey, v, isSecureAccount, _ref76, _ref77, _ref77$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, helpPath, reqx, expire, result;
 
                               return regeneratorRuntime.wrap(function _callee93$(_context94) {
                                  while (1) {
@@ -4103,7 +4107,8 @@ var _class = function () {
 
                                        case 61:
                                           multi = _this14.redis.multi();
-                                          reqx = { time: time, account: account, keyspace: keyspace, accountKey: accountKey, key: key };
+                                          helpPath = '/ak/' + account + '/' + keyspace + '/help';
+                                          reqx = { time: time, account: account, keyspace: keyspace, accountKey: accountKey, key: key, helpPath: helpPath };
 
                                           if (key) {
                                              reqx.keyspaceKey = _this14.keyspaceKey(account, keyspace, key);
@@ -4120,25 +4125,25 @@ var _class = function () {
                                              multi.expire(reqx.keyspaceKey, expire);
                                              _this14.logger.debug('expire', reqx.keyspaceKey, expire);
                                           }
-                                          _context94.next = 70;
+                                          _context94.next = 71;
                                           return multi.execAsync();
 
-                                       case 70:
-                                          _context94.next = 72;
+                                       case 71:
+                                          _context94.next = 73;
                                           return fn(req, res, reqx, multi);
 
-                                       case 72:
+                                       case 73:
                                           result = _context94.sent;
 
                                           if (!(result !== undefined)) {
-                                             _context94.next = 76;
+                                             _context94.next = 77;
                                              break;
                                           }
 
-                                          _context94.next = 76;
+                                          _context94.next = 77;
                                           return _this14.sendResult(command, req, res, reqx, result);
 
-                                       case 76:
+                                       case 77:
                                        case 'end':
                                           return _context94.stop();
                                     }
@@ -4438,7 +4443,7 @@ var _class = function () {
       key: 'sendResult',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee96(command, req, res, reqx, result) {
-            var userAgent, uaMatch, mobile, otherResult, resultString, resultArray;
+            var userAgent, uaMatch, mobile, otherResult, resultString, title, resultArray, content;
             return regeneratorRuntime.wrap(function _callee96$(_context97) {
                while (1) {
                   switch (_context97.prev = _context97.next) {
@@ -4495,7 +4500,7 @@ var _class = function () {
                         }
 
                         this.logger.error('sendResult none');
-                        _context97.next = 62;
+                        _context97.next = 69;
                         break;
 
                      case 24:
@@ -4513,7 +4518,7 @@ var _class = function () {
                            break;
                         }
 
-                        _context97.next = 62;
+                        _context97.next = 69;
                         break;
 
                      case 32:
@@ -4557,7 +4562,7 @@ var _class = function () {
                         } else if (result === null) {} else {
                            resultString = result.toString();
                         }
-                        _context97.next = 62;
+                        _context97.next = 69;
                         break;
 
                      case 37:
@@ -4568,7 +4573,7 @@ var _class = function () {
 
                         res.set('Content-Type', 'text/plain');
                         resultString = result.toString();
-                        _context97.next = 62;
+                        _context97.next = 69;
                         break;
 
                      case 42:
@@ -4582,25 +4587,26 @@ var _class = function () {
 
                      case 47:
                         if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html' || this.isHtmlDomain(req))) {
-                           _context97.next = 60;
+                           _context97.next = 67;
                            break;
                         }
 
+                        title = req.path;
                         resultArray = [];
 
                         if (!(result === null)) {
-                           _context97.next = 54;
+                           _context97.next = 55;
                            break;
                         }
 
                         this.sendStatusMessage(req, res, 404, reqx.key ? '\'' + reqx.key + '\' is empty' : 'Empty');
                         return _context97.abrupt('return');
 
-                     case 54:
+                     case 55:
                         if (lodash.isString(result)) {
                            resultString = result;
                         } else if (lodash.isArray(result)) {
-                           resultString = '<b>length</b> ' + result.length;
+                           //resultString = `${result.length} items`;
                            resultArray = result;
                         } else if (lodash.isObject(result)) {
                            //resultString = `<b>keys</b> ${Object.keys(result).join(' ')}`;
@@ -4611,31 +4617,45 @@ var _class = function () {
                            resultString = result.toString();
                         }
 
-                     case 55:
+                     case 56:
                         res.set('Content-Type', 'text/html');
+                        content = [];
+
+                        this.logger.debug('sendResult reqx', reqx, command.key, reqx.key, resultString, resultArray.length);
+                        if (command.key) {
+                           content.push('<div style=\'' + _styles2.default.result.commandKey + '\'>' + command.key + '</div>');
+                        }
+                        if (reqx.key) {
+                           title = reqx.key;
+                           content.push('<div style=\'' + _styles2.default.result.reqKey + '\'>' + reqx.key + '</div>');
+                        }
+                        if (resultString) {
+                           content.push('<div style=\'' + _styles2.default.result.resultString + '\'>' + resultString + '</div>');
+                        }
+                        if (resultArray.length) {
+                           content.push('<pre style=\'' + _styles2.default.result.resultArray + '\'>' + resultArray.join('\n') + '</pre>');
+                        }
                         if (reqx.key) {
                            res.send(new _Page2.default().render({
-                              req: req,
-                              title: reqx.key,
-                              content: '\n               <div style=\'font-size: 12pt; font-style: italic\'>' + command.key + '</div>\n               <div style=\'padding-top: 4px; font-size: 16pt; font-weight: bold;\'>' + reqx.key + '</div>\n               <div style=\'padding-top: 8px; font-size: 12pt; font-family: monospace\'>' + resultString + '</div>\n               <pre style=\'line-height: 2; margin: 0\'>\n               ' + resultArray.join('\n') + '\n               </pre>\n               '
+                              req: req, reqx: reqx, title: title,
+                              content: content.join('\n')
                            }));
                         } else {
                            res.send(new _Page2.default().render({
-                              req: req,
-                              title: req.path,
-                              content: '<h3>' + resultString + '</h3>\n               <pre>\n               ' + resultArray.join('\n') + '\n               </pre>\n               '
+                              req: req, reqx: reqx, title: title,
+                              content: content.join('\n')
                            }));
                         }
                         return _context97.abrupt('return');
 
-                     case 60:
+                     case 67:
                         this.sendError(req, res, { message: 'Invalid default format: ' + this.config.defaultFormat });
                         return _context97.abrupt('return');
 
-                     case 62:
+                     case 69:
                         res.send(resultString + '\n');
 
-                     case 63:
+                     case 70:
                      case 'end':
                         return _context97.stop();
                   }

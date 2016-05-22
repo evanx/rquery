@@ -195,9 +195,11 @@ function assignDeps(g) {
    g.Files = require('./Files');
    g.Metas = require('./Metas');
    g.Millis = require('./Millis');
+   g.Objects = require('./Objects');
    g.Promises = require('./Promises');
    g.Requests = require('./Requests');
    g.Strings = require('./Strings');
+   g.Styles = require('./Styles');
    g.Values = require('./Values');
 }
 

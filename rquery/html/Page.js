@@ -14,12 +14,29 @@ export default class {
    render(props) {
       this.props = props;
       logger.debug('props', Object.keys(props));
-      const content = props.content.replace(/\n\s*/g, '\n');
+      let content = '';
+      if (lodash.isArray(props.content)) {
+         content = props.content.join('\n');
+      } else if (lodash.isString(props.content)) {
+         content = props.content;
+      } else {
+         logger.error('props.content type', typeof props.content);
+         content = props.content.toString();
+      }
+      content = content.replace(/\n\s*/g, '\n');
+      this.reqx = props.reqx || {};
+      let helpScript = '';
+      if (this.reqx.helpPath) {
+         helpScript = `window.location.pathname = '${this.reqx.helpPath}'`;
+      }
       return `
       <html>
       <head>
       <title>${props.title}</title>
       <style>
+         a {
+            text-decoration: none;
+         }
          pre {
             background-color: #f8f8f8;
             padding: 5px;
@@ -28,7 +45,11 @@ export default class {
       <meta name='viewport' content=${viewportContentArray.join(', ')}/>
       </head>
       <body style='padding: ${this.bodyPadding(props)}; max-width: 768px'>
+      <header>
+      </header>
+      <article onClick="${helpScript}">
       ${content}
+      </article>
       </body>
       </html>
       `;

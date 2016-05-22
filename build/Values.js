@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
    value: true
 });
 exports.isDefined = isDefined;
-exports.filterKeys = filterKeys;
+exports.isInteger = isInteger;
 
 var logger = Loggers.create(__filename, 'info');
 
@@ -12,9 +12,7 @@ function isDefined(value) {
    return value !== undefined;
 }
 
-function filterKeys(object, other, fn) {
-   return Object.keys(object).filter(function (key) {
-      return fn(key, object[key], other[key]);
-   });
+function isInteger(value) {
+   return parseInt(value) === value;
 }
 //# sourceMappingURL=Values.js.map
