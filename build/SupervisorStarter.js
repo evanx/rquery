@@ -200,6 +200,7 @@ function assignDeps(g) {
    g.Requests = require('./Requests');
    g.Strings = require('./Strings');
    g.Styles = require('./Styles');
+   g.HtmlElements = require('./HtmlElements');
    g.Values = require('./Values');
 }
 

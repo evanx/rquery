@@ -1271,6 +1271,12 @@ export default class {
             assert(account, 'account');
             assert(keyspace, 'keyspace');
             const accountKey = this.accountKeyspace(account, keyspace);
+            const helpPath = `/ak/${account}/${keyspace}/help`;
+            const reqx = {account, keyspace, accountKey, key, helpPath, command};
+            if (key) {
+               reqx.keyspaceKey = this.keyspaceKey(account, keyspace, key);
+            }
+            req.rquery = reqx;
             let v;
             //await this.migrateKeyspace(req.params);
             v = this.validateAccount(account);
@@ -1304,6 +1310,9 @@ export default class {
                   multi.smembers(this.adminKey('account', account, 'certs'));
                }
             });
+            Objects.translate({time, registered, admined, accessed}, reqx, (key, value) => {
+               return parseInt(value);
+            });
             v = this.validateAccess({command, req, account, keyspace, time, registered, admined, accessed, certs});
             if (v) {
                this.sendStatusMessage(req, res, 403, v);
@@ -1334,11 +1343,6 @@ export default class {
                }
             }
             const multi = this.redis.multi();
-            const helpPath = `/ak/${account}/${keyspace}/help`;
-            const reqx = {time, account, keyspace, accountKey, key, helpPath};
-            if (key) {
-               reqx.keyspaceKey = this.keyspaceKey(account, keyspace, key);
-            }
             multi.sadd(this.adminKey('keyspaces'), keyspace);
             multi.hset(accountKey, 'accessed', time);
             if (command && command.access === 'admin') {
@@ -1617,7 +1621,7 @@ export default class {
          let title = req.path;
          let resultArray = [];
          if (result === null) {
-            this.sendStatusMessage(req, res, 404, reqx.key? `'${reqx.key}' is empty` : 'Empty');
+            this.sendStatusMessage(req, res, 404, reqx.key);
             return;
          } else if (lodash.isString(result)) {
             resultString = result;
@@ -1709,7 +1713,18 @@ export default class {
       }
    }
 
+   sendCommandError(command, req, res, reqx, err) {
+      this.logger.warn(err);
+      try {
+         this.sendStatusMessage(req, res, 500, err);
+      } catch (error) {
+         this.logger.error(error);
+      }
+   }
+
    sendStatusMessage(req, res, statusCode, err) {
+      const reqx = req.rquery || {};
+      const command = reqx.command || {};
       this.logger.warn('status', req.path, statusCode, typeof err, err);
       let messageLines = [];
       if (!err) {
@@ -1752,12 +1767,11 @@ export default class {
          res.status(statusCode).send(new Page().render({
             req,
             title,
-            content: `
-            <h2>Status ${statusCode}: ${title}</h2>
-            <pre>
-            ${messageLines.join('\n')}
-            </pre>
-            `
+            content: [
+               HtmlElements.styled('div', styles.error.status, `Status ${statusCode}`),
+               HtmlElements.styled('div', styles.error.message, title),
+               HtmlElements.styled('pre', styles.error.detail, messageLines)
+            ]
          }));
       } else {
          this.logger.warn('status lines', req.path, statusCode, typeof err, Object.keys(err), messageLines.length);

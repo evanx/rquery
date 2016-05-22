@@ -3928,7 +3928,7 @@ var _class = function () {
                         case 0:
                            _context95.prev = 0;
                            return _context95.delegateYield(regeneratorRuntime.mark(function _callee93() {
-                              var _req$params11, account, keyspace, key, timeout, accountKey, v, isSecureAccount, _ref76, _ref77, _ref77$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, helpPath, reqx, expire, result;
+                              var _req$params11, account, keyspace, key, timeout, accountKey, helpPath, reqx, v, isSecureAccount, _ref76, _ref77, _ref77$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, expire, result;
 
                               return regeneratorRuntime.wrap(function _callee93$(_context94) {
                                  while (1) {
@@ -3943,13 +3943,20 @@ var _class = function () {
                                           assert(account, 'account');
                                           assert(keyspace, 'keyspace');
                                           accountKey = _this14.accountKeyspace(account, keyspace);
+                                          helpPath = '/ak/' + account + '/' + keyspace + '/help';
+                                          reqx = { account: account, keyspace: keyspace, accountKey: accountKey, key: key, helpPath: helpPath, command: command };
+
+                                          if (key) {
+                                             reqx.keyspaceKey = _this14.keyspaceKey(account, keyspace, key);
+                                          }
+                                          req.rquery = reqx;
                                           v = void 0;
                                           //await this.migrateKeyspace(req.params);
 
                                           v = _this14.validateAccount(account);
 
                                           if (!v) {
-                                             _context94.next = 13;
+                                             _context94.next = 17;
                                              break;
                                           }
 
@@ -3958,11 +3965,11 @@ var _class = function () {
                                              v: void 0
                                           });
 
-                                       case 13:
+                                       case 17:
                                           v = _this14.validateKeyspace(keyspace);
 
                                           if (!v) {
-                                             _context94.next = 17;
+                                             _context94.next = 21;
                                              break;
                                           }
 
@@ -3971,11 +3978,11 @@ var _class = function () {
                                              v: void 0
                                           });
 
-                                       case 17:
+                                       case 21:
                                           v = _this14.validateKey(key);
 
                                           if (!v) {
-                                             _context94.next = 21;
+                                             _context94.next = 25;
                                              break;
                                           }
 
@@ -3984,14 +3991,14 @@ var _class = function () {
                                              v: void 0
                                           });
 
-                                       case 21:
+                                       case 25:
                                           if (!timeout) {
-                                             _context94.next = 25;
+                                             _context94.next = 29;
                                              break;
                                           }
 
                                           if (/^[0-9]$/.test(timeout)) {
-                                             _context94.next = 25;
+                                             _context94.next = 29;
                                              break;
                                           }
 
@@ -4000,9 +4007,9 @@ var _class = function () {
                                              v: void 0
                                           });
 
-                                       case 25:
+                                       case 29:
                                           isSecureAccount = !/^pub$/.test(account);
-                                          _context94.next = 28;
+                                          _context94.next = 32;
                                           return _this14.redis.multiExecAsync(function (multi) {
                                              multi.time();
                                              multi.hget(accountKey, 'registered');
@@ -4013,7 +4020,7 @@ var _class = function () {
                                              }
                                           });
 
-                                       case 28:
+                                       case 32:
                                           _ref76 = _context94.sent;
                                           _ref77 = _slicedToArray(_ref76, 5);
                                           _ref77$ = _slicedToArray(_ref77[0], 1);
@@ -4023,10 +4030,13 @@ var _class = function () {
                                           accessed = _ref77[3];
                                           certs = _ref77[4];
 
+                                          Objects.translate({ time: time, registered: registered, admined: admined, accessed: accessed }, reqx, function (key, value) {
+                                             return parseInt(value);
+                                          });
                                           v = _this14.validateAccess({ command: command, req: req, account: account, keyspace: keyspace, time: time, registered: registered, admined: admined, accessed: accessed, certs: certs });
 
                                           if (!v) {
-                                             _context94.next = 40;
+                                             _context94.next = 45;
                                              break;
                                           }
 
@@ -4035,84 +4045,79 @@ var _class = function () {
                                              v: void 0
                                           });
 
-                                       case 40:
+                                       case 45:
                                           hostname = void 0;
 
                                           if (!(req.hostname === _this14.config.hostname)) {
-                                             _context94.next = 44;
+                                             _context94.next = 49;
                                              break;
                                           }
 
-                                          _context94.next = 56;
+                                          _context94.next = 61;
                                           break;
 
-                                       case 44:
+                                       case 49:
                                           if (!lodash.endsWith(req.hostname, _this14.config.keyspaceHostname)) {
-                                             _context94.next = 56;
+                                             _context94.next = 61;
                                              break;
                                           }
 
                                           hostname = req.hostname.replace(/\..*$/, '');
-                                          _context94.next = 48;
+                                          _context94.next = 53;
                                           return _this14.redis.hgetallAsync(_this14.adminKey('host', hostname));
 
-                                       case 48:
+                                       case 53:
                                           hostHashes = _context94.sent;
 
                                           if (hostHashes) {
-                                             _context94.next = 51;
+                                             _context94.next = 56;
                                              break;
                                           }
 
                                           throw new ValidationError('Invalid hostname: ' + hostname);
 
-                                       case 51:
+                                       case 56:
                                           _this14.logger.debug('hostHashes', hostHashes);
 
                                           if (hostHashes.keyspaces) {
-                                             _context94.next = 54;
+                                             _context94.next = 59;
                                              break;
                                           }
 
                                           throw new ValidationError('Invalid hostname: ' + hostname);
 
-                                       case 54:
+                                       case 59:
                                           if (lodash.includes(hostHashes.keyspaces, keyspace)) {
-                                             _context94.next = 56;
+                                             _context94.next = 61;
                                              break;
                                           }
 
                                           throw new ValidationError('Invalid keyspace: ' + keyspace);
 
-                                       case 56:
+                                       case 61:
                                           if (keyspace) {
-                                             _context94.next = 58;
+                                             _context94.next = 63;
                                              break;
                                           }
 
                                           throw new ValidationError('Missing keyspace: ' + req.path);
 
-                                       case 58:
+                                       case 63:
                                           if (!timeout) {
-                                             _context94.next = 61;
+                                             _context94.next = 66;
                                              break;
                                           }
 
                                           if (!(timeout < 1 || timeout > 10)) {
-                                             _context94.next = 61;
+                                             _context94.next = 66;
                                              break;
                                           }
 
                                           throw new ValidationError('Timeout must range from 1 to 10 seconds: ' + timeout);
 
-                                       case 61:
+                                       case 66:
                                           multi = _this14.redis.multi();
-                                          helpPath = '/ak/' + account + '/' + keyspace + '/help';
-                                          reqx = { time: time, account: account, keyspace: keyspace, accountKey: accountKey, key: key, helpPath: helpPath };
 
-                                          if (key) {
-                                             reqx.keyspaceKey = _this14.keyspaceKey(account, keyspace, key);
-                                          }
                                           multi.sadd(_this14.adminKey('keyspaces'), keyspace);
                                           multi.hset(accountKey, 'accessed', time);
                                           if (command && command.access === 'admin') {
@@ -4125,25 +4130,25 @@ var _class = function () {
                                              multi.expire(reqx.keyspaceKey, expire);
                                              _this14.logger.debug('expire', reqx.keyspaceKey, expire);
                                           }
-                                          _context94.next = 71;
+                                          _context94.next = 73;
                                           return multi.execAsync();
 
-                                       case 71:
-                                          _context94.next = 73;
+                                       case 73:
+                                          _context94.next = 75;
                                           return fn(req, res, reqx, multi);
 
-                                       case 73:
+                                       case 75:
                                           result = _context94.sent;
 
                                           if (!(result !== undefined)) {
-                                             _context94.next = 77;
+                                             _context94.next = 79;
                                              break;
                                           }
 
-                                          _context94.next = 77;
+                                          _context94.next = 79;
                                           return _this14.sendResult(command, req, res, reqx, result);
 
-                                       case 77:
+                                       case 79:
                                        case 'end':
                                           return _context94.stop();
                                     }
@@ -4599,7 +4604,7 @@ var _class = function () {
                            break;
                         }
 
-                        this.sendStatusMessage(req, res, 404, reqx.key ? '\'' + reqx.key + '\' is empty' : 'Empty');
+                        this.sendStatusMessage(req, res, 404, reqx.key);
                         return _context97.abrupt('return');
 
                      case 55:
@@ -4726,8 +4731,20 @@ var _class = function () {
          }
       }
    }, {
+      key: 'sendCommandError',
+      value: function sendCommandError(command, req, res, reqx, err) {
+         this.logger.warn(err);
+         try {
+            this.sendStatusMessage(req, res, 500, err);
+         } catch (error) {
+            this.logger.error(error);
+         }
+      }
+   }, {
       key: 'sendStatusMessage',
       value: function sendStatusMessage(req, res, statusCode, err) {
+         var reqx = req.rquery || {};
+         var command = reqx.command || {};
          this.logger.warn('status', req.path, statusCode, typeof err === 'undefined' ? 'undefined' : _typeof(err), err);
          var messageLines = [];
          if (!err) {
@@ -4770,7 +4787,7 @@ var _class = function () {
             res.status(statusCode).send(new _Page2.default().render({
                req: req,
                title: title,
-               content: '\n            <h2>Status ' + statusCode + ': ' + title + '</h2>\n            <pre>\n            ' + messageLines.join('\n') + '\n            </pre>\n            '
+               content: [HtmlElements.styled('div', _styles2.default.error.status, 'Status ' + statusCode), HtmlElements.styled('div', _styles2.default.error.message, title), HtmlElements.styled('pre', _styles2.default.error.detail, messageLines)]
             }));
          } else {
             this.logger.warn('status lines', req.path, statusCode, typeof err === 'undefined' ? 'undefined' : _typeof(err), Object.keys(err), messageLines.length);

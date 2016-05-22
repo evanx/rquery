@@ -4,15 +4,16 @@
 - HTTP API for Redis queries
 
 Notable features (June 2016):
-- Register-expire for adhoc ephemeral keyspaces
+- Register adhoc ephemeral keyspaces
 - Identity verification via Telegram.org chat bot `@redishub_bot`
-- Access secured via client-authenticated SSL for `secure.redishub.com` and `cli.redishub.com`
+- Access secured via client-authenticated SSL
 - Generate tokens for Google Authenticator
+- Excrypt keys using client cert via `set-encrypt`
 
 TODO (June 2016):
-- refactor (separate auth modules for OTP, Telegram)
-- grant and revoke account access (via Bot)
+- grant and revoke cert account access
 - keyspace role-based access control
+- refactor (separate auth modules for OTP, Telegram)
 
 
 ### Status

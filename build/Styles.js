@@ -11,7 +11,7 @@ var logger = Loggers.create(module.filename, 'info');
 var IntegerKeys = ['lineHeight'];
 
 function renderStyles(object) {
-   return Objects.translate(object, function (key, value) {
+   return Objects.translate(object, {}, function (key, value) {
       return { key: key, value: renderKeys(value) };
    });
 }

@@ -6,6 +6,23 @@ module.exports = {
          textDecoration: 'none'
       }
    }),
+   error: Styles.renderStyles({
+      status: {
+         fontSize: 14,
+         fontStyle: 'italic',
+         color: '#424242'
+      },
+      message: {
+         paddingTop: 4,
+         fontSize: 20,
+         fontWeight: 'bold'
+      },
+      detail: {
+         lineHeight: 2,
+         margin: [10, 0, 0, 0],
+         borderTop: 'solid 1px #777777'
+      }
+   }),
    result: Styles.renderStyles({
       commandKey: {
          fontSize: 18,
