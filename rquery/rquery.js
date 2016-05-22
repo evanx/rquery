@@ -441,7 +441,7 @@ export default class {
             hostUrl = `https://${req.hostname}`;
          }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
-         const message = `Try endpoints below. Click anywhere on the result to return.`;
+         const message = `Try endpoints below. (There, click anywhere on the result to return.)`;
          const exampleUrls = [
             `${hostUrl}/ak/${account}/${keyspace}/set/mykey/myvalue`,
             `${hostUrl}/ak/${account}/${keyspace}/get/mykey`,

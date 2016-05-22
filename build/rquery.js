@@ -1237,7 +1237,7 @@ var _class = function () {
                            _this5.logger.ndebug('help', req.params, _this5.commands.map(function (command) {
                               return command.key;
                            }).join('/'));
-                           message = 'Try endpoints below. Click anywhere on the result to return.';
+                           message = 'Try endpoints below. (There, click anywhere on the result to return.)';
                            exampleUrls = [hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/hset/hashes1/field1/value1', hostUrl + '/ak/' + account + '/' + keyspace + '/hgetall/hashes1', hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
                            return _context24.abrupt('return', { message: message, exampleUrls: exampleUrls, keyspaceCommands: _this5.listCommands('keyspace') });
 
