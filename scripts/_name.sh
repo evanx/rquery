@@ -5,12 +5,19 @@ echo $name
 mkdir -p tmp
 mv -f ~/.pm2/logs/${name}* tmp/. || echo 'no pm2 logs'
 
-port=88
-config=demo
-if echo $name | grep -q 'secure'
+port=4
+config=secure
+if echo $name | grep -q 'demo'
 then
-  port=44
-  config=secure
+  port=8
+  config=demo
+fi
+if echo $name | grep -q 'test'
+then
+  port=${port}9
+  config=test
+else
+  port=${port}${port}
 fi
 if echo $name | grep -q 'left'
 then
