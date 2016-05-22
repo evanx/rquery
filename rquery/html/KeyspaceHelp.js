@@ -10,7 +10,7 @@ export default class {
          req: props.req,
          title: `${props.config.serviceLabel} | ${props.reqx.account}/${props.reqx.keyspace}`,
          content: `
-         <h1>/ak/${props.reqx.account}/${props.reqx.keyspace}</h1>
+         <h2>/ak/${props.reqx.account}/${props.reqx.keyspace}</h2>
          <h3>${props.result.message}</h3>
          ${this.renderUrls(this.props.result.exampleUrls).join('\n')}
          <br/>
@@ -21,7 +21,7 @@ export default class {
 
    renderUrls(urls) {
       return urls.map((url, index) => {
-         const [matching, hostUrl, path] = url.match(/^(https?:\/\/[^\/]+)(\/\S+)$/);
+         const [matching, hostUrl, path] = url.match(/^(https?:\/\/[^\/]+)\/ak\/[^\/]+\/[^\/]+\/(\S+)$/) || [];
          if (matching) {
             return `
             <div style='line-height: 1.5'>

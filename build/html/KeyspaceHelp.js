@@ -25,20 +25,20 @@ var _class = function () {
          return {
             req: props.req,
             title: props.config.serviceLabel + ' | ' + props.reqx.account + '/' + props.reqx.keyspace,
-            content: '\n         <h1>/ak/' + props.reqx.account + '/' + props.reqx.keyspace + '</h1>\n         <h3>' + props.result.message + '</h3>\n         ' + this.renderUrls(this.props.result.exampleUrls).join('\n') + '\n         <br/>\n         ' + this.renderCommands(this.props.result.keyspaceCommands).join('\n') + '\n         '
+            content: '\n         <h2>/ak/' + props.reqx.account + '/' + props.reqx.keyspace + '</h2>\n         <h3>' + props.result.message + '</h3>\n         ' + this.renderUrls(this.props.result.exampleUrls).join('\n') + '\n         <br/>\n         ' + this.renderCommands(this.props.result.keyspaceCommands).join('\n') + '\n         '
          };
       }
    }, {
       key: 'renderUrls',
       value: function renderUrls(urls) {
          return urls.map(function (url, index) {
-            var _url$match = url.match(/^(https?:\/\/[^\/]+)(\/\S+)$/);
+            var _ref = url.match(/^(https?:\/\/[^\/]+)\/ak\/[^\/]+\/[^\/]+\/(\S+)$/) || [];
 
-            var _url$match2 = _slicedToArray(_url$match, 3);
+            var _ref2 = _slicedToArray(_ref, 3);
 
-            var matching = _url$match2[0];
-            var hostUrl = _url$match2[1];
-            var path = _url$match2[2];
+            var matching = _ref2[0];
+            var hostUrl = _ref2[1];
+            var path = _ref2[2];
 
             if (matching) {
                return '\n            <div style=\'line-height: 1.5\'>\n            <a href=' + url + '>' + path + '</a>\n            </div>\n            ';

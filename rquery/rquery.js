@@ -262,7 +262,11 @@ export default class {
             .map(route => `${hostUrl}${route}`)
             ,
             misc: routes
-            .filter(route => route.includes(':') && !route.includes('telegram') && !/\:(keyspace|account)/.test(route))
+            .filter(route => route.includes(':') && !route.includes('telegram') && !/\:(account|access)/.test(route))
+            .map(route => `${route}`)
+            ,
+            ephemeral: routes
+            .filter(route => route.includes('-ephemeral') && route !== '/register-ephemeral')
             .map(route => `${route}`)
             ,
             telegram: routes
@@ -272,7 +276,7 @@ export default class {
             account: accountOnlyRoutes.map(route => `${route}`)
             ,
             accountKeyspace: routes
-            .filter(route => route.includes(':account') && route.includes(':keyspace'))
+            .filter(route => route.includes(':account') && route.includes(':keyspace/'))
             .map(route => `${route}`)
          };
       });
@@ -435,7 +439,7 @@ export default class {
             hostUrl = `https://${req.hostname}`;
          }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
-         const message = `Usage: e.g. sadd/myset/myvalue, smembers/myset etc as follows:`;
+         const message = `Try endpoints e.g.:`;
          const exampleUrls = [
             `${hostUrl}/ak/${account}/${keyspace}/set/mykey/myvalue`,
             `${hostUrl}/ak/${account}/${keyspace}/get/mykey`,
@@ -934,6 +938,13 @@ export default class {
          return this.registerEphemeral(req, res);
       });
       this.addPublicCommand({
+         key: 'register-ephemeral-named',
+         params: ['keyspace', 'access']
+      }, async (req, res) => {
+         req.params = {account: 'pub'};
+         return this.registerEphemeral(req, res);
+      });
+      this.addPublicCommand({
          key: 'register-ephemeral-access',
          params: ['access']
       }, async (req, res) => {
@@ -941,12 +952,15 @@ export default class {
          return this.registerEphemeral(req, res);
       });
       if (this.config.secureDomain) {
-         this.expressApp.get(this.config.location + '/register-account-telegram/:account', (req, res) => {
-            this.registerAccount(req, res);
+         this.addPublicCommand({
+            key: 'register-account-telegram',
+            params: ['account']
+         }, async (req, res) => {
+            return this.registerAccount(req, res);
          });
          this.addPublicCommand({
             key: 'register-cert'
-         }, async (req, res, {}, multi) => {
+         }, async (req, res) => {
             const dn = req.get('ssl_client_s_dn');
             const clientCert = req.get('ssl_client_cert');
             if (!clientCert) throw {message: 'No client cert'};
@@ -1159,7 +1173,7 @@ export default class {
       } else if (access === 'add') {
          keyspace = '+' + keyspace;
       } else if (access) {
-         this.sendError(req, res, {message: 'Access Unimplemented: ' + access});
+         this.sendError(req, res, {message: 'Access unimplemented: ' + access, hint: 'Try access: add'});
       }
       if (previousError) {
          this.logger.warn('registerEphemeral retry');
@@ -1192,9 +1206,9 @@ export default class {
             throw {message: 'Keyspace already exists'};
          }
          const replyPath = ['ak', account, keyspace].join('/');
-         this.logger.debug('registerEphemeral', keyspace, clientIp, replyPath);
+         this.logger.debug('registerEphemeral replyPath', replyPath);
          if (this.isBrowser(req)) {
-            res.redirect(302, [replyPath, 'help'].join('/'));
+            res.redirect(302, ['', replyPath, 'help'].join('/'));
          } else {
             return replyPath;
          }
