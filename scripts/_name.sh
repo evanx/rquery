@@ -19,7 +19,7 @@ elif echo $name | grep -q 'right'
 then
   port=${port}1
 else
-  port=${port}0
+  port=${port}9
 fi
 instance=1
 if echo $name | grep -q '[0-9]$'

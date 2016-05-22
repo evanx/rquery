@@ -122,13 +122,16 @@ Then generate a client cert in bash:
   mkdir .redishub
   cd .redishub
   pwd
-  echo -n 'Enter your Telegram.org username: '
+  echo -n 'Enter your Telegram.org username, to be used as your private account name: '
   read tuser
   if curl -s https://cli.redishub.com/verify-user-telegram/$tuser | grep 'OK'
   then
+    account=$tuser
+    echo "Verified Telegram user. It will be used as your Redishub account name: $account"
     echo $tuser > tuser
-    subj="/CN=$tuser/OU="`hostname`
-    echo subj $subj
+    echo $account > account
+    subj="/CN=$tuser%$USER@`hostname`/OU=admin%$account@redishub.com"
+    echo "Generating a certificate with subject: $subj"
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
       -subj "$subj" \
       -out cert.pem \
@@ -136,8 +139,8 @@ Then generate a client cert in bash:
     cat privkey.pem cert.pem > privcert.pem
     pwd
     ls -l
-    sha1sum ~/.redishub/privcert.pem
-    openssl x509 -text -in ~/.redishub/privcert.pem | grep 'CN='    
+    sha1sum privcert.pem
+    openssl x509 -text -in privcert.pem | grep 'CN='    
   fi
 )
 ```
@@ -151,7 +154,7 @@ tuser=`cat ~/.redishub/tuser` \
 We can create a bash function and alias for keyspace commands in `~/.bashrc:`
 ```shell
 rhdebug() {
-   [ -t 1 ] && >&2 echo -e "\e[33m${*}\e[39m"   
+   [ -t 1 -a "${RHLEVEL:-info}" = 'debug' ] && >&2 echo -e "\e[33m${*}\e[39m"
 }
 
 rhcurl() {
