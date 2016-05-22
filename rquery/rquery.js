@@ -1645,7 +1645,8 @@ export default class {
             content.push(`<div style='${styles.result.reqKey}'>${reqx.key}</div>`);
          }
          if (resultString) {
-            content.push(`<div style='${styles.result.resultString}'>${resultString}</div>`);
+            resultArray.push(resultString);
+            //content.push(`<div style='${styles.result.resultString}'>${resultString}</div>`);
          }
          if (resultArray.length) {
             content.push(`<pre style='${styles.result.resultArray}'>${resultArray.join('\n')}</pre>`);

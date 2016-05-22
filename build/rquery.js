@@ -4635,7 +4635,8 @@ var _class = function () {
                            content.push('<div style=\'' + _styles2.default.result.reqKey + '\'>' + reqx.key + '</div>');
                         }
                         if (resultString) {
-                           content.push('<div style=\'' + _styles2.default.result.resultString + '\'>' + resultString + '</div>');
+                           resultArray.push(resultString);
+                           //content.push(`<div style='${styles.result.resultString}'>${resultString}</div>`);
                         }
                         if (resultArray.length) {
                            content.push('<pre style=\'' + _styles2.default.result.resultArray + '\'>' + resultArray.join('\n') + '</pre>');
