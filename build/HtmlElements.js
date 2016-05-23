@@ -3,11 +3,24 @@
 Object.defineProperty(exports, "__esModule", {
    value: true
 });
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+exports.renderContent = renderContent;
 exports.el = el;
 exports.div = div;
 exports.styled = styled;
 
 var logger = Loggers.create(__filename, 'info');
+
+function renderContent(content) {
+   if (lodash.isArray(content)) {
+      content = content.join('\n');
+   } else if (lodash.isString(content)) {} else if (lodash.isInteger(content)) {} else {
+      logger.warn('content type', typeof content === 'undefined' ? 'undefined' : _typeof(content));
+   }
+   return content.toString().replace(/\n\s*/g, '\n');
+}
 
 function el(name, attributes) {
    var content = [];

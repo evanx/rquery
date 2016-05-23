@@ -653,7 +653,7 @@ var _class = function () {
 
                            case 4:
                               res.set('Content-Type', 'text/html');
-                              res.send(new _Page2.default().render(new _Help2.default().render({
+                              res.send((0, _Page2.default)((0, _Help2.default)({
                                  config: _this5.config, req: req, result: result
                               })));
 
@@ -817,7 +817,7 @@ var _class = function () {
                                  _this5.logger.debug('brucedown', htmlResult);
                               });
                            } else {
-                              content = new _Page2.default().render({
+                              content = (0, _Page2.default)({
                                  config: _this5.config,
                                  req: req,
                                  title: _this5.config.serviceLabel,
@@ -1185,7 +1185,7 @@ var _class = function () {
                               }
 
                               res.set('Content-Type', 'text/html');
-                              res.send(new _Page2.default().render(new _KeyspaceHelp2.default().render({
+                              res.send((0, _Page2.default)((0, _KeyspaceHelp2.default)({
                                  config: _this5.config, req: req, reqx: reqx, result: result
                               })));
                               _context23.next = 11;
@@ -4657,12 +4657,12 @@ var _class = function () {
                            content.push('<pre style=\'' + _styles2.default.result.resultArray + '\'>' + resultArray.join('\n') + '</pre>');
                         }
                         if (reqx.key) {
-                           res.send(new _Page2.default().render({
+                           res.send((0, _Page2.default)({
                               config: this.config, req: req, reqx: reqx, title: title,
                               content: content.join('\n')
                            }));
                         } else {
-                           res.send(new _Page2.default().render({
+                           res.send((0, _Page2.default)({
                               config: this.config, req: req, reqx: reqx, title: title,
                               content: content.join('\n')
                            }));
@@ -4800,7 +4800,7 @@ var _class = function () {
          }
          if (this.isBrowser(req)) {
             res.set('Content-Type', 'text/html');
-            res.status(statusCode).send(new _Page2.default().render({
+            res.status(statusCode).send((0, _Page2.default)({
                config: this.config, req: req, reqx: reqx, title: title,
                content: [HtmlElements.styled('div', _styles2.default.error.status, 'Status ' + statusCode), HtmlElements.styled('div', _styles2.default.error.message, title), HtmlElements.styled('pre', _styles2.default.error.detail, messageLines)]
             }));

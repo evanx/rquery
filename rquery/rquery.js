@@ -14,9 +14,9 @@ import ReactDOMServer from 'react-dom/server';
 import * as Files from './Files';
 import * as Express from './Express';
 
-import Page from './html/Page';
-import Help from './html/Help';
-import KeyspaceHelp from './html/KeyspaceHelp';
+import {default as renderPage} from './html/Page';
+import {default as renderHelp} from './html/Help';
+import {default as renderKeyspaceHelp} from './html/KeyspaceHelp';
 import KeyspaceHelpPage from './jsx/KeyspaceHelpPage';
 
 import styles from './styles';
@@ -244,7 +244,7 @@ export default class {
                return result;
             } else {
                res.set('Content-Type', 'text/html');
-               res.send(new Page().render(new Help().render({
+               res.send(renderPage(renderHelp({
                   config: this.config, req, result
                })));
             }
@@ -304,7 +304,7 @@ export default class {
                      this.logger.debug('brucedown', htmlResult);
                   });
                } else {
-                  content = new Page().render({
+                  content = renderPage({
                      config: this.config,
                      req,
                      title: this.config.serviceLabel,
@@ -425,7 +425,7 @@ export default class {
          sendResult: async (req, res, reqx, result) => {
             if (true) {
                res.set('Content-Type', 'text/html');
-               res.send(new Page().render(new KeyspaceHelp().render({
+               res.send(renderPage(renderKeyspaceHelp({
                   config: this.config, req, reqx, result
                })));
             } else if (!this.isMobile(req)) {
@@ -1656,12 +1656,12 @@ export default class {
             content.push(`<pre style='${styles.result.resultArray}'>${resultArray.join('\n')}</pre>`);
          }
          if (reqx.key) {
-            res.send(new Page().render({
+            res.send(renderPage({
                config: this.config, req, reqx, title,
                content: content.join('\n')
             }));
          } else {
-            res.send(new Page().render({
+            res.send(renderPage({
                config: this.config, req, reqx, title,
                content: content.join('\n')
             }));
@@ -1769,7 +1769,7 @@ export default class {
       }
       if (this.isBrowser(req)) {
          res.set('Content-Type', 'text/html');
-         res.status(statusCode).send(new Page().render({
+         res.status(statusCode).send(renderPage({
             config: this.config, req, reqx, title,
             content: [
                HtmlElements.styled('div', styles.error.status, `Status ${statusCode}`),
