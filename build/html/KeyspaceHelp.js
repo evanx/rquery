@@ -9,10 +9,17 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 exports.default = function (props) {
    logger.debug('props', Object.keys(props));
    return Object.assign(props, {
-      title: props.config.serviceLabel + ' | ' + props.reqx.account + '/' + props.reqx.keyspace,
-      content: '\n      <h2>/ak/' + props.reqx.account + '/' + props.reqx.keyspace + '</h2>\n      <h3>' + props.result.message + '</h3>\n      ' + renderUrls(props.result.exampleUrls).join('\n') + '\n      <br/>\n      ' + renderCommands(props.result.keyspaceCommands).join('\n') + '\n      '
+      title: [props.reqx.account, props.reqx.keyspace].join('/'),
+      helpPath: ['ak', props.reqx.account, props.reqx.keyspace],
+      content: '\n      <h3>' + props.result.message + '</h3>\n      ' + renderUrls(props.result.exampleUrls).join('\n') + '\n      <br/>\n      ' + renderCommands(props.result.keyspaceCommands).join('\n') + '\n      '
    });
 };
+
+var _styles = require('./styles');
+
+var _styles2 = _interopRequireDefault(_styles);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var logger = Loggers.create(module.filename);
 
@@ -28,9 +35,9 @@ function renderUrls(urls) {
       var params = _ref2[3];
 
       if (matching) {
-         return '\n         <div style=\'line-height: 1.5\'>\n         <a href=' + url + '><b>' + command + '</b>' + (params || '') + '</a>\n         </div>\n         ';
+         return '\n         <div style="line-height:1.5">\n         <a href=' + url + '><b>' + command + '</b>' + (params || '') + '</a>\n         </div>\n         ';
       } else {
-         return '\n         <div style=\'line-height: 1.5\'>\n         <a href=' + url + '>' + url + '</a>\n         </div>\n         ';
+         return '\n         <div style="line-height:1.5">\n         <a href=' + url + '>' + url + '</a>\n         </div>\n         ';
       }
    });
 }

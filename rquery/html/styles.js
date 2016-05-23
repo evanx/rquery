@@ -5,6 +5,19 @@ module.exports = Styles.renderStyles({
          textDecoration: 'none'
       }
    },
+   header: {
+      container: {
+         display: 'block',
+         cursor: 'pointer'
+      },
+      icon: {
+         width: 20,
+         height: 20
+      },
+      title: {
+         fontSize: 18
+      }
+   },
    error: {
       status: {
          fontSize: 14,

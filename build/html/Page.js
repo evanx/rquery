@@ -11,10 +11,14 @@ exports.default = function (props) {
    var reqx = props.reqx || {};
    var helpScript = '';
    if (reqx.helpPath) {
-      helpScript = 'window.location.pathname = \'' + reqx.helpPath + '\'';
+      helpScript = 'window.location.pathname = "' + reqx.helpPath + '"';
    }
    return '\n   <html>\n   <head>\n   <title>' + props.title + '</title>\n   <style>\n   a {\n      text-decoration: none;\n   }\n   pre {\n      background-color: #f8f8f8;\n      padding: 5px;\n   }\n   </style>\n   <meta name="viewport" content="' + viewportContentArray.join(', ') + '"/>\n   </head>\n   <body style="padding: ' + bodyPadding(props) + '; max-width: 768px">\n   ' + (0, _Header2.default)(props) + '\n   <article onClick="' + helpScript + '" style="padding-top:10px">\n   ' + content + '\n   </article>\n   </body>\n   </html>\n   ';
 };
+
+var _styles = require('./styles');
+
+var _styles2 = _interopRequireDefault(_styles);
 
 var _Header = require('./Header');
 

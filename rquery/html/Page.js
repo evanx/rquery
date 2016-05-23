@@ -1,4 +1,5 @@
 
+import styles from './styles';
 
 import {default as renderHeader} from './Header';
 
@@ -19,7 +20,7 @@ export default function (props) {
    const reqx = props.reqx || {};
    let helpScript = '';
    if (reqx.helpPath) {
-      helpScript = `window.location.pathname = '${reqx.helpPath}'`;
+      helpScript = `window.location.pathname = "${reqx.helpPath}"`;
    }
    return `
    <html>

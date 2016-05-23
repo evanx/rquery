@@ -7,12 +7,17 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = function (props) {
    assert(props.config.assetsUrl, 'assetsUrl');
    var reqx = props.reqx || {};
-   var helpScript = '';
-   if (reqx.helpPath) {
-      helpScript = 'window.location.pathname = "' + reqx.helpPath + '"';
+   var homePath = Hx.renderPath(reqx.helpPath) || '/routes';
+   var clickScript = '';
+   if (homePath) {
+      clickScript = 'window.location.pathname=\'' + homePath + '\'';
    }
-   return '\n   <header style="" onClick="' + helpScript + '">\n   <a href="' + reqx.helpPath + '">\n      <img style="opacity:.5;min-height:20px\' src=\'' + props.config.assetsUrl + '/icomoon/png20-38/home.png"/>\n      <span style="">' + props.title + '</span>\n   </a>\n   </header>\n   ';
+   return '\n   <header style="' + _styles.header.container + '" onClick="' + clickScript + '">\n      <img style="' + _styles.header.icon + '" src="' + props.config.assetsUrl + '/icomoon/png20-38/home.png"/>\n      <span style="' + _styles.header.title + '">' + props.title + '</span>\n   </header>\n   ';
 };
 
+var _styles = require('./styles');
+
 var logger = Loggers.create(module.filename);
+
+logger.info('zz', _styles.header);
 //# sourceMappingURL=Header.js.map

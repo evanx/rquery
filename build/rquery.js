@@ -80,7 +80,7 @@ var _KeyspaceHelpPage = require('./jsx/KeyspaceHelpPage');
 
 var _KeyspaceHelpPage2 = _interopRequireDefault(_KeyspaceHelpPage);
 
-var _styles = require('./styles');
+var _styles = require('./html/styles');
 
 var _styles2 = _interopRequireDefault(_styles);
 

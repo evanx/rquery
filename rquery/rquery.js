@@ -19,7 +19,7 @@ import {default as renderHelp} from './html/Help';
 import {default as renderKeyspaceHelp} from './html/KeyspaceHelp';
 import KeyspaceHelpPage from './jsx/KeyspaceHelpPage';
 
-import styles from './styles';
+import styles from './html/styles';
 
 const unsupportedAuth = ['twitter.com', 'github.com', 'gitlab.com', 'bitbucket.org'];
 const supportedAuth = ['telegram.org'];

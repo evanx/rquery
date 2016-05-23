@@ -13,6 +13,14 @@ exports.renderValue = renderValue;
 var logger = Loggers.create(module.filename, 'debug');
 
 var IntegerKeys = ['lineHeight'];
+var CssKeys = Strings.splitSpace('\ncolor background\nwidth height\ndisplay position cursor\n');
+var CssKeyPrefixes = Strings.splitSpace('\nmargin padding border\nfont background min\n');
+var CssKeyRegex = new RegExp(createCssKeyRegexString());
+
+function createCssKeyRegexString() {
+   var prefixes = CssKeys.concat(CssKeyPrefixes);
+   return ['^(', prefixes.join('|'), ')'].join();
+}
 
 function renderStyles(object) {
    var styles = renderKeys(object, 'root');
@@ -69,6 +77,6 @@ function renderKey(key) {
 }
 
 function isCssKey(key) {
-   return IntegerKeys.includes(key) || key.match(/^(margin|padding|font|color|background)/);
+   return IntegerKeys.includes(key) || key.match(CssKeyRegex);
 }
 //# sourceMappingURL=Styles.js.map

@@ -202,6 +202,7 @@ function assignDeps(g) {
    g.Styles = require('./Styles');
    g.HtmlElements = require('./HtmlElements');
    g.Values = require('./Values');
+   g.Hx = g.HtmlElements;
 }
 
 assignDeps(global);

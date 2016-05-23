@@ -1,4 +1,6 @@
 
+import styles from './styles';
+
 const logger = Loggers.create(module.filename);
 
 export default function (props) {

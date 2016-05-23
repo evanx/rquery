@@ -9,10 +9,16 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 exports.default = function (props) {
    logger.debug('props', Object.keys(props));
    return Object.assign(props, {
-      title: 'Help | ' + props.config.serviceLabel,
-      content: '\n      <h1>' + props.config.serviceLabel + '</h1>\n      <h3>Basic</h3>\n      ' + renderUrls(props.result.common).join('\n') + '\n      <h3>Ephemeral</h3>\n      ' + renderPaths(props.result.ephemeral).join('\n') + '\n      <h3>Miscellaneous</h3>\n      ' + renderPaths(props.result.misc).join('\n') + '\n      <h3>Telegram</h3>\n      ' + renderPaths(props.result.telegram).join('\n') + '\n      ' + renderAccount(props.result.account) + '\n      <h3>Account keyspace</h3>\n      ' + renderPaths(props.result.accountKeyspace).join('\n') + '\n      '
+      title: props.config.serviceLabel,
+      content: '\n      <h3>Basic</h3>\n      ' + renderUrls(props.result.common).join('\n') + '\n      <h3>Ephemeral</h3>\n      ' + renderPaths(props.result.ephemeral).join('\n') + '\n      <h3>Miscellaneous</h3>\n      ' + renderPaths(props.result.misc).join('\n') + '\n      <h3>Telegram</h3>\n      ' + renderPaths(props.result.telegram).join('\n') + '\n      ' + renderAccount(props.result.account) + '\n      <h3>Account keyspace</h3>\n      ' + renderPaths(props.result.accountKeyspace).join('\n') + '\n      '
    });
 };
+
+var _styles = require('./styles');
+
+var _styles2 = _interopRequireDefault(_styles);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var logger = Loggers.create(module.filename);
 
@@ -35,9 +41,9 @@ function renderUrls(urls) {
 
       logger.debug('renderUrls', url, matching);
       if (matching) {
-         return '\n         <div style=\'line-height: 1.5\'>\n         <a href=' + url + '>' + path + '</a>\n         </div>\n         ';
+         return '\n         <div style="line-height:1.5">\n         <a href=' + url + '>' + path + '</a>\n         </div>\n         ';
       } else {
-         return '\n         <div style=\'line-height: 1.5\'>\n         <a href=' + url + '>' + url + '</a>\n         </div>\n         ';
+         return '\n         <div style="line-height:1.5">\n         <a href=' + url + '>' + url + '</a>\n         </div>\n         ';
       }
    });
 }

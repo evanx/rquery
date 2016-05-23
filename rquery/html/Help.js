@@ -1,12 +1,13 @@
 
+import styles from './styles';
+
 const logger = Loggers.create(module.filename);
 
 export default function (props) {
    logger.debug('props', Object.keys(props));
    return Object.assign(props, {
-      title: `Help | ${props.config.serviceLabel}`,
+      title: props.config.serviceLabel,
       content: `
-      <h1>${props.config.serviceLabel}</h1>
       <h3>Basic</h3>
       ${renderUrls(props.result.common).join('\n')}
       <h3>Ephemeral</h3>
@@ -38,13 +39,13 @@ function renderUrls(urls) {
       logger.debug('renderUrls', url, matching);
       if (matching) {
          return `
-         <div style='line-height: 1.5'>
+         <div style="line-height:1.5">
          <a href=${url}>${path}</a>
          </div>
          `;
       } else {
          return `
-         <div style='line-height: 1.5'>
+         <div style="line-height:1.5">
          <a href=${url}>${url}</a>
          </div>
          `;
