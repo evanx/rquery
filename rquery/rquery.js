@@ -245,7 +245,7 @@ export default class {
             } else {
                res.set('Content-Type', 'text/html');
                res.send(new Page().render(new Help().render({
-                  req, result, config: this.config
+                  config: this.config, req, result
                })));
             }
          }
@@ -305,6 +305,7 @@ export default class {
                   });
                } else {
                   content = new Page().render({
+                     config: this.config,
                      req,
                      title: this.config.serviceLabel,
                      content: marked(content.toString())
@@ -425,7 +426,7 @@ export default class {
             if (true) {
                res.set('Content-Type', 'text/html');
                res.send(new Page().render(new KeyspaceHelp().render({
-                  req, reqx, result, config: this.config
+                  config: this.config, req, reqx, result
                })));
             } else if (!this.isMobile(req)) {
                res.set('Content-Type', 'text/html');
@@ -441,7 +442,7 @@ export default class {
             hostUrl = `https://${req.hostname}`;
          }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
-         const message = `Try endpoints below. (There, click anywhere on the result to return.)`;
+         const message = `Try endpoints below.`;
          const exampleUrls = [
             `${hostUrl}/ak/${account}/${keyspace}/set/mykey/myvalue`,
             `${hostUrl}/ak/${account}/${keyspace}/get/mykey`,
@@ -1656,12 +1657,12 @@ export default class {
          }
          if (reqx.key) {
             res.send(new Page().render({
-               req, reqx, title,
+               config: this.config, req, reqx, title,
                content: content.join('\n')
             }));
          } else {
             res.send(new Page().render({
-               req, reqx, title,
+               config: this.config, req, reqx, title,
                content: content.join('\n')
             }));
          }
@@ -1769,8 +1770,7 @@ export default class {
       if (this.isBrowser(req)) {
          res.set('Content-Type', 'text/html');
          res.status(statusCode).send(new Page().render({
-            req,
-            title,
+            config: this.config, req, reqx, title,
             content: [
                HtmlElements.styled('div', styles.error.status, `Status ${statusCode}`),
                HtmlElements.styled('div', styles.error.message, title),

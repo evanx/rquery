@@ -11,6 +11,7 @@ module.exports = {
          serviceLabel: 'RedisHub Dev',
          port: 8765,
          location: '',
+         assetsUrl: 'https://test.redishub.com/assets',
          aboutUrl: 'https://github.com/evanx/redishub/blob/master/README.md',
          helpUrl: 'https://github.com/evanx/redishub/blob/master/README.md',
          indexCommand: 'getconfig',

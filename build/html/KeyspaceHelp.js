@@ -22,11 +22,10 @@ var _class = function () {
       value: function render(props) {
          this.props = props;
          logger.debug('props', Object.keys(props));
-         return {
-            req: props.req,
+         return Object.assign(props, {
             title: props.config.serviceLabel + ' | ' + props.reqx.account + '/' + props.reqx.keyspace,
             content: '\n         <h2>/ak/' + props.reqx.account + '/' + props.reqx.keyspace + '</h2>\n         <h3>' + props.result.message + '</h3>\n         ' + this.renderUrls(this.props.result.exampleUrls).join('\n') + '\n         <br/>\n         ' + this.renderCommands(this.props.result.keyspaceCommands).join('\n') + '\n         '
-         };
+         });
       }
    }, {
       key: 'renderUrls',

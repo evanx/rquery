@@ -24,6 +24,7 @@ var _class = function () {
       value: function render(props) {
          this.props = props;
          logger.debug('props', Object.keys(props));
+         assert(props.config.assetsUrl, 'assetsUrl');
          var content = '';
          if (lodash.isArray(props.content)) {
             content = props.content.join('\n');
@@ -39,7 +40,7 @@ var _class = function () {
          if (this.reqx.helpPath) {
             helpScript = 'window.location.pathname = \'' + this.reqx.helpPath + '\'';
          }
-         return '\n      <html>\n      <head>\n      <title>' + props.title + '</title>\n      <style>\n         a {\n            text-decoration: none;\n         }\n         pre {\n            background-color: #f8f8f8;\n            padding: 5px;\n         }\n      </style>\n      <meta name=\'viewport\' content=' + viewportContentArray.join(', ') + '/>\n      </head>\n      <body style=\'padding: ' + this.bodyPadding(props) + '; max-width: 768px\'>\n      <header>\n      </header>\n      <article onClick="' + helpScript + '">\n      ' + content + '\n      </article>\n      </body>\n      </html>\n      ';
+         return '\n      <html>\n      <head>\n      <title>' + props.title + '</title>\n      <style>\n         a {\n            text-decoration: none;\n         }\n         pre {\n            background-color: #f8f8f8;\n            padding: 5px;\n         }\n      </style>\n      <meta name=\'viewport\' content=' + viewportContentArray.join(', ') + '/>\n      </head>\n      <body style=\'padding: ' + this.bodyPadding(props) + '; max-width: 768px\'>\n      <header style=\'\'>\n      <img style=\'opacity:.5\' src=\'' + props.config.assetsUrl + '/icomoon/png20-38/home.png\'/>\n      </header>\n      <article onClick="' + helpScript + '"  style=\'padding-top: 10px\'>\n      ' + content + '\n      </article>\n      </body>\n      </html>\n      ';
       }
    }, {
       key: 'bodyPadding',

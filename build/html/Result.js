@@ -20,11 +20,10 @@ var _class = function () {
       value: function render(props) {
          this.props = props;
          logger.debug('props', Object.keys(props));
-         return {
-            req: props.req,
-            title: title,
+         return Object.assign(props, {
+            title: '',
             content: '\n         '
-         };
+         });
       }
    }]);
 

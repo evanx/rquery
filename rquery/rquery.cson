@@ -10,6 +10,8 @@ config:
       type: 'string'
    location:
       defaultValue: '/'
+   assetsUrl:
+      defaultValue: ''
    keyspaceHostname:
       optional: true
       type: 'string'

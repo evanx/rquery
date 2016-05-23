@@ -22,11 +22,10 @@ var _class = function () {
       value: function render(props) {
          this.props = props;
          logger.debug('props', Object.keys(props));
-         return {
-            req: props.req,
+         return Object.assign(props, {
             title: 'Help | ' + props.config.serviceLabel,
             content: '\n         <h1>' + props.config.serviceLabel + '</h1>\n         <h3>Basic</h3>\n         ' + this.renderUrls(props.result.common).join('\n') + '\n         <h3>Ephemeral</h3>\n         ' + this.renderPaths(props.result.ephemeral).join('\n') + '\n         <h3>Miscellaneous</h3>\n         ' + this.renderPaths(props.result.misc).join('\n') + '\n         <h3>Telegram</h3>\n         ' + this.renderPaths(props.result.telegram).join('\n') + '\n         ' + this.renderAccount(props.result.account) + '\n         <h3>Account keyspace</h3>\n         ' + this.renderPaths(props.result.accountKeyspace).join('\n') + '\n         '
-         };
+         });
       }
    }, {
       key: 'renderAccount',

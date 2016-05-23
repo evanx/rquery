@@ -14,6 +14,7 @@ export default class {
    render(props) {
       this.props = props;
       logger.debug('props', Object.keys(props));
+      assert(props.config.assetsUrl, 'assetsUrl');
       let content = '';
       if (lodash.isArray(props.content)) {
          content = props.content.join('\n');
@@ -45,9 +46,10 @@ export default class {
       <meta name='viewport' content=${viewportContentArray.join(', ')}/>
       </head>
       <body style='padding: ${this.bodyPadding(props)}; max-width: 768px'>
-      <header>
+      <header style=''>
+      <img style='opacity:.5' src='${props.config.assetsUrl}/icomoon/png20-38/home.png'/>
       </header>
-      <article onClick="${helpScript}">
+      <article onClick="${helpScript}"  style='padding-top: 10px'>
       ${content}
       </article>
       </body>

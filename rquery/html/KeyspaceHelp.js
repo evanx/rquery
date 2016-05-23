@@ -6,8 +6,7 @@ export default class {
    render(props) {
       this.props = props;
       logger.debug('props', Object.keys(props));
-      return {
-         req: props.req,
+      return Object.assign(props, {
          title: `${props.config.serviceLabel} | ${props.reqx.account}/${props.reqx.keyspace}`,
          content: `
          <h2>/ak/${props.reqx.account}/${props.reqx.keyspace}</h2>
@@ -16,7 +15,7 @@ export default class {
          <br/>
          ${this.renderCommands(this.props.result.keyspaceCommands).join('\n')}
          `
-      };
+      });
    }
 
    renderUrls(urls) {

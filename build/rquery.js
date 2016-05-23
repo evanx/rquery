@@ -654,7 +654,7 @@ var _class = function () {
                            case 4:
                               res.set('Content-Type', 'text/html');
                               res.send(new _Page2.default().render(new _Help2.default().render({
-                                 req: req, result: result, config: _this5.config
+                                 config: _this5.config, req: req, result: result
                               })));
 
                            case 6:
@@ -818,6 +818,7 @@ var _class = function () {
                               });
                            } else {
                               content = new _Page2.default().render({
+                                 config: _this5.config,
                                  req: req,
                                  title: _this5.config.serviceLabel,
                                  content: (0, _marked2.default)(content.toString())
@@ -1185,7 +1186,7 @@ var _class = function () {
 
                               res.set('Content-Type', 'text/html');
                               res.send(new _Page2.default().render(new _KeyspaceHelp2.default().render({
-                                 req: req, reqx: reqx, result: result, config: _this5.config
+                                 config: _this5.config, req: req, reqx: reqx, result: result
                               })));
                               _context23.next = 11;
                               break;
@@ -1237,7 +1238,7 @@ var _class = function () {
                            _this5.logger.ndebug('help', req.params, _this5.commands.map(function (command) {
                               return command.key;
                            }).join('/'));
-                           message = 'Try endpoints below. (There, click anywhere on the result to return.)';
+                           message = 'Try endpoints below.';
                            exampleUrls = [hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/hset/hashes1/field1/value1', hostUrl + '/ak/' + account + '/' + keyspace + '/hgetall/hashes1', hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
                            return _context24.abrupt('return', { message: message, exampleUrls: exampleUrls, keyspaceCommands: _this5.listCommands('keyspace') });
 
@@ -4657,12 +4658,12 @@ var _class = function () {
                         }
                         if (reqx.key) {
                            res.send(new _Page2.default().render({
-                              req: req, reqx: reqx, title: title,
+                              config: this.config, req: req, reqx: reqx, title: title,
                               content: content.join('\n')
                            }));
                         } else {
                            res.send(new _Page2.default().render({
-                              req: req, reqx: reqx, title: title,
+                              config: this.config, req: req, reqx: reqx, title: title,
                               content: content.join('\n')
                            }));
                         }
@@ -4800,8 +4801,7 @@ var _class = function () {
          if (this.isBrowser(req)) {
             res.set('Content-Type', 'text/html');
             res.status(statusCode).send(new _Page2.default().render({
-               req: req,
-               title: title,
+               config: this.config, req: req, reqx: reqx, title: title,
                content: [HtmlElements.styled('div', _styles2.default.error.status, 'Status ' + statusCode), HtmlElements.styled('div', _styles2.default.error.message, title), HtmlElements.styled('pre', _styles2.default.error.detail, messageLines)]
             }));
          } else {

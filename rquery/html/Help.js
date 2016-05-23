@@ -6,8 +6,7 @@ export default class {
    render(props) {
       this.props = props;
       logger.debug('props', Object.keys(props));
-      return {
-         req: props.req,
+      return Object.assign(props, {
          title: `Help | ${props.config.serviceLabel}`,
          content: `
          <h1>${props.config.serviceLabel}</h1>
@@ -23,7 +22,7 @@ export default class {
          <h3>Account keyspace</h3>
          ${this.renderPaths(props.result.accountKeyspace).join('\n')}
          `
-      };
+      });
    }
 
    renderAccount(account) {
