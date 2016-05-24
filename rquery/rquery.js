@@ -239,6 +239,7 @@ export default class {
          key: 'routes',
          access: 'debug',
          aliases: ['/'],
+         resultObjectType: 'KeyedArrays',
          sendResult: async (req, res, reqx, result) => {
             if (this.isCliDomain(req)) {
                return result;
@@ -1715,7 +1716,7 @@ export default class {
    }
 
    isCliDomain(req) {
-      return /^cli/.test(req.hostname) || !this.isBrowser(req);
+      return /^cli/.test(req.hostname) || !this.isBrowser(req) || this.config.cliDomain;
    }
 
    sendError(req, res, err) {

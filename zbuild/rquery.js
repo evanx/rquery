@@ -638,6 +638,7 @@ var _class = function () {
             key: 'routes',
             access: 'debug',
             aliases: ['/'],
+            resultObjectType: 'KeyedArrays',
             sendResult: function () {
                var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee9(req, res, reqx, result) {
                   return regeneratorRuntime.wrap(function _callee9$(_context9) {
@@ -4732,7 +4733,7 @@ var _class = function () {
    }, {
       key: 'isCliDomain',
       value: function isCliDomain(req) {
-         return (/^cli/.test(req.hostname) || !this.isBrowser(req)
+         return (/^cli/.test(req.hostname) || !this.isBrowser(req) || this.config.cliDomain
          );
       }
    }, {

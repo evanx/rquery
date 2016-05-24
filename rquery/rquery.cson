@@ -46,6 +46,9 @@ config:
    secureDomain:
       type: 'boolean'
       defaultValue: false
+   cliDomain:
+      type: 'boolean'
+      defaultValue: false
    htmlDomain:
       type: 'boolean'
       defaultValue: false
