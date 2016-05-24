@@ -835,15 +835,27 @@ export default class {
       this.addKeyspaceCommand({
          key: 'rrange',
          params: ['key', 'start', 'stop'],
-      }, async (req, res, {keyspaceKey}) => {
-         const array = await this.redis.lrangeAsync(keyspaceKey, -req.params.stop, -req.params.start);
+      }, async (req, res, {command, keyspaceKey}) => {
+         if (req.params.start < 0) {
+            throw {message: `${command.key} start must be zero or greater`};
+         }
+         if (req.params.stop < 0) {
+            throw {message: `${command.key} stop must be zero or greater`};
+         }
+         const array = await this.redis.lrangeAsync(keyspaceKey, 0 - req.params.stop, 0 - req.params.start - 1);
          return array.reverse();
       });
       this.addKeyspaceCommand({
          key: 'rrevrange',
          params: ['key', 'start', 'stop'],
-      }, async (req, res, {keyspaceKey}) => {
-         const array = await this.redis.lrangeAsync(keyspaceKey, -req.params.stop, -req.params.start);
+      }, async (req, res, {command, keyspaceKey}) => {
+         if (req.params.start < 0) {
+            throw {message: `${command.key} start must be zero or greater`};
+         }
+         if (req.params.stop < 0) {
+            throw {message: `${command.key} stop must be zero or greater`};
+         }
+         const array = await this.redis.lrangeAsync(keyspaceKey, 0 - req.params.stop, 0 - req.params.start - 1);
          return array;
       });
       this.addKeyspaceCommand({

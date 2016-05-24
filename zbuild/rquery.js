@@ -2625,20 +2625,37 @@ var _class = function () {
             params: ['key', 'start', 'stop']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee67(req, res, _ref58) {
+               var command = _ref58.command;
                var keyspaceKey = _ref58.keyspaceKey;
                var array;
                return regeneratorRuntime.wrap(function _callee67$(_context67) {
                   while (1) {
                      switch (_context67.prev = _context67.next) {
                         case 0:
-                           _context67.next = 2;
-                           return _this5.redis.lrangeAsync(keyspaceKey, -req.params.stop, -req.params.start);
+                           if (!(req.params.start < 0)) {
+                              _context67.next = 2;
+                              break;
+                           }
+
+                           throw { message: command.key + ' start must be zero or greater' };
 
                         case 2:
+                           if (!(req.params.stop < 0)) {
+                              _context67.next = 4;
+                              break;
+                           }
+
+                           throw { message: command.key + ' stop must be zero or greater' };
+
+                        case 4:
+                           _context67.next = 6;
+                           return _this5.redis.lrangeAsync(keyspaceKey, 0 - req.params.stop, 0 - req.params.start - 1);
+
+                        case 6:
                            array = _context67.sent;
                            return _context67.abrupt('return', array.reverse());
 
-                        case 4:
+                        case 8:
                         case 'end':
                            return _context67.stop();
                      }
@@ -2654,20 +2671,37 @@ var _class = function () {
             params: ['key', 'start', 'stop']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee68(req, res, _ref59) {
+               var command = _ref59.command;
                var keyspaceKey = _ref59.keyspaceKey;
                var array;
                return regeneratorRuntime.wrap(function _callee68$(_context68) {
                   while (1) {
                      switch (_context68.prev = _context68.next) {
                         case 0:
-                           _context68.next = 2;
-                           return _this5.redis.lrangeAsync(keyspaceKey, -req.params.stop, -req.params.start);
+                           if (!(req.params.start < 0)) {
+                              _context68.next = 2;
+                              break;
+                           }
+
+                           throw { message: command.key + ' start must be zero or greater' };
 
                         case 2:
+                           if (!(req.params.stop < 0)) {
+                              _context68.next = 4;
+                              break;
+                           }
+
+                           throw { message: command.key + ' stop must be zero or greater' };
+
+                        case 4:
+                           _context68.next = 6;
+                           return _this5.redis.lrangeAsync(keyspaceKey, 0 - req.params.stop, 0 - req.params.start - 1);
+
+                        case 6:
                            array = _context68.sent;
                            return _context68.abrupt('return', array);
 
-                        case 4:
+                        case 8:
                         case 'end':
                            return _context68.stop();
                      }
