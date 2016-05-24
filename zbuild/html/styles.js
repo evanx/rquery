@@ -77,6 +77,7 @@ var styles = {
    },
    keyspaceHelp: {
       command: {
+         display: 'block',
          fontFamily: 'monospace',
          lineHeight: 1.5
       }
