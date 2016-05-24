@@ -9,12 +9,13 @@ exports.default = function (props) {
 
    assert(props.config.assetsUrl, 'assetsUrl');
    var reqx = props.reqx || {};
-   var homePath = Hx.renderPath(reqx.helpPath) || '/routes';
+   var homePath = Hx.renderPath(props.helpPath || reqx.helpPath) || '/routes';
    var clickScript = '';
    if (homePath) {
       clickScript = 'window.location.pathname=\'' + homePath + '\'';
    }
-   var content = [He.img({ style: _styles.header.icon, src: props.config.assetsUrl + '/icomoon/png20-38/' + props.icon + '.png' })];
+   var content = [];
+   content.push(He.img({ style: _styles.header.icon, src: props.config.assetsUrl + '/icomoon/png20-38/' + props.icon + '.png' }));
    if (props.heading) {
       content.push(Hs.span(_styles.header.heading, props.heading));
    } else if (props.title) {
