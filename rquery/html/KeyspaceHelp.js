@@ -8,7 +8,7 @@ export default function (props) {
    return Object.assign(props, {
       title: [props.reqx.account, props.reqx.keyspace].join('/'),
       heading: Hc.b(props.reqx.account) + ' ' + Hc.tt(props.reqx.keyspace),
-      icon: 'info',
+      icon: 'database',
       helpPath: ['routes'],
       content: [
          Hc.h3(props.result.message),
