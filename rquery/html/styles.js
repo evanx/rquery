@@ -24,7 +24,7 @@ const styles = {
          marginTop: 10
       },
       pre: {
-         backgroundColor: '#808080'
+         backgroundColor: '#f0f0f0'
       }
    },
    _768: {
@@ -72,7 +72,7 @@ const styles = {
    },
    keyspaceHelp: {
       command: {
-         fontFamily: 'monospace'         
+         fontFamily: 'monospace'
       }
    },
    error: {

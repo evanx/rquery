@@ -1772,10 +1772,12 @@ export default class {
          err = 'unexpected error type: ' + typeof err;
          messageLines.push(Object.keys(err).join(' '));
       }
+      const heading = [He.b('error'), He.tt('title')].join(' ');
       if (this.isBrowser(req)) {
          res.set('Content-Type', 'text/html');
          res.status(statusCode).send(renderPage({
-            config: this.config, req, reqx, title,
+            config: this.config,
+            req, reqx, title, heading,
             content: [
                Hs.div(styles.error.status, `Status ${statusCode}`),
                Hs.div(styles.error.message, title),

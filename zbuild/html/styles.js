@@ -71,6 +71,11 @@ var styles = {
          color: '#808080'
       }
    },
+   keyspaceHelp: {
+      command: {
+         fontFamily: 'monospace'
+      }
+   },
    error: {
       status: {
          fontSize: 14,
