@@ -972,7 +972,8 @@ var _class = function () {
          });
          this.addPublicCommand({
             key: 'genkey-otp',
-            params: ['user', 'host']
+            params: ['user', 'host'],
+            format: json
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee19(req, res) {
                var _req$params, user, host;
@@ -1001,7 +1002,8 @@ var _class = function () {
          }());
          this.addPublicCommand({
             key: 'genkey-ga',
-            params: ['address', 'issuer']
+            params: ['address', 'issuer'],
+            format: json
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee20(req, res) {
                var _req$params2, address, issuer;

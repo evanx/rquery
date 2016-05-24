@@ -348,7 +348,8 @@ export default class {
       this.addPublicRoute('time', () => this.redis.timeAsync());
       this.addPublicCommand({
          key: 'genkey-otp',
-         params: ['user', 'host']
+         params: ['user', 'host'],
+         format: json
       }, async (req, res) => {
          const {user, host} = req.params;
          this.logger.debug('genkey-otp', user, host);
@@ -356,7 +357,8 @@ export default class {
       });
       this.addPublicCommand({
          key: 'genkey-ga',
-         params: ['address', 'issuer']
+         params: ['address', 'issuer'],
+         format: json
       }, async (req, res) => {
          const {address, issuer} = req.params;
          this.logger.debug('genkey-ga', address, issuer);
