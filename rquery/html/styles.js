@@ -76,7 +76,8 @@ const styles = {
    },
    keyspaceHelp: {
       command: {
-         fontFamily: 'monospace'
+         fontFamily: 'monospace',
+         lineHeight: 1.5
       }
    },
    routes: {
