@@ -12,7 +12,7 @@ exports.default = function (props) {
    logger.debug('props', Object.keys(props), Object.keys(Hx));
    return Object.assign(props, (_Object$assign = {
       title: [props.reqx.account, props.reqx.keyspace].join('/'),
-      heading: Hc.b(props.reqx.account) + ' ' + Hc.tt(props.reqx.keyspace),
+      heading: [Hc.b(props.reqx.account), Hs.tt(_styles2.default.header.keyspace, props.reqx.keyspace)],
       helpPath: '/routes',
       icon: 'database'
    }, _defineProperty(_Object$assign, 'helpPath', ['routes']), _defineProperty(_Object$assign, 'content', [Hc.h3(props.result.message), renderUrls(props.result.exampleUrls), He.br(), renderCommands(props.result.keyspaceCommands)]), _Object$assign));

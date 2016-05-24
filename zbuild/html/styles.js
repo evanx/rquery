@@ -69,6 +69,9 @@ var styles = {
          padding: [0, 0, 0, 8],
          fontSize: 18,
          color: '#808080'
+      },
+      keyspace: {
+         paddingLeft: 12
       }
    },
    keyspaceHelp: {
