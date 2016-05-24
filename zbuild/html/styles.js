@@ -80,6 +80,11 @@ var styles = {
          fontFamily: 'monospace'
       }
    },
+   routes: {
+      path: {
+         lineHeight: 2
+      }
+   },
    error: {
       status: {
          fontSize: 14,

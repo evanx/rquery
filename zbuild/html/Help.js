@@ -50,7 +50,7 @@ function renderUrls(urls) {
 
 function renderPaths(paths) {
    return paths.map(function (path, index) {
-      return '\n      <div>\n      <span>' + path + '</span>\n      </div>\n      ';
+      return Hs.span(_styles2.default.routes.path, path);
    });
 }
 //# sourceMappingURL=Help.js.map

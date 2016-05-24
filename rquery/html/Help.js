@@ -6,7 +6,7 @@ const logger = Loggers.create(module.filename);
 export default function (props) {
    logger.debug('props', Object.keys(props));
    return Object.assign(props, {
-      title: props.config.serviceLabel,      
+      title: props.config.serviceLabel,
       content: `
       <h3>Basic</h3>
       ${renderUrls(props.result.common).join('\n')}
@@ -55,10 +55,6 @@ function renderUrls(urls) {
 
 function renderPaths(paths) {
    return paths.map((path, index) => {
-      return `
-      <div>
-      <span>${path}</span>
-      </div>
-      `;
+      return Hs.span(styles.routes.path, path);
    })
 }
