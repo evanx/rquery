@@ -15,7 +15,7 @@ exports.default = function (props) {
       clickScript = 'window.location.pathname=\'' + homePath + '\'';
    }
    var content = [];
-   content.push(He.img({ style: _styles.header.icon, src: props.config.assetsUrl + '/icomoon/png20-38/' + (props.icon || 'database') + '.png' }));
+   content.push(He.img({ style: _styles.header.icon, src: props.config.assetsUrl + '/icomoon/png20-50/' + (props.icon || 'database') + '.png' }));
    if (props.heading) {
       content.push(Hs.span(_styles.header.heading, props.heading));
    } else if (props.title) {

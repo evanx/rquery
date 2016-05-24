@@ -1,6 +1,6 @@
 
 function iconBackgroundImage(name) {
-   return `url(https://test.redishub.com/assets/icomoon/png20-38/${name}.png)`
+   return `url(https://test.redishub.com/assets/icomoon/png20-50/${name}.png)`
 }
 
 const styles = {
