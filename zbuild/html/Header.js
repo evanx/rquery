@@ -14,7 +14,12 @@ exports.default = function (props) {
    if (homePath) {
       clickScript = 'window.location.pathname=\'' + homePath + '\'';
    }
-   var content = [He.img({ style: _styles.header.icon, src: props.config.assetsUrl + '/icomoon/png20-38/' + props.icon + '.png' }), He.span({ style: _styles.header.title }, props.heading || props.title)];
+   var content = [He.img({ style: _styles.header.icon, src: props.config.assetsUrl + '/icomoon/png20-38/' + props.icon + '.png' })];
+   if (props.heading) {
+      content.push(Hs.span(_styles.header.heading, props.heading));
+   } else if (props.title) {
+      content.push(Hs.span(_styles.header.title, props.title));
+   }
    return (_He = He).header.apply(_He, [{ style: _styles.header.container, onClick: clickScript }].concat(content));
 };
 

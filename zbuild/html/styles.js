@@ -58,6 +58,15 @@ var styles = {
          padding: [0, 0, 0, 10],
          fontSize: 16,
          color: '#808080'
+      },
+      heading: {
+         fontFamily: 'sansserif',
+         float: 'left',
+         display: 'inline-block',
+         margin: [0, 0, 0, 0],
+         padding: [0, 0, 0, 10],
+         fontSize: 16,
+         color: '#808080'
       }
    },
    error: {
