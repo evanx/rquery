@@ -349,7 +349,7 @@ export default class {
       this.addPublicCommand({
          key: 'genkey-otp',
          params: ['user', 'host'],
-         format: json
+         format: 'json'
       }, async (req, res) => {
          const {user, host} = req.params;
          this.logger.debug('genkey-otp', user, host);
@@ -358,7 +358,7 @@ export default class {
       this.addPublicCommand({
          key: 'genkey-ga',
          params: ['address', 'issuer'],
-         format: json
+         format: 'json'
       }, async (req, res) => {
          const {address, issuer} = req.params;
          this.logger.debug('genkey-ga', address, issuer);
@@ -1572,7 +1572,7 @@ export default class {
       let resultString = '';
       if (!Values.isDefined(result)) {
          this.logger.error('sendResult none');
-      } else if (Values.isDefined(req.query.json)) {
+      } else if (Values.isDefined(req.query.json) || command.format === 'json') {
          res.json(result);
          return;
       } else if (Values.isDefined(req.query.quiet)) {

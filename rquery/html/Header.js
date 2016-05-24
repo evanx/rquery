@@ -12,7 +12,7 @@ export default function (props) {
       clickScript = `window.location.pathname='${homePath}'`;
    }
    const content = []
-   content.push(He.img({style: styles.icon, src: `${props.config.assetsUrl}/icomoon/png20-38/${props.icon}.png`}));
+   content.push(He.img({style: styles.icon, src: `${props.config.assetsUrl}/icomoon/png20-38/${props.icon || 'database'}.png`}));
    if (props.heading) {
       content.push(Hs.span(styles.heading, props.heading));
    } else if (props.title) {
