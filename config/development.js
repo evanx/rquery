@@ -21,7 +21,7 @@ module.exports = {
          certLimit: 4,
          secureDomain: true,
          htmlDomain: true,
-         cliDomain: true,
+         cliDomain: false,
          disableValidateCert: true,
          disableTelegramHook: true,
          registerLimit: 10,

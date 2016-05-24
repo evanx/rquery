@@ -1663,19 +1663,20 @@ export default class {
             //title = reqx.key;
             content.push(`<div style='${styles.result.reqKey}'>${reqx.key}</div>`);
          }
-         if (resultString) {
-            if (true) {
-               resultArray.push(resultString);
-            } else {
-               content.push(`<div style='${styles.result.resultString}'>${resultString}</div>`);
+         if (!resultString) {
+            if (!resultArray.length) {
+               resultString = 'No results';
             }
          }
-         if (resultArray.length) {
-            content.push(`<pre style='${styles.result.resultArray}'>${resultArray.join('\n')}</pre>`);
+         if (resultString) {
+            resultArray.push(resultString);
          }
-            res.send(renderPage({
-               config: this.config, req, reqx, title, heading, icon, content
-            }));
+         if (resultArray.length) {
+            content.push(Hs.pre(styles.result.resultArray, resultArray));
+         }
+         res.send(renderPage({
+            config: this.config, req, reqx, title, heading, icon, content
+         }));
          return;
       } else {
          this.sendError(req, res, {message: `Invalid default format: ${this.config.defaultFormat}`});

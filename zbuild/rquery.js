@@ -4514,7 +4514,7 @@ var _class = function () {
                         }
 
                         this.logger.error('sendResult none');
-                        _context96.next = 71;
+                        _context96.next = 72;
                         break;
 
                      case 24:
@@ -4532,7 +4532,7 @@ var _class = function () {
                            break;
                         }
 
-                        _context96.next = 71;
+                        _context96.next = 72;
                         break;
 
                      case 32:
@@ -4576,7 +4576,7 @@ var _class = function () {
                         } else if (result === null) {} else {
                            resultString = result.toString();
                         }
-                        _context96.next = 71;
+                        _context96.next = 72;
                         break;
 
                      case 37:
@@ -4587,7 +4587,7 @@ var _class = function () {
 
                         res.set('Content-Type', 'text/plain');
                         resultString = result.toString();
-                        _context96.next = 71;
+                        _context96.next = 72;
                         break;
 
                      case 42:
@@ -4601,7 +4601,7 @@ var _class = function () {
 
                      case 47:
                         if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html' || this.isHtmlDomain(req))) {
-                           _context96.next = 69;
+                           _context96.next = 70;
                            break;
                         }
 
@@ -4654,29 +4654,30 @@ var _class = function () {
                            //title = reqx.key;
                            content.push('<div style=\'' + _styles2.default.result.reqKey + '\'>' + reqx.key + '</div>');
                         }
-                        if (resultString) {
-                           if (true) {
-                              resultArray.push(resultString);
-                           } else {
-                              content.push('<div style=\'' + _styles2.default.result.resultString + '\'>' + resultString + '</div>');
+                        if (!resultString) {
+                           if (!resultArray.length) {
+                              resultString = 'No results';
                            }
                         }
+                        if (resultString) {
+                           resultArray.push(resultString);
+                        }
                         if (resultArray.length) {
-                           content.push('<pre style=\'' + _styles2.default.result.resultArray + '\'>' + resultArray.join('\n') + '</pre>');
+                           content.push(Hs.pre(_styles2.default.result.resultArray, resultArray));
                         }
                         res.send((0, _Page2.default)({
                            config: this.config, req: req, reqx: reqx, title: title, heading: heading, icon: icon, content: content
                         }));
                         return _context96.abrupt('return');
 
-                     case 69:
+                     case 70:
                         this.sendError(req, res, { message: 'Invalid default format: ' + this.config.defaultFormat });
                         return _context96.abrupt('return');
 
-                     case 71:
+                     case 72:
                         res.send(resultString + '\n');
 
-                     case 72:
+                     case 73:
                      case 'end':
                         return _context96.stop();
                   }
