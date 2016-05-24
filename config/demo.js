@@ -20,11 +20,12 @@ module.exports = {
          ephemeralAccountExpire: 1200,
          certLimit: 4,
          secureDomain: false,
+         cliDomain: false,
          htmlDomain: true,
          registerLimit: 10,
          importLimit: 5,
          adminLimit: 1,
-         defaultFormat: 'json',
+         defaultFormat: 'html',
          addClientIp: true
       }
    }
