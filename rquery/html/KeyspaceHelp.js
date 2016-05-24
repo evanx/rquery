@@ -40,10 +40,6 @@ function renderUrls(urls) {
 
 function renderCommands(commands) {
    return commands.map((command, index) => {
-      return `
-      <div>
-      <span>${command}</span>
-      </div>
-      `;
+      return Hs.div(styles.keyspaceHelp.command, He.span(command));
    })
 }

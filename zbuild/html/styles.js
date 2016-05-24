@@ -52,7 +52,7 @@ var styles = {
          height: 20
       },
       title: {
-         //fontFamily: 'sansserif',
+         fontFamily: 'monospace',
          //float: 'left',
          display: 'inline-block',
          margin: [0, 0, 0, 0],
