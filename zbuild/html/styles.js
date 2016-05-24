@@ -77,14 +77,14 @@ var styles = {
    },
    keyspaceHelp: {
       command: {
-         display: 'block',
          fontFamily: 'monospace',
          lineHeight: 1.5
       }
    },
    routes: {
       path: {
-         lineHeight: 2
+         display: 'block',
+         lineHeight: 1.5
       }
    },
    error: {
