@@ -6,7 +6,7 @@ npm run build
 cat zbuild/rquery.js | grep '^\s*logger\|zz\|ZZ' && exit 1
 
 c2notify() {
-  echo `date` $2 | ssh $1 tee tmp/rquery-notify
+  echo `date -I seconds` $2 | ssh $1 'tee > tmp/rquery-notify'
 }
 
 c1commit() {
