@@ -15,7 +15,7 @@ exports.renderUserAgentStylesheet = renderUserAgentStylesheet;
 exports.renderKeys = renderKeys;
 exports.renderValue = renderValue;
 
-var logger = Loggers.create(module.filename, 'debug');
+var logger = Loggers.create(module.filename, 'info');
 
 var IntegerKeys = ['lineHeight'];
 var CssKeys = Strings.splitSpace('\n   color background\n   width height\n   cursor\n   display position float clear\n   textDecoration\n   ');

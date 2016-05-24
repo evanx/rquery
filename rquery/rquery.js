@@ -921,9 +921,11 @@ export default class {
       });
       this.commands.push(command);
    }
-   *
+
    addPublicRoute(uri, fn) {
-      this.expressApp.get([this.config.location, uri].join('/'), async (req, res) => {
+      uri = [this.config.location, uri].join('/');
+      this.logger.debug('addPublicRoute', uri);
+      this.expressApp.get(uri, async (req, res) => {
          try {
             const result = await fn(req, res);
             if (result !== undefined) {

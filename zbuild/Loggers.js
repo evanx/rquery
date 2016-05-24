@@ -22,7 +22,6 @@ var Logger = function () {
    function Logger(options) {
       _classCallCheck(this, Logger);
 
-      Object.assign(options, { level: global.loggerLevel });
       Object.assign(this, options);
       this.logger = bunyan.createLogger({ name: this.name, level: this.level });
       this.logger.info('create', global.loggerLevel, options);
@@ -38,7 +37,7 @@ var Logger = function () {
             args[_key] = arguments[_key];
          }
 
-         if (global.loggerLevel === 'debug') {
+         if (this.level === 'debug') {
             var _logger;
 
             (_logger = this.logger).warn.apply(_logger, ['DEBUG'].concat(args));
@@ -163,6 +162,7 @@ function create(filename, level) {
    if (nameMatch) {
       name = nameMatch[1];
    }
+   level = level || global.loggerLevel;
    return new Logger({ name: name, level: level });
 };
 //# sourceMappingURL=Loggers.js.map
