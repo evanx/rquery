@@ -7,10 +7,10 @@ const logger = Loggers.create(module.filename);
 
 const viewportContentArray = [
    'width=device-width',
-   'maximum-scale=1.0',
-   'minimum-scale=1.0',
-   'initial-scale=1.0',
-   'user-scalable=no'
+   'initial-scale=1',
+   //'maximum-scale=1.0',
+   //'minimum-scale=1.0',
+   //'user-scalable=no'
 ];
 
 export default function (props) {

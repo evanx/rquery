@@ -1858,13 +1858,22 @@ var _class = function () {
                            value = _context41.sent;
 
                            _this5.logger.info('getjson', typeof value === 'undefined' ? 'undefined' : _typeof(value), value);
+
+                           if (!_this5.isMobile(req)) {
+                              _context41.next = 8;
+                              break;
+                           }
+
+                           return _context41.abrupt('return', JSON.parse(value));
+
+                        case 8:
                            if (value) {
                               res.json(JSON.parse(value));
                            } else {
                               res.status(404).send('Not found: ' + key);
                            }
 
-                        case 5:
+                        case 9:
                         case 'end':
                            return _context41.stop();
                      }
@@ -4709,79 +4718,79 @@ var _class = function () {
 
                         this.logger.debug('sendResult ua', !uaMatch ? userAgent : uaMatch[1]);
                         command = command || {};
-                        if (this.isDevelopment(req)) {
-                           this.logger.debug('sendResult command', command.key, req.params, lodash.isArray(result));
-                        } else {
-                           this.logger.debug('sendResult command', command.key, req.params, lodash.isArray(result));
-                        }
                         mobile = this.isMobile(req);
 
+                        this.logger.debug('sendResult mobile', mobile, command.key);
+                        if (this.isDevelopment(req)) {
+                           this.logger.debug('sendResult command', command.key, req.params, lodash.isArray(result));
+                        } else {}
+
                         if (!command.sendResult) {
-                           _context103.next = 19;
+                           _context103.next = 20;
                            break;
                         }
 
                         if (!lodash.isFunction(command.sendResult)) {
-                           _context103.next = 18;
+                           _context103.next = 19;
                            break;
                         }
 
-                        _context103.next = 10;
+                        _context103.next = 11;
                         return command.sendResult(req, res, reqx, result);
 
-                     case 10:
+                     case 11:
                         otherResult = _context103.sent;
 
                         if (!(otherResult === undefined)) {
-                           _context103.next = 15;
+                           _context103.next = 16;
                            break;
                         }
 
                         return _context103.abrupt('return');
 
-                     case 15:
+                     case 16:
                         result = otherResult;
 
-                     case 16:
-                        _context103.next = 19;
+                     case 17:
+                        _context103.next = 20;
                         break;
 
-                     case 18:
+                     case 19:
                         throw 'command.sendResult type: ' + _typeof(command.sendResult);
 
-                     case 19:
+                     case 20:
                         resultString = '';
 
                         if (Values.isDefined(result)) {
-                           _context103.next = 24;
+                           _context103.next = 25;
                            break;
                         }
 
                         this.logger.error('sendResult none');
-                        _context103.next = 72;
+                        _context103.next = 73;
                         break;
 
-                     case 24:
-                        if (!(Values.isDefined(req.query.json) || command.format === 'json')) {
-                           _context103.next = 29;
+                     case 25:
+                        if (!(Values.isDefined(req.query.json) || command.format === 'json' && !mobile)) {
+                           _context103.next = 30;
                            break;
                         }
 
                         res.json(result);
                         return _context103.abrupt('return');
 
-                     case 29:
+                     case 30:
                         if (!Values.isDefined(req.query.quiet)) {
-                           _context103.next = 32;
+                           _context103.next = 33;
                            break;
                         }
 
-                        _context103.next = 72;
+                        _context103.next = 73;
                         break;
 
-                     case 32:
+                     case 33:
                         if (!(this.config.defaultFormat === 'cli' || Values.isDefined(req.query.line) || this.isCliDomain(req) || command.format === 'cli')) {
-                           _context103.next = 37;
+                           _context103.next = 38;
                            break;
                         }
 
@@ -4820,32 +4829,32 @@ var _class = function () {
                         } else if (result === null) {} else {
                            resultString = result.toString();
                         }
-                        _context103.next = 72;
+                        _context103.next = 73;
                         break;
 
-                     case 37:
+                     case 38:
                         if (!(this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain) || command.format === 'plain')) {
-                           _context103.next = 42;
+                           _context103.next = 43;
                            break;
                         }
 
                         res.set('Content-Type', 'text/plain');
                         resultString = result.toString();
-                        _context103.next = 72;
+                        _context103.next = 73;
                         break;
 
-                     case 42:
-                        if (!(this.config.defaultFormat === 'json')) {
-                           _context103.next = 47;
+                     case 43:
+                        if (!(this.config.defaultFormat === 'json' && !mobile)) {
+                           _context103.next = 48;
                            break;
                         }
 
                         res.json(result);
                         return _context103.abrupt('return');
 
-                     case 47:
-                        if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html' || this.isHtmlDomain(req))) {
-                           _context103.next = 70;
+                     case 48:
+                        if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html' || this.isHtmlDomain(req) || mobile)) {
+                           _context103.next = 71;
                            break;
                         }
 
@@ -4860,14 +4869,14 @@ var _class = function () {
                         resultArray = [];
 
                         if (!(result === null)) {
-                           _context103.next = 57;
+                           _context103.next = 58;
                            break;
                         }
 
                         this.sendStatusMessage(req, res, 404, reqx.key);
                         return _context103.abrupt('return');
 
-                     case 57:
+                     case 58:
                         if (lodash.isString(result)) {
                            resultString = result;
                         } else if (lodash.isArray(result)) {
@@ -4886,7 +4895,7 @@ var _class = function () {
                            resultString = result.toString();
                         }
 
-                     case 58:
+                     case 59:
                         res.set('Content-Type', 'text/html');
                         content = [];
 
@@ -4914,14 +4923,14 @@ var _class = function () {
                         }));
                         return _context103.abrupt('return');
 
-                     case 70:
+                     case 71:
                         this.sendError(req, res, { message: 'Invalid default format: ' + this.config.defaultFormat });
                         return _context103.abrupt('return');
 
-                     case 72:
+                     case 73:
                         res.send(resultString + '\n');
 
-                     case 73:
+                     case 74:
                      case 'end':
                         return _context103.stop();
                   }
@@ -4955,7 +4964,7 @@ var _class = function () {
    }, {
       key: 'isMobile',
       value: function isMobile(req) {
-         return (/Mobile/.test(req.get('User-Agent'))
+         return (/(Mobile|iPhone)/.test(req.get('User-Agent'))
          );
       }
    }, {

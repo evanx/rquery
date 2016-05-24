@@ -637,7 +637,9 @@ export default class {
       }, async (req, res, {key, keyspaceKey}) => {
          const value = await this.redis.getAsync(keyspaceKey);
          this.logger.info('getjson', typeof value, value);
-         if (value) {
+         if (this.isMobile(req)) {
+            return JSON.parse(value);
+         } else if (value) {
             res.json(JSON.parse(value));
          } else {
             res.status(404).send('Not found: ' + key);
@@ -1636,12 +1638,12 @@ export default class {
       const uaMatch = userAgent.match(/\s([A-Z][a-z]*\/[\.0-9]+)\s/);
       this.logger.debug('sendResult ua', !uaMatch? userAgent: uaMatch[1]);
       command = command || {};
+      const mobile = this.isMobile(req);
+      this.logger.debug('sendResult mobile', mobile, command.key);
       if (this.isDevelopment(req)) {
          this.logger.debug('sendResult command', command.key, req.params, lodash.isArray(result));
       } else {
-         this.logger.debug('sendResult command', command.key, req.params, lodash.isArray(result));
       }
-      const mobile = this.isMobile(req);
       if (command.sendResult) {
          if (lodash.isFunction(command.sendResult)) {
             const otherResult = await command.sendResult(req, res, reqx, result);
@@ -1657,7 +1659,7 @@ export default class {
       let resultString = '';
       if (!Values.isDefined(result)) {
          this.logger.error('sendResult none');
-      } else if (Values.isDefined(req.query.json) || command.format === 'json') {
+      } else if (Values.isDefined(req.query.json) || (command.format === 'json' && !mobile)) {
          res.json(result);
          return;
       } else if (Values.isDefined(req.query.quiet)) {
@@ -1704,11 +1706,11 @@ export default class {
       || command.format === 'plain') {
          res.set('Content-Type', 'text/plain');
          resultString = result.toString();
-      } else if (this.config.defaultFormat === 'json') {
+      } else if (this.config.defaultFormat === 'json' && !mobile) {
          res.json(result);
          return;
       } else if (this.config.defaultFormat === 'html' || Values.isDefined(req.query.html)
-      || command.format === 'html' || this.isHtmlDomain(req)) {
+      || command.format === 'html' || this.isHtmlDomain(req) || mobile) {
          let title = this.config.serviceLabel;
          let heading, icon;
          if (reqx.account && reqx.keyspace) {
@@ -1783,7 +1785,7 @@ export default class {
    }
 
    isMobile(req) {
-      return /Mobile/.test(req.get('User-Agent'));
+      return /(Mobile|iPhone)/.test(req.get('User-Agent'));
    }
 
    isBrowser(req) {
