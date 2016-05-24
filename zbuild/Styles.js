@@ -157,6 +157,8 @@ function renderValue(value, key) {
       } else {
          return value + 'px';
       }
+   } else if (lodash.isNumber(value)) {
+      return value.toString();
    } else if (lodash.isString(value)) {
       return value;
    } else if (lodash.isArray(value)) {

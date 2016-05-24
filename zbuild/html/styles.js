@@ -56,7 +56,7 @@ var styles = {
          //float: 'left',
          display: 'inline-block',
          margin: [0, 0, 0, 0],
-         padding: [0, 0, 0, 10],
+         padding: [0, 0, 0, 12],
          fontSize: 18,
          color: '#808080',
          fontWeight: 'bold'
@@ -66,7 +66,7 @@ var styles = {
          //float: 'left',
          display: 'inline-block',
          margin: [0, 0, 0, 0],
-         padding: [0, 0, 0, 10],
+         padding: [0, 0, 0, 12],
          fontSize: 18,
          color: '#808080'
       },
