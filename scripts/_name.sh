@@ -28,7 +28,7 @@ then
 else
   port=${port}9
 fi
-instance=9
+instance=1
 if echo $name | grep -q '[0-9]$'
 then
   instance=`echo $name | sed 's/.*\([1-9]\)$/\1/'`
