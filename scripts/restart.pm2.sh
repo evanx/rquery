@@ -3,12 +3,11 @@ set -u -e
 
 if git pull | grep '^Already'
 then
-  sleep 4
   count=0
-  while [ $count -lt 4 ]
+  while [ $count -lt 4 -a -f ~/tmp/rquery-committing ]
   do
     git pull | grep '^Already' || break
-    sleep 1
+    sleep .500
     count=`echo "$count + 1" | bc`
   done
 fi
