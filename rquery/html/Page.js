@@ -15,7 +15,7 @@ const viewportContentArray = [
 
 export default function (props) {
    logger.debug('props', Object.keys(props));
-   assert(props.config.assetsUrl, 'assetsUrl');
+   assert(Values.isDefined(props.config.assetsUrl), 'assetsUrl');
    const reqx = props.reqx || {};
    let article;
    if (reqx.helpPath) {

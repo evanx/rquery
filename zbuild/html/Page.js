@@ -10,7 +10,7 @@ var _templateObject = _taggedTemplateLiteral(['<article onClick=', '>', '</artic
 
 exports.default = function (props) {
    logger.debug('props', Object.keys(props));
-   assert(props.config.assetsUrl, 'assetsUrl');
+   assert(Values.isDefined(props.config.assetsUrl), 'assetsUrl');
    var reqx = props.reqx || {};
    var article = void 0;
    if (reqx.helpPath) {
