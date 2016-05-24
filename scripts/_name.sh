@@ -25,6 +25,12 @@ then
 elif echo $name | grep -q 'right'
 then
   port=${port}1
+elif echo $name | grep -q 'blue'
+then
+  port=${port}0
+elif echo $name | grep -q 'green'
+then
+  port=${port}1
 else
   port=${port}9
 fi
