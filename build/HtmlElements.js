@@ -89,6 +89,7 @@ function element(name, attributes) {
    if (!attributes) {
       content.push('<' + name + '/>');
    } else {
+      logger.debug('ZZ attr', name, attributes);
       assert(lodash.isObject(attributes), 'attributes');
 
       for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {

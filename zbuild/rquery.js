@@ -4804,10 +4804,12 @@ var _class = function () {
             err = 'unexpected error type: ' + (typeof err === 'undefined' ? 'undefined' : _typeof(err));
             messageLines.push(Object.keys(err).join(' '));
          }
+         var heading = [Hc.b('error'), Hc.tt('title')].join(' ');
          if (this.isBrowser(req)) {
             res.set('Content-Type', 'text/html');
             res.status(statusCode).send((0, _Page2.default)({
-               config: this.config, req: req, reqx: reqx, title: title,
+               config: this.config,
+               req: req, reqx: reqx, title: title, heading: heading,
                content: [Hs.div(_styles2.default.error.status, 'Status ' + statusCode), Hs.div(_styles2.default.error.message, title), Hs.pre(_styles2.default.error.detail, messageLines)]
             }));
          } else {

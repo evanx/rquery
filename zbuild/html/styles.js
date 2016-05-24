@@ -25,7 +25,7 @@ var styles = {
          marginTop: 10
       },
       pre: {
-         backgroundColor: '#808080'
+         backgroundColor: '#f0f0f0'
       }
    },
    _768: {

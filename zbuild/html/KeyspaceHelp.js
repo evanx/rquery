@@ -46,6 +46,6 @@ function renderUrls(urls) {
 
 function renderCommands(commands) {
    return commands.map(function (command, index) {
-      return Hs.div(_styles2.default.keyspaceHelp.command, He.span(command));
+      return Hs.div(_styles2.default.keyspaceHelp.command, Hc.span(command));
    });
 }

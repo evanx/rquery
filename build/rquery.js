@@ -4804,7 +4804,7 @@ var _class = function () {
             err = 'unexpected error type: ' + (typeof err === 'undefined' ? 'undefined' : _typeof(err));
             messageLines.push(Object.keys(err).join(' '));
          }
-         var heading = [He.b('error'), He.tt('title')].join(' ');
+         var heading = [Hc.b('error'), Hc.tt('title')].join(' ');
          if (this.isBrowser(req)) {
             res.set('Content-Type', 'text/html');
             res.status(statusCode).send((0, _Page2.default)({

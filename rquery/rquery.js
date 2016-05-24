@@ -1772,7 +1772,7 @@ export default class {
          err = 'unexpected error type: ' + typeof err;
          messageLines.push(Object.keys(err).join(' '));
       }
-      const heading = [He.b('error'), He.tt('title')].join(' ');
+      const heading = [Hc.b('error'), Hc.tt('title')].join(' ');
       if (this.isBrowser(req)) {
          res.set('Content-Type', 'text/html');
          res.status(statusCode).send(renderPage({
