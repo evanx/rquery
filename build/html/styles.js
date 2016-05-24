@@ -7,7 +7,8 @@ function iconBackgroundImage(name) {
 var styles = {
    resets: {
       body: {
-         padding: 10
+         padding: 10,
+         fontFamily: 'verdana'
       },
       a: {
          textDecoration: 'none'
@@ -39,33 +40,34 @@ var styles = {
       container: {
          minHeight: 30,
          clear: 'both',
-         position: 'relative',
+         //position: 'relative',
          cursor: 'pointer',
          margin: [0, 0, 0, 0],
          border: 'bottom 1px #000'
       },
       icon: {
-         float: 'left',
+         //float: 'left',
          display: 'inline-block',
          width: 20,
          height: 20
       },
       title: {
-         fontFamily: 'sansserif',
-         float: 'left',
+         //fontFamily: 'sansserif',
+         //float: 'left',
          display: 'inline-block',
          margin: [0, 0, 0, 0],
          padding: [0, 0, 0, 10],
-         fontSize: 16,
-         color: '#808080'
+         fontSize: 18,
+         color: '#808080',
+         fontWeight: 'bold'
       },
       heading: {
          fontFamily: 'monospace',
-         float: 'left',
+         //float: 'left',
          display: 'inline-block',
          margin: [0, 0, 0, 0],
          padding: [0, 0, 0, 10],
-         fontSize: 16,
+         fontSize: 18,
          color: '#808080'
       }
    },
