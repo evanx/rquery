@@ -123,7 +123,7 @@ function element(name, attributes) {
          }
       }
    }
-   return lodash.flatten(content).join('\n');
+   return lodash.flatten(content).join('');
 }
 
 function _style(name, style) {
