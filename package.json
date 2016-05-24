@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": "node_modules/.bin/babel lib rquery telegram -d build -s",
+    "build": "node_modules/.bin/babel lib rquery telegram -d zbuild -s",
     "watch": "node_modules/.bin/babel -w lib -w rquery -w telegram -d zbuild -s",
     "test": "scripts/test.sh",
     "demo": "NODE_ENV=development configModule=./config/demo.js redisUrl='redis://localhost:6379/13' npm start | ./node_modules/.bin/bunyan -o short",

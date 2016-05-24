@@ -52,3 +52,4 @@ function renderCommands(commands) {
       return Hs.div(_styles2.default.keyspaceHelp.command, Hc.span(command));
    });
 }
+//# sourceMappingURL=KeyspaceHelp.js.map

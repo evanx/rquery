@@ -55,7 +55,7 @@ const styles = {
          //float: 'left',
          display: 'inline-block',
          margin: [0, 0, 0, 0],
-         padding: [0, 0, 0, 10],
+         padding: [0, 0, 0, 0],
          fontSize: 18,
          color: '#808080',
          fontWeight: 'bold'

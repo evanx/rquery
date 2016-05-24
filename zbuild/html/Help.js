@@ -53,3 +53,4 @@ function renderPaths(paths) {
       return '\n      <div>\n      <span>' + path + '</span>\n      </div>\n      ';
    });
 }
+//# sourceMappingURL=Help.js.map

@@ -39,3 +39,4 @@ function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defi
 var logger = Loggers.create(module.filename);
 
 var viewportContentArray = ['width=device-width', 'maximum-scale=1.0', 'minimum-scale=1.0', 'initial-scale=1.0', 'user-scalable=no'];
+//# sourceMappingURL=Page.js.map
