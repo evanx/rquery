@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = function (props) {
    var _He;
 
-   assert(props.config.assetsUrl, 'assetsUrl');
+   assert(Values.isDefined(props.config.assetsUrl), 'assetsUrl');
    var reqx = props.reqx || {};
    var homePath = Hx.renderPath(props.helpPath || reqx.helpPath) || '/routes';
    var clickScript = '';

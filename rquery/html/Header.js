@@ -4,7 +4,7 @@ import {header as styles} from './styles';
 const logger = Loggers.create(module.filename);
 
 export default function (props) {
-   assert(props.config.assetsUrl, 'assetsUrl');
+   assert(Values.isDefined(props.config.assetsUrl), 'assetsUrl');
    const reqx = props.reqx || {};
    const homePath = Hx.renderPath(props.helpPath || reqx.helpPath) || '/routes';
    let clickScript = '';
