@@ -7,7 +7,7 @@ export default function (props) {
    logger.debug('props', Object.keys(props), Object.keys(Hx));
    return Object.assign(props, {
       title: [props.reqx.account, props.reqx.keyspace].join('/'),
-      heading: [Hc.b(props.reqx.account), Hs.tt(styles.header.keyspace, props.reqx.keyspace)].join(' '),
+      heading: [Hc.b(props.reqx.account), Hs.tt(styles.header.keyspace, props.reqx.keyspace)].join(''),
       helpPath: '/routes',
       icon: 'database',
       helpPath: ['routes'],

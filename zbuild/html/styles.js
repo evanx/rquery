@@ -56,7 +56,7 @@ var styles = {
          //float: 'left',
          display: 'inline-block',
          margin: [0, 0, 0, 0],
-         padding: [0, 0, 0, 6],
+         padding: [0, 0, 0, 10],
          fontSize: 18,
          color: '#808080',
          fontWeight: 'bold'
@@ -72,7 +72,7 @@ var styles = {
       },
       keyspace: {
          display: 'inline-block',
-         paddingLeft: 12
+         paddingLeft: 8
       }
    },
    keyspaceHelp: {
