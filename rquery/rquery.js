@@ -451,8 +451,8 @@ export default class {
             `${hostUrl}/ak/${account}/${keyspace}/get/mykey`,
             `${hostUrl}/ak/${account}/${keyspace}/set/myjsonlist1/[1,2,3]`,
             `${hostUrl}/ak/${account}/${keyspace}/getjson/myjsonlist1`,
-            `${hostUrl}/ak/${account}/${keyspace}/setjsonquery/myobject1?name=myname&age=31`,
-            `${hostUrl}/ak/${account}/${keyspace}/setjsonobject/myobject2/name:"myname",age:32`,
+            `${hostUrl}/ak/${account}/${keyspace}/set-json-query/myobject1?name=myname&age=31`,
+            `${hostUrl}/ak/${account}/${keyspace}/set-json-object/myobject2/name:"myname",age:32`,
             `${hostUrl}/ak/${account}/${keyspace}/getjson/myobject1`,
             `${hostUrl}/ak/${account}/${keyspace}/getjson/myobject2`,
             `${hostUrl}/ak/${account}/${keyspace}/sadd/myset/myvalue`,
@@ -592,7 +592,7 @@ export default class {
          return await this.redis.setAsync(keyspaceKey, req.params.value);
       });
       this.addKeyspaceCommand({
-         key: 'setjsonobject',
+         key: 'set-json-object',
          params: ['key', 'value'],
          access: 'set'
       }, async (req, res, {keyspaceKey}) => {
@@ -604,7 +604,7 @@ export default class {
          return await this.redis.setAsync(keyspaceKey, string);
       });
       this.addKeyspaceCommand({
-         key: 'setjsonquery',
+         key: 'set-json-query',
          params: ['key'],
          access: 'set'
       }, async (req, res, {keyspaceKey}) => {
@@ -642,7 +642,7 @@ export default class {
          } else if (value) {
             res.json(JSON.parse(value));
          } else {
-            res.status(404).send('Not found: ' + key);
+            this.sendStatusMessage(req, res, 404, 'Not found: ' + key);
          }
       });
       this.addKeyspaceCommand({

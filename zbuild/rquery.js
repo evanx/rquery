@@ -1242,7 +1242,7 @@ var _class = function () {
                               return command.key;
                            }).join('/'));
                            message = 'Try endpoints below for keys, sets, lists and hashes etc';
-                           exampleUrls = [hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', hostUrl + '/ak/' + account + '/' + keyspace + '/set/myjsonlist1/[1,2,3]', hostUrl + '/ak/' + account + '/' + keyspace + '/getjson/myjsonlist1', hostUrl + '/ak/' + account + '/' + keyspace + '/setjsonquery/myobject1?name=myname&age=31', hostUrl + '/ak/' + account + '/' + keyspace + '/setjsonobject/myobject2/name:"myname",age:32', hostUrl + '/ak/' + account + '/' + keyspace + '/getjson/myobject1', hostUrl + '/ak/' + account + '/' + keyspace + '/getjson/myobject2', hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/10', hostUrl + '/ak/' + account + '/' + keyspace + '/rrange/mylist/0/10', hostUrl + '/ak/' + account + '/' + keyspace + '/hset/hashes1/field1/value1', hostUrl + '/ak/' + account + '/' + keyspace + '/hsetnx/hashes1/field2/value2', hostUrl + '/ak/' + account + '/' + keyspace + '/hgetall/hashes1', hostUrl + '/ak/' + account + '/' + keyspace + '/zadd/zset1/10/member10', hostUrl + '/ak/' + account + '/' + keyspace + '/zadd/zset1/20/member20', hostUrl + '/ak/' + account + '/' + keyspace + '/zrange/zset1/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/zrevrange/zset1/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
+                           exampleUrls = [hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', hostUrl + '/ak/' + account + '/' + keyspace + '/set/myjsonlist1/[1,2,3]', hostUrl + '/ak/' + account + '/' + keyspace + '/getjson/myjsonlist1', hostUrl + '/ak/' + account + '/' + keyspace + '/set-json-query/myobject1?name=myname&age=31', hostUrl + '/ak/' + account + '/' + keyspace + '/set-json-object/myobject2/name:"myname",age:32', hostUrl + '/ak/' + account + '/' + keyspace + '/getjson/myobject1', hostUrl + '/ak/' + account + '/' + keyspace + '/getjson/myobject2', hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/10', hostUrl + '/ak/' + account + '/' + keyspace + '/rrange/mylist/0/10', hostUrl + '/ak/' + account + '/' + keyspace + '/hset/hashes1/field1/value1', hostUrl + '/ak/' + account + '/' + keyspace + '/hsetnx/hashes1/field2/value2', hostUrl + '/ak/' + account + '/' + keyspace + '/hgetall/hashes1', hostUrl + '/ak/' + account + '/' + keyspace + '/zadd/zset1/10/member10', hostUrl + '/ak/' + account + '/' + keyspace + '/zadd/zset1/20/member20', hostUrl + '/ak/' + account + '/' + keyspace + '/zrange/zset1/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/zrevrange/zset1/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
                            return _context24.abrupt('return', { message: message, exampleUrls: exampleUrls, keyspaceCommands: _this5.listCommands('keyspace') });
 
                         case 9:
@@ -1688,7 +1688,7 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'setjsonobject',
+            key: 'set-json-object',
             params: ['key', 'value'],
             access: 'set'
          }, function () {
@@ -1723,7 +1723,7 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'setjsonquery',
+            key: 'set-json-query',
             params: ['key'],
             access: 'set'
          }, function () {
@@ -1870,7 +1870,7 @@ var _class = function () {
                            if (value) {
                               res.json(JSON.parse(value));
                            } else {
-                              res.status(404).send('Not found: ' + key);
+                              _this5.sendStatusMessage(req, res, 404, 'Not found: ' + key);
                            }
 
                         case 9:
