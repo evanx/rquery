@@ -4,16 +4,18 @@ import styles from './styles';
 const logger = Loggers.create(module.filename);
 
 export default function (props) {
-   logger.debug('props', Object.keys(props));
+   logger.debug('props', Object.keys(props), Object.keys(Hx));
    return Object.assign(props, {
       title: [props.reqx.account, props.reqx.keyspace].join('/'),
-      helpPath: ['ak', props.reqx.account, props.reqx.keyspace],
-      content: `
-      <h3>${props.result.message}</h3>
-      ${renderUrls(props.result.exampleUrls).join('\n')}
-      <br/>
-      ${renderCommands(props.result.keyspaceCommands).join('\n')}
-      `
+      heading: Hc.b(props.reqx.account) + ' ' + Hc.tt(props.reqx.keyspace),
+      icon: 'info',
+      helpPath: ['routes'],
+      content: [
+         Hc.h3(props.result.message),
+         renderUrls(props.result.exampleUrls),
+         He.br(),
+         renderCommands(props.result.keyspaceCommands)
+      ]
    });
 }
 

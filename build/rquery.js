@@ -4463,7 +4463,7 @@ var _class = function () {
       key: 'sendResult',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee96(command, req, res, reqx, result) {
-            var userAgent, uaMatch, mobile, otherResult, resultString, title, resultArray, content;
+            var userAgent, uaMatch, mobile, otherResult, resultString, title, heading, icon, resultArray, content;
             return regeneratorRuntime.wrap(function _callee96$(_context97) {
                while (1) {
                   switch (_context97.prev = _context97.next) {
@@ -4520,7 +4520,7 @@ var _class = function () {
                         }
 
                         this.logger.error('sendResult none');
-                        _context97.next = 69;
+                        _context97.next = 71;
                         break;
 
                      case 24:
@@ -4538,7 +4538,7 @@ var _class = function () {
                            break;
                         }
 
-                        _context97.next = 69;
+                        _context97.next = 71;
                         break;
 
                      case 32:
@@ -4582,7 +4582,7 @@ var _class = function () {
                         } else if (result === null) {} else {
                            resultString = result.toString();
                         }
-                        _context97.next = 69;
+                        _context97.next = 71;
                         break;
 
                      case 37:
@@ -4593,7 +4593,7 @@ var _class = function () {
 
                         res.set('Content-Type', 'text/plain');
                         resultString = result.toString();
-                        _context97.next = 69;
+                        _context97.next = 71;
                         break;
 
                      case 42:
@@ -4607,29 +4607,40 @@ var _class = function () {
 
                      case 47:
                         if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html' || this.isHtmlDomain(req))) {
-                           _context97.next = 67;
+                           _context97.next = 69;
                            break;
                         }
 
-                        title = req.path;
+                        title = this.config.serviceLabel;
+                        heading = void 0, icon = void 0;
+
+                        if (reqx.account && reqx.keyspace) {
+                           title = reqx.account + '/' + reqx.keyspace;
+                           heading = '<b>' + reqx.account + '</b> <tt>' + reqx.keyspace + '</tt>';
+                           icon = 'database';
+                        }
                         resultArray = [];
 
                         if (!(result === null)) {
-                           _context97.next = 55;
+                           _context97.next = 57;
                            break;
                         }
 
                         this.sendStatusMessage(req, res, 404, reqx.key);
                         return _context97.abrupt('return');
 
-                     case 55:
+                     case 57:
                         if (lodash.isString(result)) {
                            resultString = result;
                         } else if (lodash.isArray(result)) {
-                           //resultString = `${result.length} items`;
+                           if (false) {
+                              resultString = result.length + ' items';
+                           }
                            resultArray = result;
                         } else if (lodash.isObject(result)) {
-                           //resultString = `<b>keys</b> ${Object.keys(result).join(' ')}`;
+                           if (false) {
+                              resultString = '<b>keys</b> ' + Object.keys(result).join(' ');
+                           }
                            resultArray = Object.keys(result).map(function (key) {
                               return '<b>' + key + '</b> ' + result[key];
                            });
@@ -4637,7 +4648,7 @@ var _class = function () {
                            resultString = result.toString();
                         }
 
-                     case 56:
+                     case 58:
                         res.set('Content-Type', 'text/html');
                         content = [];
 
@@ -4646,37 +4657,32 @@ var _class = function () {
                            content.push('<div style=\'' + _styles2.default.result.commandKey + '\'>' + command.key + '</div>');
                         }
                         if (reqx.key) {
-                           title = reqx.key;
+                           //title = reqx.key;
                            content.push('<div style=\'' + _styles2.default.result.reqKey + '\'>' + reqx.key + '</div>');
                         }
                         if (resultString) {
-                           resultArray.push(resultString);
-                           //content.push(`<div style='${styles.result.resultString}'>${resultString}</div>`);
+                           if (true) {
+                              resultArray.push(resultString);
+                           } else {
+                              content.push('<div style=\'' + _styles2.default.result.resultString + '\'>' + resultString + '</div>');
+                           }
                         }
                         if (resultArray.length) {
                            content.push('<pre style=\'' + _styles2.default.result.resultArray + '\'>' + resultArray.join('\n') + '</pre>');
                         }
-                        if (reqx.key) {
-                           res.send((0, _Page2.default)({
-                              config: this.config, req: req, reqx: reqx, title: title,
-                              content: content.join('\n')
-                           }));
-                        } else {
-                           res.send((0, _Page2.default)({
-                              config: this.config, req: req, reqx: reqx, title: title,
-                              content: content.join('\n')
-                           }));
-                        }
-                        return _context97.abrupt('return');
-
-                     case 67:
-                        this.sendError(req, res, { message: 'Invalid default format: ' + this.config.defaultFormat });
+                        res.send((0, _Page2.default)({
+                           config: this.config, req: req, reqx: reqx, title: title, heading: heading, icon: icon, content: content
+                        }));
                         return _context97.abrupt('return');
 
                      case 69:
+                        this.sendError(req, res, { message: 'Invalid default format: ' + this.config.defaultFormat });
+                        return _context97.abrupt('return');
+
+                     case 71:
                         res.send(resultString + '\n');
 
-                     case 70:
+                     case 72:
                      case 'end':
                         return _context97.stop();
                   }
@@ -4802,7 +4808,7 @@ var _class = function () {
             res.set('Content-Type', 'text/html');
             res.status(statusCode).send((0, _Page2.default)({
                config: this.config, req: req, reqx: reqx, title: title,
-               content: [HtmlElements.styled('div', _styles2.default.error.status, 'Status ' + statusCode), HtmlElements.styled('div', _styles2.default.error.message, title), HtmlElements.styled('pre', _styles2.default.error.detail, messageLines)]
+               content: [Hs.div(_styles2.default.error.status, 'Status ' + statusCode), Hs.div(_styles2.default.error.message, title), Hs.pre(_styles2.default.error.detail, messageLines)]
             }));
          } else {
             this.logger.warn('status lines', req.path, statusCode, typeof err === 'undefined' ? 'undefined' : _typeof(err), Object.keys(err), messageLines.length);

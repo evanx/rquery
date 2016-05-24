@@ -1,21 +1,62 @@
 
-module.exports = Styles.renderStyles({
+function iconBackgroundImage(name) {
+   return `url(https://test.redishub.com/assets/icomoon/png20-38/${name}.png)`
+}
+
+const styles = {
    resets: {
+      body: {
+         padding: 10
+      },
       a: {
          textDecoration: 'none'
+      },
+      img_icon: {
+         backgroundPosition: [0, 0],
+         backgroundRepeat: 'no-repeat',
+         backgroundColor: 'transparent',
+         backgroundImage: iconBackgroundImage('home')
+      },
+      article: {
+         clear: 'both',
+         cursor: 'pointer',
+         marginTop: 10
+      },
+      pre: {
+         backgroundColor: '#808080'
+      }
+   },
+   _768: {
+      resets: {
+         body: {
+            paddingLeft: 100,
+            maxWidth: 768
+         }
       }
    },
    header: {
       container: {
-         display: 'block',
-         cursor: 'pointer'
+         minHeight: 30,
+         clear: 'both',
+         position: 'relative',
+         cursor: 'pointer',
+         margin: [0, 0, 0, 0],
+         border: 'bottom 1px #000'
       },
       icon: {
+         float: 'left',
+         display: 'inline-block',
          width: 20,
          height: 20
       },
       title: {
-         fontSize: 18
+         fontFamily: 'monospace',
+         float: 'left',
+         display: 'inline-block',
+         margin: [0, 0, 0, 0],
+         padding: [0, 0, 0, 10],
+         fontSize: 16,
+         color: '#808080'
       }
    },
    error: {
@@ -55,6 +96,8 @@ module.exports = Styles.renderStyles({
       resultArray: {
          lineHeight: 2,
          margin: [10, 0, 0, 0],
+         padding: 5,
+         backgroundColor: '#f0f0f0',
          borderTop: 'solid 1px #777777'
       },
       resultTable: {
@@ -70,6 +113,10 @@ module.exports = Styles.renderStyles({
          }
       }
    }
-});
+};
 
-//throw module.exports;
+module.exports = Styles.renderStyles(styles);
+module.exports.source = styles;
+
+
+   //throw module.exports;

@@ -16,44 +16,27 @@ const viewportContentArray = [
 export default function (props) {
    logger.debug('props', Object.keys(props));
    assert(props.config.assetsUrl, 'assetsUrl');
-   const content = HtmlElements.renderContent(props.content);
    const reqx = props.reqx || {};
-   let helpScript = '';
+   let article;
    if (reqx.helpPath) {
-      helpScript = `window.location.pathname = "${reqx.helpPath}"`;
+      const helpScript = `window.location.pathname='${reqx.helpPath}'`;
+      article = html`<article onClick=${helpScript}>${props.content}</article>`;
+   } else {
+      article = html`<article>${props.content}</article>`;
    }
-   return `
+   const ua = props.req.get('user-agent');
+   const styleSheet = Styles.getCachedUserAgentStyleSheet({styles, key: 'resets', ua});
+   return html`
    <html>
    <head>
    <title>${props.title}</title>
-   <style>
-   a {
-      text-decoration: none;
-   }
-   pre {
-      background-color: #f8f8f8;
-      padding: 5px;
-   }
-   </style>
-   <meta name="viewport" content="${viewportContentArray.join(', ')}"/>
+   <style>${styleSheet}</style>
+   <meta name="viewport" content=${viewportContentArray.join(', ')}/>
    </head>
-   <body style="padding: ${bodyPadding(props)}; max-width: 768px">
-   ${renderHeader(props)}
-   <article onClick="${helpScript}" style="padding-top:10px">
-   ${content}
-   </article>
+   <body>
+   ${renderHeader(Object.assign({icon: 'home'}, props))}
+   ${article}
    </body>
    </html>
    `;
-}
-
-function bodyPadding({req}) {
-   if (req) {
-      const ua = req.get('user-agent');
-      if (ua.match(/Mobile/)) {
-      } else {
-         return '10px 10px 10px 100px';
-      }
-   }
-   return '10px';
 }

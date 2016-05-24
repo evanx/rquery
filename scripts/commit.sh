@@ -3,7 +3,7 @@ set -u -e
 
 npm run build 
 
-cat build/rquery.js | grep '^\s*logger' && exit 1
+cat zbuild/rquery.js | grep '^\s*logger\|zz\|ZZ' && exit 1
 
 c1commit() {
   message="$1"

@@ -1622,7 +1622,13 @@ export default class {
          return;
       } else if (this.config.defaultFormat === 'html' || Values.isDefined(req.query.html)
       || command.format === 'html' || this.isHtmlDomain(req)) {
-         let title = req.path;
+         let title = this.config.serviceLabel;
+         let heading, icon;
+         if (reqx.account && reqx.keyspace) {
+            title = `${reqx.account}/${reqx.keyspace}`;
+            heading = `<b>${reqx.account}</b> <tt>${reqx.keyspace}</tt>`;
+            icon = 'database';
+         }
          let resultArray = [];
          if (result === null) {
             this.sendStatusMessage(req, res, 404, reqx.key);
@@ -1630,10 +1636,14 @@ export default class {
          } else if (lodash.isString(result)) {
             resultString = result;
          } else if (lodash.isArray(result)) {
-            //resultString = `${result.length} items`;
+            if (false) {
+               resultString = `${result.length} items`;
+            }
             resultArray = result;
          } else if (lodash.isObject(result)) {
-            //resultString = `<b>keys</b> ${Object.keys(result).join(' ')}`;
+            if (false) {
+               resultString = `<b>keys</b> ${Object.keys(result).join(' ')}`;
+            }
             resultArray = Object.keys(result).map(key => `<b>${key}</b> ${result[key]}`);
          } else {
             resultString = result.toString();
@@ -1645,27 +1655,22 @@ export default class {
             content.push(`<div style='${styles.result.commandKey}'>${command.key}</div>`);
          }
          if (reqx.key) {
-            title = reqx.key;
+            //title = reqx.key;
             content.push(`<div style='${styles.result.reqKey}'>${reqx.key}</div>`);
          }
          if (resultString) {
-            resultArray.push(resultString);
-            //content.push(`<div style='${styles.result.resultString}'>${resultString}</div>`);
+            if (true) {
+               resultArray.push(resultString);
+            } else {
+               content.push(`<div style='${styles.result.resultString}'>${resultString}</div>`);
+            }
          }
          if (resultArray.length) {
             content.push(`<pre style='${styles.result.resultArray}'>${resultArray.join('\n')}</pre>`);
          }
-         if (reqx.key) {
             res.send(renderPage({
-               config: this.config, req, reqx, title,
-               content: content.join('\n')
+               config: this.config, req, reqx, title, heading, icon, content
             }));
-         } else {
-            res.send(renderPage({
-               config: this.config, req, reqx, title,
-               content: content.join('\n')
-            }));
-         }
          return;
       } else {
          this.sendError(req, res, {message: `Invalid default format: ${this.config.defaultFormat}`});
@@ -1772,9 +1777,9 @@ export default class {
          res.status(statusCode).send(renderPage({
             config: this.config, req, reqx, title,
             content: [
-               HtmlElements.styled('div', styles.error.status, `Status ${statusCode}`),
-               HtmlElements.styled('div', styles.error.message, title),
-               HtmlElements.styled('pre', styles.error.detail, messageLines)
+               Hs.div(styles.error.status, `Status ${statusCode}`),
+               Hs.div(styles.error.message, title),
+               Hs.pre(styles.error.detail, messageLines)
             ]
          }));
       } else {

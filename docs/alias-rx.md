@@ -14,7 +14,6 @@ rhdebug() {
 ```
 
 ```shell
-
 alias rx=redisx
 ```
 

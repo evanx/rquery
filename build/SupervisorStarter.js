@@ -29,7 +29,7 @@ var createSupervisor = function () {
                   return ClassPreprocessor.buildSync('./lib/Supervisor.js', ['logger', 'context', 'config'].concat(Object.keys(supervisorMeta.state)));
 
                case 5:
-                  Supervisor = require('../build/Supervisor').default;
+                  Supervisor = require('../zbuild/Supervisor').default;
                   return _context.abrupt('return', new Supervisor());
 
                case 7:
@@ -201,8 +201,8 @@ function assignDeps(g) {
    g.Strings = require('./Strings');
    g.Styles = require('./Styles');
    g.HtmlElements = require('./HtmlElements');
+   g.HtmlElements.assignDeps(g);
    g.Values = require('./Values');
-   g.Hx = g.HtmlElements;
 }
 
 assignDeps(global);

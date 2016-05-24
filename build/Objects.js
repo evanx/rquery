@@ -3,15 +3,24 @@
 Object.defineProperty(exports, "__esModule", {
    value: true
 });
-exports.mapEntries = mapEntries;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+exports.kvs = kvs;
+exports.kv = kv;
 exports.translate = translate;
 
 var logger = Loggers.create(__filename, 'info');
 
-function mapEntries(object) {
+function kvs(object) {
    return Object.keys(object).map(function (key) {
-      return { key: key, value: object[key] };
+      return kv(object, key);
    });
+}
+
+function kv(object, key) {
+   assert.equal(typeof key === 'undefined' ? 'undefined' : _typeof(key), 'string');
+   return { key: key, value: object[key] };
 }
 
 function translate(object, other, fn) {

@@ -34,15 +34,16 @@ var Logger = function () {
    }, {
       key: 'dwarn',
       value: function dwarn() {
+         for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+         }
+
          if (global.loggerLevel === 'debug') {
             var _logger;
 
-            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-               args[_key] = arguments[_key];
-            }
-
             (_logger = this.logger).warn.apply(_logger, ['DEBUG'].concat(args));
          }
+         return args[0];
       }
    }, {
       key: 'debug',
@@ -50,6 +51,9 @@ var Logger = function () {
          var _logger2;
 
          (_logger2 = this.logger).debug.apply(_logger2, arguments);
+         if (arguments.length > 0) {
+            return arguments.length <= arguments.length - 1 + 0 ? undefined : arguments[arguments.length - 1 + 0];
+         }
       }
    }, {
       key: 'info',

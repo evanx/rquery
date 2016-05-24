@@ -3,5 +3,5 @@ set -u -e
 
 line=$1
 
-  cat build/rquery.js | head -n $line | tail
+  cat zbuild/rquery.js | head -n $line | tail
 
