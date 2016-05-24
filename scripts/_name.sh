@@ -19,21 +19,27 @@ then
 else
   port=${port}${port}
 fi
-if echo $name | grep -q 'left'
+
+# color
+
+color=9
+if echo $name | grep -q 'blue'
 then
-  port=${port}0
-elif echo $name | grep -q 'right'
-then
-  port=${port}1
-elif echo $name | grep -q 'blue'
-then
-  port=${port}0
+  color=0
 elif echo $name | grep -q 'green'
 then
-  port=${port}1
-else
-  port=${port}9
+  color=1
+elif echo $name | grep -q 'left'
+then
+  color=0
+elif echo $name | grep -q 'right'
+then
+  color=1
 fi
+port=$port${color}
+
+# instance
+
 instance=1
 if echo $name | grep -q '[0-9]$'
 then
@@ -41,4 +47,6 @@ then
 fi
 echo $instance | grep -q '^[0-9]$'
 port="${port}${instance}"
+
 echo "$name $config $instance $port"
+
