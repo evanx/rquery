@@ -1224,7 +1224,7 @@ var _class = function () {
             }()
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee24(req, res, reqx) {
-               var _req$params3, account, keyspace, hostUrl, message, exampleUrls;
+               var _req$params3, account, keyspace, hostUrl, message, description, exampleUrls;
 
                return regeneratorRuntime.wrap(function _callee24$(_context24) {
                   while (1) {
@@ -1241,11 +1241,12 @@ var _class = function () {
                            _this5.logger.ndebug('help', req.params, _this5.commands.map(function (command) {
                               return command.key;
                            }).join('/'));
-                           message = 'Try endpoints below for keys, sets, lists and hashes etc';
+                           message = 'Try sample endpoints below';
+                           description = 'You can set, add and view keys, sets, lists, hashes etc';
                            exampleUrls = [hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', hostUrl + '/ak/' + account + '/' + keyspace + '/set/myjsonlist1/[1,2,3]', hostUrl + '/ak/' + account + '/' + keyspace + '/getjson/myjsonlist1', hostUrl + '/ak/' + account + '/' + keyspace + '/set-json-query/myobject1?name=myname&age=31', hostUrl + '/ak/' + account + '/' + keyspace + '/set-json-object/myobject2/name:"myname",age:32', hostUrl + '/ak/' + account + '/' + keyspace + '/getjson/myobject1', hostUrl + '/ak/' + account + '/' + keyspace + '/getjson/myobject2', hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/10', hostUrl + '/ak/' + account + '/' + keyspace + '/rrange/mylist/0/10', hostUrl + '/ak/' + account + '/' + keyspace + '/hset/hashes1/field1/value1', hostUrl + '/ak/' + account + '/' + keyspace + '/hsetnx/hashes1/field2/value2', hostUrl + '/ak/' + account + '/' + keyspace + '/hgetall/hashes1', hostUrl + '/ak/' + account + '/' + keyspace + '/zadd/zset1/10/member10', hostUrl + '/ak/' + account + '/' + keyspace + '/zadd/zset1/20/member20', hostUrl + '/ak/' + account + '/' + keyspace + '/zrange/zset1/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/zrevrange/zset1/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
-                           return _context24.abrupt('return', { message: message, exampleUrls: exampleUrls, keyspaceCommands: _this5.listCommands('keyspace') });
+                           return _context24.abrupt('return', { message: message, description: description, exampleUrls: exampleUrls, keyspaceCommands: _this5.listCommands('keyspace') });
 
-                        case 9:
+                        case 10:
                         case 'end':
                            return _context24.stop();
                      }

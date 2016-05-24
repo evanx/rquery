@@ -445,7 +445,8 @@ export default class {
             hostUrl = `https://${req.hostname}`;
          }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
-         const message = `Try endpoints below for keys, sets, lists and hashes etc`;
+         const message = `Try sample endpoints below`;
+         const description = `You can set, add and view keys, sets, lists, hashes etc`;
          const exampleUrls = [
             `${hostUrl}/ak/${account}/${keyspace}/set/mykey/myvalue`,
             `${hostUrl}/ak/${account}/${keyspace}/get/mykey`,
@@ -469,7 +470,7 @@ export default class {
             `${hostUrl}/ak/${account}/${keyspace}/zrevrange/zset1/0/-1`,
             `${hostUrl}/ak/${account}/${keyspace}/ttls`,
          ];
-         return {message, exampleUrls, keyspaceCommands: this.listCommands('keyspace')};
+         return {message, description, exampleUrls, keyspaceCommands: this.listCommands('keyspace')};
       });
       this.addKeyspaceCommand({
          key: 'register-keyspace',

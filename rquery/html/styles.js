@@ -104,6 +104,12 @@ const styles = {
       }
    },
    result: {
+      message: {
+         fontSize: 18
+      },
+      description: {
+         fontSize: 16
+      },
       commandKey: {
          fontSize: 18,
          fontStyle: 'italic',

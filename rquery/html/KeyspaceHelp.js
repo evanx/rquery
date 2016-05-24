@@ -13,6 +13,7 @@ export default function (props) {
       helpPath: ['routes'],
       content: [
          Hc.h3(props.result.message),
+         Hs.p(styles.result.description, props.result.description),
          renderUrls(props.result.exampleUrls),
          He.br(),
          renderCommands(props.result.keyspaceCommands)
