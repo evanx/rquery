@@ -3,13 +3,21 @@ set -u -e
 
 if git pull | grep '^Already'
 then
-  count=0
-  while [ $count -lt 4 -a -f ~/tmp/rquery-committing ]
-  do
-    git pull | grep '^Already' || break
-    sleep .500
-    count=`echo "$count + 1" | bc`
-  done
+  sleep 2
+  if [ -f ~/tmp/rquery-notify ]
+  then
+    if cat ~/tmp/rquery-notify | grep 'committing$'
+    then
+      count=0
+      while [ $count -lt 10 -a -f `cat ~/tmp/rquery-notify` = 'committing' ]
+      do
+        git pull | grep '^Already' || break
+        sleep .500
+        count=`echo "$count + 1" | bc`
+      done
+    fi
+  fi
+  rm -f ~/tmp/rquery-notify
 fi
 
 git pull && git submodule update
