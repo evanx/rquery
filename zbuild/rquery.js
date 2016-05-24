@@ -1241,8 +1241,8 @@ var _class = function () {
                            _this5.logger.ndebug('help', req.params, _this5.commands.map(function (command) {
                               return command.key;
                            }).join('/'));
-                           message = 'Try endpoints below.';
-                           exampleUrls = [hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/hset/hashes1/field1/value1', hostUrl + '/ak/' + account + '/' + keyspace + '/hgetall/hashes1', hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
+                           message = 'Try endpoints below for keys, sets, lists and hashes etc';
+                           exampleUrls = [hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey', hostUrl + '/ak/' + account + '/' + keyspace + '/setjsonobject/myobject1/name:"myname",age:42', hostUrl + '/ak/' + account + '/' + keyspace + '/getjson/myobject1', hostUrl + '/ak/' + account + '/' + keyspace + '/setjsonquery/myobject2?name=myname&age=42', hostUrl + '/ak/' + account + '/' + keyspace + '/getjson/myobject2', hostUrl + '/ak/' + account + '/' + keyspace + '/set/myjsonlist1/[1,2,3]', hostUrl + '/ak/' + account + '/' + keyspace + '/getjson/myjsonlist1', hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset', hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist/0/10', hostUrl + '/ak/' + account + '/' + keyspace + '/rrange/mylist/0/10', hostUrl + '/ak/' + account + '/' + keyspace + '/hset/hashes1/field1/value1', hostUrl + '/ak/' + account + '/' + keyspace + '/hsetnx/hashes1/field2/value2', hostUrl + '/ak/' + account + '/' + keyspace + '/hgetall/hashes1', hostUrl + '/ak/' + account + '/' + keyspace + '/zadd/zset1/10/member10', hostUrl + '/ak/' + account + '/' + keyspace + '/zadd/zset1/20/member20', hostUrl + '/ak/' + account + '/' + keyspace + '/zrange/zset1/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/zrevrange/zset1/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
                            return _context24.abrupt('return', { message: message, exampleUrls: exampleUrls, keyspaceCommands: _this5.listCommands('keyspace') });
 
                         case 9:
@@ -1688,29 +1688,30 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'setex',
-            params: ['key', 'seconds', 'value'],
+            key: 'setjsonobject',
+            params: ['key', 'value'],
             access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee36(req, res, _ref27) {
                var keyspaceKey = _ref27.keyspaceKey;
-
-               var _req$params6, seconds, value;
-
+               var string;
                return regeneratorRuntime.wrap(function _callee36$(_context36) {
                   while (1) {
                      switch (_context36.prev = _context36.next) {
                         case 0:
-                           _req$params6 = req.params;
-                           seconds = _req$params6.seconds;
-                           value = _req$params6.value;
-                           _context36.next = 5;
-                           return _this5.redis.setexAsync(keyspaceKey, seconds, value);
+                           string = req.params.value;
 
-                        case 5:
+                           if (/^\w/.test(req.params.value)) {
+                              string = ['{', req.params.value, '}'].join('');
+                              string = string.replace(/(\W)(\w+):/g, '$1"$2":');
+                           }
+                           _context36.next = 4;
+                           return _this5.redis.setAsync(keyspaceKey, string);
+
+                        case 4:
                            return _context36.abrupt('return', _context36.sent);
 
-                        case 6:
+                        case 5:
                         case 'end':
                            return _context36.stop();
                      }
@@ -1722,9 +1723,9 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'setnx',
-            params: ['key', 'value'],
-            access: 'add'
+            key: 'setjsonquery',
+            params: ['key'],
+            access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee37(req, res, _ref28) {
                var keyspaceKey = _ref28.keyspaceKey;
@@ -1733,7 +1734,7 @@ var _class = function () {
                      switch (_context37.prev = _context37.next) {
                         case 0:
                            _context37.next = 2;
-                           return _this5.redis.setnxAsync(keyspaceKey, req.params.value);
+                           return _this5.redis.setAsync(keyspaceKey, JSON.stringify(req.query));
 
                         case 2:
                            return _context37.abrupt('return', _context37.sent);
@@ -1750,22 +1751,29 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'get',
-            params: ['key']
+            key: 'setex',
+            params: ['key', 'seconds', 'value'],
+            access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee38(req, res, _ref29) {
                var keyspaceKey = _ref29.keyspaceKey;
+
+               var _req$params6, seconds, value;
+
                return regeneratorRuntime.wrap(function _callee38$(_context38) {
                   while (1) {
                      switch (_context38.prev = _context38.next) {
                         case 0:
-                           _context38.next = 2;
-                           return _this5.redis.getAsync(keyspaceKey);
+                           _req$params6 = req.params;
+                           seconds = _req$params6.seconds;
+                           value = _req$params6.value;
+                           _context38.next = 5;
+                           return _this5.redis.setexAsync(keyspaceKey, seconds, value);
 
-                        case 2:
+                        case 5:
                            return _context38.abrupt('return', _context38.sent);
 
-                        case 3:
+                        case 6:
                         case 'end':
                            return _context38.stop();
                      }
@@ -1777,31 +1785,23 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'getjson',
-            params: ['key']
+            key: 'setnx',
+            params: ['key', 'value'],
+            access: 'add'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee39(req, res, _ref30) {
-               var key = _ref30.key;
                var keyspaceKey = _ref30.keyspaceKey;
-               var value;
                return regeneratorRuntime.wrap(function _callee39$(_context39) {
                   while (1) {
                      switch (_context39.prev = _context39.next) {
                         case 0:
                            _context39.next = 2;
-                           return _this5.redis.getAsync(keyspaceKey);
+                           return _this5.redis.setnxAsync(keyspaceKey, req.params.value);
 
                         case 2:
-                           value = _context39.sent;
+                           return _context39.abrupt('return', _context39.sent);
 
-                           _this5.logger.info('getjson', typeof value === 'undefined' ? 'undefined' : _typeof(value), value);
-                           if (value) {
-                              res.json(JSON.parse(value));
-                           } else {
-                              res.status(404).send('Not found: ' + key);
-                           }
-
-                        case 5:
+                        case 3:
                         case 'end':
                            return _context39.stop();
                      }
@@ -1813,9 +1813,8 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'incr',
-            params: ['key'],
-            access: 'add'
+            key: 'get',
+            params: ['key']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee40(req, res, _ref31) {
                var keyspaceKey = _ref31.keyspaceKey;
@@ -1824,7 +1823,7 @@ var _class = function () {
                      switch (_context40.prev = _context40.next) {
                         case 0:
                            _context40.next = 2;
-                           return _this5.redis.incrAsync(keyspaceKey);
+                           return _this5.redis.getAsync(keyspaceKey);
 
                         case 2:
                            return _context40.abrupt('return', _context40.sent);
@@ -1841,22 +1840,31 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'exists',
+            key: 'getjson',
             params: ['key']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee41(req, res, _ref32) {
+               var key = _ref32.key;
                var keyspaceKey = _ref32.keyspaceKey;
+               var value;
                return regeneratorRuntime.wrap(function _callee41$(_context41) {
                   while (1) {
                      switch (_context41.prev = _context41.next) {
                         case 0:
                            _context41.next = 2;
-                           return _this5.redis.existsAsync(keyspaceKey);
+                           return _this5.redis.getAsync(keyspaceKey);
 
                         case 2:
-                           return _context41.abrupt('return', _context41.sent);
+                           value = _context41.sent;
 
-                        case 3:
+                           _this5.logger.info('getjson', typeof value === 'undefined' ? 'undefined' : _typeof(value), value);
+                           if (value) {
+                              res.json(JSON.parse(value));
+                           } else {
+                              res.status(404).send('Not found: ' + key);
+                           }
+
+                        case 5:
                         case 'end':
                            return _context41.stop();
                      }
@@ -1868,9 +1876,9 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'del',
+            key: 'incr',
             params: ['key'],
-            access: 'set'
+            access: 'add'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee42(req, res, _ref33) {
                var keyspaceKey = _ref33.keyspaceKey;
@@ -1879,7 +1887,7 @@ var _class = function () {
                      switch (_context42.prev = _context42.next) {
                         case 0:
                            _context42.next = 2;
-                           return _this5.redis.delAsync(keyspaceKey);
+                           return _this5.redis.incrAsync(keyspaceKey);
 
                         case 2:
                            return _context42.abrupt('return', _context42.sent);
@@ -1896,9 +1904,8 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'sadd',
-            params: ['key', 'member'],
-            access: 'add'
+            key: 'exists',
+            params: ['key']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee43(req, res, _ref34) {
                var keyspaceKey = _ref34.keyspaceKey;
@@ -1907,7 +1914,7 @@ var _class = function () {
                      switch (_context43.prev = _context43.next) {
                         case 0:
                            _context43.next = 2;
-                           return _this5.redis.saddAsync(keyspaceKey, req.params.member);
+                           return _this5.redis.existsAsync(keyspaceKey);
 
                         case 2:
                            return _context43.abrupt('return', _context43.sent);
@@ -1924,8 +1931,8 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'srem',
-            params: ['key', 'member'],
+            key: 'del',
+            params: ['key'],
             access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee44(req, res, _ref35) {
@@ -1935,7 +1942,7 @@ var _class = function () {
                      switch (_context44.prev = _context44.next) {
                         case 0:
                            _context44.next = 2;
-                           return _this5.redis.sremAsync(keyspaceKey, req.params.member);
+                           return _this5.redis.delAsync(keyspaceKey);
 
                         case 2:
                            return _context44.abrupt('return', _context44.sent);
@@ -1952,48 +1959,36 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'smove',
-            params: ['key', 'dest', 'member'],
-            access: 'set'
+            key: 'sadd',
+            params: ['key', 'member'],
+            access: 'add'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee45(req, res, _ref36, multi) {
-               var account = _ref36.account;
-               var keyspace = _ref36.keyspace;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee45(req, res, _ref36) {
                var keyspaceKey = _ref36.keyspaceKey;
-
-               var _req$params7, dest, member, destKey, result;
-
                return regeneratorRuntime.wrap(function _callee45$(_context45) {
                   while (1) {
                      switch (_context45.prev = _context45.next) {
                         case 0:
-                           _req$params7 = req.params;
-                           dest = _req$params7.dest;
-                           member = _req$params7.member;
-                           destKey = _this5.keyspaceKey(account, keyspace, dest);
-                           _context45.next = 6;
-                           return _this5.redis.smoveAsync(keyspaceKey, destKey, member);
+                           _context45.next = 2;
+                           return _this5.redis.saddAsync(keyspaceKey, req.params.member);
 
-                        case 6:
-                           result = _context45.sent;
+                        case 2:
+                           return _context45.abrupt('return', _context45.sent);
 
-                           multi.expire(destKey, _this5.getKeyExpire(account));
-                           return _context45.abrupt('return', result);
-
-                        case 9:
+                        case 3:
                         case 'end':
                            return _context45.stop();
                      }
                   }
                }, _callee45, _this5);
             }));
-            return function (_x101, _x102, _x103, _x104) {
+            return function (_x101, _x102, _x103) {
                return ref.apply(this, arguments);
             };
          }());
          this.addKeyspaceCommand({
-            key: 'spop',
-            params: ['key'],
+            key: 'srem',
+            params: ['key', 'member'],
             access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee46(req, res, _ref37) {
@@ -2003,7 +1998,7 @@ var _class = function () {
                      switch (_context46.prev = _context46.next) {
                         case 0:
                            _context46.next = 2;
-                           return _this5.redis.spopAsync(keyspaceKey);
+                           return _this5.redis.sremAsync(keyspaceKey, req.params.member);
 
                         case 2:
                            return _context46.abrupt('return', _context46.sent);
@@ -2015,40 +2010,54 @@ var _class = function () {
                   }
                }, _callee46, _this5);
             }));
-            return function (_x105, _x106, _x107) {
+            return function (_x104, _x105, _x106) {
                return ref.apply(this, arguments);
             };
          }());
          this.addKeyspaceCommand({
-            key: 'smembers',
-            params: ['key']
+            key: 'smove',
+            params: ['key', 'dest', 'member'],
+            access: 'set'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee47(req, res, _ref38) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee47(req, res, _ref38, multi) {
+               var account = _ref38.account;
+               var keyspace = _ref38.keyspace;
                var keyspaceKey = _ref38.keyspaceKey;
+
+               var _req$params7, dest, member, destKey, result;
+
                return regeneratorRuntime.wrap(function _callee47$(_context47) {
                   while (1) {
                      switch (_context47.prev = _context47.next) {
                         case 0:
-                           _context47.next = 2;
-                           return _this5.redis.smembersAsync(keyspaceKey);
+                           _req$params7 = req.params;
+                           dest = _req$params7.dest;
+                           member = _req$params7.member;
+                           destKey = _this5.keyspaceKey(account, keyspace, dest);
+                           _context47.next = 6;
+                           return _this5.redis.smoveAsync(keyspaceKey, destKey, member);
 
-                        case 2:
-                           return _context47.abrupt('return', _context47.sent);
+                        case 6:
+                           result = _context47.sent;
 
-                        case 3:
+                           multi.expire(destKey, _this5.getKeyExpire(account));
+                           return _context47.abrupt('return', result);
+
+                        case 9:
                         case 'end':
                            return _context47.stop();
                      }
                   }
                }, _callee47, _this5);
             }));
-            return function (_x108, _x109, _x110) {
+            return function (_x107, _x108, _x109, _x110) {
                return ref.apply(this, arguments);
             };
          }());
          this.addKeyspaceCommand({
-            key: 'sismember',
-            params: ['key', 'member']
+            key: 'spop',
+            params: ['key'],
+            access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee48(req, res, _ref39) {
                var keyspaceKey = _ref39.keyspaceKey;
@@ -2057,7 +2066,7 @@ var _class = function () {
                      switch (_context48.prev = _context48.next) {
                         case 0:
                            _context48.next = 2;
-                           return _this5.redis.sismemberAsync(keyspaceKey, req.params.member);
+                           return _this5.redis.spopAsync(keyspaceKey);
 
                         case 2:
                            return _context48.abrupt('return', _context48.sent);
@@ -2074,7 +2083,7 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'scard',
+            key: 'smembers',
             params: ['key']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee49(req, res, _ref40) {
@@ -2084,7 +2093,7 @@ var _class = function () {
                      switch (_context49.prev = _context49.next) {
                         case 0:
                            _context49.next = 2;
-                           return _this5.redis.scardAsync(keyspaceKey);
+                           return _this5.redis.smembersAsync(keyspaceKey);
 
                         case 2:
                            return _context49.abrupt('return', _context49.sent);
@@ -2101,9 +2110,8 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'lpush',
-            params: ['key', 'value'],
-            access: 'add'
+            key: 'sismember',
+            params: ['key', 'member']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee50(req, res, _ref41) {
                var keyspaceKey = _ref41.keyspaceKey;
@@ -2112,7 +2120,7 @@ var _class = function () {
                      switch (_context50.prev = _context50.next) {
                         case 0:
                            _context50.next = 2;
-                           return _this5.redis.lpushAsync(keyspaceKey, req.params.value);
+                           return _this5.redis.sismemberAsync(keyspaceKey, req.params.member);
 
                         case 2:
                            return _context50.abrupt('return', _context50.sent);
@@ -2129,39 +2137,34 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'lpushtrim',
-            params: ['key', 'length', 'value'],
-            access: 'set'
+            key: 'scard',
+            params: ['key']
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee51(req, res, _ref42, multi) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee51(req, res, _ref42) {
                var keyspaceKey = _ref42.keyspaceKey;
-
-               var _req$params8, value, length;
-
                return regeneratorRuntime.wrap(function _callee51$(_context51) {
                   while (1) {
                      switch (_context51.prev = _context51.next) {
                         case 0:
-                           _req$params8 = req.params;
-                           value = _req$params8.value;
-                           length = _req$params8.length;
+                           _context51.next = 2;
+                           return _this5.redis.scardAsync(keyspaceKey);
 
-                           multi.lpush(keyspaceKey, value);
-                           multi.trim(keyspaceKey, length);
+                        case 2:
+                           return _context51.abrupt('return', _context51.sent);
 
-                        case 5:
+                        case 3:
                         case 'end':
                            return _context51.stop();
                      }
                   }
                }, _callee51, _this5);
             }));
-            return function (_x120, _x121, _x122, _x123) {
+            return function (_x120, _x121, _x122) {
                return ref.apply(this, arguments);
             };
          }());
          this.addKeyspaceCommand({
-            key: 'rpush',
+            key: 'lpush',
             params: ['key', 'value'],
             access: 'add'
          }, function () {
@@ -2172,7 +2175,7 @@ var _class = function () {
                      switch (_context52.prev = _context52.next) {
                         case 0:
                            _context52.next = 2;
-                           return _this5.redis.rpushAsync(keyspaceKey, req.params.value);
+                           return _this5.redis.lpushAsync(keyspaceKey, req.params.value);
 
                         case 2:
                            return _context52.abrupt('return', _context52.sent);
@@ -2184,67 +2187,60 @@ var _class = function () {
                   }
                }, _callee52, _this5);
             }));
-            return function (_x124, _x125, _x126) {
+            return function (_x123, _x124, _x125) {
                return ref.apply(this, arguments);
             };
          }());
          this.addKeyspaceCommand({
-            key: 'lpop',
-            params: ['key'],
+            key: 'lpushtrim',
+            params: ['key', 'length', 'value'],
             access: 'set'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee53(req, res, _ref44) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee53(req, res, _ref44, multi) {
                var keyspaceKey = _ref44.keyspaceKey;
+
+               var _req$params8, value, length;
+
                return regeneratorRuntime.wrap(function _callee53$(_context53) {
                   while (1) {
                      switch (_context53.prev = _context53.next) {
                         case 0:
-                           _context53.next = 2;
-                           return _this5.redis.lpopAsync(keyspaceKey);
+                           _req$params8 = req.params;
+                           value = _req$params8.value;
+                           length = _req$params8.length;
 
-                        case 2:
-                           return _context53.abrupt('return', _context53.sent);
+                           multi.lpush(keyspaceKey, value);
+                           multi.trim(keyspaceKey, length);
 
-                        case 3:
+                        case 5:
                         case 'end':
                            return _context53.stop();
                      }
                   }
                }, _callee53, _this5);
             }));
-            return function (_x127, _x128, _x129) {
+            return function (_x126, _x127, _x128, _x129) {
                return ref.apply(this, arguments);
             };
          }());
          this.addKeyspaceCommand({
-            key: 'blpop',
-            params: ['key', 'timeout'],
-            access: 'set'
+            key: 'rpush',
+            params: ['key', 'value'],
+            access: 'add'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee54(req, res, _ref45) {
                var keyspaceKey = _ref45.keyspaceKey;
-               var reply;
                return regeneratorRuntime.wrap(function _callee54$(_context54) {
                   while (1) {
                      switch (_context54.prev = _context54.next) {
                         case 0:
                            _context54.next = 2;
-                           return _this5.redis.blpopAsync(keyspaceKey, req.params.timeout);
+                           return _this5.redis.rpushAsync(keyspaceKey, req.params.value);
 
                         case 2:
-                           reply = _context54.sent;
+                           return _context54.abrupt('return', _context54.sent);
 
-                           if (reply) {
-                              _context54.next = 7;
-                              break;
-                           }
-
-                           return _context54.abrupt('return', null);
-
-                        case 7:
-                           return _context54.abrupt('return', reply[1]);
-
-                        case 8:
+                        case 3:
                         case 'end':
                            return _context54.stop();
                      }
@@ -2256,34 +2252,23 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'brpop',
-            params: ['key', 'timeout'],
+            key: 'lpop',
+            params: ['key'],
             access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee55(req, res, _ref46) {
                var keyspaceKey = _ref46.keyspaceKey;
-               var reply;
                return regeneratorRuntime.wrap(function _callee55$(_context55) {
                   while (1) {
                      switch (_context55.prev = _context55.next) {
                         case 0:
                            _context55.next = 2;
-                           return _this5.redis.brpopAsync(keyspaceKey, req.params.timeout);
+                           return _this5.redis.lpopAsync(keyspaceKey);
 
                         case 2:
-                           reply = _context55.sent;
+                           return _context55.abrupt('return', _context55.sent);
 
-                           if (reply) {
-                              _context55.next = 7;
-                              break;
-                           }
-
-                           return _context55.abrupt('return', null);
-
-                        case 7:
-                           return _context55.abrupt('return', reply[1]);
-
-                        case 8:
+                        case 3:
                         case 'end':
                            return _context55.stop();
                      }
@@ -2295,23 +2280,34 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'rpop',
-            params: ['key'],
+            key: 'blpop',
+            params: ['key', 'timeout'],
             access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee56(req, res, _ref47) {
                var keyspaceKey = _ref47.keyspaceKey;
+               var reply;
                return regeneratorRuntime.wrap(function _callee56$(_context56) {
                   while (1) {
                      switch (_context56.prev = _context56.next) {
                         case 0:
                            _context56.next = 2;
-                           return _this5.redis.rpopAsync(keyspaceKey);
+                           return _this5.redis.blpopAsync(keyspaceKey, req.params.timeout);
 
                         case 2:
-                           return _context56.abrupt('return', _context56.sent);
+                           reply = _context56.sent;
 
-                        case 3:
+                           if (reply) {
+                              _context56.next = 7;
+                              break;
+                           }
+
+                           return _context56.abrupt('return', null);
+
+                        case 7:
+                           return _context56.abrupt('return', reply[1]);
+
+                        case 8:
                         case 'end':
                            return _context56.stop();
                      }
@@ -2323,47 +2319,46 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'brpoplpush',
-            params: ['key', 'dest', 'timeout'],
+            key: 'brpop',
+            params: ['key', 'timeout'],
             access: 'set'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee57(req, res, _ref48, multi) {
-               var account = _ref48.account;
-               var keyspace = _ref48.keyspace;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee57(req, res, _ref48) {
                var keyspaceKey = _ref48.keyspaceKey;
-
-               var _req$params9, dest, timeout, destKey, result;
-
+               var reply;
                return regeneratorRuntime.wrap(function _callee57$(_context57) {
                   while (1) {
                      switch (_context57.prev = _context57.next) {
                         case 0:
-                           _req$params9 = req.params;
-                           dest = _req$params9.dest;
-                           timeout = _req$params9.timeout;
-                           destKey = _this5.keyspaceKey(account, keyspace, dest);
-                           _context57.next = 6;
-                           return _this5.redis.brpoplpushAsync(keyspaceKey, destKey, timeout);
+                           _context57.next = 2;
+                           return _this5.redis.brpopAsync(keyspaceKey, req.params.timeout);
 
-                        case 6:
-                           result = _context57.sent;
+                        case 2:
+                           reply = _context57.sent;
 
-                           multi.expire(destKey, _this5.getKeyExpire(account));
-                           return _context57.abrupt('return', result);
+                           if (reply) {
+                              _context57.next = 7;
+                              break;
+                           }
 
-                        case 9:
+                           return _context57.abrupt('return', null);
+
+                        case 7:
+                           return _context57.abrupt('return', reply[1]);
+
+                        case 8:
                         case 'end':
                            return _context57.stop();
                      }
                   }
                }, _callee57, _this5);
             }));
-            return function (_x139, _x140, _x141, _x142) {
+            return function (_x139, _x140, _x141) {
                return ref.apply(this, arguments);
             };
          }());
          this.addKeyspaceCommand({
-            key: 'llen',
+            key: 'rpop',
             params: ['key'],
             access: 'set'
          }, function () {
@@ -2374,7 +2369,7 @@ var _class = function () {
                      switch (_context58.prev = _context58.next) {
                         case 0:
                            _context58.next = 2;
-                           return _this5.redis.llenAsync(keyspaceKey);
+                           return _this5.redis.rpopAsync(keyspaceKey);
 
                         case 2:
                            return _context58.abrupt('return', _context58.sent);
@@ -2386,40 +2381,53 @@ var _class = function () {
                   }
                }, _callee58, _this5);
             }));
-            return function (_x143, _x144, _x145) {
+            return function (_x142, _x143, _x144) {
                return ref.apply(this, arguments);
             };
          }());
          this.addKeyspaceCommand({
-            key: 'lindex',
-            params: ['key', 'index']
+            key: 'brpoplpush',
+            params: ['key', 'dest', 'timeout'],
+            access: 'set'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee59(req, res, _ref50) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee59(req, res, _ref50, multi) {
+               var account = _ref50.account;
+               var keyspace = _ref50.keyspace;
                var keyspaceKey = _ref50.keyspaceKey;
+
+               var _req$params9, dest, timeout, destKey, result;
+
                return regeneratorRuntime.wrap(function _callee59$(_context59) {
                   while (1) {
                      switch (_context59.prev = _context59.next) {
                         case 0:
-                           _context59.next = 2;
-                           return _this5.redis.lindexAsync(keyspaceKey, req.params.index);
+                           _req$params9 = req.params;
+                           dest = _req$params9.dest;
+                           timeout = _req$params9.timeout;
+                           destKey = _this5.keyspaceKey(account, keyspace, dest);
+                           _context59.next = 6;
+                           return _this5.redis.brpoplpushAsync(keyspaceKey, destKey, timeout);
 
-                        case 2:
-                           return _context59.abrupt('return', _context59.sent);
+                        case 6:
+                           result = _context59.sent;
 
-                        case 3:
+                           multi.expire(destKey, _this5.getKeyExpire(account));
+                           return _context59.abrupt('return', result);
+
+                        case 9:
                         case 'end':
                            return _context59.stop();
                      }
                   }
                }, _callee59, _this5);
             }));
-            return function (_x146, _x147, _x148) {
+            return function (_x145, _x146, _x147, _x148) {
                return ref.apply(this, arguments);
             };
          }());
          this.addKeyspaceCommand({
-            key: 'lrem',
-            params: ['key', 'count', 'value'],
+            key: 'llen',
+            params: ['key'],
             access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee60(req, res, _ref51) {
@@ -2429,7 +2437,7 @@ var _class = function () {
                      switch (_context60.prev = _context60.next) {
                         case 0:
                            _context60.next = 2;
-                           return _this5.redis.lremAsync(keyspaceKey, req.params.count, req.params.value);
+                           return _this5.redis.llenAsync(keyspaceKey);
 
                         case 2:
                            return _context60.abrupt('return', _context60.sent);
@@ -2446,9 +2454,8 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'lset',
-            params: ['key', 'index', 'value'],
-            access: 'set'
+            key: 'lindex',
+            params: ['key', 'index']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee61(req, res, _ref52) {
                var keyspaceKey = _ref52.keyspaceKey;
@@ -2457,7 +2464,7 @@ var _class = function () {
                      switch (_context61.prev = _context61.next) {
                         case 0:
                            _context61.next = 2;
-                           return _this5.redis.lsetAsync(keyspaceKey, req.params.index, req.params.value);
+                           return _this5.redis.lindexAsync(keyspaceKey, req.params.index);
 
                         case 2:
                            return _context61.abrupt('return', _context61.sent);
@@ -2474,8 +2481,8 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'ltrim',
-            params: ['key', 'start', 'stop'],
+            key: 'lrem',
+            params: ['key', 'count', 'value'],
             access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee62(req, res, _ref53) {
@@ -2485,7 +2492,7 @@ var _class = function () {
                      switch (_context62.prev = _context62.next) {
                         case 0:
                            _context62.next = 2;
-                           return _this5.redis.ltrimAsync(keyspaceKey, req.params.start, req.params.stop);
+                           return _this5.redis.lremAsync(keyspaceKey, req.params.count, req.params.value);
 
                         case 2:
                            return _context62.abrupt('return', _context62.sent);
@@ -2502,8 +2509,9 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'lrange',
-            params: ['key', 'start', 'stop']
+            key: 'lset',
+            params: ['key', 'index', 'value'],
+            access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee63(req, res, _ref54) {
                var keyspaceKey = _ref54.keyspaceKey;
@@ -2512,7 +2520,7 @@ var _class = function () {
                      switch (_context63.prev = _context63.next) {
                         case 0:
                            _context63.next = 2;
-                           return _this5.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop);
+                           return _this5.redis.lsetAsync(keyspaceKey, req.params.index, req.params.value);
 
                         case 2:
                            return _context63.abrupt('return', _context63.sent);
@@ -2529,8 +2537,8 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'hset',
-            params: ['key', 'field', 'value'],
+            key: 'ltrim',
+            params: ['key', 'start', 'stop'],
             access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee64(req, res, _ref55) {
@@ -2540,7 +2548,7 @@ var _class = function () {
                      switch (_context64.prev = _context64.next) {
                         case 0:
                            _context64.next = 2;
-                           return _this5.redis.hsetAsync(keyspaceKey, req.params.field, req.params.value);
+                           return _this5.redis.ltrimAsync(keyspaceKey, req.params.start, req.params.stop);
 
                         case 2:
                            return _context64.abrupt('return', _context64.sent);
@@ -2557,9 +2565,8 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'hsetnx',
-            params: ['key', 'field', 'value'],
-            access: 'add'
+            key: 'lrange',
+            params: ['key', 'start', 'stop']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee65(req, res, _ref56) {
                var keyspaceKey = _ref56.keyspaceKey;
@@ -2568,7 +2575,7 @@ var _class = function () {
                      switch (_context65.prev = _context65.next) {
                         case 0:
                            _context65.next = 2;
-                           return _this5.redis.hsetnxAsync(keyspaceKey, req.params.field, req.params.value);
+                           return _this5.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop);
 
                         case 2:
                            return _context65.abrupt('return', _context65.sent);
@@ -2585,22 +2592,24 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'hget',
-            params: ['key', 'field']
+            key: 'lrevrange',
+            params: ['key', 'start', 'stop']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee66(req, res, _ref57) {
                var keyspaceKey = _ref57.keyspaceKey;
+               var array;
                return regeneratorRuntime.wrap(function _callee66$(_context66) {
                   while (1) {
                      switch (_context66.prev = _context66.next) {
                         case 0:
                            _context66.next = 2;
-                           return _this5.redis.hgetAsync(keyspaceKey, req.params.field);
+                           return _this5.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop);
 
                         case 2:
-                           return _context66.abrupt('return', _context66.sent);
+                           array = _context66.sent;
+                           return _context66.abrupt('return', array.reverse());
 
-                        case 3:
+                        case 4:
                         case 'end':
                            return _context66.stop();
                      }
@@ -2612,23 +2621,24 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'hdel',
-            params: ['key', 'field'],
-            access: 'set'
+            key: 'rrange',
+            params: ['key', 'start', 'stop']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee67(req, res, _ref58) {
                var keyspaceKey = _ref58.keyspaceKey;
+               var array;
                return regeneratorRuntime.wrap(function _callee67$(_context67) {
                   while (1) {
                      switch (_context67.prev = _context67.next) {
                         case 0:
                            _context67.next = 2;
-                           return _this5.redis.hdelAsync(keyspaceKey, req.params.field);
+                           return _this5.redis.lrangeAsync(keyspaceKey, -req.params.stop, -req.params.start);
 
                         case 2:
-                           return _context67.abrupt('return', _context67.sent);
+                           array = _context67.sent;
+                           return _context67.abrupt('return', array.reverse());
 
-                        case 3:
+                        case 4:
                         case 'end':
                            return _context67.stop();
                      }
@@ -2640,23 +2650,24 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'hincrby',
-            params: ['key', 'field', 'increment'],
-            access: 'add'
+            key: 'rrevrange',
+            params: ['key', 'start', 'stop']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee68(req, res, _ref59) {
                var keyspaceKey = _ref59.keyspaceKey;
+               var array;
                return regeneratorRuntime.wrap(function _callee68$(_context68) {
                   while (1) {
                      switch (_context68.prev = _context68.next) {
                         case 0:
                            _context68.next = 2;
-                           return _this5.redis.hincrbyAsync(keyspaceKey, req.params.field, req.params.increment);
+                           return _this5.redis.lrangeAsync(keyspaceKey, -req.params.stop, -req.params.start);
 
                         case 2:
-                           return _context68.abrupt('return', _context68.sent);
+                           array = _context68.sent;
+                           return _context68.abrupt('return', array);
 
-                        case 3:
+                        case 4:
                         case 'end':
                            return _context68.stop();
                      }
@@ -2668,8 +2679,9 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'hexists',
-            params: ['key', 'field']
+            key: 'hset',
+            params: ['key', 'field', 'value'],
+            access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee69(req, res, _ref60) {
                var keyspaceKey = _ref60.keyspaceKey;
@@ -2678,7 +2690,7 @@ var _class = function () {
                      switch (_context69.prev = _context69.next) {
                         case 0:
                            _context69.next = 2;
-                           return _this5.redis.hexistsAsync(keyspaceKey, req.params.field);
+                           return _this5.redis.hsetAsync(keyspaceKey, req.params.field, req.params.value);
 
                         case 2:
                            return _context69.abrupt('return', _context69.sent);
@@ -2695,8 +2707,9 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'hlen',
-            params: ['key']
+            key: 'hsetnx',
+            params: ['key', 'field', 'value'],
+            access: 'add'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee70(req, res, _ref61) {
                var keyspaceKey = _ref61.keyspaceKey;
@@ -2705,7 +2718,7 @@ var _class = function () {
                      switch (_context70.prev = _context70.next) {
                         case 0:
                            _context70.next = 2;
-                           return _this5.redis.hlenAsync(keyspaceKey);
+                           return _this5.redis.hsetnxAsync(keyspaceKey, req.params.field, req.params.value);
 
                         case 2:
                            return _context70.abrupt('return', _context70.sent);
@@ -2722,8 +2735,8 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'hkeys',
-            params: ['key']
+            key: 'hget',
+            params: ['key', 'field']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee71(req, res, _ref62) {
                var keyspaceKey = _ref62.keyspaceKey;
@@ -2732,7 +2745,7 @@ var _class = function () {
                      switch (_context71.prev = _context71.next) {
                         case 0:
                            _context71.next = 2;
-                           return _this5.redis.hkeysAsync(keyspaceKey);
+                           return _this5.redis.hgetAsync(keyspaceKey, req.params.field);
 
                         case 2:
                            return _context71.abrupt('return', _context71.sent);
@@ -2749,8 +2762,9 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'hgetall',
-            params: ['key']
+            key: 'hdel',
+            params: ['key', 'field'],
+            access: 'set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee72(req, res, _ref63) {
                var keyspaceKey = _ref63.keyspaceKey;
@@ -2759,7 +2773,7 @@ var _class = function () {
                      switch (_context72.prev = _context72.next) {
                         case 0:
                            _context72.next = 2;
-                           return _this5.redis.hgetallAsync(keyspaceKey);
+                           return _this5.redis.hdelAsync(keyspaceKey, req.params.field);
 
                         case 2:
                            return _context72.abrupt('return', _context72.sent);
@@ -2776,8 +2790,9 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'zcard',
-            params: ['key']
+            key: 'hincrby',
+            params: ['key', 'field', 'increment'],
+            access: 'add'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee73(req, res, _ref64) {
                var keyspaceKey = _ref64.keyspaceKey;
@@ -2786,7 +2801,7 @@ var _class = function () {
                      switch (_context73.prev = _context73.next) {
                         case 0:
                            _context73.next = 2;
-                           return _this5.redis.zcardAsync(keyspaceKey);
+                           return _this5.redis.hincrbyAsync(keyspaceKey, req.params.field, req.params.increment);
 
                         case 2:
                            return _context73.abrupt('return', _context73.sent);
@@ -2803,9 +2818,8 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'zadd',
-            params: ['key', 'score', 'member'],
-            access: 'add'
+            key: 'hexists',
+            params: ['key', 'field']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee74(req, res, _ref65) {
                var keyspaceKey = _ref65.keyspaceKey;
@@ -2814,7 +2828,7 @@ var _class = function () {
                      switch (_context74.prev = _context74.next) {
                         case 0:
                            _context74.next = 2;
-                           return _this5.redis.zaddAsync(keyspaceKey, req.params.score, req.params.member);
+                           return _this5.redis.hexistsAsync(keyspaceKey, req.params.field);
 
                         case 2:
                            return _context74.abrupt('return', _context74.sent);
@@ -2831,9 +2845,8 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'zrem',
-            params: ['key', 'member'],
-            access: 'set'
+            key: 'hlen',
+            params: ['key']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee75(req, res, _ref66) {
                var keyspaceKey = _ref66.keyspaceKey;
@@ -2842,7 +2855,7 @@ var _class = function () {
                      switch (_context75.prev = _context75.next) {
                         case 0:
                            _context75.next = 2;
-                           return _this5.redis.zremAsync(keyspaceKey, req.params.member);
+                           return _this5.redis.hlenAsync(keyspaceKey);
 
                         case 2:
                            return _context75.abrupt('return', _context75.sent);
@@ -2859,8 +2872,8 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'zrange',
-            params: ['key', 'start', 'stop']
+            key: 'hkeys',
+            params: ['key']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee76(req, res, _ref67) {
                var keyspaceKey = _ref67.keyspaceKey;
@@ -2869,7 +2882,7 @@ var _class = function () {
                      switch (_context76.prev = _context76.next) {
                         case 0:
                            _context76.next = 2;
-                           return _this5.redis.zrangeAsync(keyspaceKey, req.params.start, req.params.stop);
+                           return _this5.redis.hkeysAsync(keyspaceKey);
 
                         case 2:
                            return _context76.abrupt('return', _context76.sent);
@@ -2886,8 +2899,8 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'zrevrange',
-            params: ['key', 'start', 'stop']
+            key: 'hgetall',
+            params: ['key']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee77(req, res, _ref68) {
                var keyspaceKey = _ref68.keyspaceKey;
@@ -2896,7 +2909,7 @@ var _class = function () {
                      switch (_context77.prev = _context77.next) {
                         case 0:
                            _context77.next = 2;
-                           return _this5.redis.zrevrangeAsync(keyspaceKey, req.params.start, req.params.stop);
+                           return _this5.redis.hgetallAsync(keyspaceKey);
 
                         case 2:
                            return _context77.abrupt('return', _context77.sent);
@@ -2909,6 +2922,201 @@ var _class = function () {
                }, _callee77, _this5);
             }));
             return function (_x200, _x201, _x202) {
+               return ref.apply(this, arguments);
+            };
+         }());
+         this.addKeyspaceCommand({
+            key: 'zcard',
+            params: ['key']
+         }, function () {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee78(req, res, _ref69) {
+               var keyspaceKey = _ref69.keyspaceKey;
+               return regeneratorRuntime.wrap(function _callee78$(_context78) {
+                  while (1) {
+                     switch (_context78.prev = _context78.next) {
+                        case 0:
+                           _context78.next = 2;
+                           return _this5.redis.zcardAsync(keyspaceKey);
+
+                        case 2:
+                           return _context78.abrupt('return', _context78.sent);
+
+                        case 3:
+                        case 'end':
+                           return _context78.stop();
+                     }
+                  }
+               }, _callee78, _this5);
+            }));
+            return function (_x203, _x204, _x205) {
+               return ref.apply(this, arguments);
+            };
+         }());
+         if (this.config.redisVersion && this.config.redisVersion[0] >= 3) {
+            this.addKeyspaceCommand({
+               key: 'zaddnx',
+               params: ['key', 'score', 'member'],
+               access: 'add'
+            }, function () {
+               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee79(req, res, _ref70) {
+                  var keyspaceKey = _ref70.keyspaceKey;
+                  return regeneratorRuntime.wrap(function _callee79$(_context79) {
+                     while (1) {
+                        switch (_context79.prev = _context79.next) {
+                           case 0:
+                              _context79.next = 2;
+                              return _this5.redis.zaddAsync(keyspaceKey, 'NX', req.params.score, req.params.member);
+
+                           case 2:
+                              return _context79.abrupt('return', _context79.sent);
+
+                           case 3:
+                           case 'end':
+                              return _context79.stop();
+                        }
+                     }
+                  }, _callee79, _this5);
+               }));
+               return function (_x206, _x207, _x208) {
+                  return ref.apply(this, arguments);
+               };
+            }());
+         }
+         this.addKeyspaceCommand({
+            key: 'zincrby',
+            params: ['key', 'increment', 'member'],
+            access: 'add'
+         }, function () {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee80(req, res, _ref71) {
+               var keyspaceKey = _ref71.keyspaceKey;
+               return regeneratorRuntime.wrap(function _callee80$(_context80) {
+                  while (1) {
+                     switch (_context80.prev = _context80.next) {
+                        case 0:
+                           _context80.next = 2;
+                           return _this5.redis.zincrbyAsync(keyspaceKey, req.params.increment, req.params.member);
+
+                        case 2:
+                           return _context80.abrupt('return', _context80.sent);
+
+                        case 3:
+                        case 'end':
+                           return _context80.stop();
+                     }
+                  }
+               }, _callee80, _this5);
+            }));
+            return function (_x209, _x210, _x211) {
+               return ref.apply(this, arguments);
+            };
+         }());
+         this.addKeyspaceCommand({
+            key: 'zadd',
+            params: ['key', 'score', 'member'],
+            access: 'add'
+         }, function () {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee81(req, res, _ref72) {
+               var keyspaceKey = _ref72.keyspaceKey;
+               return regeneratorRuntime.wrap(function _callee81$(_context81) {
+                  while (1) {
+                     switch (_context81.prev = _context81.next) {
+                        case 0:
+                           _context81.next = 2;
+                           return _this5.redis.zaddAsync(keyspaceKey, req.params.score, req.params.member);
+
+                        case 2:
+                           return _context81.abrupt('return', _context81.sent);
+
+                        case 3:
+                        case 'end':
+                           return _context81.stop();
+                     }
+                  }
+               }, _callee81, _this5);
+            }));
+            return function (_x212, _x213, _x214) {
+               return ref.apply(this, arguments);
+            };
+         }());
+         this.addKeyspaceCommand({
+            key: 'zrem',
+            params: ['key', 'member'],
+            access: 'set'
+         }, function () {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee82(req, res, _ref73) {
+               var keyspaceKey = _ref73.keyspaceKey;
+               return regeneratorRuntime.wrap(function _callee82$(_context82) {
+                  while (1) {
+                     switch (_context82.prev = _context82.next) {
+                        case 0:
+                           _context82.next = 2;
+                           return _this5.redis.zremAsync(keyspaceKey, req.params.member);
+
+                        case 2:
+                           return _context82.abrupt('return', _context82.sent);
+
+                        case 3:
+                        case 'end':
+                           return _context82.stop();
+                     }
+                  }
+               }, _callee82, _this5);
+            }));
+            return function (_x215, _x216, _x217) {
+               return ref.apply(this, arguments);
+            };
+         }());
+         this.addKeyspaceCommand({
+            key: 'zrange',
+            params: ['key', 'start', 'stop']
+         }, function () {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee83(req, res, _ref74) {
+               var keyspaceKey = _ref74.keyspaceKey;
+               return regeneratorRuntime.wrap(function _callee83$(_context83) {
+                  while (1) {
+                     switch (_context83.prev = _context83.next) {
+                        case 0:
+                           _context83.next = 2;
+                           return _this5.redis.zrangeAsync(keyspaceKey, req.params.start, req.params.stop);
+
+                        case 2:
+                           return _context83.abrupt('return', _context83.sent);
+
+                        case 3:
+                        case 'end':
+                           return _context83.stop();
+                     }
+                  }
+               }, _callee83, _this5);
+            }));
+            return function (_x218, _x219, _x220) {
+               return ref.apply(this, arguments);
+            };
+         }());
+         this.addKeyspaceCommand({
+            key: 'zrevrange',
+            params: ['key', 'start', 'stop']
+         }, function () {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee84(req, res, _ref75) {
+               var keyspaceKey = _ref75.keyspaceKey;
+               return regeneratorRuntime.wrap(function _callee84$(_context84) {
+                  while (1) {
+                     switch (_context84.prev = _context84.next) {
+                        case 0:
+                           _context84.next = 2;
+                           return _this5.redis.zrevrangeAsync(keyspaceKey, req.params.start, req.params.stop);
+
+                        case 2:
+                           return _context84.abrupt('return', _context84.sent);
+
+                        case 3:
+                        case 'end':
+                           return _context84.stop();
+                     }
+                  }
+               }, _callee84, _this5);
+            }));
+            return function (_x221, _x222, _x223) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2947,64 +3155,64 @@ var _class = function () {
             }))).join('/');
          }
          this.expressApp.get([this.config.location, uri].join('/'), function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee78(req, res) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee85(req, res) {
                var match, result;
-               return regeneratorRuntime.wrap(function _callee78$(_context78) {
+               return regeneratorRuntime.wrap(function _callee85$(_context85) {
                   while (1) {
-                     switch (_context78.prev = _context78.next) {
+                     switch (_context85.prev = _context85.next) {
                         case 0:
-                           _context78.prev = 0;
+                           _context85.prev = 0;
                            match = req.path.match(/\/:([^\/]+)/);
 
                            if (!match) {
-                              _context78.next = 4;
+                              _context85.next = 4;
                               break;
                            }
 
                            throw { message: 'Invalid path: leading colon. Try substituting parameter: ' + match.pop() };
 
                         case 4:
-                           _context78.next = 6;
+                           _context85.next = 6;
                            return fn(req, res);
 
                         case 6:
-                           result = _context78.sent;
+                           result = _context85.sent;
 
                            if (!(command.access === 'redirect')) {
-                              _context78.next = 10;
+                              _context85.next = 10;
                               break;
                            }
 
-                           _context78.next = 13;
+                           _context85.next = 13;
                            break;
 
                         case 10:
                            if (!(result !== undefined)) {
-                              _context78.next = 13;
+                              _context85.next = 13;
                               break;
                            }
 
-                           _context78.next = 13;
+                           _context85.next = 13;
                            return _this6.sendResult(command, req, res, {}, result);
 
                         case 13:
-                           _context78.next = 18;
+                           _context85.next = 18;
                            break;
 
                         case 15:
-                           _context78.prev = 15;
-                           _context78.t0 = _context78['catch'](0);
+                           _context85.prev = 15;
+                           _context85.t0 = _context85['catch'](0);
 
-                           _this6.sendError(req, res, _context78.t0);
+                           _this6.sendError(req, res, _context85.t0);
 
                         case 18:
                         case 'end':
-                           return _context78.stop();
+                           return _context85.stop();
                      }
                   }
-               }, _callee78, _this6, [[0, 15]]);
+               }, _callee85, _this6, [[0, 15]]);
             }));
-            return function (_x203, _x204) {
+            return function (_x224, _x225) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3018,45 +3226,45 @@ var _class = function () {
          uri = [this.config.location, uri].join('/');
          this.logger.debug('addPublicRoute', uri);
          this.expressApp.get(uri, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee79(req, res) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee86(req, res) {
                var result;
-               return regeneratorRuntime.wrap(function _callee79$(_context79) {
+               return regeneratorRuntime.wrap(function _callee86$(_context86) {
                   while (1) {
-                     switch (_context79.prev = _context79.next) {
+                     switch (_context86.prev = _context86.next) {
                         case 0:
-                           _context79.prev = 0;
-                           _context79.next = 3;
+                           _context86.prev = 0;
+                           _context86.next = 3;
                            return fn(req, res);
 
                         case 3:
-                           result = _context79.sent;
+                           result = _context86.sent;
 
                            if (!(result !== undefined)) {
-                              _context79.next = 7;
+                              _context86.next = 7;
                               break;
                            }
 
-                           _context79.next = 7;
+                           _context86.next = 7;
                            return _this7.sendResult({}, req, res, {}, result);
 
                         case 7:
-                           _context79.next = 12;
+                           _context86.next = 12;
                            break;
 
                         case 9:
-                           _context79.prev = 9;
-                           _context79.t0 = _context79['catch'](0);
+                           _context86.prev = 9;
+                           _context86.t0 = _context86['catch'](0);
 
-                           _this7.sendError(req, res, _context79.t0);
+                           _this7.sendError(req, res, _context86.t0);
 
                         case 12:
                         case 'end':
-                           return _context79.stop();
+                           return _context86.stop();
                      }
                   }
-               }, _callee79, _this7, [[0, 9]]);
+               }, _callee86, _this7, [[0, 9]]);
             }));
-            return function (_x205, _x206) {
+            return function (_x226, _x227) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3069,22 +3277,22 @@ var _class = function () {
          this.addPublicCommand({
             key: 'register-ephemeral'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee80(req, res) {
-               return regeneratorRuntime.wrap(function _callee80$(_context80) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee87(req, res) {
+               return regeneratorRuntime.wrap(function _callee87$(_context87) {
                   while (1) {
-                     switch (_context80.prev = _context80.next) {
+                     switch (_context87.prev = _context87.next) {
                         case 0:
                            req.params = { account: 'pub' };
-                           return _context80.abrupt('return', _this8.registerEphemeral(req, res));
+                           return _context87.abrupt('return', _this8.registerEphemeral(req, res));
 
                         case 2:
                         case 'end':
-                           return _context80.stop();
+                           return _context87.stop();
                      }
                   }
-               }, _callee80, _this8);
+               }, _callee87, _this8);
             }));
-            return function (_x207, _x208) {
+            return function (_x228, _x229) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3092,22 +3300,22 @@ var _class = function () {
             key: 'register-ephemeral-named',
             params: ['keyspace', 'access']
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee81(req, res) {
-               return regeneratorRuntime.wrap(function _callee81$(_context81) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee88(req, res) {
+               return regeneratorRuntime.wrap(function _callee88$(_context88) {
                   while (1) {
-                     switch (_context81.prev = _context81.next) {
+                     switch (_context88.prev = _context88.next) {
                         case 0:
                            req.params = { account: 'pub' };
-                           return _context81.abrupt('return', _this8.registerEphemeral(req, res));
+                           return _context88.abrupt('return', _this8.registerEphemeral(req, res));
 
                         case 2:
                         case 'end':
-                           return _context81.stop();
+                           return _context88.stop();
                      }
                   }
-               }, _callee81, _this8);
+               }, _callee88, _this8);
             }));
-            return function (_x209, _x210) {
+            return function (_x230, _x231) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3115,22 +3323,22 @@ var _class = function () {
             key: 'register-ephemeral-access',
             params: ['access']
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee82(req, res) {
-               return regeneratorRuntime.wrap(function _callee82$(_context82) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee89(req, res) {
+               return regeneratorRuntime.wrap(function _callee89$(_context89) {
                   while (1) {
-                     switch (_context82.prev = _context82.next) {
+                     switch (_context89.prev = _context89.next) {
                         case 0:
                            req.params.account = 'pub';
-                           return _context82.abrupt('return', _this8.registerEphemeral(req, res));
+                           return _context89.abrupt('return', _this8.registerEphemeral(req, res));
 
                         case 2:
                         case 'end':
-                           return _context82.stop();
+                           return _context89.stop();
                      }
                   }
-               }, _callee82, _this8);
+               }, _callee89, _this8);
             }));
-            return function (_x211, _x212) {
+            return function (_x232, _x233) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3139,39 +3347,39 @@ var _class = function () {
                key: 'register-account-telegram',
                params: ['account']
             }, function () {
-               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee83(req, res) {
-                  return regeneratorRuntime.wrap(function _callee83$(_context83) {
+               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee90(req, res) {
+                  return regeneratorRuntime.wrap(function _callee90$(_context90) {
                      while (1) {
-                        switch (_context83.prev = _context83.next) {
+                        switch (_context90.prev = _context90.next) {
                            case 0:
-                              return _context83.abrupt('return', _this8.registerAccount(req, res));
+                              return _context90.abrupt('return', _this8.registerAccount(req, res));
 
                            case 1:
                            case 'end':
-                              return _context83.stop();
+                              return _context90.stop();
                         }
                      }
-                  }, _callee83, _this8);
+                  }, _callee90, _this8);
                }));
-               return function (_x213, _x214) {
+               return function (_x234, _x235) {
                   return ref.apply(this, arguments);
                };
             }());
             this.addPublicCommand({
                key: 'register-cert'
             }, function () {
-               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee84(req, res) {
+               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee91(req, res) {
                   var dn, clientCert, dns, _dns$o$match, _dns$o$match2, oMatching, account, domain;
 
-                  return regeneratorRuntime.wrap(function _callee84$(_context84) {
+                  return regeneratorRuntime.wrap(function _callee91$(_context91) {
                      while (1) {
-                        switch (_context84.prev = _context84.next) {
+                        switch (_context91.prev = _context91.next) {
                            case 0:
                               dn = req.get('ssl_client_s_dn');
                               clientCert = req.get('ssl_client_cert');
 
                               if (clientCert) {
-                                 _context84.next = 4;
+                                 _context91.next = 4;
                                  break;
                               }
 
@@ -3179,7 +3387,7 @@ var _class = function () {
 
                            case 4:
                               if (dn) {
-                                 _context84.next = 6;
+                                 _context91.next = 6;
                                  break;
                               }
 
@@ -3189,7 +3397,7 @@ var _class = function () {
                               dns = _this8.parseDn(dn);
 
                               if (dns.o) {
-                                 _context84.next = 9;
+                                 _context91.next = 9;
                                  break;
                               }
 
@@ -3203,7 +3411,7 @@ var _class = function () {
                               domain = _dns$o$match2[2];
 
                               if (oMatching) {
-                                 _context84.next = 16;
+                                 _context91.next = 16;
                                  break;
                               }
 
@@ -3211,23 +3419,23 @@ var _class = function () {
 
                            case 16:
                               if (domain.match(req.hostname)) {
-                                 _context84.next = 18;
+                                 _context91.next = 18;
                                  break;
                               }
 
                               throw { message: 'O domain not matching: ' + req.hostname };
 
                            case 18:
-                              return _context84.abrupt('return', { account: account, domain: domain });
+                              return _context91.abrupt('return', { account: account, domain: domain });
 
                            case 19:
                            case 'end':
-                              return _context84.stop();
+                              return _context91.stop();
                         }
                      }
-                  }, _callee84, _this8);
+                  }, _callee91, _this8);
                }));
-               return function (_x215, _x216) {
+               return function (_x236, _x237) {
                   return ref.apply(this, arguments);
                };
             }());
@@ -3271,37 +3479,37 @@ var _class = function () {
                },
                access: 'admin'
             }, function () {
-               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee85(req, res, _ref69) {
-                  var account = _ref69.account;
-                  var accountKey = _ref69.accountKey;
-                  var time = _ref69.time;
-                  var clientCertDigest = _ref69.clientCertDigest;
+               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee92(req, res, _ref76) {
+                  var account = _ref76.account;
+                  var accountKey = _ref76.accountKey;
+                  var time = _ref76.time;
+                  var clientCertDigest = _ref76.clientCertDigest;
 
-                  var _ref70, _ref71, cert;
+                  var _ref77, _ref78, cert;
 
-                  return regeneratorRuntime.wrap(function _callee85$(_context85) {
+                  return regeneratorRuntime.wrap(function _callee92$(_context92) {
                      while (1) {
-                        switch (_context85.prev = _context85.next) {
+                        switch (_context92.prev = _context92.next) {
                            case 0:
-                              _context85.next = 2;
+                              _context92.next = 2;
                               return _this10.redis.multiExecAsync(function (multi) {
                                  multi.hgetall(_this10.adminKey('cert', certId));
                               });
 
                            case 2:
-                              _ref70 = _context85.sent;
-                              _ref71 = _slicedToArray(_ref70, 1);
-                              cert = _ref71[0];
+                              _ref77 = _context92.sent;
+                              _ref78 = _slicedToArray(_ref77, 1);
+                              cert = _ref78[0];
                               throw { message: 'Unimplemented' };
 
                            case 6:
                            case 'end':
-                              return _context85.stop();
+                              return _context92.stop();
                         }
                      }
-                  }, _callee85, _this10);
+                  }, _callee92, _this10);
                }));
-               return function (_x217, _x218, _x219) {
+               return function (_x238, _x239, _x240) {
                   return ref.apply(this, arguments);
                };
             }());
@@ -3310,32 +3518,32 @@ var _class = function () {
    }, {
       key: 'registerAccount',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee87(req, res) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee94(req, res) {
             var _this11 = this;
 
             var _ret;
 
-            return regeneratorRuntime.wrap(function _callee87$(_context87) {
+            return regeneratorRuntime.wrap(function _callee94$(_context94) {
                while (1) {
-                  switch (_context87.prev = _context87.next) {
+                  switch (_context94.prev = _context94.next) {
                      case 0:
-                        _context87.prev = 0;
-                        return _context87.delegateYield(regeneratorRuntime.mark(function _callee86() {
-                           var errorMessage, account, v, dn, clientCert, clientCertDigest, otpSecret, accountKey, _ref72, _ref73, hsetnx, saddAccount, saddCert, result;
+                        _context94.prev = 0;
+                        return _context94.delegateYield(regeneratorRuntime.mark(function _callee93() {
+                           var errorMessage, account, v, dn, clientCert, clientCertDigest, otpSecret, accountKey, _ref79, _ref80, hsetnx, saddAccount, saddCert, result;
 
-                           return regeneratorRuntime.wrap(function _callee86$(_context86) {
+                           return regeneratorRuntime.wrap(function _callee93$(_context93) {
                               while (1) {
-                                 switch (_context86.prev = _context86.next) {
+                                 switch (_context93.prev = _context93.next) {
                                     case 0:
                                        errorMessage = _this11.validateRegisterTime();
 
                                        if (!errorMessage) {
-                                          _context86.next = 4;
+                                          _context93.next = 4;
                                           break;
                                        }
 
                                        _this11.sendError(req, res, { message: errorMessage });
-                                       return _context86.abrupt('return', {
+                                       return _context93.abrupt('return', {
                                           v: void 0
                                        });
 
@@ -3344,7 +3552,7 @@ var _class = function () {
                                        v = _this11.validateRegisterAccount(account);
 
                                        if (!v) {
-                                          _context86.next = 8;
+                                          _context93.next = 8;
                                           break;
                                        }
 
@@ -3357,7 +3565,7 @@ var _class = function () {
                                        _this11.logger.info('registerAccount dn', dn);
 
                                        if (clientCert) {
-                                          _context86.next = 13;
+                                          _context93.next = 13;
                                           break;
                                        }
 
@@ -3367,7 +3575,7 @@ var _class = function () {
                                        clientCertDigest = _this11.digestPem(clientCert);
                                        otpSecret = _this11.generateTokenKey();
                                        accountKey = _this11.adminKey('account', account);
-                                       _context86.next = 18;
+                                       _context93.next = 18;
                                        return _this11.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', new Date().getTime());
                                           multi.sadd(_this11.adminKey('accounts'), account);
@@ -3376,14 +3584,14 @@ var _class = function () {
                                        });
 
                                     case 18:
-                                       _ref72 = _context86.sent;
-                                       _ref73 = _slicedToArray(_ref72, 3);
-                                       hsetnx = _ref73[0];
-                                       saddAccount = _ref73[1];
-                                       saddCert = _ref73[2];
+                                       _ref79 = _context93.sent;
+                                       _ref80 = _slicedToArray(_ref79, 3);
+                                       hsetnx = _ref80[0];
+                                       saddAccount = _ref80[1];
+                                       saddCert = _ref80[2];
 
                                        if (hsetnx) {
-                                          _context86.next = 25;
+                                          _context93.next = 25;
                                           break;
                                        }
 
@@ -3402,46 +3610,46 @@ var _class = function () {
                                           host: _this11.config.hostname,
                                           label: _this11.config.serviceLabel
                                        });
-                                       _context86.next = 30;
+                                       _context93.next = 30;
                                        return _this11.sendResult({}, req, res, {}, result);
 
                                     case 30:
                                     case 'end':
-                                       return _context86.stop();
+                                       return _context93.stop();
                                  }
                               }
-                           }, _callee86, _this11);
+                           }, _callee93, _this11);
                         })(), 't0', 2);
 
                      case 2:
-                        _ret = _context87.t0;
+                        _ret = _context94.t0;
 
                         if (!((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object")) {
-                           _context87.next = 5;
+                           _context94.next = 5;
                            break;
                         }
 
-                        return _context87.abrupt('return', _ret.v);
+                        return _context94.abrupt('return', _ret.v);
 
                      case 5:
-                        _context87.next = 10;
+                        _context94.next = 10;
                         break;
 
                      case 7:
-                        _context87.prev = 7;
-                        _context87.t1 = _context87['catch'](0);
+                        _context94.prev = 7;
+                        _context94.t1 = _context94['catch'](0);
 
-                        this.sendError(req, res, _context87.t1);
+                        this.sendError(req, res, _context94.t1);
 
                      case 10:
                      case 'end':
-                        return _context87.stop();
+                        return _context94.stop();
                   }
                }
-            }, _callee87, this, [[0, 7]]);
+            }, _callee94, this, [[0, 7]]);
          }));
 
-         function registerAccount(_x220, _x221) {
+         function registerAccount(_x241, _x242) {
             return ref.apply(this, arguments);
          }
 
@@ -3450,13 +3658,13 @@ var _class = function () {
    }, {
       key: 'addAccountCommand',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee90(command, fn) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee97(command, fn) {
             var _this12 = this;
 
             var uri;
-            return regeneratorRuntime.wrap(function _callee90$(_context90) {
+            return regeneratorRuntime.wrap(function _callee97$(_context97) {
                while (1) {
-                  switch (_context90.prev = _context90.next) {
+                  switch (_context97.prev = _context97.next) {
                      case 0:
                         uri = [command.key];
 
@@ -3466,25 +3674,25 @@ var _class = function () {
                            })));
                         }
                         this.expressApp.get([this.config.location].concat(_toConsumableArray(uri)).join('/'), function () {
-                           var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee89(req, res) {
+                           var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee96(req, res) {
                               var _ret2;
 
-                              return regeneratorRuntime.wrap(function _callee89$(_context89) {
+                              return regeneratorRuntime.wrap(function _callee96$(_context96) {
                                  while (1) {
-                                    switch (_context89.prev = _context89.next) {
+                                    switch (_context96.prev = _context96.next) {
                                        case 0:
-                                          _context89.prev = 0;
-                                          return _context89.delegateYield(regeneratorRuntime.mark(function _callee88() {
-                                             var message, account, accountKey, _ref74, _ref75, _ref75$, time, admined, certs, duration, dn, result;
+                                          _context96.prev = 0;
+                                          return _context96.delegateYield(regeneratorRuntime.mark(function _callee95() {
+                                             var message, account, accountKey, _ref81, _ref82, _ref82$, time, admined, certs, duration, dn, result;
 
-                                             return regeneratorRuntime.wrap(function _callee88$(_context88) {
+                                             return regeneratorRuntime.wrap(function _callee95$(_context95) {
                                                 while (1) {
-                                                   switch (_context88.prev = _context88.next) {
+                                                   switch (_context95.prev = _context95.next) {
                                                       case 0:
                                                          message = _this12.validatePath(req);
 
                                                          if (!message) {
-                                                            _context88.next = 3;
+                                                            _context95.next = 3;
                                                             break;
                                                          }
 
@@ -3493,7 +3701,7 @@ var _class = function () {
                                                       case 3:
                                                          account = req.params.account;
                                                          accountKey = _this12.adminKey('account', account);
-                                                         _context88.next = 7;
+                                                         _context95.next = 7;
                                                          return _this12.redis.multiExecAsync(function (multi) {
                                                             multi.time();
                                                             multi.hget(accountKey, 'admined');
@@ -3501,15 +3709,15 @@ var _class = function () {
                                                          });
 
                                                       case 7:
-                                                         _ref74 = _context88.sent;
-                                                         _ref75 = _slicedToArray(_ref74, 3);
-                                                         _ref75$ = _slicedToArray(_ref75[0], 1);
-                                                         time = _ref75$[0];
-                                                         admined = _ref75[1];
-                                                         certs = _ref75[2];
+                                                         _ref81 = _context95.sent;
+                                                         _ref82 = _slicedToArray(_ref81, 3);
+                                                         _ref82$ = _slicedToArray(_ref82[0], 1);
+                                                         time = _ref82$[0];
+                                                         admined = _ref82[1];
+                                                         certs = _ref82[2];
 
                                                          if (admined) {
-                                                            _context88.next = 15;
+                                                            _context95.next = 15;
                                                             break;
                                                          }
 
@@ -3517,7 +3725,7 @@ var _class = function () {
 
                                                       case 15:
                                                          if (!lodash.isEmpty(certs)) {
-                                                            _context88.next = 17;
+                                                            _context95.next = 17;
                                                             break;
                                                          }
 
@@ -3527,11 +3735,11 @@ var _class = function () {
                                                          duration = time - admined;
 
                                                          if (!(duration < _this12.config.adminLimit)) {
-                                                            _context88.next = 20;
+                                                            _context95.next = 20;
                                                             break;
                                                          }
 
-                                                         return _context88.abrupt('return', {
+                                                         return _context95.abrupt('return', {
                                                             v: 'Admin command interval not elapsed: ' + _this12.config.adminLimit + 's'
                                                          });
 
@@ -3539,7 +3747,7 @@ var _class = function () {
                                                          message = _this12.validateCert(req, certs, account);
 
                                                          if (!message) {
-                                                            _context88.next = 23;
+                                                            _context95.next = 23;
                                                             break;
                                                          }
 
@@ -3547,69 +3755,69 @@ var _class = function () {
 
                                                       case 23:
                                                          dn = req.get('ssl_client_s_dn');
-                                                         _context88.next = 26;
+                                                         _context95.next = 26;
                                                          return fn(req, res, { account: account, accountKey: accountKey, time: time, admined: admined, clientCertDigest: clientCertDigest });
 
                                                       case 26:
-                                                         result = _context88.sent;
+                                                         result = _context95.sent;
 
                                                          if (!(result !== undefined)) {
-                                                            _context88.next = 30;
+                                                            _context95.next = 30;
                                                             break;
                                                          }
 
-                                                         _context88.next = 30;
+                                                         _context95.next = 30;
                                                          return _this12.sendResult({}, req, res, {}, result);
 
                                                       case 30:
                                                       case 'end':
-                                                         return _context88.stop();
+                                                         return _context95.stop();
                                                    }
                                                 }
-                                             }, _callee88, _this12);
+                                             }, _callee95, _this12);
                                           })(), 't0', 2);
 
                                        case 2:
-                                          _ret2 = _context89.t0;
+                                          _ret2 = _context96.t0;
 
                                           if (!((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object")) {
-                                             _context89.next = 5;
+                                             _context96.next = 5;
                                              break;
                                           }
 
-                                          return _context89.abrupt('return', _ret2.v);
+                                          return _context96.abrupt('return', _ret2.v);
 
                                        case 5:
-                                          _context89.next = 10;
+                                          _context96.next = 10;
                                           break;
 
                                        case 7:
-                                          _context89.prev = 7;
-                                          _context89.t1 = _context89['catch'](0);
+                                          _context96.prev = 7;
+                                          _context96.t1 = _context96['catch'](0);
 
-                                          _this12.sendError(req, res, _context89.t1);
+                                          _this12.sendError(req, res, _context96.t1);
 
                                        case 10:
                                        case 'end':
-                                          return _context89.stop();
+                                          return _context96.stop();
                                     }
                                  }
-                              }, _callee89, _this12, [[0, 7]]);
+                              }, _callee96, _this12, [[0, 7]]);
                            }));
-                           return function (_x224, _x225) {
+                           return function (_x245, _x246) {
                               return ref.apply(this, arguments);
                            };
                         }());
 
                      case 3:
                      case 'end':
-                        return _context90.stop();
+                        return _context97.stop();
                   }
                }
-            }, _callee90, this);
+            }, _callee97, this);
          }));
 
-         function addAccountCommand(_x222, _x223) {
+         function addAccountCommand(_x243, _x244) {
             return ref.apply(this, arguments);
          }
 
@@ -3696,14 +3904,14 @@ var _class = function () {
    }, {
       key: 'registerEphemeral',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee92(req, res, previousError) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee99(req, res, previousError) {
             var _this13 = this;
 
             var _req$params10, account, keyspace, access, v, _ret3;
 
-            return regeneratorRuntime.wrap(function _callee92$(_context92) {
+            return regeneratorRuntime.wrap(function _callee99$(_context99) {
                while (1) {
-                  switch (_context92.prev = _context92.next) {
+                  switch (_context99.prev = _context99.next) {
                      case 0:
                         _req$params10 = req.params;
                         account = _req$params10.account;
@@ -3713,19 +3921,19 @@ var _class = function () {
                         assert(account, 'account');
 
                         if (keyspace) {
-                           _context92.next = 9;
+                           _context99.next = 9;
                            break;
                         }
 
                         keyspace = this.generateTokenKey(12).toLowerCase();
-                        _context92.next = 12;
+                        _context99.next = 12;
                         break;
 
                      case 9:
                         v = this.validateRegisterKeyspace(keyspace);
 
                         if (!v) {
-                           _context92.next = 12;
+                           _context99.next = 12;
                            break;
                         }
 
@@ -3740,23 +3948,23 @@ var _class = function () {
                         if (previousError) {
                            this.logger.warn('registerEphemeral retry');
                         }
-                        _context92.prev = 14;
-                        return _context92.delegateYield(regeneratorRuntime.mark(function _callee91() {
+                        _context99.prev = 14;
+                        return _context99.delegateYield(regeneratorRuntime.mark(function _callee98() {
                            var errorMessage, clientIp, accountKey, replies, replyPath;
-                           return regeneratorRuntime.wrap(function _callee91$(_context91) {
+                           return regeneratorRuntime.wrap(function _callee98$(_context98) {
                               while (1) {
-                                 switch (_context91.prev = _context91.next) {
+                                 switch (_context98.prev = _context98.next) {
                                     case 0:
                                        _this13.logger.debug('registerEphemeral');
                                        errorMessage = _this13.validateRegisterTime();
 
                                        if (!errorMessage) {
-                                          _context91.next = 5;
+                                          _context98.next = 5;
                                           break;
                                        }
 
                                        _this13.sendError(req, res, { message: errorMessage });
-                                       return _context91.abrupt('return', {
+                                       return _context98.abrupt('return', {
                                           v: void 0
                                        });
 
@@ -3765,7 +3973,7 @@ var _class = function () {
                                        accountKey = _this13.accountKeyspace(account, keyspace);
 
                                        _this13.logger.debug('registerEphemeral clientIp', clientIp, account, keyspace, accountKey);
-                                       _context91.next = 10;
+                                       _context98.next = 10;
                                        return _this13.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', new Date().getTime());
                                           if (clientIp) {
@@ -3778,21 +3986,21 @@ var _class = function () {
                                        });
 
                                     case 10:
-                                       replies = _context91.sent;
+                                       replies = _context98.sent;
 
                                        if (replies[0]) {
-                                          _context91.next = 16;
+                                          _context98.next = 16;
                                           break;
                                        }
 
                                        _this13.logger.error('keyspace clash', account, keyspace);
 
                                        if (previousError) {
-                                          _context91.next = 15;
+                                          _context98.next = 15;
                                           break;
                                        }
 
-                                       return _context91.abrupt('return', {
+                                       return _context98.abrupt('return', {
                                           v: _this13.registerEphemeral(req, res, { message: 'keyspace clash' })
                                        });
 
@@ -3805,56 +4013,56 @@ var _class = function () {
                                        _this13.logger.debug('registerEphemeral replyPath', replyPath);
 
                                        if (!_this13.isBrowser(req)) {
-                                          _context91.next = 22;
+                                          _context98.next = 22;
                                           break;
                                        }
 
                                        res.redirect(302, ['', replyPath, 'help'].join('/'));
-                                       _context91.next = 23;
+                                       _context98.next = 23;
                                        break;
 
                                     case 22:
-                                       return _context91.abrupt('return', {
+                                       return _context98.abrupt('return', {
                                           v: replyPath
                                        });
 
                                     case 23:
                                     case 'end':
-                                       return _context91.stop();
+                                       return _context98.stop();
                                  }
                               }
-                           }, _callee91, _this13);
+                           }, _callee98, _this13);
                         })(), 't0', 16);
 
                      case 16:
-                        _ret3 = _context92.t0;
+                        _ret3 = _context99.t0;
 
                         if (!((typeof _ret3 === 'undefined' ? 'undefined' : _typeof(_ret3)) === "object")) {
-                           _context92.next = 19;
+                           _context99.next = 19;
                            break;
                         }
 
-                        return _context92.abrupt('return', _ret3.v);
+                        return _context99.abrupt('return', _ret3.v);
 
                      case 19:
-                        _context92.next = 24;
+                        _context99.next = 24;
                         break;
 
                      case 21:
-                        _context92.prev = 21;
-                        _context92.t1 = _context92['catch'](14);
+                        _context99.prev = 21;
+                        _context99.t1 = _context99['catch'](14);
 
-                        this.sendError(req, res, _context92.t1);
+                        this.sendError(req, res, _context99.t1);
 
                      case 24:
                      case 'end':
-                        return _context92.stop();
+                        return _context99.stop();
                   }
                }
-            }, _callee92, this, [[14, 21]]);
+            }, _callee99, this, [[14, 21]]);
          }));
 
-         function registerEphemeral(_x227, _x228, _x229) {
+         function registerEphemeral(_x248, _x249, _x250) {
             return ref.apply(this, arguments);
          }
 
@@ -3916,20 +4124,20 @@ var _class = function () {
          var _this14 = this;
 
          return function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee94(req, res) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee101(req, res) {
                var _ret4;
 
-               return regeneratorRuntime.wrap(function _callee94$(_context94) {
+               return regeneratorRuntime.wrap(function _callee101$(_context101) {
                   while (1) {
-                     switch (_context94.prev = _context94.next) {
+                     switch (_context101.prev = _context101.next) {
                         case 0:
-                           _context94.prev = 0;
-                           return _context94.delegateYield(regeneratorRuntime.mark(function _callee93() {
-                              var _req$params11, account, keyspace, key, timeout, accountKey, helpPath, reqx, v, isSecureAccount, _ref76, _ref77, _ref77$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref78, _ref79, expire;
+                           _context101.prev = 0;
+                           return _context101.delegateYield(regeneratorRuntime.mark(function _callee100() {
+                              var _req$params11, account, keyspace, key, timeout, accountKey, helpPath, reqx, v, isSecureAccount, _ref83, _ref84, _ref84$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref85, _ref86, expire;
 
-                              return regeneratorRuntime.wrap(function _callee93$(_context93) {
+                              return regeneratorRuntime.wrap(function _callee100$(_context100) {
                                  while (1) {
-                                    switch (_context93.prev = _context93.next) {
+                                    switch (_context100.prev = _context100.next) {
                                        case 0:
                                           _req$params11 = req.params;
                                           account = _req$params11.account;
@@ -3953,12 +4161,12 @@ var _class = function () {
                                           v = _this14.validateAccount(account);
 
                                           if (!v) {
-                                             _context93.next = 17;
+                                             _context100.next = 17;
                                              break;
                                           }
 
                                           _this14.sendStatusMessage(req, res, 400, 'Invalid account: ' + v);
-                                          return _context93.abrupt('return', {
+                                          return _context100.abrupt('return', {
                                              v: void 0
                                           });
 
@@ -3966,12 +4174,12 @@ var _class = function () {
                                           v = _this14.validateKeyspace(keyspace);
 
                                           if (!v) {
-                                             _context93.next = 21;
+                                             _context100.next = 21;
                                              break;
                                           }
 
                                           _this14.sendStatusMessage(req, res, 400, 'Invalid keyspace: ' + v);
-                                          return _context93.abrupt('return', {
+                                          return _context100.abrupt('return', {
                                              v: void 0
                                           });
 
@@ -3979,34 +4187,34 @@ var _class = function () {
                                           v = _this14.validateKey(key);
 
                                           if (!v) {
-                                             _context93.next = 25;
+                                             _context100.next = 25;
                                              break;
                                           }
 
                                           _this14.sendStatusMessage(req, res, 400, 'Invalid key: ' + v);
-                                          return _context93.abrupt('return', {
+                                          return _context100.abrupt('return', {
                                              v: void 0
                                           });
 
                                        case 25:
                                           if (!timeout) {
-                                             _context93.next = 29;
+                                             _context100.next = 29;
                                              break;
                                           }
 
                                           if (/^[0-9]$/.test(timeout)) {
-                                             _context93.next = 29;
+                                             _context100.next = 29;
                                              break;
                                           }
 
                                           _this14.sendStatusMessage(req, res, 400, 'Invalid timeout: require range 1 to 9 seconds');
-                                          return _context93.abrupt('return', {
+                                          return _context100.abrupt('return', {
                                              v: void 0
                                           });
 
                                        case 29:
                                           isSecureAccount = !/^pub$/.test(account);
-                                          _context93.next = 32;
+                                          _context100.next = 32;
                                           return _this14.redis.multiExecAsync(function (multi) {
                                              multi.time();
                                              multi.hget(accountKey, 'registered');
@@ -4018,14 +4226,14 @@ var _class = function () {
                                           });
 
                                        case 32:
-                                          _ref76 = _context93.sent;
-                                          _ref77 = _slicedToArray(_ref76, 5);
-                                          _ref77$ = _slicedToArray(_ref77[0], 1);
-                                          time = _ref77$[0];
-                                          registered = _ref77[1];
-                                          admined = _ref77[2];
-                                          accessed = _ref77[3];
-                                          certs = _ref77[4];
+                                          _ref83 = _context100.sent;
+                                          _ref84 = _slicedToArray(_ref83, 5);
+                                          _ref84$ = _slicedToArray(_ref84[0], 1);
+                                          time = _ref84$[0];
+                                          registered = _ref84[1];
+                                          admined = _ref84[2];
+                                          accessed = _ref84[3];
+                                          certs = _ref84[4];
 
                                           Objects.translate({ time: time, registered: registered, admined: admined, accessed: accessed }, reqx, function (key, value) {
                                              return parseInt(value);
@@ -4033,12 +4241,12 @@ var _class = function () {
                                           v = _this14.validateAccess({ command: command, req: req, account: account, keyspace: keyspace, time: time, registered: registered, admined: admined, accessed: accessed, certs: certs });
 
                                           if (!v) {
-                                             _context93.next = 45;
+                                             _context100.next = 45;
                                              break;
                                           }
 
                                           _this14.sendStatusMessage(req, res, 403, v);
-                                          return _context93.abrupt('return', {
+                                          return _context100.abrupt('return', {
                                              v: void 0
                                           });
 
@@ -4046,28 +4254,28 @@ var _class = function () {
                                           hostname = void 0;
 
                                           if (!(req.hostname === _this14.config.hostname)) {
-                                             _context93.next = 49;
+                                             _context100.next = 49;
                                              break;
                                           }
 
-                                          _context93.next = 61;
+                                          _context100.next = 61;
                                           break;
 
                                        case 49:
                                           if (!lodash.endsWith(req.hostname, _this14.config.keyspaceHostname)) {
-                                             _context93.next = 61;
+                                             _context100.next = 61;
                                              break;
                                           }
 
                                           hostname = req.hostname.replace(/\..*$/, '');
-                                          _context93.next = 53;
+                                          _context100.next = 53;
                                           return _this14.redis.hgetallAsync(_this14.adminKey('host', hostname));
 
                                        case 53:
-                                          hostHashes = _context93.sent;
+                                          hostHashes = _context100.sent;
 
                                           if (hostHashes) {
-                                             _context93.next = 56;
+                                             _context100.next = 56;
                                              break;
                                           }
 
@@ -4077,7 +4285,7 @@ var _class = function () {
                                           _this14.logger.debug('hostHashes', hostHashes);
 
                                           if (hostHashes.keyspaces) {
-                                             _context93.next = 59;
+                                             _context100.next = 59;
                                              break;
                                           }
 
@@ -4085,7 +4293,7 @@ var _class = function () {
 
                                        case 59:
                                           if (lodash.includes(hostHashes.keyspaces, keyspace)) {
-                                             _context93.next = 61;
+                                             _context100.next = 61;
                                              break;
                                           }
 
@@ -4093,7 +4301,7 @@ var _class = function () {
 
                                        case 61:
                                           if (keyspace) {
-                                             _context93.next = 63;
+                                             _context100.next = 63;
                                              break;
                                           }
 
@@ -4101,12 +4309,12 @@ var _class = function () {
 
                                        case 63:
                                           if (!timeout) {
-                                             _context93.next = 66;
+                                             _context100.next = 66;
                                              break;
                                           }
 
                                           if (!(timeout < 1 || timeout > 10)) {
-                                             _context93.next = 66;
+                                             _context100.next = 66;
                                              break;
                                           }
 
@@ -4120,18 +4328,18 @@ var _class = function () {
                                           if (command && command.access === 'admin') {
                                              multi.hset(accountKey, 'admined', time);
                                           }
-                                          _context93.next = 72;
+                                          _context100.next = 72;
                                           return fn(req, res, reqx, multi);
 
                                        case 72:
-                                          result = _context93.sent;
+                                          result = _context100.sent;
 
                                           if (!(result !== undefined)) {
-                                             _context93.next = 76;
+                                             _context100.next = 76;
                                              break;
                                           }
 
-                                          _context93.next = 76;
+                                          _context100.next = 76;
                                           return _this14.sendResult(command, req, res, reqx, result);
 
                                        case 76:
@@ -4142,16 +4350,16 @@ var _class = function () {
                                              multi.expire(reqx.keyspaceKey, _expire);
                                              _this14.logger.debug('expire', reqx.keyspaceKey, _expire);
                                           }
-                                          _context93.next = 79;
+                                          _context100.next = 79;
                                           return multi.execAsync();
 
                                        case 79:
-                                          _ref78 = _context93.sent;
-                                          _ref79 = _toArray(_ref78);
-                                          expire = _ref79;
+                                          _ref85 = _context100.sent;
+                                          _ref86 = _toArray(_ref85);
+                                          expire = _ref86;
 
                                           if (expire) {
-                                             _context93.next = 84;
+                                             _context100.next = 84;
                                              break;
                                           }
 
@@ -4159,40 +4367,40 @@ var _class = function () {
 
                                        case 84:
                                        case 'end':
-                                          return _context93.stop();
+                                          return _context100.stop();
                                     }
                                  }
-                              }, _callee93, _this14);
+                              }, _callee100, _this14);
                            })(), 't0', 2);
 
                         case 2:
-                           _ret4 = _context94.t0;
+                           _ret4 = _context101.t0;
 
                            if (!((typeof _ret4 === 'undefined' ? 'undefined' : _typeof(_ret4)) === "object")) {
-                              _context94.next = 5;
+                              _context101.next = 5;
                               break;
                            }
 
-                           return _context94.abrupt('return', _ret4.v);
+                           return _context101.abrupt('return', _ret4.v);
 
                         case 5:
-                           _context94.next = 10;
+                           _context101.next = 10;
                            break;
 
                         case 7:
-                           _context94.prev = 7;
-                           _context94.t1 = _context94['catch'](0);
+                           _context101.prev = 7;
+                           _context101.t1 = _context101['catch'](0);
 
-                           _this14.sendError(req, res, _context94.t1);
+                           _this14.sendError(req, res, _context101.t1);
 
                         case 10:
                         case 'end':
-                           return _context94.stop();
+                           return _context101.stop();
                      }
                   }
-               }, _callee94, _this14, [[0, 7]]);
+               }, _callee101, _this14, [[0, 7]]);
             }));
-            return function (_x230, _x231) {
+            return function (_x251, _x252) {
                return ref.apply(this, arguments);
             };
          }();
@@ -4209,48 +4417,48 @@ var _class = function () {
    }, {
       key: 'migrateKeyspace',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee95(_ref80) {
-            var account = _ref80.account;
-            var keyspace = _ref80.keyspace;
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee102(_ref87) {
+            var account = _ref87.account;
+            var keyspace = _ref87.keyspace;
 
-            var accountKey, _ref81, _ref82, accessToken, token, _ref83, _ref84, hsetnx, hdel;
+            var accountKey, _ref88, _ref89, accessToken, token, _ref90, _ref91, hsetnx, hdel;
 
-            return regeneratorRuntime.wrap(function _callee95$(_context95) {
+            return regeneratorRuntime.wrap(function _callee102$(_context102) {
                while (1) {
-                  switch (_context95.prev = _context95.next) {
+                  switch (_context102.prev = _context102.next) {
                      case 0:
                         accountKey = this.accountKeyspace(account, keyspace);
-                        _context95.next = 3;
+                        _context102.next = 3;
                         return this.redis.multiExecAsync(function (multi) {
                            multi.hget(accountKey, 'accessToken');
                            multi.hget(accountKey, 'token');
                         });
 
                      case 3:
-                        _ref81 = _context95.sent;
-                        _ref82 = _slicedToArray(_ref81, 2);
-                        accessToken = _ref82[0];
-                        token = _ref82[1];
+                        _ref88 = _context102.sent;
+                        _ref89 = _slicedToArray(_ref88, 2);
+                        accessToken = _ref89[0];
+                        token = _ref89[1];
 
                         if (!(!token && accessToken)) {
-                           _context95.next = 20;
+                           _context102.next = 20;
                            break;
                         }
 
-                        _context95.next = 10;
+                        _context102.next = 10;
                         return this.redis.multiExecAsync(function (multi) {
                            multi.hsetnx(accountKey, 'token', accessToken);
                            multi.hdel(accountKey, 'accessToken');
                         });
 
                      case 10:
-                        _ref83 = _context95.sent;
-                        _ref84 = _slicedToArray(_ref83, 2);
-                        hsetnx = _ref84[0];
-                        hdel = _ref84[1];
+                        _ref90 = _context102.sent;
+                        _ref91 = _slicedToArray(_ref90, 2);
+                        hsetnx = _ref91[0];
+                        hdel = _ref91[1];
 
                         if (hsetnx) {
-                           _context95.next = 18;
+                           _context102.next = 18;
                            break;
                         }
 
@@ -4258,7 +4466,7 @@ var _class = function () {
 
                      case 18:
                         if (hdel) {
-                           _context95.next = 20;
+                           _context102.next = 20;
                            break;
                         }
 
@@ -4266,13 +4474,13 @@ var _class = function () {
 
                      case 20:
                      case 'end':
-                        return _context95.stop();
+                        return _context102.stop();
                   }
                }
-            }, _callee95, this);
+            }, _callee102, this);
          }));
 
-         function migrateKeyspace(_x232) {
+         function migrateKeyspace(_x253) {
             return ref.apply(this, arguments);
          }
 
@@ -4345,16 +4553,16 @@ var _class = function () {
       }
    }, {
       key: 'validateAccess',
-      value: function validateAccess(_ref85) {
-         var req = _ref85.req;
-         var command = _ref85.command;
-         var account = _ref85.account;
-         var keyspace = _ref85.keyspace;
-         var time = _ref85.time;
-         var registered = _ref85.registered;
-         var admined = _ref85.admined;
-         var accessed = _ref85.accessed;
-         var certs = _ref85.certs;
+      value: function validateAccess(_ref92) {
+         var req = _ref92.req;
+         var command = _ref92.command;
+         var account = _ref92.account;
+         var keyspace = _ref92.keyspace;
+         var time = _ref92.time;
+         var registered = _ref92.registered;
+         var admined = _ref92.admined;
+         var accessed = _ref92.accessed;
+         var certs = _ref92.certs;
 
          var scheme = req.get('X-Forwarded-Proto');
          this.logger.debug('validateAccess scheme', scheme, account, keyspace, command);
@@ -4456,50 +4664,52 @@ var _class = function () {
    }, {
       key: 'sendResult',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee96(command, req, res, reqx, result) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee103(command, req, res, reqx, result) {
             var userAgent, uaMatch, mobile, otherResult, resultString, title, heading, icon, resultArray, content;
-            return regeneratorRuntime.wrap(function _callee96$(_context96) {
+            return regeneratorRuntime.wrap(function _callee103$(_context103) {
                while (1) {
-                  switch (_context96.prev = _context96.next) {
+                  switch (_context103.prev = _context103.next) {
                      case 0:
                         userAgent = req.get('User-Agent');
                         uaMatch = userAgent.match(/\s([A-Z][a-z]*\/[\.0-9]+)\s/);
 
                         this.logger.debug('sendResult ua', !uaMatch ? userAgent : uaMatch[1]);
                         command = command || {};
-                        if (this.isDebugReq(req)) {
-                           this.logger.ndebug('sendResult', command.command, req.params, req.query, result);
+                        if (this.isDevelopment(req)) {
+                           this.logger.debug('sendResult command', command.key, req.params, lodash.isArray(result));
+                        } else {
+                           this.logger.debug('sendResult command', command.key, req.params, lodash.isArray(result));
                         }
                         mobile = this.isMobile(req);
 
                         if (!command.sendResult) {
-                           _context96.next = 19;
+                           _context103.next = 19;
                            break;
                         }
 
                         if (!lodash.isFunction(command.sendResult)) {
-                           _context96.next = 18;
+                           _context103.next = 18;
                            break;
                         }
 
-                        _context96.next = 10;
+                        _context103.next = 10;
                         return command.sendResult(req, res, reqx, result);
 
                      case 10:
-                        otherResult = _context96.sent;
+                        otherResult = _context103.sent;
 
                         if (!(otherResult === undefined)) {
-                           _context96.next = 15;
+                           _context103.next = 15;
                            break;
                         }
 
-                        return _context96.abrupt('return');
+                        return _context103.abrupt('return');
 
                      case 15:
                         result = otherResult;
 
                      case 16:
-                        _context96.next = 19;
+                        _context103.next = 19;
                         break;
 
                      case 18:
@@ -4509,35 +4719,35 @@ var _class = function () {
                         resultString = '';
 
                         if (Values.isDefined(result)) {
-                           _context96.next = 24;
+                           _context103.next = 24;
                            break;
                         }
 
                         this.logger.error('sendResult none');
-                        _context96.next = 72;
+                        _context103.next = 72;
                         break;
 
                      case 24:
                         if (!(Values.isDefined(req.query.json) || command.format === 'json')) {
-                           _context96.next = 29;
+                           _context103.next = 29;
                            break;
                         }
 
                         res.json(result);
-                        return _context96.abrupt('return');
+                        return _context103.abrupt('return');
 
                      case 29:
                         if (!Values.isDefined(req.query.quiet)) {
-                           _context96.next = 32;
+                           _context103.next = 32;
                            break;
                         }
 
-                        _context96.next = 72;
+                        _context103.next = 72;
                         break;
 
                      case 32:
                         if (!(this.config.defaultFormat === 'cli' || Values.isDefined(req.query.line) || this.isCliDomain(req) || command.format === 'cli')) {
-                           _context96.next = 37;
+                           _context103.next = 37;
                            break;
                         }
 
@@ -4576,32 +4786,32 @@ var _class = function () {
                         } else if (result === null) {} else {
                            resultString = result.toString();
                         }
-                        _context96.next = 72;
+                        _context103.next = 72;
                         break;
 
                      case 37:
                         if (!(this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain) || command.format === 'plain')) {
-                           _context96.next = 42;
+                           _context103.next = 42;
                            break;
                         }
 
                         res.set('Content-Type', 'text/plain');
                         resultString = result.toString();
-                        _context96.next = 72;
+                        _context103.next = 72;
                         break;
 
                      case 42:
                         if (!(this.config.defaultFormat === 'json')) {
-                           _context96.next = 47;
+                           _context103.next = 47;
                            break;
                         }
 
                         res.json(result);
-                        return _context96.abrupt('return');
+                        return _context103.abrupt('return');
 
                      case 47:
                         if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html' || this.isHtmlDomain(req))) {
-                           _context96.next = 70;
+                           _context103.next = 70;
                            break;
                         }
 
@@ -4616,12 +4826,12 @@ var _class = function () {
                         resultArray = [];
 
                         if (!(result === null)) {
-                           _context96.next = 57;
+                           _context103.next = 57;
                            break;
                         }
 
                         this.sendStatusMessage(req, res, 404, reqx.key);
-                        return _context96.abrupt('return');
+                        return _context103.abrupt('return');
 
                      case 57:
                         if (lodash.isString(result)) {
@@ -4663,38 +4873,38 @@ var _class = function () {
                            resultArray.push(resultString);
                         }
                         if (resultArray.length) {
-                           content.push(Hs.pre(_styles2.default.result.resultArray, resultArray));
+                           content.push(Hs.pre(_styles2.default.result.resultArray, resultArray.join('\n')));
                         }
                         res.send((0, _Page2.default)({
                            config: this.config, req: req, reqx: reqx, title: title, heading: heading, icon: icon, content: content
                         }));
-                        return _context96.abrupt('return');
+                        return _context103.abrupt('return');
 
                      case 70:
                         this.sendError(req, res, { message: 'Invalid default format: ' + this.config.defaultFormat });
-                        return _context96.abrupt('return');
+                        return _context103.abrupt('return');
 
                      case 72:
                         res.send(resultString + '\n');
 
                      case 73:
                      case 'end':
-                        return _context96.stop();
+                        return _context103.stop();
                   }
                }
-            }, _callee96, this);
+            }, _callee103, this);
          }));
 
-         function sendResult(_x233, _x234, _x235, _x236, _x237) {
+         function sendResult(_x254, _x255, _x256, _x257, _x258) {
             return ref.apply(this, arguments);
          }
 
          return sendResult;
       }()
    }, {
-      key: 'isDebugReq',
-      value: function isDebugReq(req) {
-         return req.hostname === 'localhost';
+      key: 'isDevelopment',
+      value: function isDevelopment(req) {
+         return req.hostname === 'localhost' && process.env.NODE_ENV === 'development';
       }
    }, {
       key: 'isSecureDomain',
@@ -4841,19 +5051,19 @@ var _class = function () {
    }, {
       key: 'end',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee97() {
-            return regeneratorRuntime.wrap(function _callee97$(_context97) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee104() {
+            return regeneratorRuntime.wrap(function _callee104$(_context104) {
                while (1) {
-                  switch (_context97.prev = _context97.next) {
+                  switch (_context104.prev = _context104.next) {
                      case 0:
                         this.logger.info('end');
 
                         if (!redis) {
-                           _context97.next = 4;
+                           _context104.next = 4;
                            break;
                         }
 
-                        _context97.next = 4;
+                        _context104.next = 4;
                         return this.redis.quitAsync();
 
                      case 4:
@@ -4863,10 +5073,10 @@ var _class = function () {
 
                      case 5:
                      case 'end':
-                        return _context97.stop();
+                        return _context104.stop();
                   }
                }
-            }, _callee97, this);
+            }, _callee104, this);
          }));
 
          function end() {

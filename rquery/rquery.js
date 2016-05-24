@@ -445,16 +445,28 @@ export default class {
             hostUrl = `https://${req.hostname}`;
          }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
-         const message = `Try endpoints below.`;
+         const message = `Try endpoints below for keys, sets, lists and hashes etc`;
          const exampleUrls = [
             `${hostUrl}/ak/${account}/${keyspace}/set/mykey/myvalue`,
             `${hostUrl}/ak/${account}/${keyspace}/get/mykey`,
+            `${hostUrl}/ak/${account}/${keyspace}/setjsonobject/myobject1/name:"myname",age:42`,
+            `${hostUrl}/ak/${account}/${keyspace}/getjson/myobject1`,
+            `${hostUrl}/ak/${account}/${keyspace}/setjsonquery/myobject2?name=myname&age=42`,
+            `${hostUrl}/ak/${account}/${keyspace}/getjson/myobject2`,
+            `${hostUrl}/ak/${account}/${keyspace}/set/myjsonlist1/[1,2,3]`,
+            `${hostUrl}/ak/${account}/${keyspace}/getjson/myjsonlist1`,
             `${hostUrl}/ak/${account}/${keyspace}/sadd/myset/myvalue`,
             `${hostUrl}/ak/${account}/${keyspace}/smembers/myset`,
             `${hostUrl}/ak/${account}/${keyspace}/lpush/mylist/myvalue`,
-            `${hostUrl}/ak/${account}/${keyspace}/lrange/mylist/0/-1`,
+            `${hostUrl}/ak/${account}/${keyspace}/lrange/mylist/0/10`,
+            `${hostUrl}/ak/${account}/${keyspace}/rrange/mylist/0/10`,
             `${hostUrl}/ak/${account}/${keyspace}/hset/hashes1/field1/value1`,
+            `${hostUrl}/ak/${account}/${keyspace}/hsetnx/hashes1/field2/value2`,
             `${hostUrl}/ak/${account}/${keyspace}/hgetall/hashes1`,
+            `${hostUrl}/ak/${account}/${keyspace}/zadd/zset1/10/member10`,
+            `${hostUrl}/ak/${account}/${keyspace}/zadd/zset1/20/member20`,
+            `${hostUrl}/ak/${account}/${keyspace}/zrange/zset1/0/-1`,
+            `${hostUrl}/ak/${account}/${keyspace}/zrevrange/zset1/0/-1`,
             `${hostUrl}/ak/${account}/${keyspace}/ttls`,
          ];
          return {message, exampleUrls, keyspaceCommands: this.listCommands('keyspace')};
@@ -578,6 +590,25 @@ export default class {
          access: 'set'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.setAsync(keyspaceKey, req.params.value);
+      });
+      this.addKeyspaceCommand({
+         key: 'setjsonobject',
+         params: ['key', 'value'],
+         access: 'set'
+      }, async (req, res, {keyspaceKey}) => {
+         let string = req.params.value;
+         if (/^\w/.test(req.params.value)) {
+            string = ['{', req.params.value, '}'].join('');
+            string = string.replace(/(\W)(\w+):/g, '$1"$2":');
+         }
+         return await this.redis.setAsync(keyspaceKey, string);
+      });
+      this.addKeyspaceCommand({
+         key: 'setjsonquery',
+         params: ['key'],
+         access: 'set'
+      }, async (req, res, {keyspaceKey}) => {
+         return await this.redis.setAsync(keyspaceKey, JSON.stringify(req.query));
       });
       this.addKeyspaceCommand({
          key: 'setex',
@@ -795,6 +826,27 @@ export default class {
          return await this.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop);
       });
       this.addKeyspaceCommand({
+         key: 'lrevrange',
+         params: ['key', 'start', 'stop'],
+      }, async (req, res, {keyspaceKey}) => {
+         const array = await this.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop);
+         return array.reverse();
+      });
+      this.addKeyspaceCommand({
+         key: 'rrange',
+         params: ['key', 'start', 'stop'],
+      }, async (req, res, {keyspaceKey}) => {
+         const array = await this.redis.lrangeAsync(keyspaceKey, -req.params.stop, -req.params.start);
+         return array.reverse();
+      });
+      this.addKeyspaceCommand({
+         key: 'rrevrange',
+         params: ['key', 'start', 'stop'],
+      }, async (req, res, {keyspaceKey}) => {
+         const array = await this.redis.lrangeAsync(keyspaceKey, -req.params.stop, -req.params.start);
+         return array;
+      });
+      this.addKeyspaceCommand({
          key: 'hset',
          params: ['key', 'field', 'value'],
          access: 'set'
@@ -857,6 +909,22 @@ export default class {
          params: ['key']
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.zcardAsync(keyspaceKey);
+      });
+      if (this.config.redisVersion && this.config.redisVersion[0] >= 3) {
+         this.addKeyspaceCommand({
+            key: 'zaddnx',
+            params: ['key', 'score', 'member'],
+            access: 'add'
+         }, async (req, res, {keyspaceKey}) => {
+            return await this.redis.zaddAsync(keyspaceKey, 'NX', req.params.score, req.params.member);
+         });
+      }
+      this.addKeyspaceCommand({
+         key: 'zincrby',
+         params: ['key', 'increment', 'member'],
+         access: 'add'
+      }, async (req, res, {keyspaceKey}) => {
+         return await this.redis.zincrbyAsync(keyspaceKey, req.params.increment, req.params.member);
       });
       this.addKeyspaceCommand({
          key: 'zadd',
@@ -1556,8 +1624,10 @@ export default class {
       const uaMatch = userAgent.match(/\s([A-Z][a-z]*\/[\.0-9]+)\s/);
       this.logger.debug('sendResult ua', !uaMatch? userAgent: uaMatch[1]);
       command = command || {};
-      if (this.isDebugReq(req)) {
-         this.logger.ndebug('sendResult', command.command, req.params, req.query, result);
+      if (this.isDevelopment(req)) {
+         this.logger.debug('sendResult command', command.key, req.params, lodash.isArray(result));
+      } else {
+         this.logger.debug('sendResult command', command.key, req.params, lodash.isArray(result));
       }
       const mobile = this.isMobile(req);
       if (command.sendResult) {
@@ -1672,7 +1742,7 @@ export default class {
             resultArray.push(resultString);
          }
          if (resultArray.length) {
-            content.push(Hs.pre(styles.result.resultArray, resultArray));
+            content.push(Hs.pre(styles.result.resultArray, resultArray.join('\n')));
          }
          res.send(renderPage({
             config: this.config, req, reqx, title, heading, icon, content
@@ -1685,8 +1755,8 @@ export default class {
       res.send(resultString + '\n');
    }
 
-   isDebugReq(req) {
-      return req.hostname === 'localhost';
+   isDevelopment(req) {
+      return req.hostname === 'localhost' && process.env.NODE_ENV === 'development';
    }
 
    isSecureDomain(req) {
