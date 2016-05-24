@@ -51,7 +51,7 @@ var styles = {
          height: 20
       },
       title: {
-         fontFamily: 'monospace',
+         fontFamily: 'sansserif',
          float: 'left',
          display: 'inline-block',
          margin: [0, 0, 0, 0],
@@ -60,7 +60,7 @@ var styles = {
          color: '#808080'
       },
       heading: {
-         fontFamily: 'sansserif',
+         fontFamily: 'monospace',
          float: 'left',
          display: 'inline-block',
          margin: [0, 0, 0, 0],
