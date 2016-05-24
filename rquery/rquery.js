@@ -446,28 +446,24 @@ export default class {
          }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
          const message = `Try sample endpoints below on this keyspace.`;
-         const description = `You can set, add and view keys, sets, lists, zsets andhashes etc`;
+         const description = `You can set, add and view keys, sets, lists, zsets andhashes etc.`;
          const exampleUrls = [
-            `${hostUrl}/ak/${account}/${keyspace}/set/mykey/myvalue`,
-            `${hostUrl}/ak/${account}/${keyspace}/get/mykey`,
-            `${hostUrl}/ak/${account}/${keyspace}/set/myjsonlist1/[1,2,3]`,
-            `${hostUrl}/ak/${account}/${keyspace}/getjson/myjsonlist1`,
+            `${hostUrl}/ak/${account}/${keyspace}/set/mykey1/myvalue`,
+            `${hostUrl}/ak/${account}/${keyspace}/get/mykey1`,
             `${hostUrl}/ak/${account}/${keyspace}/set-json-query/myobject1?name=myname&age=31`,
-            `${hostUrl}/ak/${account}/${keyspace}/set-json-object/myobject2/name:"myname",age:32`,
-            `${hostUrl}/ak/${account}/${keyspace}/getjson/myobject1`,
-            `${hostUrl}/ak/${account}/${keyspace}/getjson/myobject2`,
-            `${hostUrl}/ak/${account}/${keyspace}/sadd/myset/myvalue`,
-            `${hostUrl}/ak/${account}/${keyspace}/smembers/myset`,
-            `${hostUrl}/ak/${account}/${keyspace}/lpush/mylist/myvalue`,
-            `${hostUrl}/ak/${account}/${keyspace}/lrange/mylist/0/10`,
-            `${hostUrl}/ak/${account}/${keyspace}/rrange/mylist/0/10`,
-            `${hostUrl}/ak/${account}/${keyspace}/hset/hashes1/field1/value1`,
-            `${hostUrl}/ak/${account}/${keyspace}/hsetnx/hashes1/field2/value2`,
-            `${hostUrl}/ak/${account}/${keyspace}/hgetall/hashes1`,
-            `${hostUrl}/ak/${account}/${keyspace}/zadd/zset1/10/member10`,
-            `${hostUrl}/ak/${account}/${keyspace}/zadd/zset1/20/member20`,
-            `${hostUrl}/ak/${account}/${keyspace}/zrange/zset1/0/-1`,
-            `${hostUrl}/ak/${account}/${keyspace}/zrevrange/zset1/0/-1`,
+            `${hostUrl}/ak/${account}/${keyspace}/get-json/myobject1`,
+            `${hostUrl}/ak/${account}/${keyspace}/sadd/myset1/myvalue`,
+            `${hostUrl}/ak/${account}/${keyspace}/smembers/myset1`,
+            `${hostUrl}/ak/${account}/${keyspace}/lpush/mylist1/myvalue`,
+            `${hostUrl}/ak/${account}/${keyspace}/lrange/mylist1/0/10`,
+            `${hostUrl}/ak/${account}/${keyspace}/rrange/mylist1/0/10`,
+            `${hostUrl}/ak/${account}/${keyspace}/hset/myhashes1/field1/value1`,
+            `${hostUrl}/ak/${account}/${keyspace}/hsetnx/myhashes1/field2/value2`,
+            `${hostUrl}/ak/${account}/${keyspace}/hgetall/myhashes1`,
+            `${hostUrl}/ak/${account}/${keyspace}/zadd/myzset1/10/member10`,
+            `${hostUrl}/ak/${account}/${keyspace}/zadd/myzset1/20/member20`,
+            `${hostUrl}/ak/${account}/${keyspace}/zrange/myzset1/0/-1`,
+            `${hostUrl}/ak/${account}/${keyspace}/zrevrange/myzset1/0/-1`,
             `${hostUrl}/ak/${account}/${keyspace}/ttls`,
          ];
          return {message, description, exampleUrls, keyspaceCommands: this.listCommands('keyspace')};
@@ -633,11 +629,11 @@ export default class {
          return await this.redis.getAsync(keyspaceKey);
       });
       this.addKeyspaceCommand({
-         key: 'getjson',
+         key: 'get-json',
          params: ['key']
       }, async (req, res, {key, keyspaceKey}) => {
          const value = await this.redis.getAsync(keyspaceKey);
-         this.logger.info('getjson', typeof value, value);
+         this.logger.info('get-json', typeof value, value);
          if (this.isMobile(req)) {
             return JSON.parse(value);
          } else if (value) {
