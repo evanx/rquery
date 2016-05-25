@@ -1,5 +1,9 @@
 
-curla() {
+curlu() {
+  curlr time/seconds '^[1-9][0-9]*$'
+}
+
+curlak() {
   curle set/mykey/myvalue OK
   curle type/mykey string
   curli get/mykey myvalue

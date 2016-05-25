@@ -77,9 +77,6 @@ curl1() {
 
 ruri=`curl -s $rurl/register-ephemeral`
 echo ruri $ruri
-rurl="$rurl/$ruri"
-echo rurl $rurl
-echo $rurl > ~/.redishub/test.url
 
 . scripts/_test.sh
 
@@ -88,6 +85,12 @@ mkdir -p $tmp
 cd $tmp
 pwd
 
-curla
+curlu
+
+rurl="$rurl/$ruri"
+echo rurl $rurl
+echo $rurl > ~/.redishub/test.url
+
+curlak
 
 echo "OK"

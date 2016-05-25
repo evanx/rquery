@@ -256,7 +256,7 @@ export default class {
             hostUrl = 'https://' + req.hostname;
          }
          const routes = Express.getRoutes(this.expressApp)
-         .filter(route => !['/', '/routes', '/webhook-telegram/*', '/help'].includes(route));
+         .filter(route => !['/', '/routes', '/webhook-telegram/*', '/help', '/about'].includes(route));
          const accountOnlyRoutes = routes
          .filter(route => route.includes(':account') && !route.includes(':keyspace'));
          return {
