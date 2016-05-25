@@ -1739,7 +1739,9 @@ export default class {
          res.set('Content-Type', 'text/html');
          const content = [];
          this.logger.debug('sendResult reqx', reqx, command, resultString, resultArray.length);
-         content.push(Hso.div(styles.result.commandKey, command.key.replace(/-/g, ' ')));
+         if (command.key) {
+            content.push(Hso.div(styles.result.commandKey, command.key.replace(/-/g, ' ')));
+         }
          if (reqx.key) {
             //title = reqx.key;
             content.push(Hso.div(styles.result.reqKey, reqx.key));
@@ -1869,7 +1871,7 @@ export default class {
             return Object.assign({url}, hint);
          });
          if (err.stack) {
-            messageLines = messageLines.concat(err.stack.split('\n').slice(0, 5));
+            messageLines.push(err.stack.split('\n').slice(0, 5));
          }
       } else {
          this.logger.error('sendStatusMessage type', typeof err, err);
@@ -1886,7 +1888,7 @@ export default class {
             content: [
                //Hs.div(styles.error.status, `Status ${statusCode}`),
                Hs.div(styles.error.message, title),
-               Hs.pre(styles.error.detail, messageLines),
+               Hs.pre(styles.error.detail, lodash.flatten(messageLines).join('\n')),
                hints.map(hint => He.div(styles.error.hint, [
                   Hso.div(styles.error.hintMessage, hint.message),
                   Hso.div(styles.error.hintUrl, hint.url),
@@ -1897,7 +1899,7 @@ export default class {
       } else {
          this.logger.warn('status lines', req.path, statusCode, typeof err, Object.keys(err), messageLines.length);
          // TODO hints
-         res.status(statusCode).send([title, ...messageLines].join('\n') + '\n');
+         res.status(statusCode).send(lodash.flatten([title, ...messageLines]).join('\n') + '\n');
       }
    }
 

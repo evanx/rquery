@@ -4900,7 +4900,9 @@ var _class = function () {
                         content = [];
 
                         this.logger.debug('sendResult reqx', reqx, command, resultString, resultArray.length);
-                        content.push(Hso.div(_styles2.default.result.commandKey, command.key.replace(/-/g, ' ')));
+                        if (command.key) {
+                           content.push(Hso.div(_styles2.default.result.commandKey, command.key.replace(/-/g, ' ')));
+                        }
                         if (reqx.key) {
                            //title = reqx.key;
                            content.push(Hso.div(_styles2.default.result.reqKey, reqx.key));
@@ -5063,7 +5065,7 @@ var _class = function () {
                return Object.assign({ url: url }, hint);
             });
             if (err.stack) {
-               messageLines = messageLines.concat(err.stack.split('\n').slice(0, 5));
+               messageLines.push(err.stack.split('\n').slice(0, 5));
             }
          } else {
             this.logger.error('sendStatusMessage type', typeof err === 'undefined' ? 'undefined' : _typeof(err), err);
@@ -5079,14 +5081,14 @@ var _class = function () {
                req: req, reqx: reqx, title: title, heading: heading,
                content: [
                //Hs.div(styles.error.status, `Status ${statusCode}`),
-               Hs.div(_styles2.default.error.message, title), Hs.pre(_styles2.default.error.detail, messageLines), hints.map(function (hint) {
+               Hs.div(_styles2.default.error.message, title), Hs.pre(_styles2.default.error.detail, lodash.flatten(messageLines).join('\n')), hints.map(function (hint) {
                   return He.div(_styles2.default.error.hint, [Hso.div(_styles2.default.error.hintMessage, hint.message), Hso.div(_styles2.default.error.hintUrl, hint.url), Hso.div(_styles2.default.error.hintDescription, hint.description)]);
                })]
             }));
          } else {
             this.logger.warn('status lines', req.path, statusCode, typeof err === 'undefined' ? 'undefined' : _typeof(err), Object.keys(err), messageLines.length);
             // TODO hints
-            res.status(statusCode).send([title].concat(_toConsumableArray(messageLines)).join('\n') + '\n');
+            res.status(statusCode).send(lodash.flatten([title].concat(_toConsumableArray(messageLines))).join('\n') + '\n');
          }
       }
    }, {

@@ -131,7 +131,7 @@ function element(name, attributes) {
          args[_key2 - 2] = arguments[_key2];
       }
 
-      var children = args;
+      var children = lodash.compact(lodash.flatten(args));
       var attrs = Objects.kvs(attributes).filter(function (kv) {
          return kv.key !== 'meta';
       }).filter(function (kv) {
