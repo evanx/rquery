@@ -130,7 +130,7 @@ var styles = {
          lineHeight: 1.5,
          margin: [4, 4, 8, 12],
          fontSize: 14,
-         color: '#505050',
+         color: '#808080',
          backgroundColor: '#ffffff'
       },
       reqKey: {
