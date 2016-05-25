@@ -134,7 +134,7 @@ var styles = {
          backgroundColor: '#ffffff'
       },
       reqKey: {
-         paddingTop: 4,
+         padding: [8, 0, 4, 0],
          fontSize: 20,
          fontWeight: 'bold'
       },

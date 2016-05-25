@@ -4784,7 +4784,7 @@ var _class = function () {
                         }
 
                         this.logger.error('sendResult none');
-                        _context103.next = 70;
+                        _context103.next = 71;
                         break;
 
                      case 25:
@@ -4802,7 +4802,7 @@ var _class = function () {
                            break;
                         }
 
-                        _context103.next = 70;
+                        _context103.next = 71;
                         break;
 
                      case 33:
@@ -4846,7 +4846,7 @@ var _class = function () {
                         } else if (result === null) {} else {
                            resultString = result.toString();
                         }
-                        _context103.next = 70;
+                        _context103.next = 71;
                         break;
 
                      case 38:
@@ -4857,7 +4857,7 @@ var _class = function () {
 
                         res.set('Content-Type', 'text/plain');
                         resultString = result.toString();
-                        _context103.next = 70;
+                        _context103.next = 71;
                         break;
 
                      case 43:
@@ -4871,7 +4871,7 @@ var _class = function () {
 
                      case 48:
                         if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html' || this.isHtmlDomain(req) || mobile)) {
-                           _context103.next = 68;
+                           _context103.next = 69;
                            break;
                         }
 
@@ -4901,13 +4901,16 @@ var _class = function () {
 
                         this.logger.debug('sendResult reqx', reqx, command.key, reqx.key, resultString, resultArray.length);
                         content.push(Hso.div(_styles2.default.result.commandKey, command.key.replace(/-/g, ' ')));
-                        if (command.params) {
-                           content.push(Hso.pre(_styles2.default.result.commandParams, command.params.map(function (key) {
-                              return '<b>' + key + '</b> ' + req.params[key];
-                           }).join('\n')));
-                        } else if (reqx.key) {
+                        if (reqx.key) {
                            //title = reqx.key;
                            content.push(Hso.div(_styles2.default.result.reqKey, reqx.key));
+                        }
+                        if (command.params) {
+                           content.push(Hso.pre(_styles2.default.result.commandParams, command.params.filter(function (key) {
+                              return key !== 'key';
+                           }).map(function (key) {
+                              return '<b>' + key + '</b> ' + req.params[key];
+                           }).join('\n')));
                         }
                         statusCode = 200;
                         emptyMessage = void 0;
@@ -4929,14 +4932,14 @@ var _class = function () {
                         }));
                         return _context103.abrupt('return');
 
-                     case 68:
+                     case 69:
                         this.sendError(req, res, { message: 'Invalid default format: ' + this.config.defaultFormat });
                         return _context103.abrupt('return');
 
-                     case 70:
+                     case 71:
                         res.send(resultString + '\n');
 
-                     case 71:
+                     case 72:
                      case 'end':
                         return _context103.stop();
                   }

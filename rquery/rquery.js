@@ -1740,14 +1740,16 @@ export default class {
          const content = [];
          this.logger.debug('sendResult reqx', reqx, command.key, reqx.key, resultString, resultArray.length);
          content.push(Hso.div(styles.result.commandKey, command.key.replace(/-/g, ' ')));
+         if (reqx.key) {
+            //title = reqx.key;
+            content.push(Hso.div(styles.result.reqKey, reqx.key));
+         }
          if (command.params) {
             content.push(Hso.pre(styles.result.commandParams, command.params
+               .filter(key => key !== 'key')
                .map(key => `<b>${key}</b> ${req.params[key]}`)
                .join('\n'))
             );
-         } else if (reqx.key) {
-            //title = reqx.key;
-            content.push(Hso.div(styles.result.reqKey, reqx.key));
          }
          let statusCode = 200;
          let emptyMessage;
