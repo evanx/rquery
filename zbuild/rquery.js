@@ -4917,6 +4917,7 @@ var _class = function () {
                               logger.error('sendResult resultString', command, req.path);
                            }
                         } else if (!resultString) {
+                           //statusCode = 404;
                            resultString = '<i>&lt;empty&gt;</i>';
                         }
                         if (resultString) {
