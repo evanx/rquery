@@ -446,7 +446,7 @@ export default class {
          }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
          const message = `Try sample endpoints below on this keyspace.`;
-         const description = `You can set, add and view keys, sets, lists, zsets andhashes etc.`;
+         const description = `You can set, add and view keys, sets, lists, zsets, hashes etc.`;
          const exampleUrls = [
             `${hostUrl}/ak/${account}/${keyspace}/set/mykey1/myvalue`,
             `${hostUrl}/ak/${account}/${keyspace}/get/mykey1`,
@@ -1747,10 +1747,13 @@ export default class {
          res.set('Content-Type', 'text/html');
          const content = [];
          this.logger.debug('sendResult reqx', reqx, command.key, reqx.key, resultString, resultArray.length);
-         if (command.key) {
-            content.push(`<div style='${styles.result.commandKey}'>${command.key}</div>`);
-         }
-         if (reqx.key) {
+         content.push(Hso.div(styles.result.commandKey, command.key));
+         if (command.params) {
+            content.push(Hso.pre(styles.result.commandParams, command.params
+               .map(key => `<b>${key}</b> ${req.params[key]}`)
+               .join('\n'))
+            );
+         } else if (reqx.key) {
             //title = reqx.key;
             content.push(`<div style='${styles.result.reqKey}'>${reqx.key}</div>`);
          }
@@ -1759,11 +1762,9 @@ export default class {
                resultString = 'No results';
             }
          }
-         if (resultString) {
-            resultArray.push(resultString);
-         }
+         resultArray.push(resultString);
          if (resultArray.length) {
-            content.push(Hs.pre(styles.result.resultArray, resultArray.join('\n')));
+            content.push(Hs.pre(styles.result.resultArray, lodash.compact(resultArray).join('\n')));
          }
          res.send(renderPage({
             config: this.config, req, reqx, title, heading, icon, content

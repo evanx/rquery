@@ -126,6 +126,13 @@ const styles = {
          fontStyle: 'italic',
          color: '#424242'
       },
+      commandParams: {
+         lineHeight: 1.5,
+         margin: [4, 4, 8, 12],
+         fontSize: 14,
+         color: '#505050',
+         backgroundColor: '#ffffff',
+      },
       reqKey: {
          paddingTop: 4,
          fontSize: 20,
