@@ -1727,21 +1727,13 @@ export default class {
          }
          let resultArray = [];
          if (result === null) {
-            this.sendStatusMessage(req, res, 404, reqx.key);
-            return;
          } else if (lodash.isString(result)) {
             resultString = result;
          } else if (lodash.isArray(result)) {
-            if (false) {
-               resultString = `${result.length} items`;
-            }
             resultArray = result;
          } else if (lodash.isObject(result)) {
-            if (false) {
-               resultString = `<b>keys</b> ${Object.keys(result).join(' ')}`;
-            }
             resultArray = Object.keys(result).map(key => `<b>${key}</b> ${result[key]}`);
-         } else {
+         } else if (result) {
             resultString = result.toString();
          }
          res.set('Content-Type', 'text/html');
@@ -1755,18 +1747,22 @@ export default class {
             );
          } else if (reqx.key) {
             //title = reqx.key;
-            content.push(`<div style='${styles.result.reqKey}'>${reqx.key}</div>`);
+            content.push(Hso.div(styles.result.reqKey, reqx.key));
          }
-         if (!resultString) {
-            if (!resultArray.length) {
-               resultString = 'No results';
-            }
-         }
-         resultArray.push(resultString);
+         let statusCode = 200;
+         let emptyMessage;
          if (resultArray.length) {
-            content.push(Hs.pre(styles.result.resultArray, lodash.compact(resultArray).join('\n')));
+            if (resultString) {
+               logger.error('sendResult resultString', command, req.path);
+            }
+         } else if (!resultString) {
+            resultString = '<i>&lt;empty&gt;</i>';
          }
-         res.send(renderPage({
+         if (resultString) {
+            resultArray.push(resultString);
+         }
+         content.push(Hs.pre(styles.result.resultArray, lodash.compact(resultArray).join('\n')));
+         res.status(statusCode).send(renderPage({
             config: this.config, req, reqx, title, heading, icon, content
          }));
          return;
