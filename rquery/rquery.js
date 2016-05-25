@@ -450,7 +450,7 @@ export default class {
          const exampleUrls = [
             `${hostUrl}/ak/${account}/${keyspace}/set/mykey1/myvalue`,
             `${hostUrl}/ak/${account}/${keyspace}/get/mykey1`,
-            `${hostUrl}/ak/${account}/${keyspace}/set-json-query/myobject1?name=myname&age=31`,
+            `${hostUrl}/ak/${account}/${keyspace}/set-json-query/myobject1?name=myname&id=12346`,
             `${hostUrl}/ak/${account}/${keyspace}/get-json/myobject1`,
             `${hostUrl}/ak/${account}/${keyspace}/sadd/myset1/myvalue`,
             `${hostUrl}/ak/${account}/${keyspace}/smembers/myset1`,
