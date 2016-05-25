@@ -93,7 +93,7 @@ const styles = {
          color: '#424242'
       },
       message: {
-         paddingTop: 4,
+         paddingTop: 0,
          fontSize: 20,
          fontWeight: 'bold'
       },

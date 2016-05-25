@@ -1861,14 +1861,14 @@ export default class {
          err = 'unexpected error type: ' + typeof err;
          messageLines.push(Object.keys(err).join(' '));
       }
-      const heading = [Hc.b('error'), Hc.tt('title')].join(' ');
+      const heading = [Hc.b('Status'), Hc.tt(statusCode)].join(' ');
       if (this.isBrowser(req)) {
          res.set('Content-Type', 'text/html');
          res.status(statusCode).send(renderPage({
             config: this.config,
             req, reqx, title, heading,
             content: [
-               Hs.div(styles.error.status, `Status ${statusCode}`),
+               //Hs.div(styles.error.status, `Status ${statusCode}`),
                Hs.div(styles.error.message, title),
                Hs.pre(styles.error.detail, messageLines)
             ]
