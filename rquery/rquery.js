@@ -634,10 +634,12 @@ export default class {
       }, async (req, res, {key, keyspaceKey}) => {
          const value = await this.redis.getAsync(keyspaceKey);
          this.logger.info('get-json', typeof value, value);
-         if (this.isMobile(req)) {
-            return JSON.parse(value);
-         } else if (value) {
-            res.json(JSON.parse(value));
+         if (value) {
+            if (true) {
+               return JSON.parse(value);
+            } else {
+               res.json(JSON.parse(value));
+            }
          } else {
             this.sendStatusMessage(req, res, 404, 'Not found: ' + key);
          }

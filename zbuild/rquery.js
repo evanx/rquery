@@ -1860,21 +1860,29 @@ var _class = function () {
 
                            _this5.logger.info('get-json', typeof value === 'undefined' ? 'undefined' : _typeof(value), value);
 
-                           if (!_this5.isMobile(req)) {
-                              _context41.next = 8;
+                           if (!value) {
+                              _context41.next = 12;
+                              break;
+                           }
+
+                           if (!true) {
+                              _context41.next = 9;
                               break;
                            }
 
                            return _context41.abrupt('return', JSON.parse(value));
 
-                        case 8:
-                           if (value) {
-                              res.json(JSON.parse(value));
-                           } else {
-                              _this5.sendStatusMessage(req, res, 404, 'Not found: ' + key);
-                           }
-
                         case 9:
+                           res.json(JSON.parse(value));
+
+                        case 10:
+                           _context41.next = 13;
+                           break;
+
+                        case 12:
+                           _this5.sendStatusMessage(req, res, 404, 'Not found: ' + key);
+
+                        case 13:
                         case 'end':
                            return _context41.stop();
                      }
