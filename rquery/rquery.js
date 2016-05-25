@@ -445,7 +445,7 @@ export default class {
             hostUrl = `https://${req.hostname}`;
          }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
-         const message = `Try sample endpoints below on this keyspace._`;
+         const message = `Try sample endpoints below on this keyspace.`;
          const description = `You can set, add and view keys, sets, lists, zsets, hashes etc.`;
          const exampleUrls = [
             `${hostUrl}/ak/${account}/${keyspace}/set/mykey1/myvalue`,
