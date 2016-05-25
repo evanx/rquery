@@ -6,6 +6,7 @@ then
   sleep 2
   if [ -f ~/tmp/rquery-notify ]
   then
+    ls -l ~/tmp/rquery-notify 
     if cat ~/tmp/rquery-notify | grep 'committing$'
     then
       count=0
