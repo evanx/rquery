@@ -128,13 +128,13 @@ const styles = {
       },
       commandParams: {
          lineHeight: 1.5,
-         margin: [4, 4, 8, 12],
+         margin: [4, 4, 8, 16],
          fontSize: 14,
          color: '#808080',
          backgroundColor: '#ffffff',
       },
       reqKey: {
-         padding: [8, 0, 4, 0],
+         padding: [8, 0, 4, 8],
          fontSize: 20,
          fontWeight: 'bold'
       },
