@@ -70,7 +70,7 @@ function getCachedUserAgentStyleSheet(options) {
    var key = options.key;
    var ua = options.ua;
 
-   assert.equal(_typeof(styles[key]), 'object', 'css stylesheet object');
+   assert.equal(_typeof(styles[key]), 'object', 'css stylesheet object: ' + key);
    options.uaType = getUserAgentType(key, ua);
    options.uaKey = [options.uaType, key].join(':');
    var entry = userAgentCache.get(options.uaKey);

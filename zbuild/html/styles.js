@@ -98,6 +98,16 @@ var styles = {
          fontSize: 20,
          fontWeight: 'bold'
       },
+      hint: {},
+      hintUrl: {
+         fontSize: 16,
+         paddingTop: 10
+      },
+      hintDescription: {
+         fontSize: 16,
+         paddingTop: 8,
+         fontStyle: 'italic'
+      },
       detail: {
          lineHeight: 2,
          margin: [10, 0, 0, 0],

@@ -502,7 +502,7 @@ var _class = function () {
                         _context6.next = 19;
                         return this.sendTelegramReply(request, {
                            format: 'html',
-                           content: 'Thanks, ' + request.greetName + '.\n            Your identity as is now verified to <b>' + this.config.serviceLabel + '</b>\n            as <code>telegram.me/' + request.username + '.</code>\n            '
+                           content: ['Thanks, ' + request.greetName + '.', 'Your identity as is now verified to <b>' + this.config.serviceLabel + '</b>', 'as <code>telegram.me/' + request.username + '.</code>'].join(' ')
                         });
 
                      case 19:
@@ -514,7 +514,7 @@ var _class = function () {
                         _context6.next = 24;
                         return this.sendTelegramReply(request, {
                            format: 'html',
-                           content: 'Hi ' + request.greetName + '.\n            Your identity as was already verified to <b>' + this.config.serviceLabel + '</b>\n            ' + Millis.formatDuration(duration) + ' ago as <code>@' + request.username + '</code>\n            '
+                           content: ['Hi ' + request.greetName + '.', 'Your identity as was already verified to <b>' + this.config.serviceLabel + '</b>', Millis.formatDuration(duration) + ' ago as <code>@' + request.username + '</code>'].join(' ')
                         });
 
                      case 24:
@@ -3334,7 +3334,7 @@ var _class = function () {
                   while (1) {
                      switch (_context87.prev = _context87.next) {
                         case 0:
-                           req.params = { account: 'pub' };
+                           req.params = { account: 'hub' };
                            return _context87.abrupt('return', _this8.registerEphemeral(req, res));
 
                         case 2:
@@ -3357,7 +3357,7 @@ var _class = function () {
                   while (1) {
                      switch (_context88.prev = _context88.next) {
                         case 0:
-                           req.params = { account: 'pub' };
+                           req.params = { account: 'hub' };
                            return _context88.abrupt('return', _this8.registerEphemeral(req, res));
 
                         case 2:
@@ -3380,7 +3380,7 @@ var _class = function () {
                   while (1) {
                      switch (_context89.prev = _context89.next) {
                         case 0:
-                           req.params.account = 'pub';
+                           req.params.account = 'hub';
                            return _context89.abrupt('return', _this8.registerEphemeral(req, res));
 
                         case 2:
@@ -3995,7 +3995,10 @@ var _class = function () {
                         if (!access) {} else if (access === 'add') {
                            keyspace = '+' + keyspace;
                         } else if (access) {
-                           this.sendError(req, res, { message: 'Access unimplemented: ' + access, hint: 'Try access: add' });
+                           this.sendError(req, res, { message: 'Access unimplemented: ' + access, hint: {
+                                 message: 'Try access: add',
+                                 description: 'Currently only "add" limited access is supported.'
+                              } });
                         }
                         if (previousError) {
                            this.logger.warn('registerEphemeral retry');
@@ -4265,7 +4268,7 @@ var _class = function () {
                                           });
 
                                        case 29:
-                                          isSecureAccount = !/^pub$/.test(account);
+                                          isSecureAccount = !/^hub$/.test(account);
                                           _context100.next = 32;
                                           return _this14.redis.multiExecAsync(function (multi) {
                                              multi.time();
@@ -4460,7 +4463,7 @@ var _class = function () {
    }, {
       key: 'getKeyExpire',
       value: function getKeyExpire(account) {
-         if (account === 'pub') {
+         if (account === 'hub') {
             return this.config.ephemeralKeyExpire;
          } else {
             return this.config.keyExpire;
@@ -4543,7 +4546,7 @@ var _class = function () {
       value: function validateRegisterAccount(account) {
          if (lodash.isEmpty(account)) {
             return 'Invalid account (empty)';
-         } else if (account === 'pub') {
+         } else if (account === 'hub') {
             return 'Invalid account (leading @ symbol reserved for ephemeral keyspaces)';
          } else if (!/^[\-_a-z0-9]+$/.test(account)) {
             return 'Account name is invalid. Try only lowercase/numeric with dash/underscore.';
@@ -4628,10 +4631,16 @@ var _class = function () {
                return { message: 'Already registered' };
             }
          } else if (!registered) {
-            if (account === 'pub') {
-               return { message: 'Expired (or unregistered) keyspace', hintUri: 'register-ephemeral' };
+            if (account === 'hub') {
+               return { message: 'Expired (or unregistered) keyspace', hint: {
+                     uri: 'register-ephemeral',
+                     description: 'To register a new ephemeral keyspace'
+                  } };
             } else {
-               return { message: 'Unregistered keyspace', hintUri: 'register-ephemeral' };
+               return { message: 'Unregistered keyspace', hint: {
+                     uri: 'register-ephemeral',
+                     description: 'To register a new ephemeral keyspace'
+                  } };
             }
          }
          if (command.access) {
@@ -4654,8 +4663,7 @@ var _class = function () {
                }
             } else if (command.access === 'get') {} else {}
          }
-         var isSecureAccount = !/^pub$/.test(account);
-         if (isSecureAccount) {
+         if (account !== 'hub') {
             var errorMessage = this.validateCert(req, certs, account);
             if (errorMessage) {
                return errorMessage;
@@ -5022,6 +5030,8 @@ var _class = function () {
    }, {
       key: 'sendStatusMessage',
       value: function sendStatusMessage(req, res, statusCode, err) {
+         var _this15 = this;
+
          var reqx = req.rquery || {};
          var command = reqx.command || {};
          this.logger.warn('status', req.path, statusCode, typeof err === 'undefined' ? 'undefined' : _typeof(err), err);
@@ -5031,6 +5041,7 @@ var _class = function () {
             err = 'empty error message';
          }
          var title = req.path;
+         var hints = [];
          if (lodash.isString(err)) {
             title = err;
          } else if (lodash.isArray(err)) {
@@ -5039,20 +5050,26 @@ var _class = function () {
             if (err.message) {
                title = err.message;
             }
-            if (err.hintUri) {
-               var url = void 0;
-               if (this.isBrowser(req)) {
-                  url = '/' + err.hintUri;
-               } else if (/localhost/.test(req.hostname)) {
-                  url = 'http://localhost:8765/' + err.hintUri;
-               } else {
-                  url = 'https://' + req.hostname + '/' + err.hintUri;
-               }
-               if (this.isBrowser(req)) {
-                  url = 'Try <a href="' + url + '">' + url + '</a>';
-               }
-               messageLines.push(url);
+            if (err.hint) {
+               hints.push(err.hint);
             }
+            if (err.hints) {
+               hints = hints.concat(err.hints);
+            }
+            hints = hints.map(function (hint) {
+               var url = void 0;
+               if (_this15.isBrowser(req)) {
+                  url = '/' + hint.uri;
+               } else if (/localhost/.test(req.hostname)) {
+                  url = 'http://localhost:8765/' + hint.uri;
+               } else {
+                  url = 'https://' + req.hostname + '/' + hint.uri;
+               }
+               if (_this15.isBrowser(req)) {
+                  url = 'Try <a href="' + url + '"><tt>' + url + '</tt></a>';
+               }
+               return Object.assign({ url: url }, hint);
+            });
             if (err.stack) {
                messageLines = messageLines.concat(err.stack.split('\n').slice(0, 5));
             }
@@ -5063,16 +5080,20 @@ var _class = function () {
          }
          var heading = [Hc.b('Status'), Hc.tt(statusCode)].join(' ');
          if (this.isBrowser(req)) {
+            this.logger.debug('hints', hints);
             res.set('Content-Type', 'text/html');
             res.status(statusCode).send((0, _Page2.default)({
                config: this.config,
                req: req, reqx: reqx, title: title, heading: heading,
                content: [
                //Hs.div(styles.error.status, `Status ${statusCode}`),
-               Hs.div(_styles2.default.error.message, title), Hs.pre(_styles2.default.error.detail, messageLines)]
+               Hs.div(_styles2.default.error.message, title), Hs.pre(_styles2.default.error.detail, messageLines), hints.map(function (hint) {
+                  return He.div(_styles2.default.error.hint, [Hso.div(_styles2.default.error.hintMessage, hint.message), Hso.div(_styles2.default.error.hintUrl, hint.url), Hso.div(_styles2.default.error.hintDescription, hint.description)]);
+               })]
             }));
          } else {
             this.logger.warn('status lines', req.path, statusCode, typeof err === 'undefined' ? 'undefined' : _typeof(err), Object.keys(err), messageLines.length);
+            // TODO hints
             res.status(statusCode).send([title].concat(_toConsumableArray(messageLines)).join('\n') + '\n');
          }
       }

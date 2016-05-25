@@ -184,19 +184,19 @@ export default class {
          });
          await this.sendTelegramReply(request, {
             format: 'html',
-            content: `Thanks, ${request.greetName}.
-            Your identity as is now verified to <b>${this.config.serviceLabel}</b>
-            as <code>telegram.me/${request.username}.</code>
-            `
+            content: [`Thanks, ${request.greetName}.`,
+               `Your identity as is now verified to <b>${this.config.serviceLabel}</b>`,
+               `as <code>telegram.me/${request.username}.</code>`
+            ].join(' ')
          });
       } else {
          const duration = now - parseInt(verified);
          await this.sendTelegramReply(request, {
             format: 'html',
-            content: `Hi ${request.greetName}.
-            Your identity as was already verified to <b>${this.config.serviceLabel}</b>
-            ${Millis.formatDuration(duration)} ago as <code>@${request.username}</code>
-            `
+            content: [`Hi ${request.greetName}.`,
+               `Your identity as was already verified to <b>${this.config.serviceLabel}</b>`,
+               `${Millis.formatDuration(duration)} ago as <code>@${request.username}</code>`
+            ].join(' ')
          });
       }
    }
@@ -1023,21 +1023,21 @@ export default class {
       this.addPublicCommand({
          key: 'register-ephemeral'
       }, async (req, res) => {
-         req.params = {account: 'pub'};
+         req.params = {account: 'hub'};
          return this.registerEphemeral(req, res);
       });
       this.addPublicCommand({
          key: 'register-ephemeral-named',
          params: ['keyspace', 'access']
       }, async (req, res) => {
-         req.params = {account: 'pub'};
+         req.params = {account: 'hub'};
          return this.registerEphemeral(req, res);
       });
       this.addPublicCommand({
          key: 'register-ephemeral-access',
          params: ['access']
       }, async (req, res) => {
-         req.params.account = 'pub';
+         req.params.account = 'hub';
          return this.registerEphemeral(req, res);
       });
       if (this.config.secureDomain) {
@@ -1262,7 +1262,10 @@ export default class {
       } else if (access === 'add') {
          keyspace = '+' + keyspace;
       } else if (access) {
-         this.sendError(req, res, {message: 'Access unimplemented: ' + access, hint: 'Try access: add'});
+         this.sendError(req, res, {message: 'Access unimplemented: ' + access, hint: {
+            message: 'Try access: add',
+            description: 'Currently only "add" limited access is supported.'
+         }});
       }
       if (previousError) {
          this.logger.warn('registerEphemeral retry');
@@ -1387,7 +1390,7 @@ export default class {
                   return;
                }
             }
-            const isSecureAccount = !/^pub$/.test(account);
+            const isSecureAccount = !/^hub$/.test(account);
             const [[time], registered, admined, accessed, certs] = await this.redis.multiExecAsync(multi => {
                multi.time();
                multi.hget(accountKey, 'registered');
@@ -1456,7 +1459,7 @@ export default class {
    }
 
    getKeyExpire(account) {
-      if (account === 'pub') {
+      if (account === 'hub') {
          return this.config.ephemeralKeyExpire;
       } else {
          return this.config.keyExpire;
@@ -1485,7 +1488,7 @@ export default class {
    validateRegisterAccount(account) {
       if (lodash.isEmpty(account)) {
          return 'Invalid account (empty)';
-      } else if (account === 'pub') {
+      } else if (account === 'hub') {
          return 'Invalid account (leading @ symbol reserved for ephemeral keyspaces)';
       } else if (!/^[\-_a-z0-9]+$/.test(account)) {
          return 'Account name is invalid. Try only lowercase/numeric with dash/underscore.';
@@ -1553,10 +1556,16 @@ export default class {
             return {message: 'Already registered'};
          }
       } else if (!registered) {
-         if (account === 'pub') {
-            return {message: 'Expired (or unregistered) keyspace', hintUri: 'register-ephemeral'};
+         if (account === 'hub') {
+            return {message: 'Expired (or unregistered) keyspace', hint: {
+               uri: 'register-ephemeral',
+               description: 'To register a new ephemeral keyspace'
+            }};
          } else {
-            return {message: 'Unregistered keyspace', hintUri: 'register-ephemeral'};
+            return {message: 'Unregistered keyspace', hint: {
+               uri: 'register-ephemeral',
+               description: 'To register a new ephemeral keyspace'
+            }};
          }
       }
       if (command.access) {
@@ -1582,8 +1591,7 @@ export default class {
          } else {
          }
       }
-      const isSecureAccount = !/^pub$/.test(account);
-      if (isSecureAccount) {
+      if (account !== 'hub') {
          const errorMessage = this.validateCert(req, certs, account);
          if (errorMessage) {
             return errorMessage;
@@ -1831,6 +1839,7 @@ export default class {
          err = 'empty error message';
       }
       let title = req.path;
+      let hints = [];
       if (lodash.isString(err)) {
          title = err;
       } else if (lodash.isArray(err)) {
@@ -1839,20 +1848,26 @@ export default class {
          if (err.message) {
             title = err.message;
          }
-         if (err.hintUri) {
+         if (err.hint) {
+            hints.push(err.hint);
+         }
+         if (err.hints) {
+            hints = hints.concat(err.hints);
+         }
+         hints = hints.map(hint => {
             let url;
             if (this.isBrowser(req)) {
-               url = `/${err.hintUri}`;
+               url = `/${hint.uri}`;
             } else if (/localhost/.test(req.hostname)) {
-               url = `http://localhost:8765/${err.hintUri}`;
+               url = `http://localhost:8765/${hint.uri}`;
             } else {
-               url = `https://${req.hostname}/${err.hintUri}`;
+               url = `https://${req.hostname}/${hint.uri}`;
             }
             if (this.isBrowser(req)) {
-               url = `Try <a href="${url}">${url}</a>`;
+               url = `Try <a href="${url}"><tt>${url}</tt></a>`;
             }
-            messageLines.push(url);
-         }
+            return Object.assign({url}, hint);
+         });
          if (err.stack) {
             messageLines = messageLines.concat(err.stack.split('\n').slice(0, 5));
          }
@@ -1863,6 +1878,7 @@ export default class {
       }
       const heading = [Hc.b('Status'), Hc.tt(statusCode)].join(' ');
       if (this.isBrowser(req)) {
+         this.logger.debug('hints', hints);
          res.set('Content-Type', 'text/html');
          res.status(statusCode).send(renderPage({
             config: this.config,
@@ -1870,11 +1886,17 @@ export default class {
             content: [
                //Hs.div(styles.error.status, `Status ${statusCode}`),
                Hs.div(styles.error.message, title),
-               Hs.pre(styles.error.detail, messageLines)
+               Hs.pre(styles.error.detail, messageLines),
+               hints.map(hint => He.div(styles.error.hint, [
+                  Hso.div(styles.error.hintMessage, hint.message),
+                  Hso.div(styles.error.hintUrl, hint.url),
+                  Hso.div(styles.error.hintDescription, hint.description)
+               ])),
             ]
          }));
       } else {
          this.logger.warn('status lines', req.path, statusCode, typeof err, Object.keys(err), messageLines.length);
+         // TODO hints
          res.status(statusCode).send([title, ...messageLines].join('\n') + '\n');
       }
    }
