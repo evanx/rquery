@@ -1739,7 +1739,7 @@ export default class {
          res.set('Content-Type', 'text/html');
          const content = [];
          this.logger.debug('sendResult reqx', reqx, command.key, reqx.key, resultString, resultArray.length);
-         content.push(Hso.div(styles.result.commandKey, command.key));
+         content.push(Hso.div(styles.result.commandKey, command.key.replace(/-/g, ' ')));
          if (command.params) {
             content.push(Hso.pre(styles.result.commandParams, command.params
                .map(key => `<b>${key}</b> ${req.params[key]}`)

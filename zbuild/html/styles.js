@@ -25,7 +25,7 @@ var styles = {
          marginTop: 10
       },
       pre: {
-         backgroundColor: '#f0f0f0'
+         backgroundColor: '#f8f8f8'
       }
    },
    _768: {
@@ -148,7 +148,7 @@ var styles = {
          lineHeight: 2,
          margin: [10, 0, 0, 0],
          padding: 5,
-         backgroundColor: '#f0f0f0',
+         backgroundColor: '#f8f8f8',
          borderTop: 'solid 1px #777777'
       },
       resultTable: {

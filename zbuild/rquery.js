@@ -4900,7 +4900,7 @@ var _class = function () {
                         content = [];
 
                         this.logger.debug('sendResult reqx', reqx, command.key, reqx.key, resultString, resultArray.length);
-                        content.push(Hso.div(_styles2.default.result.commandKey, command.key));
+                        content.push(Hso.div(_styles2.default.result.commandKey, command.key.replace(/-/g, ' ')));
                         if (command.params) {
                            content.push(Hso.pre(_styles2.default.result.commandParams, command.params.map(function (key) {
                               return '<b>' + key + '</b> ' + req.params[key];
