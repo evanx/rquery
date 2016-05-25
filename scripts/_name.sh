@@ -5,6 +5,8 @@ echo $name
 mkdir -p tmp
 mv -f ~/.pm2/logs/${name}* tmp/. || echo 'no pm2 logs'
 
+# domain 
+
 port=4
 config=secure
 if echo $name | grep -q 'demo'
@@ -12,6 +14,9 @@ then
   port=8
   config=demo
 fi
+
+# env 
+
 if echo $name | grep -q 'test'
 then
   port=${port}9
@@ -48,5 +53,8 @@ fi
 echo $instance | grep -q '^[0-9]$'
 port="${port}${instance}"
 
-echo "$name $config $instance $port"
+# ok 
+
+>&2 echo "$0 $name $config $instance $port"
+
 
