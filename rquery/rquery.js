@@ -446,7 +446,9 @@ export default class {
          }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
          const message = `Try sample endpoints below on this keyspace.`;
-         const description = `You can set, add and view keys, sets, lists, zsets, hashes etc.`;
+         const description = [`You can set, add and view keys, sets, lists, zsets, hashes etc.`,
+            `Also try to edit the URL in the location bar to try other combinations.`
+         ];
          const exampleUrls = [
             `${hostUrl}/ak/${account}/${keyspace}/set/mykey1/myvalue`,
             `${hostUrl}/ak/${account}/${keyspace}/get/mykey1`,

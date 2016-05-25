@@ -15,7 +15,7 @@ exports.default = function (props) {
       heading: [Hc.b(props.reqx.account), Hs.tt(_styles2.default.header.keyspace, props.reqx.keyspace)].join(''),
       helpPath: '/routes',
       icon: 'database'
-   }, _defineProperty(_Object$assign, 'helpPath', ['routes']), _defineProperty(_Object$assign, 'content', [Hc.h3(props.result.message), Hs.p(_styles2.default.result.description, props.result.description), renderUrls(props.result.exampleUrls), He.br(), renderCommands(props.result.keyspaceCommands)]), _Object$assign));
+   }, _defineProperty(_Object$assign, 'helpPath', ['routes']), _defineProperty(_Object$assign, 'content', [Hc.h3(props.result.message), He.p(Styles.meta('repeat', _styles2.default.result.description), props.result.description), renderUrls(props.result.exampleUrls), He.br(), renderCommands(props.result.keyspaceCommands)]), _Object$assign));
 };
 
 var _styles = require('./styles');

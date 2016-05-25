@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
+exports.meta = meta;
 exports.renderStyles = renderStyles;
 exports.renderStyleSheet = renderStyleSheet;
 exports.getCachedUserAgentStyleSheet = getCachedUserAgentStyleSheet;
@@ -38,6 +39,14 @@ function createCssKeyRegexString() {
 }
 
 // exports
+
+function meta(meta, style) {
+   if (!lodash.isString(style)) {
+      throw { message: 'style type: ' + (typeof style === 'undefined' ? 'undefined' : _typeof(style)), meta: meta, style: style };
+   } else {
+      return { meta: meta, style: style };
+   }
+}
 
 function renderStyles(object) {
    var styles = renderKeys(object, 'root');

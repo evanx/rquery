@@ -13,8 +13,8 @@ exports.renderPath = renderPath;
 exports.element = element;
 exports.createElements = createElements;
 exports.createStyleElements = createStyleElements;
-exports.createOptionalStyleElements = createOptionalStyleElements;
-exports.createOptionalContentElements = createOptionalContentElements;
+exports.createMetaStyleElements = createMetaStyleElements;
+exports.createMetaContentElements = createMetaContentElements;
 exports.createContentElements = createContentElements;
 exports.assignDeps = assignDeps;
 
@@ -46,8 +46,8 @@ var HtmlElement = function () {
    }
 
    _createClass(HtmlElement, [{
-      key: 'render',
-      value: function render() {
+      key: 'toString',
+      value: function toString() {
          return '';
       }
    }]);
@@ -123,49 +123,99 @@ function renderPath(path) {
 function element(name, attributes) {
    var content = [];
    if (!attributes) {
-      content.push('<' + name + '/>');
-   } else {
-      assert(lodash.isObject(attributes), 'attributes: ' + name);
-
-      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-         args[_key2 - 2] = arguments[_key2];
-      }
-
-      var children = lodash.compact(lodash.flatten(args));
-      var attrs = Objects.kvs(attributes).filter(function (kv) {
-         return kv.key !== 'meta';
-      }).filter(function (kv) {
-         return kv.value && kv.value.toString();
-      }).map(function (kv) {
-         return { key: kv.key, value: kv.value.toString() };
-      }).map(function (kv) {
-         return kv.key + '="' + kv.value + '"';
-      });
-      logger.debug('element', name, attrs);
-      if (attrs.length) {
-         if (children.length) {
-            content.push('<' + name + ' ' + attrs.join(' ') + '>');
-            content.push(lodash.flatten(children));
-            content.push('</' + name + '>');
-         } else {
-            content.push('<' + name + ' ' + attrs.join(' ') + '/>');
-         }
-      } else {
-         if (children.length) {
-            content.push('<' + name + '>');
-            content.push(lodash.flatten(children));
-            content.push('</' + name + '>');
-         } else if (attributes.meta === 'optional') {} else {
-            content.push('<' + name + '/>');
-         }
-      }
+      return ['<', name, '/>'].join('');
    }
-   return lodash.flatten(content).join('');
+   assert(lodash.isObject(attributes), 'attributes: ' + name);
+
+   for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+      args[_key2 - 2] = arguments[_key2];
+   }
+
+   var children = lodash.compact(lodash.flatten(args));
+   var attrs = Objects.kvs(attributes).filter(function (kv) {
+      return kv.key !== 'meta';
+   }).filter(function (kv) {
+      return kv.value && kv.value.toString();
+   }).map(function (kv) {
+      return { key: kv.key, value: kv.value.toString() };
+   }).map(function (kv) {
+      return kv.key + '="' + kv.value + '"';
+   });
+   logger.debug('element', name, attrs);
+   return renderElements(name, attributes, attrs, children);
+}
+
+function renderElements(name, attributes, attrs, children) {
+   if (isMeta(attributes, 'repeat')) {
+      if (!children.length) {
+         return '';
+      } else if (!lodash.isArray(children)) {
+         throw { message: 'children type: ' + (typeof children === 'undefined' ? 'undefined' : _typeof(children)), name: name, attributes: attributes, children: children };
+      } else if (lodash.isEmpty(children)) {
+         return '';
+      } else {
+         return lodash.flatten(children).map(function (child) {
+            return renderElementChildren(name, attributes, attrs, child);
+         }).join('\n');
+      }
+   } else {
+      return renderElementChildren(name, attributes, attrs, children);
+   }
+}
+
+function renderElementChildren(name, attributes, attrs) {
+   for (var _len3 = arguments.length, children = Array(_len3 > 3 ? _len3 - 3 : 0), _key3 = 3; _key3 < _len3; _key3++) {
+      children[_key3 - 3] = arguments[_key3];
+   }
+
+   var content = [];
+   children = lodash.flatten(children);
+   if (!attrs.length && !children.length) {
+      if (isMeta(attributes, 'optional')) {} else {
+         return '<' + name + '/>';
+      }
+   } else if (attrs.length && children.length) {
+      content.push('<' + name + ' ' + attrs.join(' ') + '/>');
+      content.push(joinContent(name, attributes, children));
+      content.push('</' + name + '>');
+   } else if (attrs.length) {
+      content.push('<' + name + ' ' + attrs.join(' ') + '/>');
+   } else {
+      content.push('<' + name + '>');
+      content.push(joinContent(name, attributes, children));
+      content.push('</' + name + '>');
+   }
+   return joinContent(name, attributes, content);
+}
+
+function isMeta(attributes, metaName) {
+   if (!attributes.meta) {
+      return false;
+   } else if (lodash.isString(attributes.meta)) {
+      return attributes.meta === metaName;
+   } else if (lodash.isArray(attributes.meta)) {
+      return attributes.meta.includes(metaName);
+   } else {
+      throw { message: 'Meta type: ' + _typeof(attributes.meta), attributes: attributes };
+   }
+}
+
+function joinContent(name, attributes) {
+   for (var _len4 = arguments.length, children = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
+      children[_key4 - 2] = arguments[_key4];
+   }
+
+   children = lodash.flatten(children);
+   if (name === 'pre') {
+      return children.join('\n');
+   } else {
+      return children.join('');
+   }
 }
 
 function _style(name, style) {
-   for (var _len3 = arguments.length, children = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
-      children[_key3 - 2] = arguments[_key3];
+   for (var _len5 = arguments.length, children = Array(_len5 > 2 ? _len5 - 2 : 0), _key5 = 2; _key5 < _len5; _key5++) {
+      children[_key5 - 2] = arguments[_key5];
    }
 
    logger.debug('_style', name, style, children);
@@ -177,8 +227,8 @@ function _style(name, style) {
 }
 
 function _content(name) {
-   for (var _len4 = arguments.length, children = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-      children[_key4 - 1] = arguments[_key4];
+   for (var _len6 = arguments.length, children = Array(_len6 > 1 ? _len6 - 1 : 0), _key6 = 1; _key6 < _len6; _key6++) {
+      children[_key6 - 1] = arguments[_key6];
    }
 
    return element.apply(undefined, [name, {}].concat(children));
@@ -187,8 +237,8 @@ function _content(name) {
 function createElements() {
    return ElementNames.reduce(function (result, name) {
       result[name] = function () {
-         for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-            args[_key5] = arguments[_key5];
+         for (var _len7 = arguments.length, args = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+            args[_key7] = arguments[_key7];
          }
 
          return element.apply(undefined, [name].concat(args));
@@ -200,8 +250,8 @@ function createElements() {
 function createStyleElements() {
    return ElementNames.reduce(function (result, name) {
       result[name] = function () {
-         for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-            args[_key6] = arguments[_key6];
+         for (var _len8 = arguments.length, args = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+            args[_key8] = arguments[_key8];
          }
 
          return _style.apply(undefined, [name].concat(args));
@@ -210,27 +260,27 @@ function createStyleElements() {
    }, {});
 }
 
-function createOptionalStyleElements() {
+function createMetaStyleElements(meta) {
    return ElementNames.reduce(function (result, name) {
       result[name] = function (style) {
-         for (var _len7 = arguments.length, args = Array(_len7 > 1 ? _len7 - 1 : 0), _key7 = 1; _key7 < _len7; _key7++) {
-            args[_key7 - 1] = arguments[_key7];
+         for (var _len9 = arguments.length, args = Array(_len9 > 1 ? _len9 - 1 : 0), _key9 = 1; _key9 < _len9; _key9++) {
+            args[_key9 - 1] = arguments[_key9];
          }
 
-         return element.apply(undefined, [name, { meta: 'optional', style: style }].concat(args));
+         return element.apply(undefined, [name, { meta: meta, style: style }].concat(args));
       };
       return result;
    }, {});
 }
 
-function createOptionalContentElements() {
+function createMetaContentElements(meta) {
    return ElementNames.reduce(function (result, name) {
       result[name] = function () {
-         for (var _len8 = arguments.length, args = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
-            args[_key8] = arguments[_key8];
+         for (var _len10 = arguments.length, args = Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
+            args[_key10] = arguments[_key10];
          }
 
-         return element.apply(undefined, [name, { meta: 'optional' }].concat(args));
+         return element.apply(undefined, [name, { meta: meta }].concat(args));
       };
       return result;
    }, {});
@@ -239,8 +289,8 @@ function createOptionalContentElements() {
 function createContentElements() {
    return ElementNames.reduce(function (result, name) {
       result[name] = function () {
-         for (var _len9 = arguments.length, args = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
-            args[_key9] = arguments[_key9];
+         for (var _len11 = arguments.length, args = Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
+            args[_key11] = arguments[_key11];
          }
 
          return _content.apply(undefined, [name].concat(args));
@@ -252,9 +302,9 @@ function createContentElements() {
 function assignDeps(g) {
    g.He = createElements();
    g.Hs = createStyleElements();
-   g.Hso = createOptionalStyleElements();
+   g.Hso = createMetaStyleElements('optional');
    g.Hc = createContentElements();
-   g.Hco = createOptionalContentElements();
+   g.Hco = createMetaContentElements('optional');
    g.Hx = module.exports;
    g.html = html;
 }
