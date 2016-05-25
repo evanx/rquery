@@ -4268,7 +4268,7 @@ var _class = function () {
                                           });
 
                                        case 29:
-                                          isSecureAccount = !/^hub$/.test(account);
+                                          isSecureAccount = !/^(pub|hub)$/.test(account);
                                           _context100.next = 32;
                                           return _this14.redis.multiExecAsync(function (multi) {
                                              multi.time();
@@ -4546,8 +4546,8 @@ var _class = function () {
       value: function validateRegisterAccount(account) {
          if (lodash.isEmpty(account)) {
             return 'Invalid account (empty)';
-         } else if (account === 'hub') {
-            return 'Invalid account (leading @ symbol reserved for ephemeral keyspaces)';
+         } else if (['hub', 'pub', 'public'].includes(account)) {
+            return 'Invalid account (reserved name)';
          } else if (!/^[\-_a-z0-9]+$/.test(account)) {
             return 'Account name is invalid. Try only lowercase/numeric with dash/underscore.';
          }
@@ -4631,7 +4631,7 @@ var _class = function () {
                return { message: 'Already registered' };
             }
          } else if (!registered) {
-            if (account === 'hub') {
+            if (account === 'hub' || account === 'pub') {
                return { message: 'Expired (or unregistered) keyspace', hint: {
                      uri: 'register-ephemeral',
                      description: 'To register a new ephemeral keyspace'
@@ -4663,7 +4663,7 @@ var _class = function () {
                }
             } else if (command.access === 'get') {} else {}
          }
-         if (account !== 'hub') {
+         if (account !== 'hub' && account !== 'pub') {
             var errorMessage = this.validateCert(req, certs, account);
             if (errorMessage) {
                return errorMessage;
