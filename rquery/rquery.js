@@ -445,7 +445,7 @@ export default class {
             hostUrl = `https://${req.hostname}`;
          }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
-         const message = `Try sample endpoints below on this keyspace.`;
+         const message = `Try sample endpoints below on this keyspace._`;
          const description = `You can set, add and view keys, sets, lists, zsets, hashes etc.`;
          const exampleUrls = [
             `${hostUrl}/ak/${account}/${keyspace}/set/mykey1/myvalue`,
@@ -1738,7 +1738,7 @@ export default class {
          }
          res.set('Content-Type', 'text/html');
          const content = [];
-         this.logger.debug('sendResult reqx', reqx, command.key, reqx.key, resultString, resultArray.length);
+         this.logger.debug('sendResult reqx', reqx, command, resultString, resultArray.length);
          content.push(Hso.div(styles.result.commandKey, command.key.replace(/-/g, ' ')));
          if (reqx.key) {
             //title = reqx.key;
@@ -1755,7 +1755,7 @@ export default class {
          let emptyMessage;
          if (resultArray.length) {
             if (resultString) {
-               logger.error('sendResult resultString', command, req.path);
+               this.logger.error('sendResult resultString', command, req.path);
             }
          } else if (!resultString) {
             //statusCode = 404;

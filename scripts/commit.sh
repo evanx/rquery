@@ -1,13 +1,15 @@
 
 set -u -e
 
-npm run build 
-
-cat zbuild/rquery.js | grep '^\s*logger\|zz\|ZZ' && exit 1
-
 c2notify() {
   echo `date +%T` $2 | ssh $1 'tee > tmp/rquery-notify'
 }
+
+c2notify joy building & 
+
+npm run build 
+
+cat zbuild/rquery.js | grep '^\s*logger\|zz\|ZZ' && exit 1
 
 c1commit() {
   message="$1"
