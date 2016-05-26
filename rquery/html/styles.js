@@ -191,7 +191,7 @@ const styles = {
    keyspaceHelp: {
       linkContainer: {
          lineHeight: 1.75,
-         fontFamily: monospace
+         fontFamily: 'monospace'
       }
    }
 };
