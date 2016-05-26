@@ -174,7 +174,8 @@ rhcurl() {
     cmd="$cmd/$1"
     shift
   done
-  cn=`openssl x509 -text -in ~/.redishub/privcert.pem | grep 'CN=' | sed -e 's/^.*\(CN=\w*\).*$/\1/' | head -1`
+  cn=`openssl x509 -text -in ~/.redishub/privcert.pem |
+    grep 'CN=' | sed -e 's/^.*\(CN=\w*\).*$/\1/' | head -1`
   if ! echo $cn | grep -q "${tuser}$"
   then
     echo "ERROR $cn does not match Telegram user $tuser"
