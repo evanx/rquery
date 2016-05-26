@@ -868,7 +868,8 @@ export default class {
                description: 'to get items from the right of your list'
             },
             {
-               description: 'Try <tt>lpush</tt> to add items to your list'
+               commandKey: 'lpush',
+               message: 'to add items to your list'
             }
          ];
          return await this.redis.llenAsync(reqx.keyspaceKey);
@@ -2095,15 +2096,13 @@ export default class {
          }
       }
       if (hints.length && reqx.account && reqx.keyspace) {
-         const otherHints = [];
-         const renderedHints = hints.map(hint => {
-            if (hint.uri) {
-               const path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace, ...hint.uri].join('/'));
-               return Object.assign({path}, hint);
-            } else {
-               otherHints.push(hint);
-            }
-         }).filter(hint => hint)
+         const otherHints = hints.filter(hint => !hint.uri && hint.commandKey)
+         const renderedPathHints = hints
+         .filter(hint => hint.uri)
+         .map(hint => {
+            const path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace, ...hint.uri].join('/'));
+            return Object.assign({path}, hint);
+         })
          .map(hint => {
             const uriLabel = [Hc.b(hint.uri[0]), ...hint.uri.slice(1)].join('/');
             this.logger.debug('hint', uriLabel, hint);
@@ -2116,16 +2115,17 @@ export default class {
                Hso.div(styles.result.hint.description, hint.description)
             ]);
          });
-         const otherRenderedHints = otherHints.forEach(hint => {
-            return He.div({
+         const renderedOtherHints = otherHints.map(hint => He.div({
                style: styles.result.hint.container
             }, [
                Hso.div(styles.result.hint.message, hint.message),
+               Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, commandKey)),
                Hso.div(styles.result.hint.description, hint.description)
-            ]);
-         });
-         this.logger.debug('renderedHints', renderedHints);
-         content.push(renderedHints);
+            ])
+         );
+         this.logger.debug('renderedPathHints', renderedPathHints);
+         content.push(renderedPathHints);
+         content.push(renderedOtherHints);
       }
       res.status(statusCode).send(renderPage({
          config: this.config, req, reqx, title, heading, icon, content
