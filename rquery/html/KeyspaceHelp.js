@@ -3,11 +3,20 @@ import styles from './styles';
 
 const logger = Loggers.create(module.filename);
 
-export default function (props) {
-   logger.debug('props', Object.keys(props), Object.keys(Hx));
+export function obscureKeyspaceLabel(reqx) {
+   if (reqx.account === 'hub' && reqx.keyspace.length > 6) {
+      return reqx.keyspace.substring(0, 4);
+   } else {
+      return reqx.keyspace;
+   }
+}
+
+export function render(props) {
+   let keyspaceLabel = obscureKeyspaceLabel(props.reqx);
+   logger.debug('props', keyspaceLabel, Object.keys(props), Object.keys(Hx));
    return Object.assign(props, {
-      title: [props.reqx.account, props.reqx.keyspace].join('/'),
-      heading: [Hc.b(props.reqx.account), Hs.tt(styles.header.keyspace, props.reqx.keyspace)].join(''),
+      title: [props.reqx.account, keyspaceLabel].join('/'),
+      heading: [Hc.b(props.reqx.account), Hs.tt(styles.header.keyspace, keyspaceLabel)].join(''),
       helpPath: '/routes',
       icon: 'database',
       helpPath: ['routes'],

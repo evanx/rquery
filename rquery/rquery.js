@@ -16,7 +16,8 @@ import * as Express from './Express';
 
 import {default as renderPage} from './html/Page';
 import {default as renderHelp} from './html/Help';
-import {default as renderKeyspaceHelp} from './html/KeyspaceHelp';
+import * as KeyspaceHelp from './html/KeyspaceHelp';
+
 import KeyspaceHelpPage from './jsx/KeyspaceHelpPage';
 
 import styles from './html/styles';
@@ -428,7 +429,7 @@ export default class {
          sendResult: async (req, res, reqx, result) => {
             if (true) {
                res.set('Content-Type', 'text/html');
-               res.send(renderPage(renderKeyspaceHelp({
+               res.send(renderPage(KeyspaceHelp.render({
                   config: this.config, req, reqx, result
                })));
             } else if (!this.isMobile(req)) {
@@ -2111,8 +2112,9 @@ export default class {
       let title = this.config.serviceLabel;
       let heading, icon;
       if (reqx.account && reqx.keyspace) {
-         title = `${reqx.account}/${reqx.keyspace}`;
-         heading = `<b>${reqx.account}</b> <tt>${reqx.keyspace}</tt>`;
+         const keyspace = KeyspaceHelp.obscureKeyspaceLabel(reqx);
+         title = `${reqx.account}/${keyspace}`;
+         heading = `<b>${reqx.account}</b> <tt>${keyspace}</tt>`;
          icon = 'database';
       }
       let resultString = '';

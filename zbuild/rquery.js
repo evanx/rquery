@@ -74,7 +74,7 @@ var _Help2 = _interopRequireDefault(_Help);
 
 var _KeyspaceHelp = require('./html/KeyspaceHelp');
 
-var _KeyspaceHelp2 = _interopRequireDefault(_KeyspaceHelp);
+var KeyspaceHelp = _interopRequireWildcard(_KeyspaceHelp);
 
 var _KeyspaceHelpPage = require('./jsx/KeyspaceHelpPage');
 
@@ -1188,7 +1188,7 @@ var _class = function () {
                               }
 
                               res.set('Content-Type', 'text/html');
-                              res.send((0, _Page2.default)((0, _KeyspaceHelp2.default)({
+                              res.send((0, _Page2.default)(KeyspaceHelp.render({
                                  config: _this5.config, req: req, reqx: reqx, result: result
                               })));
                               _context23.next = 11;
@@ -5138,8 +5138,9 @@ var _class = function () {
          var heading = void 0,
              icon = void 0;
          if (reqx.account && reqx.keyspace) {
-            title = reqx.account + '/' + reqx.keyspace;
-            heading = '<b>' + reqx.account + '</b> <tt>' + reqx.keyspace + '</tt>';
+            var keyspace = KeyspaceHelp.obscureKeyspaceLabel(reqx);
+            title = reqx.account + '/' + keyspace;
+            heading = '<b>' + reqx.account + '</b> <tt>' + keyspace + '</tt>';
             icon = 'database';
          }
          var resultString = '';

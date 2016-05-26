@@ -9,17 +9,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 var _templateObject = _taggedTemplateLiteral(['\n         <div style="', '">\n         <a href=', '><b>', '</b>', '</a>\n         </div>\n         '], ['\n         <div style="', '">\n         <a href=', '><b>', '</b>', '</a>\n         </div>\n         ']),
     _templateObject2 = _taggedTemplateLiteral(['\n         <div style="', '">\n         <a href=', '>', '</a>\n         </div>\n         '], ['\n         <div style="', '">\n         <a href=', '>', '</a>\n         </div>\n         ']);
 
-exports.default = function (props) {
-   var _Object$assign;
-
-   logger.debug('props', Object.keys(props), Object.keys(Hx));
-   return Object.assign(props, (_Object$assign = {
-      title: [props.reqx.account, props.reqx.keyspace].join('/'),
-      heading: [Hc.b(props.reqx.account), Hs.tt(_styles2.default.header.keyspace, props.reqx.keyspace)].join(''),
-      helpPath: '/routes',
-      icon: 'database'
-   }, _defineProperty(_Object$assign, 'helpPath', ['routes']), _defineProperty(_Object$assign, 'content', [Hc.h3(props.result.message), He.p(Styles.meta('repeat', _styles2.default.result.description), props.result.description), renderUrls(props.result.exampleUrls), He.br(), renderCommands(props.result.keyspaceCommands)]), _Object$assign));
-};
+exports.obscureKeyspaceLabel = obscureKeyspaceLabel;
+exports.render = render;
 
 var _styles = require('./styles');
 
@@ -32,6 +23,27 @@ function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defi
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var logger = Loggers.create(module.filename);
+
+function obscureKeyspaceLabel(reqx) {
+   if (reqx.account === 'hub' && reqx.keyspace.length > 6) {
+      return reqx.keyspace.substring(0, 4);
+   } else {
+      return reqx.keyspace;
+   }
+}
+
+function render(props) {
+   var _Object$assign;
+
+   var keyspaceLabel = obscureKeyspaceLabel(props.reqx);
+   logger.debug('props', keyspaceLabel, Object.keys(props), Object.keys(Hx));
+   return Object.assign(props, (_Object$assign = {
+      title: [props.reqx.account, keyspaceLabel].join('/'),
+      heading: [Hc.b(props.reqx.account), Hs.tt(_styles2.default.header.keyspace, keyspaceLabel)].join(''),
+      helpPath: '/routes',
+      icon: 'database'
+   }, _defineProperty(_Object$assign, 'helpPath', ['routes']), _defineProperty(_Object$assign, 'content', [Hc.h3(props.result.message), He.p(Styles.meta('repeat', _styles2.default.result.description), props.result.description), renderUrls(props.result.exampleUrls), He.br(), renderCommands(props.result.keyspaceCommands)]), _Object$assign));
+}
 
 function renderUrls(urls) {
    return urls.map(function (url, index) {
