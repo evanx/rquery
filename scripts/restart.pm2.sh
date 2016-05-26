@@ -23,7 +23,7 @@ waitCommitted() {
   rm -f ~/tmp/rquery-notify
 }
 
-waitCommited
+waitCommitted
 
 git pull && git submodule update
 
