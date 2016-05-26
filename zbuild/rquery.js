@@ -516,7 +516,7 @@ var _class = function () {
                         _context6.next = 24;
                         return this.sendTelegramReply(request, {
                            format: 'html',
-                           content: ['Hi ' + request.greetName + '.', 'Your identity as was already verified to <b>' + this.config.serviceLabel + '</b>', Millis.formatDuration(duration) + ' ago as <code>@' + request.username + '</code>'].join(' ')
+                           content: ['Hi ' + request.greetName + '.', 'Your identity as was already verified to <b>' + this.config.serviceLabel + '</b>', Millis.formatVerboseDuration(duration) + ' ago as <code>@' + request.username + '</code>'].join(' ')
                         });
 
                      case 24:
@@ -1149,7 +1149,7 @@ var _class = function () {
                            }
 
                            duration = parseInt(now) - parseInt(verified);
-                           return _context22.abrupt('return', 'OK: ' + user + '@telegram.me, verified ' + Millis.formatDuration(duration) + ' ago');
+                           return _context22.abrupt('return', 'OK: ' + user + '@telegram.me, verified ' + Millis.formatVerboseDuration(duration) + ' ago');
 
                         case 17:
                            return _context22.abrupt('return', 'OK: ' + user + '@telegram.me');
@@ -3689,104 +3689,102 @@ var _class = function () {
                return ref.apply(this, arguments);
             };
          }());
-         if (this.config.secureDomain) {
-            this.addPublicCommand({
-               key: 'register-account-telegram',
-               params: ['account']
-            }, function () {
-               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee90(req, res) {
-                  return regeneratorRuntime.wrap(function _callee90$(_context90) {
-                     while (1) {
-                        switch (_context90.prev = _context90.next) {
-                           case 0:
-                              return _context90.abrupt('return', _this8.registerAccount(req, res));
+         this.addPublicCommand({
+            key: 'register-account-telegram',
+            params: ['account']
+         }, function () {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee90(req, res) {
+               return regeneratorRuntime.wrap(function _callee90$(_context90) {
+                  while (1) {
+                     switch (_context90.prev = _context90.next) {
+                        case 0:
+                           return _context90.abrupt('return', _this8.registerAccount(req, res));
 
-                           case 1:
-                           case 'end':
-                              return _context90.stop();
-                        }
+                        case 1:
+                        case 'end':
+                           return _context90.stop();
                      }
-                  }, _callee90, _this8);
-               }));
-               return function (_x234, _x235) {
-                  return ref.apply(this, arguments);
-               };
-            }());
-            this.addPublicCommand({
-               key: 'register-cert'
-            }, function () {
-               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee91(req, res) {
-                  var dn, clientCert, dns, _dns$o$match, _dns$o$match2, oMatching, account, domain;
+                  }
+               }, _callee90, _this8);
+            }));
+            return function (_x234, _x235) {
+               return ref.apply(this, arguments);
+            };
+         }());
+         this.addPublicCommand({
+            key: 'register-cert'
+         }, function () {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee91(req, res) {
+               var dn, clientCert, dns, _dns$o$match, _dns$o$match2, oMatching, account, domain;
 
-                  return regeneratorRuntime.wrap(function _callee91$(_context91) {
-                     while (1) {
-                        switch (_context91.prev = _context91.next) {
-                           case 0:
-                              dn = req.get('ssl_client_s_dn');
-                              clientCert = req.get('ssl_client_cert');
+               return regeneratorRuntime.wrap(function _callee91$(_context91) {
+                  while (1) {
+                     switch (_context91.prev = _context91.next) {
+                        case 0:
+                           dn = req.get('ssl_client_s_dn');
+                           clientCert = req.get('ssl_client_cert');
 
-                              if (clientCert) {
-                                 _context91.next = 4;
-                                 break;
-                              }
+                           if (clientCert) {
+                              _context91.next = 4;
+                              break;
+                           }
 
-                              throw { message: 'No client cert' };
+                           throw { message: 'No client cert' };
 
-                           case 4:
-                              if (dn) {
-                                 _context91.next = 6;
-                                 break;
-                              }
+                        case 4:
+                           if (dn) {
+                              _context91.next = 6;
+                              break;
+                           }
 
-                              throw { message: 'No client cert DN' };
+                           throw { message: 'No client cert DN' };
 
-                           case 6:
-                              dns = _this8.parseDn(dn);
+                        case 6:
+                           dns = _this8.parseDn(dn);
 
-                              if (dns.o) {
-                                 _context91.next = 9;
-                                 break;
-                              }
+                           if (dns.o) {
+                              _context91.next = 9;
+                              break;
+                           }
 
-                              throw { message: 'No client cert O name' };
+                           throw { message: 'No client cert O name' };
 
-                           case 9:
-                              _dns$o$match = dns.o.match(/^([\-_a-z]+)@(.*)$/);
-                              _dns$o$match2 = _slicedToArray(_dns$o$match, 3);
-                              oMatching = _dns$o$match2[0];
-                              account = _dns$o$match2[1];
-                              domain = _dns$o$match2[2];
+                        case 9:
+                           _dns$o$match = dns.o.match(/^([\-_a-z]+)@(.*)$/);
+                           _dns$o$match2 = _slicedToArray(_dns$o$match, 3);
+                           oMatching = _dns$o$match2[0];
+                           account = _dns$o$match2[1];
+                           domain = _dns$o$match2[2];
 
-                              if (oMatching) {
-                                 _context91.next = 16;
-                                 break;
-                              }
+                           if (oMatching) {
+                              _context91.next = 16;
+                              break;
+                           }
 
-                              throw { message: 'Cert O name not matching "account @ service domain"' };
+                           throw { message: 'Cert O name not matching "account @ service domain"' };
 
-                           case 16:
-                              if (domain.match(req.hostname)) {
-                                 _context91.next = 18;
-                                 break;
-                              }
+                        case 16:
+                           if (domain.match(req.hostname)) {
+                              _context91.next = 18;
+                              break;
+                           }
 
-                              throw { message: 'O domain not matching: ' + req.hostname };
+                           throw { message: 'O domain not matching: ' + req.hostname };
 
-                           case 18:
-                              return _context91.abrupt('return', { account: account, domain: domain });
+                        case 18:
+                           return _context91.abrupt('return', { account: account, domain: domain });
 
-                           case 19:
-                           case 'end':
-                              return _context91.stop();
-                        }
+                        case 19:
+                        case 'end':
+                           return _context91.stop();
                      }
-                  }, _callee91, _this8);
-               }));
-               return function (_x236, _x237) {
-                  return ref.apply(this, arguments);
-               };
-            }());
-         }
+                  }
+               }, _callee91, _this8);
+            }));
+            return function (_x236, _x237) {
+               return ref.apply(this, arguments);
+            };
+         }());
       }
    }, {
       key: 'parseDn',

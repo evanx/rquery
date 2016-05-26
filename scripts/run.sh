@@ -1,8 +1,8 @@
 
   set -e -u
 
-  config=${config:=demo}
-  configModule=${configModule:=./config/${config}.js}
+  config=${config-demo}
+  configModule=${configModule-./config/${config}.js}
 
   NODE_ENV=development \
     configModule=$configModule \

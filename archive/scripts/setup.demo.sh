@@ -2,8 +2,8 @@
 
 set -u -e
 
-force=${force:=false}
-loggerLevel=${loggerLevel:=debug}
+force=${force-false}
+loggerLevel=${loggerLevel-debug}
 
 # logging
 

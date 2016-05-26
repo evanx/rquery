@@ -1,7 +1,7 @@
 
 set -e -u
 
-rurl=${rurl:=`cat ~/.redishub/demo.url`}
+rurl=${rurl-`cat ~/.redishub/demo.url`}
 echo rurl $rurl
 
 curls() {

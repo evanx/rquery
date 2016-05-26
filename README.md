@@ -101,9 +101,9 @@ curl -s $rdemo/exists/mykey
 curl -s $rdemo/get/mykey
 curl -s $rdemo/ttl/mykey
 ```
-where `ttl/mykey` returns the TTL decreasing from 180 seconds:
+where `ttl/mykey` returns the TTL decreasing from 600 seconds:
 ```json
-179
+594
 ```
 
 #### Client cert
@@ -112,7 +112,7 @@ For secure access to permanent keyspaces, let's try SSL client cert authenticati
 
 Note that we will register an account using our Telegram.org username. (I like Telegram.org, have an Ubuntu phone, and want to build a Telegram Bot to win one of those prizes, woohoo!)
 
-So visit `https://web.telegram.org` or install the mobile app, and message `@redishub_bot /verify.` That will verify your Telegram username to Redishub.
+So visit https://web.telegram.org or install the mobile app, and message `@redishub_bot /verify.` That will verify your Telegram username to Redishub.
 
 Then generate a client cert in bash:
 ```shell
@@ -148,14 +148,17 @@ Then generate a client cert in bash:
 
 We can register an account using this privcert as the initial `admin` authorized cert:
 ```shell
-tuser=`cat ~/.redishub/tuser` \
-  curl -E ~/.redishub/privcert.pem https://cli.redishub.com/register-account-telegram/$tuser
+(
+  tuser=`cat ~/.redishub/tuser`
+  alias rhcurl="curl -s -E ~/.redishub/privcert.pem"
+  rhcurl https://cli.redishub.com/register-account-telegram/$tuser
+)
 ```
 
 We can create a bash function and alias for keyspace commands in `~/.bashrc:`
 ```shell
 rhdebug() {
-   [ -t 1 -a "${RHLEVEL:-info}" = 'debug' ] && >&2 echo -e "\e[33m${*}\e[39m"
+   [ -t 1 -a "${RHLEVEL-info}" = 'debug' ] && >&2 echo -e "\e[33m${*}\e[39m"
 }
 
 rhcurl() {
@@ -357,14 +360,14 @@ where `keys` returns:
 and `ttl` returns:
 ```json
 {
-   "myhashes": 174,
-   "mykey": 161,
-   "mylist": 179,
-   "myset": 166,
-   "mysortedset": 169
+   "myhashes": 594,
+   "mykey": 581,
+   "mylist": 599,
+   "myset": 586,
+   "mysortedset": 589
 }
 ```
-which shows my keys' TTLs decreasing from 180 seconds.
+which shows my keys' TTLs decreasing from 600 seconds.
 
 
 ### Installation

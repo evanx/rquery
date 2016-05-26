@@ -196,7 +196,7 @@ export default class {
             format: 'html',
             content: [`Hi ${request.greetName}.`,
                `Your identity as was already verified to <b>${this.config.serviceLabel}</b>`,
-               `${Millis.formatDuration(duration)} ago as <code>@${request.username}</code>`
+               `${Millis.formatVerboseDuration(duration)} ago as <code>@${request.username}</code>`
             ].join(' ')
          });
       }
@@ -412,7 +412,7 @@ export default class {
          if (sismember) {
             if (verified) {
                const duration = parseInt(now) - parseInt(verified);
-               return `OK: ${user}@telegram.me, verified ${Millis.formatDuration(duration)} ago`;
+               return `OK: ${user}@telegram.me, verified ${Millis.formatVerboseDuration(duration)} ago`;
             } else {
                return `OK: ${user}@telegram.me`;
             }
@@ -1485,28 +1485,26 @@ export default class {
          req.params.account = 'hub';
          return this.registerEphemeral(req, res);
       });
-      if (this.config.secureDomain) {
-         this.addPublicCommand({
-            key: 'register-account-telegram',
-            params: ['account']
-         }, async (req, res) => {
-            return this.registerAccount(req, res);
-         });
-         this.addPublicCommand({
-            key: 'register-cert'
-         }, async (req, res) => {
-            const dn = req.get('ssl_client_s_dn');
-            const clientCert = req.get('ssl_client_cert');
-            if (!clientCert) throw {message: 'No client cert'};
-            if (!dn) throw {message: 'No client cert DN'};
-            const dns = this.parseDn(dn);
-            if (!dns.o) throw {message: 'No client cert O name'};
-            const [oMatching, account, domain] = dns.o.match(/^([\-_a-z]+)@(.*)$/);
-            if (!oMatching) throw {message: 'Cert O name not matching "account @ service domain"'};
-            if (!domain.match(req.hostname)) throw {message: 'O domain not matching: ' + req.hostname};
-            return {account, domain};
-         });
-      }
+      this.addPublicCommand({
+         key: 'register-account-telegram',
+         params: ['account']
+      }, async (req, res) => {
+         return this.registerAccount(req, res);
+      });
+      this.addPublicCommand({
+         key: 'register-cert'
+      }, async (req, res) => {
+         const dn = req.get('ssl_client_s_dn');
+         const clientCert = req.get('ssl_client_cert');
+         if (!clientCert) throw {message: 'No client cert'};
+         if (!dn) throw {message: 'No client cert DN'};
+         const dns = this.parseDn(dn);
+         if (!dns.o) throw {message: 'No client cert O name'};
+         const [oMatching, account, domain] = dns.o.match(/^([\-_a-z]+)@(.*)$/);
+         if (!oMatching) throw {message: 'Cert O name not matching "account @ service domain"'};
+         if (!domain.match(req.hostname)) throw {message: 'O domain not matching: ' + req.hostname};
+         return {account, domain};
+      });
    }
 
    parseDn(dn) {

@@ -40,6 +40,19 @@ var that = {
          return '' + parseInt(millis / factors.d) + 'd';
       }
    },
+   formatVerboseDuration: function formatVerboseDuration(millis) {
+      if (millis < factors.s) {
+         return '' + millis + 'ms';
+      } else if (millis < factors.m) {
+         return '' + parseInt(millis / factors.s) + ' seconds';
+      } else if (millis < factors.h) {
+         return '' + parseInt(millis / factors.m) + ' minutes';
+      } else if (millis < factors.d) {
+         return '' + parseInt(millis / factors.h) + ' hours';
+      } else {
+         return '' + parseInt(millis / factors.d) + ' days';
+      }
+   },
    fromSeconds: function fromSeconds(seconds) {
       return seconds * factors.s;
    },
