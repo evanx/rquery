@@ -148,7 +148,7 @@ const styles = {
          lineHeight: 2,
          margin: [10, 0, 0, 0],
          padding: 5,
-         backgroundColor: '#fafafa',
+         backgroundColor: '#f0f0f0',
          borderTop: 'solid 1px #777777'
       },
       resultTable: {
