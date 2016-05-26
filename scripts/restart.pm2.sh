@@ -12,7 +12,7 @@ waitCommitted() {
     if cat ~/tmp/rquery-notify | grep 'committing$'
     then
       count=0
-      while [ $count -lt 10 -a -f `cat ~/tmp/rquery-notify` = 'committing' ]
+      while [ $count -lt 10 ] && cat ~/tmp/rquery-notify` | grep 'committing'
       do
         git pull | grep '^Already' || break
         sleep .500
