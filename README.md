@@ -200,6 +200,7 @@ rh ks1 sadd myset item2
 rh ks1 smembers myset
 ```
 
+<hr>
 <img src="https://evanx.github.io/images/rquery/rquery030-kshelp.png"/>
 <hr>
 
