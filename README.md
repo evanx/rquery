@@ -30,6 +30,7 @@ However be sure to have a JSON Viewer extension installed in your browser.
 It should report the available "routes" defined for the ExpressJS webserver:
 
 <img src="https://evanx.github.io/images/rquery/rquery030-help.png">
+<hr>
 
 where the following "help" is available:
 - https://demo.redishub.com/routes - shows all the "routes"
@@ -200,6 +201,7 @@ rh ks1 smembers myset
 ```
 
 <img src="https://evanx.github.io/images/rquery/rquery030-kshelp.png"/>
+<hr>
 
 ###### PKCS12 cert for browser
 
