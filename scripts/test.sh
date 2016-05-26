@@ -4,11 +4,16 @@ set -e -u
 rurl=${rurl:=`cat ~/.redishub/demo.url`}
 echo rurl $rurl
 
+check_ruri() {
+  echo $rurl/$1 `curl -s -A Mobile -I "$rurl/$1" | grep ^HTTP`
+}
+
 curls() {
   >&2 echo ignore "$*"
 }
 
 curlx() {
+  check_ruri $1
   url="$rurl/$1"
   if ! curl -s "$url"
   then
@@ -17,11 +22,13 @@ curlx() {
 }
 
 curlv() {
+  check_ruri $1
   url="$rurl/$1"
   curl -s "$url"
 }
 
 curlr() {
+  check_ruri $1
   url="$rurl/$1"
   expected=$2
   >&2 echo
@@ -36,6 +43,7 @@ curlr() {
 }
 
 curlm() {
+  check_ruri $1
   url="$rurl/$1"
   count=$2
   >&2 echo
@@ -47,6 +55,7 @@ curlm() {
 }
 
 curli() {
+  check_ruri $1
   url="$rurl/$1"
   shift
   >&2 echo
