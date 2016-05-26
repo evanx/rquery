@@ -165,7 +165,7 @@ rhdebug() {
    [ -t 1 -a "${RHLEVEL-info}" = 'debug' ] && >&2 echo -e "\e[33m${*}\e[39m"
 }
 
-rhcurl() {
+_rhcurl() {
   local tuser=`cat ~/.redishub/tuser`
   if [ $# -eq 0 ]
   then
@@ -173,7 +173,7 @@ rhcurl() {
     return 1
   elif [ $# -eq 1 ]
   then
-    rhdebug "curl -s -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/$1/ttls"
+    rhdebug "curl -s -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/$1"
     return 1
   fi
   local cmd=''
@@ -187,13 +187,14 @@ rhcurl() {
   if ! echo $cn | grep -q "${tuser}$"
   then
     echo "ERROR $cn does not match Telegram user $tuser"
+    return 3
   else
     rhdebug "$cn https://cli.redishub.com/ak/$tuser$cmd"
     curl -s -E ~/.redishub/privcert.pem "https://cli.redishub.com/ak/$tuser$cmd"
   fi
 }
 
-alias rh=rhcurl
+alias rh=_rhcurl
 ```
 
 First we register a keyspace:

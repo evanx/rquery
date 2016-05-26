@@ -1303,7 +1303,7 @@ var _class = function () {
                            keyspace = reqx.keyspace;
                            accountKey = reqx.accountKey;
 
-                           logger.debug('command', reqx, multi);
+                           _this5.logger.debug('command', reqx);
                            _context25.next = 7;
                            return _this5.redis.multiExecAsync(function (multi) {
                               multi.hsetnx(accountKey, 'registered', time);

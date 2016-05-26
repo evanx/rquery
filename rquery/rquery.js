@@ -490,7 +490,7 @@ export default class {
          access: 'admin'
       }, async (req, res, reqx, multi) => {
          const {time, account, keyspace, accountKey} = reqx;
-         logger.debug('command', reqx, multi);
+         this.logger.debug('command', reqx);
          const replies = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', time);
          });
