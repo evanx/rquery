@@ -1849,10 +1849,13 @@ var _class = function () {
                   while (1) {
                      switch (_context40.prev = _context40.next) {
                         case 0:
-                           reqx.hint = {
+                           reqx.hints = [{
                               uri: ['ttl', reqx.key],
                               description: 'to see the TTL of your key'
-                           };
+                           }, {
+                              uri: ['help'],
+                              description: 'to view sample keyspace commands'
+                           }];
                            _context40.next = 3;
                            return _this5.redis.getAsync(reqx.keyspaceKey);
 
@@ -1874,45 +1877,52 @@ var _class = function () {
             key: 'get-json',
             params: ['key']
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee41(req, res, _ref25) {
-               var key = _ref25.key;
-               var keyspaceKey = _ref25.keyspaceKey;
-               var value;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee41(req, res, reqx) {
+               var key, keyspaceKey, value;
                return regeneratorRuntime.wrap(function _callee41$(_context41) {
                   while (1) {
                      switch (_context41.prev = _context41.next) {
                         case 0:
-                           _context41.next = 2;
+                           reqx.hints = [{
+                              uri: ['ttl', reqx.key],
+                              description: 'to see the TTL of your key'
+                           }, {
+                              uri: ['help'],
+                              description: 'to view sample keyspace commands'
+                           }];
+                           key = reqx.key;
+                           keyspaceKey = reqx.keyspaceKey;
+                           _context41.next = 5;
                            return _this5.redis.getAsync(keyspaceKey);
 
-                        case 2:
+                        case 5:
                            value = _context41.sent;
 
                            _this5.logger.info('get-json', typeof value === 'undefined' ? 'undefined' : _typeof(value), value);
 
                            if (!value) {
-                              _context41.next = 12;
+                              _context41.next = 15;
                               break;
                            }
 
                            if (!true) {
-                              _context41.next = 9;
+                              _context41.next = 12;
                               break;
                            }
 
                            return _context41.abrupt('return', JSON.parse(value));
 
-                        case 9:
+                        case 12:
                            res.json(JSON.parse(value));
 
-                        case 10:
-                           _context41.next = 13;
+                        case 13:
+                           _context41.next = 16;
                            break;
 
-                        case 12:
+                        case 15:
                            _this5.sendStatusMessage(req, res, 404, 'Not found: ' + key);
 
-                        case 13:
+                        case 16:
                         case 'end':
                            return _context41.stop();
                      }
@@ -1928,8 +1938,8 @@ var _class = function () {
             params: ['key'],
             access: 'add'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee42(req, res, _ref26) {
-               var keyspaceKey = _ref26.keyspaceKey;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee42(req, res, _ref25) {
+               var keyspaceKey = _ref25.keyspaceKey;
                return regeneratorRuntime.wrap(function _callee42$(_context42) {
                   while (1) {
                      switch (_context42.prev = _context42.next) {
@@ -1955,8 +1965,8 @@ var _class = function () {
             key: 'exists',
             params: ['key']
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee43(req, res, _ref27) {
-               var keyspaceKey = _ref27.keyspaceKey;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee43(req, res, _ref26) {
+               var keyspaceKey = _ref26.keyspaceKey;
                return regeneratorRuntime.wrap(function _callee43$(_context43) {
                   while (1) {
                      switch (_context43.prev = _context43.next) {
@@ -1983,8 +1993,8 @@ var _class = function () {
             params: ['key'],
             access: 'set'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee44(req, res, _ref28) {
-               var keyspaceKey = _ref28.keyspaceKey;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee44(req, res, _ref27) {
+               var keyspaceKey = _ref27.keyspaceKey;
                return regeneratorRuntime.wrap(function _callee44$(_context44) {
                   while (1) {
                      switch (_context44.prev = _context44.next) {
@@ -2045,8 +2055,8 @@ var _class = function () {
             params: ['key', 'member'],
             access: 'set'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee46(req, res, _ref29) {
-               var keyspaceKey = _ref29.keyspaceKey;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee46(req, res, _ref28) {
+               var keyspaceKey = _ref28.keyspaceKey;
                return regeneratorRuntime.wrap(function _callee46$(_context46) {
                   while (1) {
                      switch (_context46.prev = _context46.next) {
@@ -2073,10 +2083,10 @@ var _class = function () {
             params: ['key', 'dest', 'member'],
             access: 'set'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee47(req, res, _ref30, multi) {
-               var account = _ref30.account;
-               var keyspace = _ref30.keyspace;
-               var keyspaceKey = _ref30.keyspaceKey;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee47(req, res, _ref29, multi) {
+               var account = _ref29.account;
+               var keyspace = _ref29.keyspace;
+               var keyspaceKey = _ref29.keyspaceKey;
 
                var _req$params7, dest, member, destKey, result;
 
@@ -2113,8 +2123,8 @@ var _class = function () {
             params: ['key'],
             access: 'set'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee48(req, res, _ref31) {
-               var keyspaceKey = _ref31.keyspaceKey;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee48(req, res, _ref30) {
+               var keyspaceKey = _ref30.keyspaceKey;
                return regeneratorRuntime.wrap(function _callee48$(_context48) {
                   while (1) {
                      switch (_context48.prev = _context48.next) {
@@ -2283,8 +2293,8 @@ var _class = function () {
             params: ['key', 'length', 'value'],
             access: 'set'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee53(req, res, _ref32, multi) {
-               var keyspaceKey = _ref32.keyspaceKey;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee53(req, res, _ref31, multi) {
+               var keyspaceKey = _ref31.keyspaceKey;
 
                var _req$params8, value, length;
 
@@ -2472,10 +2482,10 @@ var _class = function () {
             params: ['key', 'dest', 'timeout'],
             access: 'set'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee59(req, res, _ref33, multi) {
-               var account = _ref33.account;
-               var keyspace = _ref33.keyspace;
-               var keyspaceKey = _ref33.keyspaceKey;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee59(req, res, _ref32, multi) {
+               var account = _ref32.account;
+               var keyspace = _ref32.keyspace;
+               var keyspaceKey = _ref32.keyspaceKey;
 
                var _req$params9, dest, timeout, destKey, result;
 
@@ -3749,13 +3759,13 @@ var _class = function () {
                },
                access: 'admin'
             }, function () {
-               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee92(req, res, _ref34) {
-                  var account = _ref34.account;
-                  var accountKey = _ref34.accountKey;
-                  var time = _ref34.time;
-                  var clientCertDigest = _ref34.clientCertDigest;
+               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee92(req, res, _ref33) {
+                  var account = _ref33.account;
+                  var accountKey = _ref33.accountKey;
+                  var time = _ref33.time;
+                  var clientCertDigest = _ref33.clientCertDigest;
 
-                  var _ref35, _ref36, cert;
+                  var _ref34, _ref35, cert;
 
                   return regeneratorRuntime.wrap(function _callee92$(_context92) {
                      while (1) {
@@ -3767,9 +3777,9 @@ var _class = function () {
                               });
 
                            case 2:
-                              _ref35 = _context92.sent;
-                              _ref36 = _slicedToArray(_ref35, 1);
-                              cert = _ref36[0];
+                              _ref34 = _context92.sent;
+                              _ref35 = _slicedToArray(_ref34, 1);
+                              cert = _ref35[0];
                               throw { message: 'Unimplemented' };
 
                            case 6:
@@ -3799,7 +3809,7 @@ var _class = function () {
                      case 0:
                         _context94.prev = 0;
                         return _context94.delegateYield(regeneratorRuntime.mark(function _callee93() {
-                           var errorMessage, account, v, dn, clientCert, clientCertDigest, otpSecret, accountKey, _ref37, _ref38, hsetnx, saddAccount, saddCert, result;
+                           var errorMessage, account, v, dn, clientCert, clientCertDigest, otpSecret, accountKey, _ref36, _ref37, hsetnx, saddAccount, saddCert, result;
 
                            return regeneratorRuntime.wrap(function _callee93$(_context93) {
                               while (1) {
@@ -3854,11 +3864,11 @@ var _class = function () {
                                        });
 
                                     case 18:
-                                       _ref37 = _context93.sent;
-                                       _ref38 = _slicedToArray(_ref37, 3);
-                                       hsetnx = _ref38[0];
-                                       saddAccount = _ref38[1];
-                                       saddCert = _ref38[2];
+                                       _ref36 = _context93.sent;
+                                       _ref37 = _slicedToArray(_ref36, 3);
+                                       hsetnx = _ref37[0];
+                                       saddAccount = _ref37[1];
+                                       saddCert = _ref37[2];
 
                                        if (hsetnx) {
                                           _context93.next = 25;
@@ -3953,7 +3963,7 @@ var _class = function () {
                                        case 0:
                                           _context96.prev = 0;
                                           return _context96.delegateYield(regeneratorRuntime.mark(function _callee95() {
-                                             var message, account, accountKey, _ref39, _ref40, _ref40$, time, admined, certs, duration, dn, result;
+                                             var message, account, accountKey, _ref38, _ref39, _ref39$, time, admined, certs, duration, dn, result;
 
                                              return regeneratorRuntime.wrap(function _callee95$(_context95) {
                                                 while (1) {
@@ -3979,12 +3989,12 @@ var _class = function () {
                                                          });
 
                                                       case 7:
-                                                         _ref39 = _context95.sent;
-                                                         _ref40 = _slicedToArray(_ref39, 3);
-                                                         _ref40$ = _slicedToArray(_ref40[0], 1);
-                                                         time = _ref40$[0];
-                                                         admined = _ref40[1];
-                                                         certs = _ref40[2];
+                                                         _ref38 = _context95.sent;
+                                                         _ref39 = _slicedToArray(_ref38, 3);
+                                                         _ref39$ = _slicedToArray(_ref39[0], 1);
+                                                         time = _ref39$[0];
+                                                         admined = _ref39[1];
+                                                         certs = _ref39[2];
 
                                                          if (admined) {
                                                             _context95.next = 15;
@@ -4406,7 +4416,7 @@ var _class = function () {
                         case 0:
                            _context101.prev = 0;
                            return _context101.delegateYield(regeneratorRuntime.mark(function _callee100() {
-                              var _req$params11, account, keyspace, key, timeout, accountKey, helpPath, reqx, v, isSecureAccount, _ref41, _ref42, _ref42$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref43, _ref44, expire;
+                              var _req$params11, account, keyspace, key, timeout, accountKey, helpPath, reqx, v, isSecureAccount, _ref40, _ref41, _ref41$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref42, _ref43, expire;
 
                               return regeneratorRuntime.wrap(function _callee100$(_context100) {
                                  while (1) {
@@ -4499,14 +4509,14 @@ var _class = function () {
                                           });
 
                                        case 32:
-                                          _ref41 = _context100.sent;
-                                          _ref42 = _slicedToArray(_ref41, 5);
-                                          _ref42$ = _slicedToArray(_ref42[0], 1);
-                                          time = _ref42$[0];
-                                          registered = _ref42[1];
-                                          admined = _ref42[2];
-                                          accessed = _ref42[3];
-                                          certs = _ref42[4];
+                                          _ref40 = _context100.sent;
+                                          _ref41 = _slicedToArray(_ref40, 5);
+                                          _ref41$ = _slicedToArray(_ref41[0], 1);
+                                          time = _ref41$[0];
+                                          registered = _ref41[1];
+                                          admined = _ref41[2];
+                                          accessed = _ref41[3];
+                                          certs = _ref41[4];
 
                                           Objects.translate({ time: time, registered: registered, admined: admined, accessed: accessed }, reqx, function (key, value) {
                                              return parseInt(value);
@@ -4627,9 +4637,9 @@ var _class = function () {
                                           return multi.execAsync();
 
                                        case 79:
-                                          _ref43 = _context100.sent;
-                                          _ref44 = _toArray(_ref43);
-                                          expire = _ref44;
+                                          _ref42 = _context100.sent;
+                                          _ref43 = _toArray(_ref42);
+                                          expire = _ref43;
 
                                           if (expire) {
                                              _context100.next = 84;
@@ -4690,11 +4700,11 @@ var _class = function () {
    }, {
       key: 'migrateKeyspace',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee102(_ref45) {
-            var account = _ref45.account;
-            var keyspace = _ref45.keyspace;
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee102(_ref44) {
+            var account = _ref44.account;
+            var keyspace = _ref44.keyspace;
 
-            var accountKey, _ref46, _ref47, accessToken, token, _ref48, _ref49, hsetnx, hdel;
+            var accountKey, _ref45, _ref46, accessToken, token, _ref47, _ref48, hsetnx, hdel;
 
             return regeneratorRuntime.wrap(function _callee102$(_context102) {
                while (1) {
@@ -4708,10 +4718,10 @@ var _class = function () {
                         });
 
                      case 3:
-                        _ref46 = _context102.sent;
-                        _ref47 = _slicedToArray(_ref46, 2);
-                        accessToken = _ref47[0];
-                        token = _ref47[1];
+                        _ref45 = _context102.sent;
+                        _ref46 = _slicedToArray(_ref45, 2);
+                        accessToken = _ref46[0];
+                        token = _ref46[1];
 
                         if (!(!token && accessToken)) {
                            _context102.next = 20;
@@ -4725,10 +4735,10 @@ var _class = function () {
                         });
 
                      case 10:
-                        _ref48 = _context102.sent;
-                        _ref49 = _slicedToArray(_ref48, 2);
-                        hsetnx = _ref49[0];
-                        hdel = _ref49[1];
+                        _ref47 = _context102.sent;
+                        _ref48 = _slicedToArray(_ref47, 2);
+                        hsetnx = _ref48[0];
+                        hdel = _ref48[1];
 
                         if (hsetnx) {
                            _context102.next = 18;
@@ -4826,16 +4836,16 @@ var _class = function () {
       }
    }, {
       key: 'validateAccess',
-      value: function validateAccess(_ref50) {
-         var req = _ref50.req;
-         var command = _ref50.command;
-         var account = _ref50.account;
-         var keyspace = _ref50.keyspace;
-         var time = _ref50.time;
-         var registered = _ref50.registered;
-         var admined = _ref50.admined;
-         var accessed = _ref50.accessed;
-         var certs = _ref50.certs;
+      value: function validateAccess(_ref49) {
+         var req = _ref49.req;
+         var command = _ref49.command;
+         var account = _ref49.account;
+         var keyspace = _ref49.keyspace;
+         var time = _ref49.time;
+         var registered = _ref49.registered;
+         var admined = _ref49.admined;
+         var accessed = _ref49.accessed;
+         var certs = _ref49.certs;
 
          var scheme = req.get('X-Forwarded-Proto');
          this.logger.debug('validateAccess scheme', scheme, account, keyspace, command);

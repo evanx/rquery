@@ -674,16 +674,33 @@ export default class {
          key: 'get',
          params: ['key']
       }, async (req, res, reqx) => {
-         reqx.hint =  {
-            uri: ['ttl', reqx.key],
-            description: 'to see the TTL of your key'
-         };
+         reqx.hints = [
+            {
+               uri: ['ttl', reqx.key],
+               description: 'to see the TTL of your key'
+            },
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
+            }
+         ];
          return await this.redis.getAsync(reqx.keyspaceKey);
       });
       this.addKeyspaceCommand({
          key: 'get-json',
          params: ['key']
-      }, async (req, res, {key, keyspaceKey}) => {
+      }, async (req, res, reqx) => {
+         reqx.hints = [
+            {
+               uri: ['ttl', reqx.key],
+               description: 'to see the TTL of your key'
+            },
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
+            }
+         ];
+         const {key, keyspaceKey} = reqx;
          const value = await this.redis.getAsync(keyspaceKey);
          this.logger.info('get-json', typeof value, value);
          if (value) {
