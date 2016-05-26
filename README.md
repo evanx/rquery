@@ -29,7 +29,7 @@ However be sure to have a JSON Viewer extension installed in your browser.
 
 It should report the available "routes" defined for the ExpressJS webserver:
 
-<img src="https://evanx.github.io/images/rquery/rquery-routes.png">
+<img src="https://evanx.github.io/images/rquery/rquery030-help.png">
 
 where the following "help" is available:
 - https://demo.redishub.com/routes - shows all the "routes"
@@ -199,8 +199,7 @@ rh ks1 sadd myset item2
 rh ks1 smembers myset
 ```
 
-<img src="https://evanx.github.io/images/rquery/rhtest.png">
-
+<img src="https://evanx.github.io/images/rquery/rquery030-kshelp.png"/>
 
 ###### PKCS12 cert for browser
 
@@ -212,7 +211,7 @@ openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem
 
 We can then import this cert into our browser.
 
-<img src="https://evanx.github.io/images/rquery/browser-cert.png">
+<img src="https://evanx.github.io/images/rquery/rquery030-evanxsummers.png"/>
 <hr>
 
 Testing the same URL in another browser without our `privcert` installed:
