@@ -42,7 +42,7 @@ function render(props) {
    var keyspaceLabel = obscureKeyspaceLabel(props.reqx);
    logger.debug('props', keyspaceLabel, Object.keys(props), Object.keys(Hx));
    var commands = props.result.commands.filter(function (command) {
-      return !['help'].includes(command.key);
+      return !['help', 'routes', 'about'].includes(command.key);
    }).filter(function (command) {
       return !command.key.startsWith('verify');
    }).filter(function (command) {

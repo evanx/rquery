@@ -17,7 +17,7 @@ export function render(props) {
    let keyspaceLabel = obscureKeyspaceLabel(props.reqx);
    logger.debug('props', keyspaceLabel, Object.keys(props), Object.keys(Hx));
    const commands = props.result.commands
-   .filter(command => !['help'].includes(command.key))
+   .filter(command => !['help', 'routes', 'about'].includes(command.key))
    .filter(command => !command.key.startsWith('verify'))
    .filter(command => !command.key.startsWith('gen'))
    .filter(command => !command.key.includes('keyspace'))
