@@ -549,7 +549,14 @@ export default class {
       this.addKeyspaceCommand({
          key: 'ttls',
          access: 'debug'
-      }, async (req, res, {account, keyspace}) => {
+      }, async (req, res, reqx) => {
+         reqx.hints = [
+            {
+               commandKey: 'help',
+               description: 'to view sample commands'
+            }
+         ];
+         const {account, keyspace} = reqx;
          const keys = await this.redis.keysAsync(this.keyspaceKey(account, keyspace, '*'));
          this.logger.debug('ttl ak', account, keyspace, keys);
          const keyIndex = this.keyIndex(account, keyspace);
