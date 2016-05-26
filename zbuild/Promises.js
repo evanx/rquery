@@ -47,3 +47,4 @@ function timeout(timeout, reason, promise) {
       return promise;
    }
 }
+//# sourceMappingURL=Promises.js.map

@@ -75,6 +75,7 @@ const styles = {
       },
       keyspace: {
          display: 'inline-block',
+         color: '#c0c0c0',
          paddingLeft: 8
       }
    },

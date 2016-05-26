@@ -76,6 +76,7 @@ var styles = {
       },
       keyspace: {
          display: 'inline-block',
+         color: '#c0c0c0',
          paddingLeft: 8
       }
    },
@@ -202,3 +203,4 @@ module.exports = Styles.renderStyles(styles);
 module.exports.source = styles;
 
 //throw module.exports;
+//# sourceMappingURL=styles.js.map
