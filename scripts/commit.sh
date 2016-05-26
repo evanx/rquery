@@ -2,7 +2,9 @@
 set -u -e
 
 c2notify() {
+  date
   echo `date +%T` $2 | ssh $1 'cat > tmp/rquery-notify'
+  date
 }
 
 c2notify joy building & 

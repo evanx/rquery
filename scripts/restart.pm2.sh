@@ -1,8 +1,7 @@
 
 set -u -e
 
-if git pull | grep '^Already'
-then
+waitCommitted() {
   sleep 2
   if [ -f ~/tmp/rquery-notify ]
   then
@@ -19,7 +18,9 @@ then
     fi
   fi
   rm -f ~/tmp/rquery-notify
-fi
+}
+
+waitCommited
 
 git pull && git submodule update
 
