@@ -612,10 +612,16 @@ export default class {
             string = ['{', req.params.value, '}'].join('');
             string = string.replace(/(\W)(\w+):/g, '$1"$2":');
          }
-         reqx.hint =  {
-            uri: ['get-json', reqx.key],
-            description: 'to get the value you have set'
-         };
+         reqx.hints = [
+            {
+               uri: ['get-json', reqx.key],
+               description: 'to get the value you have set'
+            },
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
+            }
+         ];
          return await this.redis.setAsync(reqx.keyspaceKey, string);
       });
       this.addKeyspaceCommand({
@@ -623,19 +629,39 @@ export default class {
          params: ['key'],
          access: 'set'
       }, async (req, res, reqx) => {
-         reqx.hint =  {
-            uri: ['get-json', reqx.key],
-            description: 'to get the value you have set'
-         };
+         reqx.hints = [
+            {
+               uri: ['get-json', reqx.key],
+               description: 'to get the value you have set'
+            },
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
+            }
+         ];
          return await this.redis.setAsync(reqx.keyspaceKey, JSON.stringify(req.query));
       });
       this.addKeyspaceCommand({
          key: 'setex',
          params: ['key', 'seconds', 'value'],
          access: 'set'
-      }, async (req, res, {keyspaceKey}) => {
+      }, async (req, res, reqx) => {
+         reqx.hints = [
+            {
+               uri: ['get', reqx.key],
+               description: 'to get the value you have set'
+            },
+            {
+               uri: ['ttl', reqx.key],
+               description: 'to check the expiry of the key'
+            },
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
+            }
+         ];
          const {seconds, value} = req.params;
-         return await this.redis.setexAsync(keyspaceKey, seconds, value);
+         return await this.redis.setexAsync(reqx.keyspaceKey, seconds, value);
       });
       this.addKeyspaceCommand({
          key: 'setnx',
@@ -2140,180 +2166,180 @@ export default class {
             ]);
          });
          const renderedOtherHints = otherHints.map(hint => He.div({
-               style: styles.result.hint.container
-            }, [
-               Hso.div(styles.result.hint.message, hint.message),
-               Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, Hc.b(hint.commandKey))),
-               Hso.div(styles.result.hint.description, hint.description)
-            ])
-         );
-         this.logger.debug('renderedPathHints', renderedPathHints);
-         content.push(renderedPathHints);
-         content.push(renderedOtherHints);
+            style: styles.result.hint.container
+         }, [
+            Hso.div(styles.result.hint.message, hint.message),
+            Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, Hc.b(hint.commandKey))),
+            Hso.div(styles.result.hint.description, hint.description)
+         ])
+      );
+      this.logger.debug('renderedPathHints', renderedPathHints);
+      content.push(renderedPathHints);
+      content.push(renderedOtherHints);
+   }
+   res.status(statusCode).send(renderPage({
+      config: this.config, req, reqx, title, heading, icon, content
+   }));
+}
+
+isDevelopment(req) {
+   return req.hostname === 'localhost' && process.env.NODE_ENV === 'development';
+}
+
+isSecureDomain(req) {
+   if (this.config.secureDomain) {
+      return true;
+   }
+   if (/^(secure|cli)\./.test(req.hostname)) {
+      this.logger.warn('isSecureDomain', req.hostname);
+      return true;
+   }
+   return false;
+}
+
+isMobile(req) {
+   return /(Mobile|iPhone)/.test(req.get('User-Agent'));
+}
+
+isBrowser(req) {
+   return !/^curl\//.test(req.get('User-Agent'));
+}
+
+isHtmlDomain(req) {
+   return /^web/.test(req.hostname);
+}
+
+isJsonDomain(req) {
+   return /^json/.test(req.hostname);
+}
+
+isCliDomain(req) {
+   return /^cli/.test(req.hostname) || !this.isBrowser(req) || this.config.cliDomain;
+}
+
+sendError(req, res, err) {
+   this.logger.warn(err);
+   if (err.context) {
+      this.logger.warn(err.context);
+   }
+   try {
+      this.sendStatusMessage(req, res, 500, err);
+   } catch (error) {
+      this.logger.error(error);
+   }
+}
+
+sendCommandError(command, req, res, reqx, err) {
+   this.logger.warn(err);
+   try {
+      this.sendStatusMessage(req, res, 500, err);
+   } catch (error) {
+      this.logger.error(error);
+   }
+}
+
+sendStatusMessage(req, res, statusCode, err) {
+   const reqx = req.rquery || {};
+   const command = reqx.command || {};
+   this.logger.warn('status', req.path, statusCode, typeof err, err);
+   let messageLines = [];
+   if (!err) {
+      this.logger.error('sendStatusMessage empty');
+      err = 'empty error message';
+   }
+   let title = req.path;
+   let hints = [];
+   if (lodash.isString(err)) {
+      title = err;
+   } else if (lodash.isArray(err)) {
+      messageLines = messageLines.concat(err);
+   } else if (typeof err === 'object') {
+      if (err.message) {
+         title = err.message;
       }
-      res.status(statusCode).send(renderPage({
-         config: this.config, req, reqx, title, heading, icon, content
-      }));
-   }
-
-   isDevelopment(req) {
-      return req.hostname === 'localhost' && process.env.NODE_ENV === 'development';
-   }
-
-   isSecureDomain(req) {
-      if (this.config.secureDomain) {
-         return true;
+      if (err.hint) {
+         hints.push(err.hint);
       }
-      if (/^(secure|cli)\./.test(req.hostname)) {
-         this.logger.warn('isSecureDomain', req.hostname);
-         return true;
+      if (err.hints) {
+         hints = hints.concat(err.hints);
       }
-      return false;
-   }
-
-   isMobile(req) {
-      return /(Mobile|iPhone)/.test(req.get('User-Agent'));
-   }
-
-   isBrowser(req) {
-      return !/^curl\//.test(req.get('User-Agent'));
-   }
-
-   isHtmlDomain(req) {
-      return /^web/.test(req.hostname);
-   }
-
-   isJsonDomain(req) {
-      return /^json/.test(req.hostname);
-   }
-
-   isCliDomain(req) {
-      return /^cli/.test(req.hostname) || !this.isBrowser(req) || this.config.cliDomain;
-   }
-
-   sendError(req, res, err) {
-      this.logger.warn(err);
-      if (err.context) {
-         this.logger.warn(err.context);
-      }
-      try {
-         this.sendStatusMessage(req, res, 500, err);
-      } catch (error) {
-         this.logger.error(error);
-      }
-   }
-
-   sendCommandError(command, req, res, reqx, err) {
-      this.logger.warn(err);
-      try {
-         this.sendStatusMessage(req, res, 500, err);
-      } catch (error) {
-         this.logger.error(error);
-      }
-   }
-
-   sendStatusMessage(req, res, statusCode, err) {
-      const reqx = req.rquery || {};
-      const command = reqx.command || {};
-      this.logger.warn('status', req.path, statusCode, typeof err, err);
-      let messageLines = [];
-      if (!err) {
-         this.logger.error('sendStatusMessage empty');
-         err = 'empty error message';
-      }
-      let title = req.path;
-      let hints = [];
-      if (lodash.isString(err)) {
-         title = err;
-      } else if (lodash.isArray(err)) {
-         messageLines = messageLines.concat(err);
-      } else if (typeof err === 'object') {
-         if (err.message) {
-            title = err.message;
+      hints = hints.map(hint => {
+         let url;
+         if (this.isBrowser(req)) {
+            url = `/${hint.uri}`;
+         } else if (/localhost/.test(req.hostname)) {
+            url = `http://localhost:8765/${hint.uri}`;
+         } else {
+            url = `https://${req.hostname}/${hint.uri}`;
          }
-         if (err.hint) {
-            hints.push(err.hint);
+         if (this.isBrowser(req)) {
+            url = `Try <a href="${url}"><tt>${url}</tt></a>`;
          }
-         if (err.hints) {
-            hints = hints.concat(err.hints);
-         }
-         hints = hints.map(hint => {
-            let url;
-            if (this.isBrowser(req)) {
-               url = `/${hint.uri}`;
-            } else if (/localhost/.test(req.hostname)) {
-               url = `http://localhost:8765/${hint.uri}`;
-            } else {
-               url = `https://${req.hostname}/${hint.uri}`;
-            }
-            if (this.isBrowser(req)) {
-               url = `Try <a href="${url}"><tt>${url}</tt></a>`;
-            }
-            return Object.assign({url}, hint);
-         });
-         if (err.stack) {
-            messageLines.push(err.stack.split('\n').slice(0, 5));
-         }
-      } else {
-         this.logger.error('sendStatusMessage type', typeof err, err);
-         err = 'unexpected error type: ' + typeof err;
-         messageLines.push(Object.keys(err).join(' '));
-      }
-      const heading = [Hc.b('Status'), Hc.tt(statusCode)].join(' ');
-      if (this.isBrowser(req)) {
-         this.logger.debug('hints', hints);
-         res.set('Content-Type', 'text/html');
-         res.status(statusCode).send(renderPage({
-            config: this.config,
-            req, reqx, title, heading,
-            content: [
-               //Hs.div(styles.error.status, `Status ${statusCode}`),
-               Hs.div(styles.error.message, title),
-               Hs.pre(styles.error.detail, lodash.flatten(messageLines).join('\n')),
-               hints.map(hint => He.div(styles.error.hint, [
-                  Hso.div(styles.error.hintMessage, hint.message),
-                  Hso.div(styles.error.hintUrl, hint.url),
-                  Hso.div(styles.error.hintDescription, hint.description)
-               ])),
-            ]
-         }));
-      } else {
-         this.logger.warn('status lines', req.path, statusCode, typeof err, Object.keys(err), messageLines.length);
-         // TODO hints
-         res.status(statusCode).send(lodash.flatten([title, ...messageLines]).join('\n') + '\n');
-      }
-   }
-
-   digestPem(pem) {
-      const lines = pem.split(/[\n\t]/);
-      if (lines.length < 8) {
-         throw new ValidationError('Invalid lines');
-      }
-      if (!/^-+BEGIN CERTIFICATE/.test(lines[0])) {
-         throw new ValidationError('Invalid first line');
-      }
-      const contentLines = lines.filter(line => {
-         return line.length > 16 && /^[\w\/\+]+$/.test(line);
+         return Object.assign({url}, hint);
       });
-      if (contentLines.length < 8) {
-         throw new ValidationError('Invalid lines');
+      if (err.stack) {
+         messageLines.push(err.stack.split('\n').slice(0, 5));
       }
-      const sha1 = crypto.createHash('sha1');
-      contentLines.forEach(line => sha1.update(new Buffer(line)));
-      const digest = sha1.digest('hex');
-      if (digest.length < 32) {
-         throw new ValidationError('Invalid cert length');
-      }
-      return digest;
+   } else {
+      this.logger.error('sendStatusMessage type', typeof err, err);
+      err = 'unexpected error type: ' + typeof err;
+      messageLines.push(Object.keys(err).join(' '));
    }
+   const heading = [Hc.b('Status'), Hc.tt(statusCode)].join(' ');
+   if (this.isBrowser(req)) {
+      this.logger.debug('hints', hints);
+      res.set('Content-Type', 'text/html');
+      res.status(statusCode).send(renderPage({
+         config: this.config,
+         req, reqx, title, heading,
+         content: [
+            //Hs.div(styles.error.status, `Status ${statusCode}`),
+            Hs.div(styles.error.message, title),
+            Hs.pre(styles.error.detail, lodash.flatten(messageLines).join('\n')),
+            hints.map(hint => He.div(styles.error.hint, [
+               Hso.div(styles.error.hintMessage, hint.message),
+               Hso.div(styles.error.hintUrl, hint.url),
+               Hso.div(styles.error.hintDescription, hint.description)
+            ])),
+         ]
+      }));
+   } else {
+      this.logger.warn('status lines', req.path, statusCode, typeof err, Object.keys(err), messageLines.length);
+      // TODO hints
+      res.status(statusCode).send(lodash.flatten([title, ...messageLines]).join('\n') + '\n');
+   }
+}
 
-   async end() {
-      this.logger.info('end');
-      if (redis) {
-         await this.redis.quitAsync();
-      }
-      if (this.expressServer) {
-         this.expressServer.close();
-      }
+digestPem(pem) {
+   const lines = pem.split(/[\n\t]/);
+   if (lines.length < 8) {
+      throw new ValidationError('Invalid lines');
    }
+   if (!/^-+BEGIN CERTIFICATE/.test(lines[0])) {
+      throw new ValidationError('Invalid first line');
+   }
+   const contentLines = lines.filter(line => {
+      return line.length > 16 && /^[\w\/\+]+$/.test(line);
+   });
+   if (contentLines.length < 8) {
+      throw new ValidationError('Invalid lines');
+   }
+   const sha1 = crypto.createHash('sha1');
+   contentLines.forEach(line => sha1.update(new Buffer(line)));
+   const digest = sha1.digest('hex');
+   if (digest.length < 32) {
+      throw new ValidationError('Invalid cert length');
+   }
+   return digest;
+}
+
+async end() {
+   this.logger.info('end');
+   if (redis) {
+      await this.redis.quitAsync();
+   }
+   if (this.expressServer) {
+      this.expressServer.close();
+   }
+}
 }
