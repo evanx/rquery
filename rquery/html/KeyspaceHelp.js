@@ -80,7 +80,7 @@ function renderCommandString(command) {
    if (!command.params) {
       return command.key;
    }
-   return [command.key, ...command.params].join(' ');
+   return [Hc.b(command.key.toUpperCase()), ...command.params].join(' ');
 }
 
 function renderCustomCommands(commands) {
@@ -92,11 +92,8 @@ function renderCustomCommands(commands) {
 
 function renderStandardCommands(commands) {
    return commands.map(command => {
-      logger.debug('standardCommand', command.key);
       const commandString = renderCommandString(command);
-      logger.debug('standardCommand', command.key, commandString);
       const href = getCommandLink(command);
-      logger.debug('standardCommand', command.key, href);
       return Hs.div(styles.keyspaceHelp.command, He.a({href}, commandString));
    });
 }
