@@ -5150,23 +5150,33 @@ var _class = function () {
             }
          }
          if (hints.length && reqx.account && reqx.keyspace) {
-            var renderedHints = hints.map(function (hint) {
-               if (hint.uri) {
-                  var path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace].concat(_toConsumableArray(hint.uri)).join('/'));
-                  return Object.assign({ path: path }, hint);
-               } else {
+            (function () {
+               var otherHints = [];
+               var renderedHints = hints.map(function (hint) {
+                  if (hint.uri) {
+                     var path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace].concat(_toConsumableArray(hint.uri)).join('/'));
+                     return Object.assign({ path: path }, hint);
+                  } else {
+                     otherHints.push(hint);
+                  }
+               }).filter(function (hint) {
                   return hint;
-               }
-            }).map(function (hint) {
-               var uriLabel = [Hc.b(hint.uri[0])].concat(_toConsumableArray(hint.uri.slice(1))).join('/');
-               _this15.logger.debug('hint', uriLabel, hint);
-               return He.div({
-                  style: _styles2.default.result.hint.container,
-                  onClick: HtmlElements.onClick(hint.path)
-               }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, uriLabel)), Hso.div(_styles2.default.result.hint.description, '' + hint.description)]);
-            });
-            this.logger.debug('renderedHints', renderedHints);
-            content.push(renderedHints);
+               }).map(function (hint) {
+                  var uriLabel = [Hc.b(hint.uri[0])].concat(_toConsumableArray(hint.uri.slice(1))).join('/');
+                  _this15.logger.debug('hint', uriLabel, hint);
+                  return He.div({
+                     style: _styles2.default.result.hint.container,
+                     onClick: HtmlElements.onClick(hint.path)
+                  }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, uriLabel)), Hso.div(_styles2.default.result.hint.description, hint.description)]);
+               });
+               var otherRenderedHints = otherHints.forEach(function (hint) {
+                  return He.div({
+                     style: _styles2.default.result.hint.container
+                  }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.description, hint.description)]);
+               });
+               _this15.logger.debug('renderedHints', renderedHints);
+               content.push(renderedHints);
+            })();
          }
          res.status(statusCode).send((0, _Page2.default)({
             config: this.config, req: req, reqx: reqx, title: title, heading: heading, icon: icon, content: content

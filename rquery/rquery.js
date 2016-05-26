@@ -2095,14 +2095,16 @@ export default class {
          }
       }
       if (hints.length && reqx.account && reqx.keyspace) {
+         const otherHints = [];
          const renderedHints = hints.map(hint => {
             if (hint.uri) {
                const path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace, ...hint.uri].join('/'));
                return Object.assign({path}, hint);
             } else {
-               return hint;
+               otherHints.push(hint);
             }
-         }).map(hint => {
+         }).filter(hint => hint)
+         .map(hint => {
             const uriLabel = [Hc.b(hint.uri[0]), ...hint.uri.slice(1)].join('/');
             this.logger.debug('hint', uriLabel, hint);
             return He.div({
@@ -2111,7 +2113,15 @@ export default class {
             }, [
                Hso.div(styles.result.hint.message, hint.message),
                Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, uriLabel)),
-               Hso.div(styles.result.hint.description, `${hint.description}`)
+               Hso.div(styles.result.hint.description, hint.description)
+            ]);
+         });
+         const otherRenderedHints = otherHints.forEach(hint => {
+            return He.div({
+               style: styles.result.hint.container
+            }, [
+               Hso.div(styles.result.hint.message, hint.message),
+               Hso.div(styles.result.hint.description, hint.description)
             ]);
          });
          this.logger.debug('renderedHints', renderedHints);
