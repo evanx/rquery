@@ -866,6 +866,9 @@ export default class {
             {
                uri: ['lrange', reqx.key, -10, -1],
                description: 'to get items from the right of your list'
+            },
+            {
+               description: 'Try <tt>lpush</tt> to add items to your list'
             }
          ];
          return await this.redis.llenAsync(reqx.keyspaceKey);

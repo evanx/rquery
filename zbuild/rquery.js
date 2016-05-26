@@ -2496,6 +2496,8 @@ var _class = function () {
                            }, {
                               uri: ['lrange', reqx.key, -10, -1],
                               description: 'to get items from the right of your list'
+                           }, {
+                              description: 'Try <tt>lpush</tt> to add items to your list'
                            }];
                            _context60.next = 3;
                            return _this5.redis.llenAsync(reqx.keyspaceKey);
