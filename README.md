@@ -33,7 +33,7 @@ It should report the available "routes" defined for the ExpressJS webserver:
 
 where the following "help" is available:
 - https://demo.redishub.com/routes - shows all the "routes"
-- https://demo.redishub.com/help - renders this `README.md`
+- https://demo.redishub.com/help - currently redirects to this `README.md`
 
 Notes about this demo:
 - automatically expires keys after an idle duration of 3 minutes.
