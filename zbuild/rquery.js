@@ -2134,6 +2134,9 @@ var _class = function () {
                            reqx.hints = [{
                               uri: ['scard', reqx.key],
                               description: 'to get the cardinality of your set'
+                           }, {
+                              uri: ['help'],
+                              description: 'to view sample keyspace commands'
                            }];
                            _context49.next = 3;
                            return _this5.redis.smembersAsync(reqx.keyspaceKey);
@@ -2171,6 +2174,9 @@ var _class = function () {
                            reqx.hints = [{
                               uri: ['smembers', reqx.key],
                               description: 'to get the members of your set'
+                           }, {
+                              uri: ['help'],
+                              description: 'to view sample keyspace commands'
                            }];
                            if (reply) {
                               reqx.hints.push({
@@ -2203,7 +2209,10 @@ var _class = function () {
                            reqx.hints = [{
                               uri: ['smembers', reqx.key],
                               description: 'to get the members of your set'
-                           }, {}];
+                           }, {
+                              uri: ['help'],
+                              description: 'to view sample keyspace commands'
+                           }];
                            _context51.next = 3;
                            return _this5.redis.scardAsync(reqx.keyspaceKey);
 

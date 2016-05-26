@@ -740,6 +740,10 @@ export default class {
             {
                uri: ['scard', reqx.key],
                description: 'to get the cardinality of your set'
+            },
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
             }
          ];
          return await this.redis.smembersAsync(reqx.keyspaceKey);
@@ -753,6 +757,10 @@ export default class {
             {
                uri: ['smembers', reqx.key],
                description: 'to get the members of your set'
+            },
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
             }
          ];
          if (reply) {
@@ -773,7 +781,8 @@ export default class {
                description: 'to get the members of your set'
             },
             {
-
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
             }
          ];
          return await this.redis.scardAsync(reqx.keyspaceKey);
