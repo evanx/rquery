@@ -1883,7 +1883,7 @@ export default class {
             multi.sadd(this.adminKey('keyspaces'), keyspace);
             multi.hset(accountKey, 'accessed', time);
             if (command && command.access === 'admin') {
-               xmulti.hset(accountKey, 'admined', time);
+               multi.hset(accountKey, 'admined', time);
             }
             const result = await fn(req, res, reqx, multi);
             if (result !== undefined) {

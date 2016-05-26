@@ -4678,7 +4678,7 @@ var _class = function () {
                                           multi.sadd(_this14.adminKey('keyspaces'), keyspace);
                                           multi.hset(accountKey, 'accessed', time);
                                           if (command && command.access === 'admin') {
-                                             xmulti.hset(accountKey, 'admined', time);
+                                             multi.hset(accountKey, 'admined', time);
                                           }
                                           _context100.next = 72;
                                           return fn(req, res, reqx, multi);
