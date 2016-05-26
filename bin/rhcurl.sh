@@ -6,15 +6,19 @@
 
   . ~/redis-scan-bash/bin/bashrc.rhlogging.sh
   
-  tuser=`cat ~/.redishub/tuser`
+  tuser=${tuser-`cat ~/.redishub/tuser`}
+  domain=${domain-cli.redishub.com}
+  url=${url-https://$domain/ak/$tuser}
   
   if [ $# -eq 0 ]
   then
-    rhdebug "curl -s -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/:keyspace/register-keyspace"
+    rhinfo "Try as follows, with new keyspace name:"
+    rhinfo "curl -s -E ~/.redishub/privcert.pem $url/:keyspace/register-keyspace"
     exit 1
   elif [ $# -eq 1 ]
   then
-    rhdebug "curl -s -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/$1"
+    rhinfo "Try as follows, to see routes:"
+    rhinfo "curl -s -E ~/.redishub/privcert.pem $url/$1/help"
     exit 1
   fi
 

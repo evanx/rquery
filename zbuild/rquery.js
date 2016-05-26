@@ -1304,16 +1304,19 @@ var _class = function () {
                            accountKey = reqx.accountKey;
 
                            _this5.logger.debug('command', reqx);
-                           _context25.next = 7;
+                           _this5.logger.debug('hsetnx', accountKey);
+                           _context25.next = 8;
                            return _this5.redis.multiExecAsync(function (multi) {
+                              _this5.logger.debug('hsetnx', accountKey);
                               multi.hsetnx(accountKey, 'registered', time);
+                              _this5.logger.debug('hsetnx', accountKey);
                            });
 
-                        case 7:
+                        case 8:
                            replies = _context25.sent;
                            return _context25.abrupt('return', replies);
 
-                        case 9:
+                        case 10:
                         case 'end':
                            return _context25.stop();
                      }

@@ -491,8 +491,11 @@ export default class {
       }, async (req, res, reqx, multi) => {
          const {time, account, keyspace, accountKey} = reqx;
          this.logger.debug('command', reqx);
+         this.logger.debug('hsetnx', accountKey);
          const replies = await this.redis.multiExecAsync(multi => {
+            this.logger.debug('hsetnx', accountKey);
             multi.hsetnx(accountKey, 'registered', time);
+            this.logger.debug('hsetnx', accountKey);
          });
          return replies;
       });
