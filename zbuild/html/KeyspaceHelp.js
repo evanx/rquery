@@ -64,9 +64,30 @@ function renderUrls(urls) {
    });
 }
 
+var ExtraCommandNames = ['help', 'ttls'];
+
+function getCommandLink(command) {
+   logger.debug('getCommandLink', command, command.match(/^[a-z]+/)[1]);
+   if (command) {
+      if (command.match(/^[a-z]+/)) {
+         command = command.match(/^([a-z]+)/)[1];
+      }
+      if (ExtraCommandNames.includes(command)) {} else {
+         if (command.match(/-/)) {} else {
+            return 'http://redis.io/commands/' + command.toUpperCase();
+         }
+      }
+   }
+}
+
 function renderCommands(commands) {
    return commands.map(function (command, index) {
-      return Hs.div(_styles2.default.keyspaceHelp.command, Hc.span(command));
+      var href = getCommandLink(command);
+      if (!href) {
+         return Hs.div(_styles2.default.keyspaceHelp.command, Hc.span(command));
+      } else {
+         return Hs.div(_styles2.default.keyspaceHelp.command, He.a({ href: href }, command));
+      }
    });
 }
 //# sourceMappingURL=KeyspaceHelp.js.map

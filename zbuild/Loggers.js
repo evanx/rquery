@@ -100,7 +100,7 @@ var Logger = function () {
                         }
 
                         message = JSON.stringify(this.map.apply(this, _args));
-                        url = [loggingUrl, 'lpushtrim', message, 100].join('/');
+                        url = [loggingUrl, 'lpush-trim', message, 100].join('/');
                         _context.prev = 8;
                         _context.next = 11;
                         return Promises.request({ url: url, method: 'head' });

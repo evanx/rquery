@@ -513,7 +513,7 @@ export default class {
          return keys.map(key => key.substring(keyIndex));
       });
       this.addKeyspaceCommand({
-         key: 'getconfig',
+         key: 'show-keyspace-config',
          access: 'debug'
       }, async (req, res, reqx) => {
          return await this.redis.hgetallAsync(reqx.accountKey);
@@ -855,7 +855,7 @@ export default class {
          return await this.redis.lpushAsync(reqx.keyspaceKey, req.params.value);
       });
       this.addKeyspaceCommand({
-         key: 'lpushtrim',
+         key: 'lpush-trim',
          params: ['key', 'length', 'value'],
          access: 'set'
       }, async (req, res, {keyspaceKey}, multi) => {

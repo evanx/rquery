@@ -1401,7 +1401,7 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'getconfig',
+            key: 'show-keyspace-config',
             access: 'debug'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee28(req, res, reqx) {
@@ -2292,7 +2292,7 @@ var _class = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'lpushtrim',
+            key: 'lpush-trim',
             params: ['key', 'length', 'value'],
             access: 'set'
          }, function () {

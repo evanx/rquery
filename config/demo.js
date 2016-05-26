@@ -14,7 +14,7 @@ module.exports = {
          assetsUrl: '/assets',
          aboutUrl: 'https://github.com/evanx/redishub/blob/master/README.md',
          helpUrl: 'https://github.com/evanx/redishub/blob/master/README.md',
-         indexCommand: 'getconfig',
+         indexCommand: 'show-keyspace-config',
          keyExpire: 600,
          ephemeralKeyExpire: 600,
          ephemeralAccountExpire: 1200,
