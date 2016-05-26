@@ -4,10 +4,10 @@ set -u -e
 c2notify() {
   echo NOTIFY `date +%T` "$*" 
   echo `date +%T` $2 | ssh $1 'cat > tmp/rquery-notify'
-  echo NOTIFY OK `date +%T` "$*"
+  echo NOTIFY `date +%T` "$*" DONE
 }
 
-c2notify joy building & 
+c2notify joy committing
 
 npm run build 
 
