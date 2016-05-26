@@ -543,8 +543,14 @@ export default class {
          key: 'ttl',
          params: ['key'],
          access: 'debug'
-      }, async (req, res, {keyspaceKey}) => {
-         return await this.redis.ttlAsync(keyspaceKey);
+      }, async (req, res, reqx) => {
+         reqx.hints = [
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
+            }
+         ];
+         return await this.redis.ttlAsync(reqx.keyspaceKey);
       });
       this.addKeyspaceCommand({
          key: 'ttls',
