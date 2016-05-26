@@ -92,9 +92,7 @@ function renderUrls(urls) {
 }
 
 function isCustomCommand(command) {
-   if (command.key.indexOf('-') > 0) {
-      return true;
-   }
+   return command.key.indexOf('-') > 0 || ['ttls', 'types'].includes(command.key);
 }
 
 function getCommandLink(command) {

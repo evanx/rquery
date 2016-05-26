@@ -521,12 +521,33 @@ export default class {
          key: 'show-keyspace-config',
          access: 'debug'
       }, async (req, res, reqx) => {
+         reqx.hints = [
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
+            }
+         ];
          return await this.redis.hgetallAsync(reqx.accountKey);
       });
       this.addKeyspaceCommand({
          key: 'keys',
          access: 'debug'
-      }, async (req, res, {account, keyspace}) => {
+      }, async (req, res, reqx) => {
+         const {account, keyspace} = reqx;
+         reqx.hints = [
+            {
+               uri: ['ttls'],
+               description: 'to view all TTLs in this keyspace'
+            },
+            {
+               uri: ['types'],
+               description: 'to view all key types in this keyspace'
+            },
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
+            }
+         ];
          const keys = await this.redis.keysAsync(this.keyspaceKey(account, keyspace, '*'));
          const keyIndex = this.keyIndex(account, keyspace);
          return keys.map(key => key.substring(keyIndex));
@@ -534,7 +555,18 @@ export default class {
       this.addKeyspaceCommand({
          key: 'types',
          access: 'debug'
-      }, async (req, res, {account, keyspace}) => {
+      }, async (req, res, reqx) => {
+         reqx.hints = [
+            {
+               uri: ['ttls'],
+               description: 'to view all TTLs in this keyspace'
+            },
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
+            }
+         ];
+         const {account, keyspace} = reqx;
          const keys = await this.redis.keysAsync(this.keyspaceKey(account, keyspace, '*'));
          this.logger.debug('ttl ak', account, keyspace, keys);
          const keyIndex = this.keyIndex(account, keyspace);
@@ -546,23 +578,14 @@ export default class {
          return result;
       });
       this.addKeyspaceCommand({
-         key: 'ttl',
-         params: ['key'],
-         access: 'debug'
-      }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['help'],
-               description: 'to view sample keyspace commands'
-            }
-         ];
-         return await this.redis.ttlAsync(reqx.keyspaceKey);
-      });
-      this.addKeyspaceCommand({
          key: 'ttls',
          access: 'debug'
       }, async (req, res, reqx) => {
          reqx.hints = [
+            {
+               uri: ['types'],
+               description: 'to view all key types in this keyspace'
+            },
             {
                uri: ['help'],
                description: 'to view sample keyspace commands'
@@ -580,12 +603,38 @@ export default class {
          return result;
       });
       this.addKeyspaceCommand({
+         key: 'ttl',
+         params: ['key'],
+         access: 'debug'
+      }, async (req, res, reqx) => {
+         reqx.hints = [
+            {
+               uri: ['type', reqx.key],
+               description: 'to check the key type'
+            },
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
+            }
+         ];
+         return await this.redis.ttlAsync(reqx.keyspaceKey);
+      });
+      this.addKeyspaceCommand({
          key: 'type',
          params: ['key'],
          access: 'debug'
-      }, async (req, res, {keyspaceKey}) => {
-         this.logger.debug('type', keyspaceKey);
-         return await this.redis.typeAsync(keyspaceKey);
+      }, async (req, res, reqx) => {
+         reqx.hints = [
+            {
+               uri: ['ttl', reqx.key],
+               description: 'to check the key TTL'
+            },
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
+            }
+         ];
+         return await this.redis.typeAsync(reqx.keyspaceKey);
       });
       this.addKeyspaceCommand({
          key: 'set-encrypt',
