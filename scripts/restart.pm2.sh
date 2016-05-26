@@ -2,28 +2,26 @@
 set -u -e
 
 waitCommitted() {
-  ls -l ~/tmp/rquery-notify
-  cat ~/tmp/rquery-notify
+  notifyFile=$1
+  ls -l $notifyFile
+  cat $notifyFile
   echo "Sleeping for 8 seconds"
   sleep 8
-  if [ -f ~/tmp/rquery-notify ]
+  ls -l $notifyFile
+  cat $notifyFile
+  if cat $notifyFile | grep 'committing$'
   then
-    ls -l ~/tmp/rquery-notify 
-    if cat ~/tmp/rquery-notify | grep 'committing$'
-    then
-      count=0
-      while [ $count -lt 10 ] && cat ~/tmp/rquery-notify` | grep 'committing'
-      do
-        git pull | grep '^Already' || break
-        sleep .500
-        count=`echo "$count + 1" | bc`
-      done
-    fi
+    count=0
+    while [ $count -lt 10 ] && cat ~/tmp/rquery-notify | grep 'committing'
+    do
+      git pull | grep '^Already' || break
+      sleep .500
+      count=`echo "$count + 1" | bc`
+    done
   fi
-  rm -f ~/tmp/rquery-notify
 }
 
-waitCommitted
+[ -f ~/tmp/rquery-notify ] && waitCommitted ~/tmp/rquery-notify
 
 git pull && git submodule update
 
