@@ -2119,7 +2119,7 @@ export default class {
                style: styles.result.hint.container
             }, [
                Hso.div(styles.result.hint.message, hint.message),
-               Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, Hc.bb(hint.commandKey))),
+               Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, Hc.b(hint.commandKey))),
                Hso.div(styles.result.hint.description, hint.description)
             ])
          );

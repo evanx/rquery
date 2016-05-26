@@ -5170,7 +5170,7 @@ var _class = function () {
             var renderedOtherHints = otherHints.map(function (hint) {
                return He.div({
                   style: _styles2.default.result.hint.container
-               }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, Hc.bb(hint.commandKey))), Hso.div(_styles2.default.result.hint.description, hint.description)]);
+               }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, Hc.b(hint.commandKey))), Hso.div(_styles2.default.result.hint.description, hint.description)]);
             });
             this.logger.debug('renderedPathHints', renderedPathHints);
             content.push(renderedPathHints);
