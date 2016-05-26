@@ -39,13 +39,13 @@ function renderUrls(urls) {
       logger.debug('renderUrls', url, matching);
       if (matching) {
          return `
-         <div style="line-height:1.75">
+         <div style="${styles.help.linkContainer}">
          <a href=${url}>${path}</a>
          </div>
          `;
       } else {
          return `
-         <div style="line-height:1.75">
+         <div style="${styles.help.linkContainer}">
          <a href=${url}>${url}</a>
          </div>
          `;

@@ -92,8 +92,19 @@ var styles = {
    },
    routes: {
       path: {
+         fontFamily: 'monospace',
          display: 'block',
          lineHeight: 1.5
+      }
+   },
+   help: {
+      command: {
+         fontFamily: 'monospace',
+         lineHeight: 1.5
+      },
+      linkContainer: {
+         lineHeight: 1.75,
+         fontFamily: 'monospace'
       }
    },
    error: {
