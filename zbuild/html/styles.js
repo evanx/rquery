@@ -11,7 +11,8 @@ var styles = {
          fontFamily: 'verdana'
       },
       a: {
-         textDecoration: 'none'
+         textDecoration: 'none',
+         color: '#404040'
       },
       img_icon: {
          backgroundPosition: [0, 0],
