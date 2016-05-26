@@ -32,4 +32,3 @@ function translate(object, other, fn) {
    });
    return other;
 }
-//# sourceMappingURL=Objects.js.map

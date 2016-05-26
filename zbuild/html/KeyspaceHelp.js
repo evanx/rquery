@@ -30,7 +30,7 @@ var logger = Loggers.create(module.filename, 'info');
 
 function obscureKeyspaceLabel(reqx) {
    if (reqx.account === 'hub' && reqx.keyspace.length > 6) {
-      return reqx.keyspace.substring(0, 4);
+      return reqx.keyspace.substring(0, 6);
    } else {
       return reqx.keyspace;
    }
@@ -127,4 +127,3 @@ function renderStandardCommands(commands) {
       return Hs.div(_styles2.default.keyspaceHelp.command, He.a({ href: href }, commandString));
    });
 }
-//# sourceMappingURL=KeyspaceHelp.js.map

@@ -7,7 +7,7 @@ const logger = Loggers.create(module.filename, 'info');
 
 export function obscureKeyspaceLabel(reqx) {
    if (reqx.account === 'hub' && reqx.keyspace.length > 6) {
-      return reqx.keyspace.substring(0, 4);
+      return reqx.keyspace.substring(0, 6);
    } else {
       return reqx.keyspace;
    }
