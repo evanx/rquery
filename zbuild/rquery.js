@@ -5202,10 +5202,9 @@ var _class = function () {
          var heading = void 0,
              icon = void 0;
          if (reqx.account && reqx.keyspace) {
-            var keyspace = KeyspaceHelp.obscureKeyspaceLabel(reqx);
-            title = reqx.account + '/' + keyspace;
-            heading = '<b>' + reqx.account + '</b> <tt>' + keyspace + '</tt>';
-            icon = 'database';
+            var keyspaceLabel = KeyspaceHelp.obscureKeyspaceLabel(reqx);
+            title = reqx.account + '/' + keyspaceLabel;
+            heading = [Hc.b(reqx.account), Hs.tt(_styles2.default.header.keyspace, keyspaceLabel)].join(''), icon = 'database';
          }
          var resultString = '';
          var resultArray = [];
@@ -5270,7 +5269,7 @@ var _class = function () {
             });
             hints.push({
                uri: ['help'],
-               description: 'to view sample keyspace commands, or click on header'
+               description: 'to view sample keyspace commands, or click on the header'
             });
             var renderedPathHints = hints.map(function (hint) {
                var path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace].concat(_toConsumableArray(hint.uri)).join('/'));

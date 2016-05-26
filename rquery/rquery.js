@@ -2175,9 +2175,9 @@ export default class {
       let title = this.config.serviceLabel;
       let heading, icon;
       if (reqx.account && reqx.keyspace) {
-         const keyspace = KeyspaceHelp.obscureKeyspaceLabel(reqx);
-         title = `${reqx.account}/${keyspace}`;
-         heading = `<b>${reqx.account}</b> <tt>${keyspace}</tt>`;
+         const keyspaceLabel = KeyspaceHelp.obscureKeyspaceLabel(reqx);
+         title = `${reqx.account}/${keyspaceLabel}`;
+         heading = [Hc.b(reqx.account), Hs.tt(styles.header.keyspace, keyspaceLabel)].join(''),
          icon = 'database';
       }
       let resultString = '';
@@ -2239,7 +2239,7 @@ export default class {
          .filter(hint => hint.uri && hint.uri[0] !== 'help');
          hints.push({
             uri: ['help'],
-            description: 'to view sample keyspace commands, or click on header'
+            description: 'to view sample keyspace commands, or click on the header'
          });
          const renderedPathHints = hints
          .map(hint => {
