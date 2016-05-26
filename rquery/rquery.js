@@ -869,7 +869,7 @@ export default class {
             },
             {
                commandKey: 'lpush',
-               message: 'to add items to your list'
+               description: 'to add items to your list'
             }
          ];
          return await this.redis.llenAsync(reqx.keyspaceKey);
@@ -2119,7 +2119,7 @@ export default class {
                style: styles.result.hint.container
             }, [
                Hso.div(styles.result.hint.message, hint.message),
-               Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, commandKey)),
+               Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, hint.commandKey)),
                Hso.div(styles.result.hint.description, hint.description)
             ])
          );

@@ -2498,7 +2498,7 @@ var _class = function () {
                               description: 'to get items from the right of your list'
                            }, {
                               commandKey: 'lpush',
-                              message: 'to add items to your list'
+                              description: 'to add items to your list'
                            }];
                            _context60.next = 3;
                            return _this5.redis.llenAsync(reqx.keyspaceKey);
@@ -5170,7 +5170,7 @@ var _class = function () {
             var renderedOtherHints = otherHints.map(function (hint) {
                return He.div({
                   style: _styles2.default.result.hint.container
-               }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, commandKey)), Hso.div(_styles2.default.result.hint.description, hint.description)]);
+               }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, hint.commandKey)), Hso.div(_styles2.default.result.hint.description, hint.description)]);
             });
             this.logger.debug('renderedPathHints', renderedPathHints);
             content.push(renderedPathHints);
