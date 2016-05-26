@@ -11,7 +11,7 @@ const styles = {
       },
       a: {
          textDecoration: 'none',
-         color: '#202020'
+         color: '#101010'
       },
       img_icon: {
          backgroundPosition: [0, 0],
@@ -186,6 +186,12 @@ const styles = {
             fontSize: 12,
             fontFamily: 'monospace'
          }
+      }
+   },
+   keyspaceHelp: {
+      linkContainer: {
+         lineHeight: 1.75,
+         fontFamily: monospace
       }
    }
 };

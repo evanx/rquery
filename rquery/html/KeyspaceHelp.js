@@ -26,13 +26,13 @@ function renderUrls(urls) {
       const [matching, hostUrl, command, params] = url.match(/^(https?:\/\/[^\/]+)\/ak\/[^\/]+\/[^\/]+\/([^\/]+)(\/\S+)?$/) || [];
       if (matching) {
          return `
-         <div style="line-height:1.5">
+         <div style="${styles.keyspaceHelp.linkContainer}">
          <a href=${url}><b>${command}</b>${params || ''}</a>
          </div>
          `;
       } else {
          return `
-         <div style="line-height:1.5">
+         <div style="${styles.keyspaceHelp.linkContainer}">
          <a href=${url}>${url}</a>
          </div>
          `;

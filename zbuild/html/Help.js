@@ -41,9 +41,9 @@ function renderUrls(urls) {
 
       logger.debug('renderUrls', url, matching);
       if (matching) {
-         return '\n         <div style="line-height:1.5">\n         <a href=' + url + '>' + path + '</a>\n         </div>\n         ';
+         return '\n         <div style="line-height:1.75">\n         <a href=' + url + '>' + path + '</a>\n         </div>\n         ';
       } else {
-         return '\n         <div style="line-height:1.5">\n         <a href=' + url + '>' + url + '</a>\n         </div>\n         ';
+         return '\n         <div style="line-height:1.75">\n         <a href=' + url + '>' + url + '</a>\n         </div>\n         ';
       }
    });
 }

@@ -1,10 +1,12 @@
 'use strict';
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function iconBackgroundImage(name) {
    return 'url(https://test.redishub.com/assets/icomoon/png20-38/' + name + '.png)';
 }
 
-var styles = {
+var styles = _defineProperty({
    resets: {
       body: {
          padding: 10,
@@ -12,7 +14,7 @@ var styles = {
       },
       a: {
          textDecoration: 'none',
-         color: '#202020'
+         color: '#101010'
       },
       img_icon: {
          backgroundPosition: [0, 0],
@@ -188,7 +190,12 @@ var styles = {
          }
       }
    }
-};
+}, 'keyspaceHelp', {
+   linkContainer: {
+      lineHeight: 1.75,
+      fontFamily: monospace
+   }
+});
 
 module.exports = Styles.renderStyles(styles);
 module.exports.source = styles;

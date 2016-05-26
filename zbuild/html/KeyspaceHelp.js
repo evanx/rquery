@@ -40,9 +40,9 @@ function renderUrls(urls) {
       var params = _ref2[3];
 
       if (matching) {
-         return '\n         <div style="line-height:1.5">\n         <a href=' + url + '><b>' + command + '</b>' + (params || '') + '</a>\n         </div>\n         ';
+         return '\n         <div style="' + _styles2.default.keyspaceHelp.linkContainer + '">\n         <a href=' + url + '><b>' + command + '</b>' + (params || '') + '</a>\n         </div>\n         ';
       } else {
-         return '\n         <div style="line-height:1.5">\n         <a href=' + url + '>' + url + '</a>\n         </div>\n         ';
+         return '\n         <div style="' + _styles2.default.keyspaceHelp.linkContainer + '">\n         <a href=' + url + '>' + url + '</a>\n         </div>\n         ';
       }
    });
 }
