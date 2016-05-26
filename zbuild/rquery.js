@@ -92,6 +92,8 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var unsupportedAuth = ['twitter.com', 'github.com', 'gitlab.com', 'bitbucket.org'];
@@ -1224,7 +1226,9 @@ var _class = function () {
             }()
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee24(req, res, reqx) {
-               var _req$params3, account, keyspace, hostUrl, message, commandReferenceMessage, customCommandHeading, description, exampleUrls;
+               var _exampleParams;
+
+               var _req$params3, account, keyspace, hostUrl, message, commandReferenceMessage, customCommandHeading, description, exampleParams, exampleUrls;
 
                return regeneratorRuntime.wrap(function _callee24$(_context24) {
                   while (1) {
@@ -1245,13 +1249,35 @@ var _class = function () {
                            commandReferenceMessage = 'Read the Redis.io docs for the following commands';
                            customCommandHeading = 'Custom commands';
                            description = ['You can set, add and view keys, sets, lists, zsets, hashes etc.', 'Also edit the URL in the location bar to try other combinations.'];
-                           exampleUrls = [hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey1/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey1', hostUrl + '/ak/' + account + '/' + keyspace + '/set-json-query/myobject1?name=myname&id=12346', hostUrl + '/ak/' + account + '/' + keyspace + '/get-json/myobject1', hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset1/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset1', hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist1/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist1/0/10', hostUrl + '/ak/' + account + '/' + keyspace + '/rrange/mylist1/0/10', hostUrl + '/ak/' + account + '/' + keyspace + '/hset/myhashes1/field1/value1', hostUrl + '/ak/' + account + '/' + keyspace + '/hsetnx/myhashes1/field2/value2', hostUrl + '/ak/' + account + '/' + keyspace + '/hgetall/myhashes1', hostUrl + '/ak/' + account + '/' + keyspace + '/zadd/myzset1/10/member10', hostUrl + '/ak/' + account + '/' + keyspace + '/zadd/myzset1/20/member20', hostUrl + '/ak/' + account + '/' + keyspace + '/zrange/myzset1/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/zrevrange/myzset1/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
+                           exampleParams = (_exampleParams = {
+                              'set': 'mykey1/myvalue',
+                              'get': 'mykey1',
+                              'set-json-query': 'myobject1?name=myname&id=12346',
+                              'get-json': 'myobject1',
+                              'sadd': 'myset1/myvalue',
+                              'smembers': 'myset1',
+                              'lpush': 'mylist1/myvalue',
+                              'lrange': 'mylist1/0/10',
+                              'rrange': 'mylist1/0/10',
+                              'hset': 'myhashes1/field1/value1',
+                              'hsetnx': 'myhashes1/field2/value2',
+                              'hgetall': 'myhashes1',
+                              'zadd': 'myzset1/10/member10'
+                           }, _defineProperty(_exampleParams, 'zadd', 'myzset1/20/member20'), _defineProperty(_exampleParams, 'zrange', 'myzset1/0/-1'), _defineProperty(_exampleParams, 'zrevrange', 'myzset1/0/-1'), _defineProperty(_exampleParams, 'ttls', ''), _defineProperty(_exampleParams, 'types', ''), _exampleParams);
+                           exampleUrls = Object.keys(exampleParams).map(function (key) {
+                              var url = hostUrl + '/ak/' + account + '/' + keyspace + '/' + key;
+                              var params = exampleParams[key];
+                              if (params) {
+                                 url += '/' + params;
+                              }
+                              return url;
+                           });
                            return _context24.abrupt('return', { message: message, commandReferenceMessage: commandReferenceMessage, customCommandHeading: customCommandHeading, description: description, exampleUrls: exampleUrls,
                               commands: _this5.commands,
                               keyspaceCommands: _this5.listCommands('keyspace')
                            });
 
-                        case 12:
+                        case 13:
                         case 'end':
                            return _context24.stop();
                      }
@@ -5239,9 +5265,14 @@ var _class = function () {
             var otherHints = hints.filter(function (hint) {
                return !hint.uri && hint.commandKey;
             });
-            var renderedPathHints = hints.filter(function (hint) {
-               return hint.uri;
-            }).map(function (hint) {
+            hints = hints.filter(function (hint) {
+               return hint.uri && hint.uri[0] !== 'help';
+            });
+            hints.push({
+               uri: ['help'],
+               description: 'to view sample keyspace commands, or click on header'
+            });
+            var renderedPathHints = hints.map(function (hint) {
                var path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace].concat(_toConsumableArray(hint.uri)).join('/'));
                return Object.assign({ path: path }, hint);
             }).map(function (hint) {
@@ -5252,13 +5283,13 @@ var _class = function () {
                   onClick: HtmlElements.onClick(hint.path)
                }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, uriLabel)), Hso.div(_styles2.default.result.hint.description, hint.description)]);
             });
+            this.logger.debug('renderedPathHints', renderedPathHints);
+            content.push(renderedPathHints);
             var renderedOtherHints = otherHints.map(function (hint) {
                return He.div({
                   style: _styles2.default.result.hint.container
                }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, Hc.b(hint.commandKey))), Hso.div(_styles2.default.result.hint.description, hint.description)]);
             });
-            this.logger.debug('renderedPathHints', renderedPathHints);
-            content.push(renderedPathHints);
             content.push(renderedOtherHints);
          }
          res.status(statusCode).send((0, _Page2.default)({

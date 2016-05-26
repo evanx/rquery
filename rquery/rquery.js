@@ -452,25 +452,34 @@ export default class {
          const description = [`You can set, add and view keys, sets, lists, zsets, hashes etc.`,
             `Also edit the URL in the location bar to try other combinations.`
          ];
-         const exampleUrls = [
-            `${hostUrl}/ak/${account}/${keyspace}/set/mykey1/myvalue`,
-            `${hostUrl}/ak/${account}/${keyspace}/get/mykey1`,
-            `${hostUrl}/ak/${account}/${keyspace}/set-json-query/myobject1?name=myname&id=12346`,
-            `${hostUrl}/ak/${account}/${keyspace}/get-json/myobject1`,
-            `${hostUrl}/ak/${account}/${keyspace}/sadd/myset1/myvalue`,
-            `${hostUrl}/ak/${account}/${keyspace}/smembers/myset1`,
-            `${hostUrl}/ak/${account}/${keyspace}/lpush/mylist1/myvalue`,
-            `${hostUrl}/ak/${account}/${keyspace}/lrange/mylist1/0/10`,
-            `${hostUrl}/ak/${account}/${keyspace}/rrange/mylist1/0/10`,
-            `${hostUrl}/ak/${account}/${keyspace}/hset/myhashes1/field1/value1`,
-            `${hostUrl}/ak/${account}/${keyspace}/hsetnx/myhashes1/field2/value2`,
-            `${hostUrl}/ak/${account}/${keyspace}/hgetall/myhashes1`,
-            `${hostUrl}/ak/${account}/${keyspace}/zadd/myzset1/10/member10`,
-            `${hostUrl}/ak/${account}/${keyspace}/zadd/myzset1/20/member20`,
-            `${hostUrl}/ak/${account}/${keyspace}/zrange/myzset1/0/-1`,
-            `${hostUrl}/ak/${account}/${keyspace}/zrevrange/myzset1/0/-1`,
-            `${hostUrl}/ak/${account}/${keyspace}/ttls`,
-         ];
+         const exampleParams = {
+            'set': 'mykey1/myvalue',
+            'get': 'mykey1',
+            'set-json-query': 'myobject1?name=myname&id=12346',
+            'get-json': 'myobject1',
+            'sadd': 'myset1/myvalue',
+            'smembers': 'myset1',
+            'lpush': 'mylist1/myvalue',
+            'lrange': 'mylist1/0/10',
+            'rrange': 'mylist1/0/10',
+            'hset': 'myhashes1/field1/value1',
+            'hsetnx': 'myhashes1/field2/value2',
+            'hgetall': 'myhashes1',
+            'zadd': 'myzset1/10/member10',
+            'zadd': 'myzset1/20/member20',
+            'zrange': 'myzset1/0/-1',
+            'zrevrange': 'myzset1/0/-1',
+            'ttls': '',
+            'types': ''
+         };
+         const exampleUrls = Object.keys(exampleParams).map(key => {
+            let url = `${hostUrl}/ak/${account}/${keyspace}/${key}`;
+            const params = exampleParams[key];
+            if (params) {
+               url += '/' + params;
+            }
+            return url;
+         })
          return {message, commandReferenceMessage, customCommandHeading, description, exampleUrls,
             commands: this.commands,
             keyspaceCommands: this.listCommands('keyspace')
@@ -2226,8 +2235,13 @@ export default class {
       }
       if (hints.length && reqx.account && reqx.keyspace) {
          const otherHints = hints.filter(hint => !hint.uri && hint.commandKey)
+         hints = hints
+         .filter(hint => hint.uri && hint.uri[0] !== 'help');
+         hints.push({
+            uri: ['help'],
+            description: 'to view sample keyspace commands, or click on header'
+         });
          const renderedPathHints = hints
-         .filter(hint => hint.uri)
          .map(hint => {
             const path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace, ...hint.uri].join('/'));
             return Object.assign({path}, hint);
@@ -2244,181 +2258,180 @@ export default class {
                Hso.div(styles.result.hint.description, hint.description)
             ]);
          });
+         this.logger.debug('renderedPathHints', renderedPathHints);
+         content.push(renderedPathHints);
          const renderedOtherHints = otherHints.map(hint => He.div({
             style: styles.result.hint.container
          }, [
             Hso.div(styles.result.hint.message, hint.message),
             Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, Hc.b(hint.commandKey))),
             Hso.div(styles.result.hint.description, hint.description)
-         ])
-      );
-      this.logger.debug('renderedPathHints', renderedPathHints);
-      content.push(renderedPathHints);
-      content.push(renderedOtherHints);
-   }
-   res.status(statusCode).send(renderPage({
-      config: this.config, req, reqx, title, heading, icon, content
-   }));
-}
-
-isDevelopment(req) {
-   return req.hostname === 'localhost' && process.env.NODE_ENV === 'development';
-}
-
-isSecureDomain(req) {
-   if (this.config.secureDomain) {
-      return true;
-   }
-   if (/^(secure|cli)\./.test(req.hostname)) {
-      this.logger.warn('isSecureDomain', req.hostname);
-      return true;
-   }
-   return false;
-}
-
-isMobile(req) {
-   return /(Mobile|iPhone)/.test(req.get('User-Agent'));
-}
-
-isBrowser(req) {
-   return !/^curl\//.test(req.get('User-Agent'));
-}
-
-isHtmlDomain(req) {
-   return /^web/.test(req.hostname);
-}
-
-isJsonDomain(req) {
-   return /^json/.test(req.hostname);
-}
-
-isCliDomain(req) {
-   return /^cli/.test(req.hostname) || !this.isBrowser(req) || this.config.cliDomain;
-}
-
-sendError(req, res, err) {
-   this.logger.warn(err);
-   if (err.context) {
-      this.logger.warn(err.context);
-   }
-   try {
-      this.sendStatusMessage(req, res, 500, err);
-   } catch (error) {
-      this.logger.error(error);
-   }
-}
-
-sendCommandError(command, req, res, reqx, err) {
-   this.logger.warn(err);
-   try {
-      this.sendStatusMessage(req, res, 500, err);
-   } catch (error) {
-      this.logger.error(error);
-   }
-}
-
-sendStatusMessage(req, res, statusCode, err) {
-   const reqx = req.rquery || {};
-   const command = reqx.command || {};
-   this.logger.warn('status', req.path, statusCode, typeof err, err);
-   let messageLines = [];
-   if (!err) {
-      this.logger.error('sendStatusMessage empty');
-      err = 'empty error message';
-   }
-   let title = req.path;
-   let hints = [];
-   if (lodash.isString(err)) {
-      title = err;
-   } else if (lodash.isArray(err)) {
-      messageLines = messageLines.concat(err);
-   } else if (typeof err === 'object') {
-      if (err.message) {
-         title = err.message;
+         ]));
+         content.push(renderedOtherHints);
       }
-      if (err.hint) {
-         hints.push(err.hint);
-      }
-      if (err.hints) {
-         hints = hints.concat(err.hints);
-      }
-      hints = hints.map(hint => {
-         let url;
-         if (this.isBrowser(req)) {
-            url = `/${hint.uri}`;
-         } else if (/localhost/.test(req.hostname)) {
-            url = `http://localhost:8765/${hint.uri}`;
-         } else {
-            url = `https://${req.hostname}/${hint.uri}`;
-         }
-         if (this.isBrowser(req)) {
-            url = `Try <a href="${url}"><tt>${url}</tt></a>`;
-         }
-         return Object.assign({url}, hint);
-      });
-      if (err.stack) {
-         messageLines.push(err.stack.split('\n').slice(0, 5));
-      }
-   } else {
-      this.logger.error('sendStatusMessage type', typeof err, err);
-      err = 'unexpected error type: ' + typeof err;
-      messageLines.push(Object.keys(err).join(' '));
-   }
-   const heading = [Hc.b('Status'), Hc.tt(statusCode)].join(' ');
-   if (this.isBrowser(req)) {
-      this.logger.debug('hints', hints);
-      res.set('Content-Type', 'text/html');
       res.status(statusCode).send(renderPage({
-         config: this.config,
-         req, reqx, title, heading,
-         content: [
-            //Hs.div(styles.error.status, `Status ${statusCode}`),
-            Hs.div(styles.error.message, title),
-            Hs.pre(styles.error.detail, lodash.flatten(messageLines).join('\n')),
-            hints.map(hint => He.div(styles.error.hint, [
-               Hso.div(styles.error.hintMessage, hint.message),
-               Hso.div(styles.error.hintUrl, hint.url),
-               Hso.div(styles.error.hintDescription, hint.description)
-            ])),
-         ]
+         config: this.config, req, reqx, title, heading, icon, content
       }));
-   } else {
-      this.logger.warn('status lines', req.path, statusCode, typeof err, Object.keys(err), messageLines.length);
-      // TODO hints
-      res.status(statusCode).send(lodash.flatten([title, ...messageLines]).join('\n') + '\n');
    }
-}
 
-digestPem(pem) {
-   const lines = pem.split(/[\n\t]/);
-   if (lines.length < 8) {
-      throw new ValidationError('Invalid lines');
+   isDevelopment(req) {
+      return req.hostname === 'localhost' && process.env.NODE_ENV === 'development';
    }
-   if (!/^-+BEGIN CERTIFICATE/.test(lines[0])) {
-      throw new ValidationError('Invalid first line');
-   }
-   const contentLines = lines.filter(line => {
-      return line.length > 16 && /^[\w\/\+]+$/.test(line);
-   });
-   if (contentLines.length < 8) {
-      throw new ValidationError('Invalid lines');
-   }
-   const sha1 = crypto.createHash('sha1');
-   contentLines.forEach(line => sha1.update(new Buffer(line)));
-   const digest = sha1.digest('hex');
-   if (digest.length < 32) {
-      throw new ValidationError('Invalid cert length');
-   }
-   return digest;
-}
 
-async end() {
-   this.logger.info('end');
-   if (redis) {
-      await this.redis.quitAsync();
+   isSecureDomain(req) {
+      if (this.config.secureDomain) {
+         return true;
+      }
+      if (/^(secure|cli)\./.test(req.hostname)) {
+         this.logger.warn('isSecureDomain', req.hostname);
+         return true;
+      }
+      return false;
    }
-   if (this.expressServer) {
-      this.expressServer.close();
+
+   isMobile(req) {
+      return /(Mobile|iPhone)/.test(req.get('User-Agent'));
    }
-}
+
+   isBrowser(req) {
+      return !/^curl\//.test(req.get('User-Agent'));
+   }
+
+   isHtmlDomain(req) {
+      return /^web/.test(req.hostname);
+   }
+
+   isJsonDomain(req) {
+      return /^json/.test(req.hostname);
+   }
+
+   isCliDomain(req) {
+      return /^cli/.test(req.hostname) || !this.isBrowser(req) || this.config.cliDomain;
+   }
+
+   sendError(req, res, err) {
+      this.logger.warn(err);
+      if (err.context) {
+         this.logger.warn(err.context);
+      }
+      try {
+         this.sendStatusMessage(req, res, 500, err);
+      } catch (error) {
+         this.logger.error(error);
+      }
+   }
+
+   sendCommandError(command, req, res, reqx, err) {
+      this.logger.warn(err);
+      try {
+         this.sendStatusMessage(req, res, 500, err);
+      } catch (error) {
+         this.logger.error(error);
+      }
+   }
+
+   sendStatusMessage(req, res, statusCode, err) {
+      const reqx = req.rquery || {};
+      const command = reqx.command || {};
+      this.logger.warn('status', req.path, statusCode, typeof err, err);
+      let messageLines = [];
+      if (!err) {
+         this.logger.error('sendStatusMessage empty');
+         err = 'empty error message';
+      }
+      let title = req.path;
+      let hints = [];
+      if (lodash.isString(err)) {
+         title = err;
+      } else if (lodash.isArray(err)) {
+         messageLines = messageLines.concat(err);
+      } else if (typeof err === 'object') {
+         if (err.message) {
+            title = err.message;
+         }
+         if (err.hint) {
+            hints.push(err.hint);
+         }
+         if (err.hints) {
+            hints = hints.concat(err.hints);
+         }
+         hints = hints.map(hint => {
+            let url;
+            if (this.isBrowser(req)) {
+               url = `/${hint.uri}`;
+            } else if (/localhost/.test(req.hostname)) {
+               url = `http://localhost:8765/${hint.uri}`;
+            } else {
+               url = `https://${req.hostname}/${hint.uri}`;
+            }
+            if (this.isBrowser(req)) {
+               url = `Try <a href="${url}"><tt>${url}</tt></a>`;
+            }
+            return Object.assign({url}, hint);
+         });
+         if (err.stack) {
+            messageLines.push(err.stack.split('\n').slice(0, 5));
+         }
+      } else {
+         this.logger.error('sendStatusMessage type', typeof err, err);
+         err = 'unexpected error type: ' + typeof err;
+         messageLines.push(Object.keys(err).join(' '));
+      }
+      const heading = [Hc.b('Status'), Hc.tt(statusCode)].join(' ');
+      if (this.isBrowser(req)) {
+         this.logger.debug('hints', hints);
+         res.set('Content-Type', 'text/html');
+         res.status(statusCode).send(renderPage({
+            config: this.config,
+            req, reqx, title, heading,
+            content: [
+               //Hs.div(styles.error.status, `Status ${statusCode}`),
+               Hs.div(styles.error.message, title),
+               Hs.pre(styles.error.detail, lodash.flatten(messageLines).join('\n')),
+               hints.map(hint => He.div(styles.error.hint, [
+                  Hso.div(styles.error.hintMessage, hint.message),
+                  Hso.div(styles.error.hintUrl, hint.url),
+                  Hso.div(styles.error.hintDescription, hint.description)
+               ])),
+            ]
+         }));
+      } else {
+         this.logger.warn('status lines', req.path, statusCode, typeof err, Object.keys(err), messageLines.length);
+         // TODO hints
+         res.status(statusCode).send(lodash.flatten([title, ...messageLines]).join('\n') + '\n');
+      }
+   }
+
+   digestPem(pem) {
+      const lines = pem.split(/[\n\t]/);
+      if (lines.length < 8) {
+         throw new ValidationError('Invalid lines');
+      }
+      if (!/^-+BEGIN CERTIFICATE/.test(lines[0])) {
+         throw new ValidationError('Invalid first line');
+      }
+      const contentLines = lines.filter(line => {
+         return line.length > 16 && /^[\w\/\+]+$/.test(line);
+      });
+      if (contentLines.length < 8) {
+         throw new ValidationError('Invalid lines');
+      }
+      const sha1 = crypto.createHash('sha1');
+      contentLines.forEach(line => sha1.update(new Buffer(line)));
+      const digest = sha1.digest('hex');
+      if (digest.length < 32) {
+         throw new ValidationError('Invalid cert length');
+      }
+      return digest;
+   }
+
+   async end() {
+      this.logger.info('end');
+      if (redis) {
+         await this.redis.quitAsync();
+      }
+      if (this.expressServer) {
+         this.expressServer.close();
+      }
+   }
 }
