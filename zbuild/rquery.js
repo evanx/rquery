@@ -4587,6 +4587,7 @@ var _class = function () {
                                           certs = _ref36[4];
 
                                           Objects.translate({ time: time, registered: registered, admined: admined, accessed: accessed }, reqx, function (key, value) {
+                                             _this14.logger.debug('translate', key, value);
                                              return parseInt(value);
                                           });
                                           v = _this14.validateAccess({ command: command, req: req, account: account, keyspace: keyspace, time: time, registered: registered, admined: admined, accessed: accessed, certs: certs });
@@ -4677,7 +4678,7 @@ var _class = function () {
                                           multi.sadd(_this14.adminKey('keyspaces'), keyspace);
                                           multi.hset(accountKey, 'accessed', time);
                                           if (command && command.access === 'admin') {
-                                             multi.hset(accountKey, 'admined', time);
+                                             xmulti.hset(accountKey, 'admined', time);
                                           }
                                           _context100.next = 72;
                                           return fn(req, res, reqx, multi);
