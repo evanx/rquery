@@ -11,7 +11,10 @@ const styles = {
       },
       a: {
          textDecoration: 'none',
-         color: '#101010'
+         color: '#800000'
+      },
+      "a:visited": {
+         color: '#800000'
       },
       img_icon: {
          backgroundPosition: [0, 0],
@@ -79,6 +82,10 @@ const styles = {
       command: {
          fontFamily: 'monospace',
          lineHeight: 1.5
+      },
+      linkContainer: {
+         lineHeight: 1.75,
+         fontFamily: 'monospace'
       }
    },
    routes: {
@@ -181,6 +188,7 @@ const styles = {
          },
          link: {
             fontSize: 14,
+            color: '#800000'
          },
          uri: {
             fontSize: 12,
@@ -188,16 +196,9 @@ const styles = {
          }
       }
    },
-   keyspaceHelp: {
-      linkContainer: {
-         lineHeight: 1.75,
-         fontFamily: 'monospace'
-      }
-   }
 };
 
 module.exports = Styles.renderStyles(styles);
 module.exports.source = styles;
 
-
-   //throw module.exports;
+//throw module.exports;

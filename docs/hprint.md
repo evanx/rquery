@@ -13,6 +13,14 @@ Let's consider React-type stylesheets.
 
 ```javascript
 module.exports = {
+   resets: {
+      a: {
+         visited: {
+            textDecoration: 'none',
+            color: '#800000'
+         }
+      }
+   },
    status: {
       container: {
          fontSize: 14,

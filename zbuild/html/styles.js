@@ -1,12 +1,10 @@
 'use strict';
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function iconBackgroundImage(name) {
    return 'url(https://test.redishub.com/assets/icomoon/png20-38/' + name + '.png)';
 }
 
-var styles = _defineProperty({
+var styles = {
    resets: {
       body: {
          padding: 10,
@@ -14,7 +12,10 @@ var styles = _defineProperty({
       },
       a: {
          textDecoration: 'none',
-         color: '#101010'
+         color: '#800000'
+      },
+      "a:visited": {
+         color: '#800000'
       },
       img_icon: {
          backgroundPosition: [0, 0],
@@ -82,6 +83,10 @@ var styles = _defineProperty({
       command: {
          fontFamily: 'monospace',
          lineHeight: 1.5
+      },
+      linkContainer: {
+         lineHeight: 1.75,
+         fontFamily: 'monospace'
       }
    },
    routes: {
@@ -182,7 +187,8 @@ var styles = _defineProperty({
             color: '#424242'
          },
          link: {
-            fontSize: 14
+            fontSize: 14,
+            color: '#800000'
          },
          uri: {
             fontSize: 12,
@@ -190,12 +196,7 @@ var styles = _defineProperty({
          }
       }
    }
-}, 'keyspaceHelp', {
-   linkContainer: {
-      lineHeight: 1.75,
-      fontFamily: 'monospace'
-   }
-});
+};
 
 module.exports = Styles.renderStyles(styles);
 module.exports.source = styles;
