@@ -101,11 +101,18 @@ function getCommandLink(command) {
    return 'http://redis.io/commands/' + command.key.toUpperCase();
 }
 
-function renderCommandString(command) {
+function renderUpperCaseCommandString(command) {
    if (!command.params) {
       return command.key;
    }
    return [Hc.b(command.key.toUpperCase())].concat(_toConsumableArray(command.params)).join(' ');
+}
+
+function renderCommandString(command) {
+   if (!command.params) {
+      return command.key;
+   }
+   return [Hc.b(command.key)].concat(_toConsumableArray(command.params)).join(' ');
 }
 
 function renderCustomCommands(commands) {
@@ -117,7 +124,7 @@ function renderCustomCommands(commands) {
 
 function renderStandardCommands(commands) {
    return commands.map(function (command) {
-      var commandString = renderCommandString(command);
+      var commandString = renderUpperCaseCommandString(command);
       var href = getCommandLink(command);
       return Hs.div(_styles2.default.keyspaceHelp.command, He.a({ href: href }, commandString));
    });
