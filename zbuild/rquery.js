@@ -1546,8 +1546,8 @@ var _class = function () {
                      switch (_context32.prev = _context32.next) {
                         case 0:
                            reqx.hints = [{
-                              commandKey: 'help',
-                              description: 'to view sample commands'
+                              uri: ['help'],
+                              description: 'to view sample keyspace commands'
                            }];
                            account = reqx.account;
                            keyspace = reqx.keyspace;
@@ -2501,8 +2501,8 @@ var _class = function () {
                               uri: ['lrange', reqx.key, -10, -1],
                               description: 'to get items from the right of your list'
                            }, {
-                              commandKey: 'lpush',
-                              description: 'to add items to your list'
+                              uri: ['help'],
+                              description: 'to see sample commands'
                            }];
                            _context60.next = 3;
                            return _this5.redis.llenAsync(reqx.keyspaceKey);

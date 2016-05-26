@@ -552,8 +552,8 @@ export default class {
       }, async (req, res, reqx) => {
          reqx.hints = [
             {
-               commandKey: 'help',
-               description: 'to view sample commands'
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
             }
          ];
          const {account, keyspace} = reqx;
@@ -875,8 +875,8 @@ export default class {
                description: 'to get items from the right of your list'
             },
             {
-               commandKey: 'lpush',
-               description: 'to add items to your list'
+               uri: ['help'],
+               description: 'to see sample commands'
             }
          ];
          return await this.redis.llenAsync(reqx.keyspaceKey);
