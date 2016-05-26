@@ -488,21 +488,19 @@ export default class {
       this.addKeyspaceCommand({
          key: 'register-keyspace',
          access: 'admin'
-      }, async (req, res, reqx, multi) => {
+      }, async (req, res, reqx) => {
          const {time, account, keyspace, accountKey} = reqx;
          this.logger.debug('command', reqx);
-         this.logger.debug('hsetnx', accountKey);
+         this.logger.debug('hsetnx', accountKey, time);
          const replies = await this.redis.multiExecAsync(multi => {
-            this.logger.debug('hsetnx', accountKey);
             multi.hsetnx(accountKey, 'registered', time);
-            this.logger.debug('hsetnx', accountKey);
          });
          return replies;
       });
       this.addKeyspaceCommand({
          key: 'deregister-keyspace',
          access: 'admin'
-      }, async (req, res, {account, keyspace, accountKey, keyspaceKey}, multi) => {
+      }, async (req, res, {account, keyspace, accountKey, keyspaceKey}) => {
          const [keys] = await this.redis.multiExecAsync(multi => {
             multi.keys(this.keyspaceKey(account, keyspace, '*'));
          });

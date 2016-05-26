@@ -1292,7 +1292,7 @@ var _class = function () {
             key: 'register-keyspace',
             access: 'admin'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee25(req, res, reqx, multi) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee25(req, res, reqx) {
                var time, account, keyspace, accountKey, replies;
                return regeneratorRuntime.wrap(function _callee25$(_context25) {
                   while (1) {
@@ -1304,12 +1304,10 @@ var _class = function () {
                            accountKey = reqx.accountKey;
 
                            _this5.logger.debug('command', reqx);
-                           _this5.logger.debug('hsetnx', accountKey);
+                           _this5.logger.debug('hsetnx', accountKey, time);
                            _context25.next = 8;
                            return _this5.redis.multiExecAsync(function (multi) {
-                              _this5.logger.debug('hsetnx', accountKey);
                               multi.hsetnx(accountKey, 'registered', time);
-                              _this5.logger.debug('hsetnx', accountKey);
                            });
 
                         case 8:
@@ -1323,7 +1321,7 @@ var _class = function () {
                   }
                }, _callee25, _this5);
             }));
-            return function (_x40, _x41, _x42, _x43) {
+            return function (_x40, _x41, _x42) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1331,7 +1329,7 @@ var _class = function () {
             key: 'deregister-keyspace',
             access: 'admin'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee26(req, res, _ref13, multi) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee26(req, res, _ref13) {
                var account = _ref13.account;
                var keyspace = _ref13.keyspace;
                var accountKey = _ref13.accountKey;
@@ -1387,7 +1385,7 @@ var _class = function () {
                   }
                }, _callee26, _this5);
             }));
-            return function (_x44, _x45, _x46, _x47) {
+            return function (_x43, _x44, _x45) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1432,7 +1430,7 @@ var _class = function () {
                   }
                }, _callee27, _this5);
             }));
-            return function (_x48, _x49) {
+            return function (_x46, _x47) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1462,7 +1460,7 @@ var _class = function () {
                   }
                }, _callee28, _this5);
             }));
-            return function (_x50, _x51, _x52) {
+            return function (_x48, _x49, _x50) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1506,7 +1504,7 @@ var _class = function () {
                   }
                }, _callee29, _this5);
             }));
-            return function (_x53, _x54, _x55) {
+            return function (_x51, _x52, _x53) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1561,7 +1559,7 @@ var _class = function () {
                   }
                }, _callee30, _this5);
             }));
-            return function (_x56, _x57, _x58) {
+            return function (_x54, _x55, _x56) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1616,7 +1614,7 @@ var _class = function () {
                   }
                }, _callee31, _this5);
             }));
-            return function (_x59, _x60, _x61) {
+            return function (_x57, _x58, _x59) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1650,7 +1648,7 @@ var _class = function () {
                   }
                }, _callee32, _this5);
             }));
-            return function (_x62, _x63, _x64) {
+            return function (_x60, _x61, _x62) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1684,7 +1682,7 @@ var _class = function () {
                   }
                }, _callee33, _this5);
             }));
-            return function (_x65, _x66, _x67) {
+            return function (_x63, _x64, _x65) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1731,7 +1729,7 @@ var _class = function () {
                   }
                }, _callee34, _this5);
             }));
-            return function (_x68, _x69, _x70) {
+            return function (_x66, _x67, _x68) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1762,7 +1760,7 @@ var _class = function () {
                   }
                }, _callee35, _this5);
             }));
-            return function (_x71, _x72, _x73) {
+            return function (_x69, _x70, _x71) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1804,7 +1802,7 @@ var _class = function () {
                   }
                }, _callee36, _this5);
             }));
-            return function (_x74, _x75, _x76) {
+            return function (_x72, _x73, _x74) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1838,7 +1836,7 @@ var _class = function () {
                   }
                }, _callee37, _this5);
             }));
-            return function (_x77, _x78, _x79) {
+            return function (_x75, _x76, _x77) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1880,7 +1878,7 @@ var _class = function () {
                   }
                }, _callee38, _this5);
             }));
-            return function (_x80, _x81, _x82) {
+            return function (_x78, _x79, _x80) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1908,7 +1906,7 @@ var _class = function () {
                   }
                }, _callee39, _this5);
             }));
-            return function (_x83, _x84, _x85) {
+            return function (_x81, _x82, _x83) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1941,7 +1939,7 @@ var _class = function () {
                   }
                }, _callee40, _this5);
             }));
-            return function (_x86, _x87, _x88) {
+            return function (_x84, _x85, _x86) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2001,7 +1999,7 @@ var _class = function () {
                   }
                }, _callee41, _this5);
             }));
-            return function (_x89, _x90, _x91) {
+            return function (_x87, _x88, _x89) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2029,7 +2027,7 @@ var _class = function () {
                   }
                }, _callee42, _this5);
             }));
-            return function (_x92, _x93, _x94) {
+            return function (_x90, _x91, _x92) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2056,7 +2054,7 @@ var _class = function () {
                   }
                }, _callee43, _this5);
             }));
-            return function (_x95, _x96, _x97) {
+            return function (_x93, _x94, _x95) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2084,7 +2082,7 @@ var _class = function () {
                   }
                }, _callee44, _this5);
             }));
-            return function (_x98, _x99, _x100) {
+            return function (_x96, _x97, _x98) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2118,7 +2116,7 @@ var _class = function () {
                   }
                }, _callee45, _this5);
             }));
-            return function (_x101, _x102, _x103) {
+            return function (_x99, _x100, _x101) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2146,7 +2144,7 @@ var _class = function () {
                   }
                }, _callee46, _this5);
             }));
-            return function (_x104, _x105, _x106) {
+            return function (_x102, _x103, _x104) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2186,7 +2184,7 @@ var _class = function () {
                   }
                }, _callee47, _this5);
             }));
-            return function (_x107, _x108, _x109, _x110) {
+            return function (_x105, _x106, _x107, _x108) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2214,7 +2212,7 @@ var _class = function () {
                   }
                }, _callee48, _this5);
             }));
-            return function (_x111, _x112, _x113) {
+            return function (_x109, _x110, _x111) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2247,7 +2245,7 @@ var _class = function () {
                   }
                }, _callee49, _this5);
             }));
-            return function (_x114, _x115, _x116) {
+            return function (_x112, _x113, _x114) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2289,7 +2287,7 @@ var _class = function () {
                   }
                }, _callee50, _this5);
             }));
-            return function (_x117, _x118, _x119) {
+            return function (_x115, _x116, _x117) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2322,7 +2320,7 @@ var _class = function () {
                   }
                }, _callee51, _this5);
             }));
-            return function (_x120, _x121, _x122) {
+            return function (_x118, _x119, _x120) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2356,7 +2354,7 @@ var _class = function () {
                   }
                }, _callee52, _this5);
             }));
-            return function (_x123, _x124, _x125) {
+            return function (_x121, _x122, _x123) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2388,7 +2386,7 @@ var _class = function () {
                   }
                }, _callee53, _this5);
             }));
-            return function (_x126, _x127, _x128, _x129) {
+            return function (_x124, _x125, _x126, _x127) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2415,7 +2413,7 @@ var _class = function () {
                   }
                }, _callee54, _this5);
             }));
-            return function (_x130, _x131, _x132) {
+            return function (_x128, _x129, _x130) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2442,7 +2440,7 @@ var _class = function () {
                   }
                }, _callee55, _this5);
             }));
-            return function (_x133, _x134, _x135) {
+            return function (_x131, _x132, _x133) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2480,7 +2478,7 @@ var _class = function () {
                   }
                }, _callee56, _this5);
             }));
-            return function (_x136, _x137, _x138) {
+            return function (_x134, _x135, _x136) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2518,7 +2516,7 @@ var _class = function () {
                   }
                }, _callee57, _this5);
             }));
-            return function (_x139, _x140, _x141) {
+            return function (_x137, _x138, _x139) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2545,7 +2543,7 @@ var _class = function () {
                   }
                }, _callee58, _this5);
             }));
-            return function (_x142, _x143, _x144) {
+            return function (_x140, _x141, _x142) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2585,7 +2583,7 @@ var _class = function () {
                   }
                }, _callee59, _this5);
             }));
-            return function (_x145, _x146, _x147, _x148) {
+            return function (_x143, _x144, _x145, _x146) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2622,7 +2620,7 @@ var _class = function () {
                   }
                }, _callee60, _this5);
             }));
-            return function (_x149, _x150, _x151) {
+            return function (_x147, _x148, _x149) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2648,7 +2646,7 @@ var _class = function () {
                   }
                }, _callee61, _this5);
             }));
-            return function (_x152, _x153, _x154) {
+            return function (_x150, _x151, _x152) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2675,7 +2673,7 @@ var _class = function () {
                   }
                }, _callee62, _this5);
             }));
-            return function (_x155, _x156, _x157) {
+            return function (_x153, _x154, _x155) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2702,7 +2700,7 @@ var _class = function () {
                   }
                }, _callee63, _this5);
             }));
-            return function (_x158, _x159, _x160) {
+            return function (_x156, _x157, _x158) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2729,7 +2727,7 @@ var _class = function () {
                   }
                }, _callee64, _this5);
             }));
-            return function (_x161, _x162, _x163) {
+            return function (_x159, _x160, _x161) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2759,7 +2757,7 @@ var _class = function () {
                   }
                }, _callee65, _this5);
             }));
-            return function (_x164, _x165, _x166) {
+            return function (_x162, _x163, _x164) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2791,7 +2789,7 @@ var _class = function () {
                   }
                }, _callee66, _this5);
             }));
-            return function (_x167, _x168, _x169) {
+            return function (_x165, _x166, _x167) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2840,7 +2838,7 @@ var _class = function () {
                   }
                }, _callee67, _this5);
             }));
-            return function (_x170, _x171, _x172) {
+            return function (_x168, _x169, _x170) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2888,7 +2886,7 @@ var _class = function () {
                   }
                }, _callee68, _this5);
             }));
-            return function (_x173, _x174, _x175) {
+            return function (_x171, _x172, _x173) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2928,7 +2926,7 @@ var _class = function () {
                   }
                }, _callee69, _this5);
             }));
-            return function (_x176, _x177, _x178) {
+            return function (_x174, _x175, _x176) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2968,7 +2966,7 @@ var _class = function () {
                   }
                }, _callee70, _this5);
             }));
-            return function (_x179, _x180, _x181) {
+            return function (_x177, _x178, _x179) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3004,7 +3002,7 @@ var _class = function () {
                   }
                }, _callee71, _this5);
             }));
-            return function (_x182, _x183, _x184) {
+            return function (_x180, _x181, _x182) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3044,7 +3042,7 @@ var _class = function () {
                   }
                }, _callee72, _this5);
             }));
-            return function (_x185, _x186, _x187) {
+            return function (_x183, _x184, _x185) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3084,7 +3082,7 @@ var _class = function () {
                   }
                }, _callee73, _this5);
             }));
-            return function (_x188, _x189, _x190) {
+            return function (_x186, _x187, _x188) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3129,7 +3127,7 @@ var _class = function () {
                   }
                }, _callee74, _this5);
             }));
-            return function (_x191, _x192, _x193) {
+            return function (_x189, _x190, _x191) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3162,7 +3160,7 @@ var _class = function () {
                   }
                }, _callee75, _this5);
             }));
-            return function (_x194, _x195, _x196) {
+            return function (_x192, _x193, _x194) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3195,7 +3193,7 @@ var _class = function () {
                   }
                }, _callee76, _this5);
             }));
-            return function (_x197, _x198, _x199) {
+            return function (_x195, _x196, _x197) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3228,7 +3226,7 @@ var _class = function () {
                   }
                }, _callee77, _this5);
             }));
-            return function (_x200, _x201, _x202) {
+            return function (_x198, _x199, _x200) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3261,7 +3259,7 @@ var _class = function () {
                   }
                }, _callee78, _this5);
             }));
-            return function (_x203, _x204, _x205) {
+            return function (_x201, _x202, _x203) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3296,7 +3294,7 @@ var _class = function () {
                      }
                   }, _callee79, _this5);
                }));
-               return function (_x206, _x207, _x208) {
+               return function (_x204, _x205, _x206) {
                   return ref.apply(this, arguments);
                };
             }());
@@ -3331,7 +3329,7 @@ var _class = function () {
                   }
                }, _callee80, _this5);
             }));
-            return function (_x209, _x210, _x211) {
+            return function (_x207, _x208, _x209) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3365,7 +3363,7 @@ var _class = function () {
                   }
                }, _callee81, _this5);
             }));
-            return function (_x212, _x213, _x214) {
+            return function (_x210, _x211, _x212) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3399,7 +3397,7 @@ var _class = function () {
                   }
                }, _callee82, _this5);
             }));
-            return function (_x215, _x216, _x217) {
+            return function (_x213, _x214, _x215) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3435,7 +3433,7 @@ var _class = function () {
                   }
                }, _callee83, _this5);
             }));
-            return function (_x218, _x219, _x220) {
+            return function (_x216, _x217, _x218) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3468,7 +3466,7 @@ var _class = function () {
                   }
                }, _callee84, _this5);
             }));
-            return function (_x221, _x222, _x223) {
+            return function (_x219, _x220, _x221) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3564,7 +3562,7 @@ var _class = function () {
                   }
                }, _callee85, _this6, [[0, 15]]);
             }));
-            return function (_x224, _x225) {
+            return function (_x222, _x223) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3616,7 +3614,7 @@ var _class = function () {
                   }
                }, _callee86, _this7, [[0, 9]]);
             }));
-            return function (_x226, _x227) {
+            return function (_x224, _x225) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3644,7 +3642,7 @@ var _class = function () {
                   }
                }, _callee87, _this8);
             }));
-            return function (_x228, _x229) {
+            return function (_x226, _x227) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3667,7 +3665,7 @@ var _class = function () {
                   }
                }, _callee88, _this8);
             }));
-            return function (_x230, _x231) {
+            return function (_x228, _x229) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3690,7 +3688,7 @@ var _class = function () {
                   }
                }, _callee89, _this8);
             }));
-            return function (_x232, _x233) {
+            return function (_x230, _x231) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3712,7 +3710,7 @@ var _class = function () {
                   }
                }, _callee90, _this8);
             }));
-            return function (_x234, _x235) {
+            return function (_x232, _x233) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3786,7 +3784,7 @@ var _class = function () {
                   }
                }, _callee91, _this8);
             }));
-            return function (_x236, _x237) {
+            return function (_x234, _x235) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3859,7 +3857,7 @@ var _class = function () {
                      }
                   }, _callee92, _this10);
                }));
-               return function (_x238, _x239, _x240) {
+               return function (_x236, _x237, _x238) {
                   return ref.apply(this, arguments);
                };
             }());
@@ -3999,7 +3997,7 @@ var _class = function () {
             }, _callee94, this, [[0, 7]]);
          }));
 
-         function registerAccount(_x241, _x242) {
+         function registerAccount(_x239, _x240) {
             return ref.apply(this, arguments);
          }
 
@@ -4154,7 +4152,7 @@ var _class = function () {
                                  }
                               }, _callee96, _this12, [[0, 7]]);
                            }));
-                           return function (_x245, _x246) {
+                           return function (_x243, _x244) {
                               return ref.apply(this, arguments);
                            };
                         }());
@@ -4167,7 +4165,7 @@ var _class = function () {
             }, _callee97, this);
          }));
 
-         function addAccountCommand(_x243, _x244) {
+         function addAccountCommand(_x241, _x242) {
             return ref.apply(this, arguments);
          }
 
@@ -4415,7 +4413,7 @@ var _class = function () {
             }, _callee99, this, [[14, 21]]);
          }));
 
-         function registerEphemeral(_x248, _x249, _x250) {
+         function registerEphemeral(_x246, _x247, _x248) {
             return ref.apply(this, arguments);
          }
 
@@ -4753,7 +4751,7 @@ var _class = function () {
                   }
                }, _callee101, _this14, [[0, 7]]);
             }));
-            return function (_x251, _x252) {
+            return function (_x249, _x250) {
                return ref.apply(this, arguments);
             };
          }();
@@ -4833,7 +4831,7 @@ var _class = function () {
             }, _callee102, this);
          }));
 
-         function migrateKeyspace(_x253) {
+         function migrateKeyspace(_x251) {
             return ref.apply(this, arguments);
          }
 
@@ -5190,7 +5188,7 @@ var _class = function () {
             }, _callee103, this);
          }));
 
-         function sendResult(_x254, _x255, _x256, _x257, _x258) {
+         function sendResult(_x252, _x253, _x254, _x255, _x256) {
             return ref.apply(this, arguments);
          }
 
