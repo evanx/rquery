@@ -91,7 +91,7 @@ where we set `rdemo` environment variable with the keyspace URL:
 ```
 https://demo.redishub.com/ak/hub/63carsebfmrf
 ```
-where an account and keyspace have been randomly generated. The account name `hub` is a publically shared account.
+where the keyspace name has been randomly generated. The account name `hub` is a publically shared account.
 
 Then we can use `curl $rdemo` as follows:
 ```shell
