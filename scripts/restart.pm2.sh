@@ -2,7 +2,10 @@
 set -u -e
 
 waitCommitted() {
-  sleep 2
+  ls -l ~/tmp/rquery-notify
+  cat ~/tmp/rquery-notify
+  echo "Sleeping for 8 seconds"
+  sleep 8
   if [ -f ~/tmp/rquery-notify ]
   then
     ls -l ~/tmp/rquery-notify 

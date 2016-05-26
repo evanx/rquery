@@ -2,12 +2,14 @@
 set -u -e
 
 c2notify() {
-  echo NOTIFY `date +%T` "$*" 
   echo `date +%T` $2 | ssh $1 'cat > tmp/rquery-notify'
-  echo NOTIFY `date +%T` "$*" DONE
 }
 
+startTimestamp=`date +%s`
 c2notify joy committing
+timestamp=`date +%s`
+duration=`echo "$timestamp - $startTimestamp" | bc`
+echo NOTIFY $duration "$*"
 
 npm run build 
 
