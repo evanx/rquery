@@ -3148,6 +3148,9 @@ var _class = function () {
                            reqx.hints = [{
                               uri: ['zrange', reqx.key, 0, 10],
                               description: 'to range items in the zset'
+                           }, {
+                              uri: ['help'],
+                              description: 'to view sample keyspace commands'
                            }];
                            _context78.next = 3;
                            return _this5.redis.zcardAsync(reqx.keyspaceKey);
@@ -3319,6 +3322,9 @@ var _class = function () {
                            }, {
                               uri: ['zcard', reqx.key],
                               description: 'to get the cardinality of the zset'
+                           }, {
+                              uri: ['help'],
+                              description: 'to view sample keyspace commands'
                            }];
                            _context83.next = 3;
                            return _this5.redis.zrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);

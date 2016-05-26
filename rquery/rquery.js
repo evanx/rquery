@@ -1183,6 +1183,10 @@ export default class {
             {
                uri: ['zrange', reqx.key, 0, 10],
                description: 'to range items in the zset'
+            },
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
             }
          ];
          return await this.redis.zcardAsync(reqx.keyspaceKey);
@@ -1269,6 +1273,10 @@ export default class {
             {
                uri: ['zcard', reqx.key],
                description: 'to get the cardinality of the zset'
+            },
+            {
+               uri: ['help'],
+               description: 'to view sample keyspace commands'
             }
          ];
          return await this.redis.zrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
