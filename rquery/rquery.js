@@ -488,7 +488,9 @@ export default class {
       this.addKeyspaceCommand({
          key: 'register-keyspace',
          access: 'admin'
-      }, async (req, res, {time, account, keyspace, accountKey}, multi) => {
+      }, async (req, res, reqx, multi) => {
+         const {time, account, keyspace, accountKey} = reqx;
+         logger.debug('command', reqx, multi);
          const replies = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', time);
          });

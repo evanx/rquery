@@ -50,6 +50,20 @@ function renderUrls(urls) {
 
 function renderPaths(paths) {
    return paths.map(function (path, index) {
+      var pathPaths = path.split('/');
+      if (pathPaths[1] === 'ak') {
+         var akPath = pathPaths.slice(0, 3).join('/');
+         if (pathPaths.length > 4) {
+            var commandKey = pathPaths[4];
+            if (pathPaths.length > 6) {
+               var params = pathPaths.slice(6).map(function (param) {
+                  return param.replace(/^:/g, ' ');
+               });
+               return Hs.div(_styles2.default.routes.path, [Hc.b(commandKey), Hc.tt(params)]);
+            }
+            return Hs.div(_styles2.default.routes.path, [Hc.b(commandKey)]);
+         }
+      }
       return Hs.span(_styles2.default.routes.path, path);
    });
 }

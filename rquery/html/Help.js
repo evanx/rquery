@@ -55,6 +55,18 @@ function renderUrls(urls) {
 
 function renderPaths(paths) {
    return paths.map((path, index) => {
+      const pathPaths = path.split('/');
+      if (pathPaths[1] === 'ak') {
+         const akPath = pathPaths.slice(0, 3).join('/');
+         if (pathPaths.length > 4) {
+           const commandKey = pathPaths[4];
+           if (pathPaths.length > 6) {
+              const params = pathPaths.slice(6).map(param => param.replace(/^:/g, ' '));
+              return Hs.div(styles.routes.path, [Hc.b(commandKey), Hc.tt(params)]);
+           }
+           return Hs.div(styles.routes.path, [Hc.b(commandKey)]);
+        }
+      }
       return Hs.span(styles.routes.path, path);
    })
 }

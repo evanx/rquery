@@ -12,29 +12,66 @@ Of course we must use JSX, or its `DOM` methods. This is just for fun.
 Let's consider React-type stylesheets.
 
 ```javascript
-module.exports = {
+
+export const styles = {
    resets: {
       a: {
-         visited: {
+         visited: { // recognised pseudo
             textDecoration: 'none',
             color: '#800000'
          }
       }
    },
+   resultLine: {
+      pseudo: 'nth-child(2)',
+      background: '#c0c0c0',
+   },
    status: {
       container: {
+         assign: [styles.other, require('other').container],
          fontSize: 14,
-         fontStyle: 'italic',
-         color: '#424242',
-         min768: {
-            padding: 10   
+         media: {
+            minWidth1024: {
+               padding: 10,
+            },
          }
       }
    }
-}
+};
 ```
-where we should nested styles and also support "media" e.g. `min768` is a user-defined tag for sa device groups.
-and also nested styles.
+where we nested styles, and support custom keys:
+- pseudo class names
+- `assign` to coalesce styles via `Object.assign()`
+- `pseudo` to specify CSS pseudo class names
+
+We must support "media" stylesheets e.g. `minWidth1024` is a user-defined tag for some device groups, to generate a stylesheet called `minWidth1024.` That stylesheet can be included by clients on demand using a CSS media query in its `link` element.
+
+So we might use in-line styles to be mobile-first, and provide an extra stylesheet for tablets, desktops etc.
+
+While we could use the HTTP `Vary: User-Agent` header for CDN pages, there are very many mobile devices and that makes caching less effective.
+
+Alternatively we could redirect non-mobile users to a different domain e.g. `w.mysite.com` which as `link rel=canonical` to `mysite.com.` Perhaps even `www.mysite.com` for non-mobile, where we promote `mysite.com` as the default ;)
+
+#### Style objects
+
+We should transform such stylesheets into a style object:
+```javascript
+  status: {
+     key: 'status',
+     container: {
+        parentKeys: ['status'],
+        key: 'container',
+        css: 'fontSize:14px',
+        styles: {
+           fontSize: 14,
+        },
+```
+where:
+- record each set of original style properties as `styles`
+- record the keys and parent keys
+- cache the rendered `css`
+
+When rendering a document, we can build class names e.g. `status-container` if we so wish.
 
 
 #### Elements
