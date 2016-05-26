@@ -18,11 +18,15 @@ var _styles2 = _interopRequireDefault(_styles);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var logger = Loggers.create(module.filename);
+var CustomCommandKeys = ['ttls'];
+
+var logger = Loggers.create(module.filename, 'info');
 
 function obscureKeyspaceLabel(reqx) {
    if (reqx.account === 'hub' && reqx.keyspace.length > 6) {
@@ -37,12 +41,35 @@ function render(props) {
 
    var keyspaceLabel = obscureKeyspaceLabel(props.reqx);
    logger.debug('props', keyspaceLabel, Object.keys(props), Object.keys(Hx));
+   var commands = props.result.commands.filter(function (command) {
+      return !['help'].includes(command.key);
+   }).filter(function (command) {
+      return !command.key.startsWith('verify');
+   }).filter(function (command) {
+      return !command.key.startsWith('gen');
+   }).filter(function (command) {
+      return !command.key.includes('keyspace');
+   }).filter(function (command) {
+      return !command.key.includes('register');
+   });
+   var customCommands = commands.filter(function (command) {
+      return isCustomCommand(command);
+   });
+   logger.debug('customCommands', customCommands.map(function (command) {
+      return command.key;
+   }).join(' '));
+   var standardCommands = commands.filter(function (command) {
+      return !isCustomCommand(command);
+   });
+   logger.debug('standardCommands', standardCommands.map(function (command) {
+      return command.key;
+   }).join(' '));
    return Object.assign(props, (_Object$assign = {
       title: [props.reqx.account, keyspaceLabel].join('/'),
       heading: [Hc.b(props.reqx.account), Hs.tt(_styles2.default.header.keyspace, keyspaceLabel)].join(''),
       helpPath: '/routes',
       icon: 'database'
-   }, _defineProperty(_Object$assign, 'helpPath', ['routes']), _defineProperty(_Object$assign, 'content', [Hc.h3(props.result.message), He.p(Styles.meta('repeat', _styles2.default.result.description), props.result.description), renderUrls(props.result.exampleUrls), He.br(), renderCommands(props.result.keyspaceCommands)]), _Object$assign));
+   }, _defineProperty(_Object$assign, 'helpPath', ['routes']), _defineProperty(_Object$assign, 'content', [Hc.h3(props.result.message), He.p(Styles.meta('repeat', _styles2.default.result.description), props.result.description), renderUrls(props.result.exampleUrls), He.br(), Hs.h4(_styles2.default.result.message, props.result.commandReferenceMessage), renderStandardCommands(standardCommands), Hs.h4(_styles2.default.result.message, props.result.customCommandHeading), renderCustomCommands(customCommands)]), _Object$assign));
 }
 
 function renderUrls(urls) {
@@ -64,30 +91,38 @@ function renderUrls(urls) {
    });
 }
 
-var ExtraCommandNames = ['help', 'ttls'];
-
-function getCommandLink(command) {
-   logger.debug('getCommandLink', command, command.match(/^[a-z]+/)[1]);
-   if (command) {
-      if (command.match(/^[a-z]+/)) {
-         command = command.match(/^([a-z]+)/)[1];
-      }
-      if (ExtraCommandNames.includes(command)) {} else {
-         if (command.match(/-/)) {} else {
-            return 'http://redis.io/commands/' + command.toUpperCase();
-         }
-      }
+function isCustomCommand(command) {
+   if (command.key.indexOf('-') > 0) {
+      return true;
    }
 }
 
-function renderCommands(commands) {
-   return commands.map(function (command, index) {
+function getCommandLink(command) {
+   return 'http://redis.io/commands/' + command.key.toUpperCase();
+}
+
+function renderCommandString(command) {
+   if (!command.params) {
+      return command.key;
+   }
+   return [command.key].concat(_toConsumableArray(command.params)).join(' ');
+}
+
+function renderCustomCommands(commands) {
+   return commands.map(function (command) {
+      var commandString = renderCommandString(command);
+      return Hs.div(_styles2.default.keyspaceHelp.command, Hc.span(commandString));
+   });
+}
+
+function renderStandardCommands(commands) {
+   return commands.map(function (command) {
+      logger.debug('standardCommand', command.key);
+      var commandString = renderCommandString(command);
+      logger.debug('standardCommand', command.key, commandString);
       var href = getCommandLink(command);
-      if (!href) {
-         return Hs.div(_styles2.default.keyspaceHelp.command, Hc.span(command));
-      } else {
-         return Hs.div(_styles2.default.keyspaceHelp.command, He.a({ href: href }, command));
-      }
+      logger.debug('standardCommand', command.key, href);
+      return Hs.div(_styles2.default.keyspaceHelp.command, He.a({ href: href }, commandString));
    });
 }
 //# sourceMappingURL=KeyspaceHelp.js.map

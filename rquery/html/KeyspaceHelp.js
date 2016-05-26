@@ -1,7 +1,9 @@
 
 import styles from './styles';
 
-const logger = Loggers.create(module.filename);
+const CustomCommandKeys = ['ttls'];
+
+const logger = Loggers.create(module.filename, 'info');
 
 export function obscureKeyspaceLabel(reqx) {
    if (reqx.account === 'hub' && reqx.keyspace.length > 6) {
@@ -14,6 +16,18 @@ export function obscureKeyspaceLabel(reqx) {
 export function render(props) {
    let keyspaceLabel = obscureKeyspaceLabel(props.reqx);
    logger.debug('props', keyspaceLabel, Object.keys(props), Object.keys(Hx));
+   const commands = props.result.commands
+   .filter(command => !['help'].includes(command.key))
+   .filter(command => !command.key.startsWith('verify'))
+   .filter(command => !command.key.startsWith('gen'))
+   .filter(command => !command.key.includes('keyspace'))
+   .filter(command => !command.key.includes('register'));
+   const customCommands = commands
+   .filter(command => isCustomCommand(command));
+   logger.debug('customCommands', customCommands.map(command => command.key).join(' '));
+   const standardCommands = commands
+   .filter(command => !isCustomCommand(command));
+   logger.debug('standardCommands', standardCommands.map(command => command.key).join(' '));
    return Object.assign(props, {
       title: [props.reqx.account, keyspaceLabel].join('/'),
       heading: [Hc.b(props.reqx.account), Hs.tt(styles.header.keyspace, keyspaceLabel)].join(''),
@@ -25,7 +39,10 @@ export function render(props) {
          He.p(Styles.meta('repeat', styles.result.description), props.result.description),
          renderUrls(props.result.exampleUrls),
          He.br(),
-         renderCommands(props.result.keyspaceCommands)
+         Hs.h4(styles.result.message, props.result.commandReferenceMessage),
+         renderStandardCommands(standardCommands),
+         Hs.h4(styles.result.message, props.result.customCommandHeading),
+         renderCustomCommands(customCommands),
       ]
    });
 }
@@ -49,31 +66,37 @@ function renderUrls(urls) {
    });
 }
 
-const ExtraCommandNames = ['help', 'ttls'];
-
-function getCommandLink(command) {
-   logger.debug(`getCommandLink`, command, command.match(/^[a-z]+/)[1]);
-   if (command) {
-      if (command.match(/^[a-z]+/)) {
-         command = command.match(/^([a-z]+)/)[1];
-      }
-      if (ExtraCommandNames.includes(command)) {
-      } else {
-         if (command.match(/-/)) {
-         } else {
-            return 'http://redis.io/commands/' + command.toUpperCase();
-         }
-      }
+function isCustomCommand(command) {
+   if (command.key.indexOf('-') > 0) {
+      return true;
    }
 }
 
-function renderCommands(commands) {
-   return commands.map((command, index) => {
+function getCommandLink(command) {
+   return 'http://redis.io/commands/' + command.key.toUpperCase();
+}
+
+function renderCommandString(command) {
+   if (!command.params) {
+      return command.key;
+   }
+   return [command.key, ...command.params].join(' ');
+}
+
+function renderCustomCommands(commands) {
+   return commands.map(command => {
+      const commandString = renderCommandString(command);
+      return Hs.div(styles.keyspaceHelp.command, Hc.span(commandString));
+   });
+}
+
+function renderStandardCommands(commands) {
+   return commands.map(command => {
+      logger.debug('standardCommand', command.key);
+      const commandString = renderCommandString(command);
+      logger.debug('standardCommand', command.key, commandString);
       const href = getCommandLink(command);
-      if (!href) {
-         return Hs.div(styles.keyspaceHelp.command, Hc.span(command));
-      } else {
-         return Hs.div(styles.keyspaceHelp.command, He.a({href}, command));
-      }
-   })
+      logger.debug('standardCommand', command.key, href);
+      return Hs.div(styles.keyspaceHelp.command, He.a({href}, commandString));
+   });
 }

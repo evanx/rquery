@@ -447,6 +447,8 @@ export default class {
          }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
          const message = `Try sample endpoints below on this keyspace.`;
+         const commandReferenceMessage = `Read the Redis.io docs for the following commands`;
+         const customCommandHeading = `Custom commands`;
          const description = [`You can set, add and view keys, sets, lists, zsets, hashes etc.`,
             `Also edit the URL in the location bar to try other combinations.`
          ];
@@ -469,7 +471,10 @@ export default class {
             `${hostUrl}/ak/${account}/${keyspace}/zrevrange/myzset1/0/-1`,
             `${hostUrl}/ak/${account}/${keyspace}/ttls`,
          ];
-         return {message, description, exampleUrls, keyspaceCommands: this.listCommands('keyspace')};
+         return {message, commandReferenceMessage, customCommandHeading, description, exampleUrls,
+            commands: this.commands,
+            keyspaceCommands: this.listCommands('keyspace')
+         };
       });
       this.addKeyspaceCommand({
          key: 'register-keyspace',

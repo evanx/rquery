@@ -1224,7 +1224,7 @@ var _class = function () {
             }()
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee24(req, res, reqx) {
-               var _req$params3, account, keyspace, hostUrl, message, description, exampleUrls;
+               var _req$params3, account, keyspace, hostUrl, message, commandReferenceMessage, customCommandHeading, description, exampleUrls;
 
                return regeneratorRuntime.wrap(function _callee24$(_context24) {
                   while (1) {
@@ -1242,11 +1242,16 @@ var _class = function () {
                               return command.key;
                            }).join('/'));
                            message = 'Try sample endpoints below on this keyspace.';
+                           commandReferenceMessage = 'Read the Redis.io docs for the following commands';
+                           customCommandHeading = 'Custom commands';
                            description = ['You can set, add and view keys, sets, lists, zsets, hashes etc.', 'Also edit the URL in the location bar to try other combinations.'];
                            exampleUrls = [hostUrl + '/ak/' + account + '/' + keyspace + '/set/mykey1/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/get/mykey1', hostUrl + '/ak/' + account + '/' + keyspace + '/set-json-query/myobject1?name=myname&id=12346', hostUrl + '/ak/' + account + '/' + keyspace + '/get-json/myobject1', hostUrl + '/ak/' + account + '/' + keyspace + '/sadd/myset1/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/smembers/myset1', hostUrl + '/ak/' + account + '/' + keyspace + '/lpush/mylist1/myvalue', hostUrl + '/ak/' + account + '/' + keyspace + '/lrange/mylist1/0/10', hostUrl + '/ak/' + account + '/' + keyspace + '/rrange/mylist1/0/10', hostUrl + '/ak/' + account + '/' + keyspace + '/hset/myhashes1/field1/value1', hostUrl + '/ak/' + account + '/' + keyspace + '/hsetnx/myhashes1/field2/value2', hostUrl + '/ak/' + account + '/' + keyspace + '/hgetall/myhashes1', hostUrl + '/ak/' + account + '/' + keyspace + '/zadd/myzset1/10/member10', hostUrl + '/ak/' + account + '/' + keyspace + '/zadd/myzset1/20/member20', hostUrl + '/ak/' + account + '/' + keyspace + '/zrange/myzset1/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/zrevrange/myzset1/0/-1', hostUrl + '/ak/' + account + '/' + keyspace + '/ttls'];
-                           return _context24.abrupt('return', { message: message, description: description, exampleUrls: exampleUrls, keyspaceCommands: _this5.listCommands('keyspace') });
+                           return _context24.abrupt('return', { message: message, commandReferenceMessage: commandReferenceMessage, customCommandHeading: customCommandHeading, description: description, exampleUrls: exampleUrls,
+                              commands: _this5.commands,
+                              keyspaceCommands: _this5.listCommands('keyspace')
+                           });
 
-                        case 10:
+                        case 12:
                         case 'end':
                            return _context24.stop();
                      }
