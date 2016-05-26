@@ -134,7 +134,7 @@ var styles = {
          backgroundColor: '#ffffff'
       },
       reqKey: {
-         padding: [8, 0, 4, 8],
+         padding: [8, 0, 4, 4],
          fontSize: 20,
          fontWeight: 'bold'
       },
@@ -161,6 +161,29 @@ var styles = {
          },
          td: {
             backgroundColor: '#848484'
+         }
+      },
+      hint: {
+         container: {
+            paddingTop: 20,
+            fontSize: 16,
+            color: '#424242'
+         },
+         message: {
+            fontSize: 16
+         },
+         description: {
+            paddingTop: 8,
+            fontSize: 16,
+            fontStyle: 'italic',
+            color: '#424242'
+         },
+         link: {
+            fontSize: 14
+         },
+         uri: {
+            fontSize: 12,
+            fontFamily: 'monospace'
          }
       }
    }

@@ -9,10 +9,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 exports.html = html;
+exports.ms = ms;
+exports.onClick = onClick;
 exports.renderPath = renderPath;
 exports.element = element;
 exports.createElements = createElements;
 exports.createStyleElements = createStyleElements;
+exports.createMetaElements = createMetaElements;
 exports.createMetaStyleElements = createMetaStyleElements;
 exports.createMetaContentElements = createMetaContentElements;
 exports.createContentElements = createContentElements;
@@ -26,7 +29,7 @@ var logger = Loggers.create(__filename, 'info');
 
 var SelfClosingElementNames = Strings.splitSpace('\n   area base basefont br hr input img link meta\n   ');
 
-var ElementNames = Strings.splitSpace('\n   html head meta link script body\n   header nav h1 h2 h3 h4 h5 h6\n   section article aside\n   table thead tbody th tr td\n   div span pre p hr br img i b tt\n   ');
+var ElementNames = Strings.splitSpace('\n   html head meta link script body\n   header nav h1 h2 h3 h4 h5 h6\n   section article aside\n   table thead tbody th tr td\n   div span pre p a hr br img i b tt\n   ');
 
 var Element = function Element(_ref) {
    var name = _ref.name;
@@ -109,6 +112,14 @@ function html(strings) {
    }, previousString);
 }
 
+function ms(meta, style) {
+   return { meta: meta, style: style };
+}
+
+function onClick(path) {
+   return 'window.location.pathname=\'' + path + '\'';
+}
+
 function renderPath(path) {
    if (lodash.isArray(path)) {
       return [''].concat(_toConsumableArray(path)).join('/');
@@ -125,13 +136,15 @@ function element(name, attributes) {
    if (!attributes) {
       return ['<', name, '/>'].join('');
    }
-   assert(lodash.isObject(attributes), 'attributes: ' + name);
 
    for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
       args[_key2 - 2] = arguments[_key2];
    }
 
    var children = lodash.compact(lodash.flatten(args));
+   if (!lodash.isObject(attributes)) {
+      throw { message: 'attributes: ' + (typeof attributes === 'undefined' ? 'undefined' : _typeof(attributes)), context: { name: name, attributes: attributes, children: children } };
+   }
    var attrs = Objects.kvs(attributes).filter(function (kv) {
       return kv.key !== 'meta';
    }).filter(function (kv) {
@@ -172,14 +185,22 @@ function renderElementChildren(name, attributes, attrs) {
    children = lodash.flatten(children);
    if (!attrs.length && !children.length) {
       if (isMeta(attributes, 'optional')) {} else {
-         return '<' + name + '/>';
+         if (SelfClosingElementNames.includes(name)) {
+            return '<' + name + '/>';
+         } else {
+            return '<' + name + '></' + name + '>';
+         }
       }
    } else if (attrs.length && children.length) {
-      content.push('<' + name + ' ' + attrs.join(' ') + '/>');
+      content.push('<' + name + ' ' + attrs.join(' ') + '>');
       content.push(joinContent(name, attributes, children));
       content.push('</' + name + '>');
    } else if (attrs.length) {
-      content.push('<' + name + ' ' + attrs.join(' ') + '/>');
+      if (SelfClosingElementNames.includes(name)) {
+         content.push('<' + name + ' ' + attrs.join(' ') + '/>');
+      } else {
+         content.push('<' + name + ' ' + attrs.join(' ') + '></' + name + '>');
+      }
    } else {
       content.push('<' + name + '>');
       content.push(joinContent(name, attributes, children));
@@ -260,11 +281,24 @@ function createStyleElements() {
    }, {});
 }
 
+function createMetaElements() {
+   return ElementNames.reduce(function (result, name) {
+      result[name] = function (meta, attributes) {
+         for (var _len9 = arguments.length, args = Array(_len9 > 2 ? _len9 - 2 : 0), _key9 = 2; _key9 < _len9; _key9++) {
+            args[_key9 - 2] = arguments[_key9];
+         }
+
+         return element.apply(undefined, [name, Object.assign({ meta: meta }, attributes)].concat(args));
+      };
+      return result;
+   }, {});
+}
+
 function createMetaStyleElements(meta) {
    return ElementNames.reduce(function (result, name) {
       result[name] = function (style) {
-         for (var _len9 = arguments.length, args = Array(_len9 > 1 ? _len9 - 1 : 0), _key9 = 1; _key9 < _len9; _key9++) {
-            args[_key9 - 1] = arguments[_key9];
+         for (var _len10 = arguments.length, args = Array(_len10 > 1 ? _len10 - 1 : 0), _key10 = 1; _key10 < _len10; _key10++) {
+            args[_key10 - 1] = arguments[_key10];
          }
 
          return element.apply(undefined, [name, { meta: meta, style: style }].concat(args));
@@ -276,8 +310,8 @@ function createMetaStyleElements(meta) {
 function createMetaContentElements(meta) {
    return ElementNames.reduce(function (result, name) {
       result[name] = function () {
-         for (var _len10 = arguments.length, args = Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
-            args[_key10] = arguments[_key10];
+         for (var _len11 = arguments.length, args = Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
+            args[_key11] = arguments[_key11];
          }
 
          return element.apply(undefined, [name, { meta: meta }].concat(args));
@@ -289,8 +323,8 @@ function createMetaContentElements(meta) {
 function createContentElements() {
    return ElementNames.reduce(function (result, name) {
       result[name] = function () {
-         for (var _len11 = arguments.length, args = Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
-            args[_key11] = arguments[_key11];
+         for (var _len12 = arguments.length, args = Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
+            args[_key12] = arguments[_key12];
          }
 
          return _content.apply(undefined, [name].concat(args));
@@ -302,6 +336,7 @@ function createContentElements() {
 function assignDeps(g) {
    g.He = createElements();
    g.Hs = createStyleElements();
+   g.Hm = createMetaElements();
    g.Hso = createMetaStyleElements('optional');
    g.Hc = createContentElements();
    g.Hco = createMetaContentElements('optional');

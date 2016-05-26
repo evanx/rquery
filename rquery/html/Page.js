@@ -20,7 +20,7 @@ export default function (props) {
    let article;
    if (reqx.helpPath) {
       const helpScript = `window.location.pathname='${reqx.helpPath}'`;
-      article = html`<article onClick=${helpScript}>${props.content}</article>`;
+      article = html`<article>${props.content}</article>`;
    } else {
       article = html`<article>${props.content}</article>`;
    }

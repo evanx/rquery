@@ -41,11 +41,7 @@ function createCssKeyRegexString() {
 // exports
 
 function meta(meta, style) {
-   if (!lodash.isString(style)) {
-      throw { message: 'style type: ' + (typeof style === 'undefined' ? 'undefined' : _typeof(style)), meta: meta, style: style };
-   } else {
-      return { meta: meta, style: style };
-   }
+   return { meta: meta, style: style };
 }
 
 function renderStyles(object) {

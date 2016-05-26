@@ -4,9 +4,8 @@ Object.defineProperty(exports, "__esModule", {
    value: true
 });
 
-var _templateObject = _taggedTemplateLiteral(['<article onClick=', '>', '</article>'], ['<article onClick=', '>', '</article>']),
-    _templateObject2 = _taggedTemplateLiteral(['<article>', '</article>'], ['<article>', '</article>']),
-    _templateObject3 = _taggedTemplateLiteral(['\n   <html>\n   <head>\n   <title>', '</title>\n   <style>', '</style>\n   <meta name="viewport" content=', '/>\n   </head>\n   <body>\n   ', '\n   ', '\n   </body>\n   </html>\n   '], ['\n   <html>\n   <head>\n   <title>', '</title>\n   <style>', '</style>\n   <meta name="viewport" content=', '/>\n   </head>\n   <body>\n   ', '\n   ', '\n   </body>\n   </html>\n   ']);
+var _templateObject = _taggedTemplateLiteral(['<article>', '</article>'], ['<article>', '</article>']),
+    _templateObject2 = _taggedTemplateLiteral(['\n   <html>\n   <head>\n   <title>', '</title>\n   <style>', '</style>\n   <meta name="viewport" content=', '/>\n   </head>\n   <body>\n   ', '\n   ', '\n   </body>\n   </html>\n   '], ['\n   <html>\n   <head>\n   <title>', '</title>\n   <style>', '</style>\n   <meta name="viewport" content=', '/>\n   </head>\n   <body>\n   ', '\n   ', '\n   </body>\n   </html>\n   ']);
 
 exports.default = function (props) {
    logger.debug('props', Object.keys(props));
@@ -15,13 +14,13 @@ exports.default = function (props) {
    var article = void 0;
    if (reqx.helpPath) {
       var helpScript = 'window.location.pathname=\'' + reqx.helpPath + '\'';
-      article = html(_templateObject, helpScript, props.content);
+      article = html(_templateObject, props.content);
    } else {
-      article = html(_templateObject2, props.content);
+      article = html(_templateObject, props.content);
    }
    var ua = props.req.get('user-agent');
    var styleSheet = Styles.getCachedUserAgentStyleSheet({ styles: _styles2.default, key: 'resets', ua: ua });
-   return html(_templateObject3, props.title, styleSheet, viewportContentArray.join(', '), (0, _Header2.default)(Object.assign({ icon: 'home' }, props)), article);
+   return html(_templateObject2, props.title, styleSheet, viewportContentArray.join(', '), (0, _Header2.default)(Object.assign({ icon: 'home' }, props)), article);
 };
 
 var _styles = require('./styles');
