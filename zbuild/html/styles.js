@@ -12,7 +12,7 @@ var styles = {
       },
       a: {
          textDecoration: 'none',
-         color: '#404040'
+         color: '#202020'
       },
       img_icon: {
          backgroundPosition: [0, 0],
