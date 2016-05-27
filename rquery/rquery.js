@@ -1846,9 +1846,8 @@ export default class {
                   multi.smembers(this.adminKey('account', account, 'certs'));
                }
             });
-            Objects.translate({time, registered, admined, accessed}, reqx, (key, value) => {
-               this.logger.debug('translate', key, value);
-               return parseInt(value);
+            Objects.translate(reqx, {time, registered, admined, accessed}, (key, value) => {
+               return {key, value: parseInt(value)};
             });
             v = this.validateAccess({command, req, account, keyspace, time, registered, admined, accessed, certs});
             if (v) {

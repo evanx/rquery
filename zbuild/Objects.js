@@ -23,9 +23,9 @@ function kv(object, key) {
    return { key: key, value: object[key] };
 }
 
-function translate(object, other, fn) {
-   Object.keys(object).forEach(function (key) {
-      var entry = fn(key, object[key], other);
+function translate(object, source, fn) {
+   Object.keys(source).forEach(function (key) {
+      var entry = fn(key, source[key], other);
       if (!entry) {} else if (!Values.isDefined(entry.key)) {} else if (!Values.isDefined(entry.value)) {} else {
          other[entry.key] = entry.value;
       }
