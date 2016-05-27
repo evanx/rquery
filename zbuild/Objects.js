@@ -8,7 +8,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 exports.kvs = kvs;
 exports.kv = kv;
-exports.translate = translate;
 
 var logger = Loggers.create(__filename, 'info');
 
@@ -21,15 +20,5 @@ function kvs(object) {
 function kv(object, key) {
    assert.equal(typeof key === 'undefined' ? 'undefined' : _typeof(key), 'string');
    return { key: key, value: object[key] };
-}
-
-function translate(object, source, fn) {
-   Object.keys(source).forEach(function (key) {
-      var entry = fn(key, source[key], other);
-      if (!entry) {} else if (!Values.isDefined(entry.key)) {} else if (!Values.isDefined(entry.value)) {} else {
-         other[entry.key] = entry.value;
-      }
-   });
-   return other;
 }
 //# sourceMappingURL=Objects.js.map

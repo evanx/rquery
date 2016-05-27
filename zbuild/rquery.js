@@ -4586,8 +4586,8 @@ var _class = function () {
                                           accessed = _ref36[3];
                                           certs = _ref36[4];
 
-                                          Objects.translate(reqx, { time: time, registered: registered, admined: admined, accessed: accessed }, function (key, value) {
-                                             return { key: key, value: parseInt(value) };
+                                          Objects.kvs({ time: time, registered: registered, admined: admined, accessed: accessed }).forEach(function (kv) {
+                                             reqx[kv.key] = parseInt(value);
                                           });
                                           v = _this14.validateAccess({ command: command, req: req, account: account, keyspace: keyspace, time: time, registered: registered, admined: admined, accessed: accessed, certs: certs });
 
