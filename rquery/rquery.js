@@ -1847,7 +1847,7 @@ export default class {
                }
             });
             Objects.kvs({time, registered, admined, accessed}).forEach(kv => {
-               reqx[kv.key] = parseInt(value);
+               reqx[kv.key] = parseInt(kv.value);
             });
             v = this.validateAccess({command, req, account, keyspace, time, registered, admined, accessed, certs});
             if (v) {

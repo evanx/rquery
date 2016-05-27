@@ -4587,7 +4587,7 @@ var _class = function () {
                                           certs = _ref36[4];
 
                                           Objects.kvs({ time: time, registered: registered, admined: admined, accessed: accessed }).forEach(function (kv) {
-                                             reqx[kv.key] = parseInt(value);
+                                             reqx[kv.key] = parseInt(kv.value);
                                           });
                                           v = _this14.validateAccess({ command: command, req: req, account: account, keyspace: keyspace, time: time, registered: registered, admined: admined, accessed: accessed, certs: certs });
 
