@@ -92,8 +92,6 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var unsupportedAuth = ['twitter.com', 'github.com', 'gitlab.com', 'bitbucket.org'];
@@ -1218,8 +1216,6 @@ var _class = function () {
             }()
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee24(req, res, reqx) {
-               var _exampleParams;
-
                var _req$params3, account, keyspace, hostUrl, message, commandReferenceMessage, customCommandHeading, description, exampleParams, exampleUrls;
 
                return regeneratorRuntime.wrap(function _callee24$(_context24) {
@@ -1241,24 +1237,10 @@ var _class = function () {
                            commandReferenceMessage = 'Read the Redis.io docs for the following commands';
                            customCommandHeading = 'Custom commands';
                            description = ['You can set, add and view keys, sets, lists, zsets, hashes etc.', 'Also edit the URL in the location bar to try other combinations.'];
-                           exampleParams = (_exampleParams = {
-                              'set': 'mykey1/myvalue',
-                              'get': 'mykey1',
-                              'set-json-query': 'myobject1?name=myname&id=12346',
-                              'get-json': 'myobject1',
-                              'sadd': 'myset1/myvalue',
-                              'smembers': 'myset1',
-                              'lpush': 'mylist1/myvalue',
-                              'lrange': 'mylist1/0/10',
-                              'rrange': 'mylist1/0/10',
-                              'hset': 'myhashes1/field1/value1',
-                              'hsetnx': 'myhashes1/field2/value2',
-                              'hgetall': 'myhashes1',
-                              'zadd': 'myzset1/10/member10'
-                           }, _defineProperty(_exampleParams, 'zadd', 'myzset1/20/member20'), _defineProperty(_exampleParams, 'zrange', 'myzset1/0/-1'), _defineProperty(_exampleParams, 'zrevrange', 'myzset1/0/-1'), _defineProperty(_exampleParams, 'ttls', ''), _defineProperty(_exampleParams, 'types', ''), _exampleParams);
-                           exampleUrls = Object.keys(exampleParams).map(function (key) {
+                           exampleParams = [['set', 'mykey1/myvalue'], ['get', 'mykey1'], ['set-json-query', 'myobject1?name=myname&id=12346'], ['get-json', 'myobject1'], ['sadd', 'myset1/myvalue'], ['smembers', 'myset1'], ['lpush', 'mylist1/myvalue'], ['lrange', 'mylist1/0/10'], ['rrange', 'mylist1/0/10'], ['hset', 'myhashes1/field1/value1'], ['hsetnx', 'myhashes1/field2/value2'], ['hgetall', 'myhashes1'], ['zadd', 'myzset1/10/member10'], ['zadd', 'myzset1/20/member20'], ['zrange', 'myzset1/0/-1'], ['zrevrange', 'myzset1/0/-1'], ['ttls'], ['types']];
+                           exampleUrls = exampleParams.map(function (params) {
+                              var key = params.shift();
                               var url = hostUrl + '/ak/' + account + '/' + keyspace + '/' + key;
-                              var params = exampleParams[key];
                               if (params) {
                                  url += '/' + params;
                               }

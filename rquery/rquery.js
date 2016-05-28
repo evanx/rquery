@@ -450,29 +450,29 @@ export default class {
          const description = [`You can set, add and view keys, sets, lists, zsets, hashes etc.`,
             `Also edit the URL in the location bar to try other combinations.`
          ];
-         const exampleParams = {
-            'set': 'mykey1/myvalue',
-            'get': 'mykey1',
-            'set-json-query': 'myobject1?name=myname&id=12346',
-            'get-json': 'myobject1',
-            'sadd': 'myset1/myvalue',
-            'smembers': 'myset1',
-            'lpush': 'mylist1/myvalue',
-            'lrange': 'mylist1/0/10',
-            'rrange': 'mylist1/0/10',
-            'hset': 'myhashes1/field1/value1',
-            'hsetnx': 'myhashes1/field2/value2',
-            'hgetall': 'myhashes1',
-            'zadd': 'myzset1/10/member10',
-            'zadd': 'myzset1/20/member20',
-            'zrange': 'myzset1/0/-1',
-            'zrevrange': 'myzset1/0/-1',
-            'ttls': '',
-            'types': ''
-         };
-         const exampleUrls = Object.keys(exampleParams).map(key => {
+         const exampleParams = [
+            ['set', 'mykey1/myvalue'],
+            ['get', 'mykey1'],
+            ['set-json-query', 'myobject1?name=myname&id=12346'],
+            ['get-json', 'myobject1'],
+            ['sadd', 'myset1/myvalue'],
+            ['smembers', 'myset1'],
+            ['lpush', 'mylist1/myvalue'],
+            ['lrange', 'mylist1/0/10'],
+            ['rrange', 'mylist1/0/10'],
+            ['hset', 'myhashes1/field1/value1'],
+            ['hsetnx', 'myhashes1/field2/value2'],
+            ['hgetall', 'myhashes1'],
+            ['zadd', 'myzset1/10/member10'],
+            ['zadd', 'myzset1/20/member20'],
+            ['zrange', 'myzset1/0/-1'],
+            ['zrevrange', 'myzset1/0/-1'],
+            ['ttls'],
+            ['types'],
+         ];
+         const exampleUrls = exampleParams.map(params => {
+            const key = params.shift();
             let url = `${hostUrl}/ak/${account}/${keyspace}/${key}`;
-            const params = exampleParams[key];
             if (params) {
                url += '/' + params;
             }
