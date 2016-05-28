@@ -118,36 +118,25 @@ So visit https://web.telegram.org or install the mobile app, and message `@redis
 <img src="https://evanx.github.io/images/rquery/rquery030-telegram.png"/>
 <hr>
 
-Then generate a client cert in bash:
+Then generate an admin client cert in bash.
+
+First let's set our `telegramUser`
 ```shell
-(
-  set -e
-  cd
-  [ ! -d .redishub ]
-  mkdir .redishub
-  cd .redishub
-  pwd
-  echo -n 'Enter your Telegram.org username, to be used as your private account name: '
-  read tuser
-  if curl -s https://cli.redishub.com/verify-user-telegram/$tuser | grep 'OK'
-  then
-    account=$tuser
-    echo "Verified Telegram user. It will be used as your Redishub account name: $account"
-    echo $tuser > tuser
-    echo $account > account
-    subj="/CN=$tuser%$USER@`hostname`/OU=admin%$account@redishub.com"
-    echo "Generating a certificate with subject: $subj"
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-      -subj "$subj" \
-      -out cert.pem \
-      -keyout privkey.pem
-    cat privkey.pem cert.pem > privcert.pem
-    pwd
-    ls -l
-    sha1sum privcert.pem
-    openssl x509 -text -in privcert.pem | grep 'CN='    
-  fi
-)
+echo -n 'Enter your authoritative Telegram.org user for your RedisHub account: ' && 
+  read telegramUser
+```
+
+Test its validity:
+```shell
+curl -s https://cli.redishub.com/verify-user-telegram/$telegramUser
+```
+where we assume you have visited https://web.telegram.org to message `@redishub_bot /verify.` 
+
+Then we can curl the following `generate-privcert.sh` script:
+```shell
+  [ ! -f ~/.redishub/live/privcert.pem ]
+  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/openssl.generate.privcert.sh |
+      bash -u /dev/stdin $telegramUser
 ```
 
 We can register an account using this privcert as the initial `admin` authorized cert:
