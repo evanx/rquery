@@ -116,7 +116,7 @@ function renderCommandString(command) {
 function renderCustomCommands(commands) {
    return commands.map(function (command) {
       var commandString = renderCommandString(command);
-      return [Hs.div(_styles2.default.keyspaceHelp.command, Hc.span(commandString)), Hs.div(_styles2.default.keyspaceHelp.command, Hc.span(commandString))];
+      return [Hs.div(_styles2.default.keyspaceHelp.command, Hc.span(commandString))];
    });
 }
 
@@ -124,7 +124,7 @@ function renderStandardCommands(commands) {
    return commands.map(function (command) {
       var commandString = renderUpperCaseCommandString(command);
       var href = getCommandLink(command);
-      return Hs.div(_styles2.default.keyspaceHelp.command, He.a({ href: href }, commandString));
+      return [Hs.div(_styles2.default.keyspaceHelp.command, He.a({ href: href }, commandString))];
    });
 }
 //# sourceMappingURL=KeyspaceHelp.js.map

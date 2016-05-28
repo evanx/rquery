@@ -93,7 +93,6 @@ function renderCustomCommands(commands) {
       const commandString = renderCommandString(command);
       return [
          Hs.div(styles.keyspaceHelp.command, Hc.span(commandString)),
-         Hs.div(styles.keyspaceHelp.command, Hc.span(commandString))
       ];
    });
 }
@@ -102,6 +101,8 @@ function renderStandardCommands(commands) {
    return commands.map(command => {
       const commandString = renderUpperCaseCommandString(command);
       const href = getCommandLink(command);
-      return Hs.div(styles.keyspaceHelp.command, He.a({href}, commandString));
+      return [
+         Hs.div(styles.keyspaceHelp.command, He.a({href}, commandString))
+      ];
    });
 }
