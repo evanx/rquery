@@ -92,7 +92,7 @@ function renderUrls(urls) {
 }
 
 function isCustomCommand(command) {
-   return command.key.indexOf('-') > 0 || ['ttls', 'types'].includes(command.key);
+   return command.key.indexOf('-') > 0 || ['ttls', 'types', 'rrange', 'rrevrange'].includes(command.key);
 }
 
 function getCommandLink(command) {
@@ -116,7 +116,7 @@ function renderCommandString(command) {
 function renderCustomCommands(commands) {
    return commands.map(function (command) {
       var commandString = renderCommandString(command);
-      return Hs.div(_styles2.default.keyspaceHelp.command, Hc.span(commandString));
+      return [Hs.div(_styles2.default.keyspaceHelp.command, Hc.span(commandString)), Hs.div(_styles2.default.keyspaceHelp.command, Hc.span(commandString))];
    });
 }
 
