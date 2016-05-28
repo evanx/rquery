@@ -118,33 +118,18 @@ So visit https://web.telegram.org or install the mobile app, and message `@redis
 <img src="https://evanx.github.io/images/rquery/rquery030-telegram.png"/>
 <hr>
 
-Then generate an admin client cert in bash.
-
-First let's set our `telegramUser`
+Then generate an admin client cert in bash:
 ```shell
-echo -n 'Enter your authoritative Telegram.org user for your RedisHub account: ' && 
-  read telegramUser
-```
-
-Test its validity:
-```shell
-curl -s https://cli.redishub.com/verify-user-telegram/$telegramUser
-```
-where we assume you have visited https://web.telegram.org to message `@redishub_bot /verify.` 
-
-Then we can curl the following `generate-privcert.sh` script:
-```shell
-  [ ! -f ~/.redishub/live/privcert.pem ]
-  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/openssl.generate.privcert.sh |
-      bash -u /dev/stdin $telegramUser
+curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/generate-privcert.sh |
+  bash /dev/stdin $telegramUser
 ```
 
 We can register an account using this privcert as the initial `admin` authorized cert:
 ```shell
 (
-  tuser=`cat ~/.redishub/tuser`
-  alias rhcurl="curl -s -E ~/.redishub/privcert.pem"
-  rhcurl https://cli.redishub.com/register-account-telegram/$tuser
+  account=`cat ~/.redishub/live/account`
+  alias rhcurl="curl -s -E ~/.redishub/live/privcert.pem"
+  rhcurl https://cli.redishub.com/register-account-telegram/$account
 )
 ```
 
@@ -155,14 +140,14 @@ rhdebug() {
 }
 
 _rhcurl() {
-  local tuser=`cat ~/.redishub/tuser`
+  local account=`cat ~/.redishub/live/account`
   if [ $# -eq 0 ]
   then
-    rhdebug "curl -s -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/:keyspace/register-keyspace"
+    rhdebug "curl -s -E ~/.redishub/live/privcert.pem https://cli.redishub.com/ak/$account/:keyspace/register-keyspace"
     return 1
   elif [ $# -eq 1 ]
   then
-    rhdebug "curl -s -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/$1"
+    rhdebug "curl -s -E ~/.redishub/live/privcert.pem https://cli.redishub.com/ak/$account/$1"
     return 1
   fi
   local cmd=''
@@ -171,15 +156,15 @@ _rhcurl() {
     cmd="$cmd/$1"
     shift
   done
-  cn=`openssl x509 -text -in ~/.redishub/privcert.pem |
-    grep 'CN=' | sed -e 's/^.*\(CN=\w*\).*$/\1/' | head -1`
-  if ! echo $cn | grep -q "${tuser}$"
+  OU=`openssl x509 -text -in ~/.redishub/live/privcert.pem |
+    grep 'OU=' | sed -e 's/^.*\(OU=\S*\)$/\1/' | head -1`
+  if ! echo $OU | grep -q "\W${account}@redishub.com"
   then
-    echo "ERROR $cn does not match Telegram user $tuser"
+    echo "ERROR $OU does not match you account $account"
     return 3
   else
-    rhdebug "$cn https://cli.redishub.com/ak/$tuser$cmd"
-    curl -s -E ~/.redishub/privcert.pem "https://cli.redishub.com/ak/$tuser$cmd"
+    rhdebug "$cn https://cli.redishub.com/ak/$account$cmd"
+    curl -s -E ~/.redishub/live/privcert.pem "https://cli.redishub.com/ak/$account$cmd"
   fi
 }
 

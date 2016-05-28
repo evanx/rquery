@@ -29,7 +29,7 @@ var logger = Loggers.create(__filename, 'info');
 
 var SelfClosingElementNames = Strings.splitSpace('\n   area base basefont br hr input img link meta\n   ');
 
-var ElementNames = Strings.splitSpace('\n   html head meta link script body\n   header nav h1 h2 h3 h4 h5 h6\n   section article aside\n   table thead tbody th tr td\n   div span pre p a hr br img i b tt\n   ');
+var ElementNames = Strings.splitSpace('\n   html head meta link script body\n   header footer nav section article aside\n   h1 h2 h3 h4 h5 h6\n   table thead tbody th tr td\n   div span pre p a hr br img i b tt\n   ');
 
 var Element = function Element(_ref) {
    var name = _ref.name;

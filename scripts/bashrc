@@ -8,15 +8,15 @@ rhdebug() {
 }
 
 rhcurl() {
-  local tuser=`cat ~/.redishub/tuser`
+  local telegramUser=`cat ~/.redishub/telegramUser`
   local cmd=`echo $@ | tr ' ' '/'`
-  cn=`openssl x509 -text -in ~/.redishub/privcert.pem | grep 'CN=' | sed 's/^.*\(CN=.*\)$/\1/' | head -1`
-  if ! echo $cn | grep -q "${tuser}$"
+  cn=`openssl x509 -text -in ~/.redishub/live/privcert.pem | grep 'CN=' | sed 's/^.*\(CN=.*\)$/\1/' | head -1`
+  if ! echo $cn | grep -q "${telegramUser}$"
   then
-    echo "ERROR $cn does not match telegram user $tuser"
+    echo "ERROR $cn does not match telegram user $telegramUser"
   else
-    rhdebug "$cn https://cli.redishub.com/ak/$tuser/$cmd"
-    curl -s -E ~/.redishub/privcert.pem https://cli.redishub.com/ak/$tuser/$cmd
+    rhdebug "$cn https://cli.redishub.com/ak/$telegramUser/$cmd"
+    curl -s -E ~/.redishub/live/privcert.pem https://cli.redishub.com/ak/$telegramUser/$cmd
   fi
 }
 

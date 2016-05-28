@@ -1,12 +1,12 @@
 #!/bin/bash
-  
-  set -u -e 
+
+  set -u -e
 
   [ -z "$BASH" ] && rhabort 1 'Use bash' && exit 1
 
   . ~/redis-scan-bash/bin/bashrc.rhlogging.sh
-  
-  account=${account-`cat ~/.redishub/tuser`}
+
+  account=${account-`cat ~/.redishub/telegramUser`}
   domain=${domain-cli.redishub.com}
   url=${url-"https://$domain/ak/$account"}
   rhdebug "account $account, url $url"
@@ -14,12 +14,12 @@
   if [ $# -eq 0 ]
   then
     rhinfo "Try as follows, with new keyspace name:"
-    rhinfo "curl -s -E ~/.redishub/privcert.pem $url/:keyspace/register-keyspace"
+    rhinfo "curl -s -E ~/.redishub/live/privcert.pem $url/:keyspace/register-keyspace"
     exit 1
   elif [ $# -eq 1 ]
   then
     rhinfo "Try as follows, to see routes:"
-    rhinfo "curl -s -E ~/.redishub/privcert.pem $url/$1/help"
+    rhinfo "curl -s -E ~/.redishub/live/privcert.pem $url/$1/help"
     exit 1
   fi
 
@@ -30,7 +30,7 @@
     shift
   done
 
-  cn=`openssl x509 -text -in ~/.redishub/privcert.pem |
+  cn=`openssl x509 -text -in ~/.redishub/live/privcert.pem |
     grep 'CN=' | sed -e 's/^.*\(CN=\w*\).*$/\1/' | head -1`
   if ! echo $cn | grep -q "${account}$"
   then
@@ -38,6 +38,5 @@
     exit 3
   else
     rhdebug "$cn $url$cmd"
-    curl -s -E ~/.redishub/privcert.pem "$url$cmd"
+    curl -s -E ~/.redishub/live/privcert.pem "$url$cmd"
   fi
-

@@ -2,7 +2,7 @@
 set -e -u
 
 rurl=${rurl-`cat ~/.redishub/cli.url`}
-cert=${cert-~/.redishub/privcert.pem}
+cert=${cert-~/.redishub/live/privcert.pem}
 echo rurl $rurl
 openssl x509 -text -in $cert | grep CN
 

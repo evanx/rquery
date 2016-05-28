@@ -372,7 +372,7 @@ export default class {
          this.addPublicCommand({
             key: 'gentoken',
             params: ['account']
-         }, async (req, res) => {
+         }, async (req, res, reqx) => {
             const {account} = req.params;
             const accountKey = this.adminKey('account', account);
             const [[time], registered, admined, accessed, certs] = await this.redis.multiExecAsync(multi => {
@@ -387,10 +387,7 @@ export default class {
                return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
             }
             this.logger.debug('gentoken', accountKey);
-            const errorMessage = this.validateCert(req, certs, account);
-            if (errorMessage) {
-               return errorMessage;
-            }
+            this.validateCert(req, certs, account);
             const token = this.generateTokenKey(6);
             await this.redis.setexAsync([accountKey, token].join(':'), this.config.keyExpire, token);
             return token;
@@ -1616,8 +1613,7 @@ export default class {
             if (duration < this.config.adminLimit) {
                return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
             }
-            message = this.validateCert(req, certs, account);
-            if (message) throw {message};
+            this.validateCert(req, certs, account);
             const dn = req.get('ssl_client_s_dn');
             const result = await fn(req, res, {account, accountKey, time, admined, clientCertDigest});
             if (result !== undefined) {
@@ -1849,11 +1845,7 @@ export default class {
             Objects.kvs({time, registered, admined, accessed}).forEach(kv => {
                reqx[kv.key] = parseInt(kv.value);
             });
-            v = this.validateAccess({command, req, account, keyspace, time, registered, admined, accessed, certs});
-            if (v) {
-               this.sendStatusMessage(req, res, 403, v);
-               return;
-            }
+            this.validateAccess(req, reqx, {certs});
             let hostname;
             if (req.hostname === this.config.hostname) {
             } else if (lodash.endsWith(req.hostname, this.config.keyspaceHostname)) {
@@ -1989,26 +1981,27 @@ export default class {
       return false;
    }
 
-   validateAccess({req, command, account, keyspace, time, registered, admined, accessed, certs}) {
+   validateAccess(req, reqx, {certs}) {
+      const {command, account, keyspace, time} = reqx;
       const scheme = req.get('X-Forwarded-Proto');
       this.logger.debug('validateAccess scheme', scheme, account, keyspace, command);
       if (this.isSecureDomain(req)) {
          if (scheme === 'http') {
-            return `Insecure scheme ${scheme}: ${req.hostname}`;
+            throw {message: `Insecure scheme ${scheme}: ${req.hostname}`};
          }
       }
       if (command.key === 'register-keyspace') {
-         if (registered) {
-            return {message: 'Already registered'};
+         if (reqx.registered) {
+            throw {message: 'Already registered'};
          }
-      } else if (!registered) {
+      } else if (!reqx.registered) {
          if (account === 'hub' || account === 'pub') {
-            return {message: 'Expired (or unregistered) keyspace', hint: {
+            throw {message: 'Expired (or unregistered) keyspace', hint: {
                uri: 'register-ephemeral',
                description: 'To register a new ephemeral keyspace'
             }};
          } else {
-            return {message: 'Unregistered keyspace', hint: {
+            throw {message: 'Unregistered keyspace', hint: {
                uri: 'register-ephemeral',
                description: 'To register a new ephemeral keyspace'
             }};
@@ -2021,7 +2014,7 @@ export default class {
             } else {
                const duration = time - admined;
                if (duration < this.config.adminLimit) {
-                  return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
+                  throw {message: `Admin command interval not elapsed: ${this.config.adminLimit}s`};
                }
             }
          } else if (command.access === 'debug') {
@@ -2031,37 +2024,39 @@ export default class {
             }
          } else if (command.access === 'set') {
             if (/^\+/.test(keyspace)) {
-               return 'Append-only keyspace';
+               throw {message: 'Append-only keyspace'};
             }
          } else if (command.access === 'get') {
          } else {
          }
       }
       if (account !== 'hub' && account !== 'pub') {
-         const errorMessage = this.validateCert(req, certs, account);
-         if (errorMessage) {
-            return errorMessage;
-         }
+         this.validateCert(req, certs, account);
       }
    }
 
    validateCert(req, certs, account) {
       if (this.config.disableValidateCert) {
-         return null;
+         return;
       }
       if (!certs) {
-         return 'No enrolled certs';
+         throw {message: 'No enrolled certs', hint: {
+            uri: ['register-account']
+         }};
       }
       const clientCert = req.get('ssl_client_cert');
       if (!clientCert) {
-         return 'No client cert';
+         throw {message: 'No client cert sent', hint: {
+            uri: ['register-account']
+         }};
       }
       const clientCertDigest = this.digestPem(clientCert);
       this.logger.info('validateCert', clientCertDigest, account);
       if (!certs.includes(clientCertDigest)) {
-         return 'Invalid cert';
+         throw {message: 'Invalid cert', hint: {
+            uri: ['register-account']
+         }};
       }
-      return null;
    }
 
    keyIndex(account, keyspace) {

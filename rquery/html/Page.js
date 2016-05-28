@@ -2,6 +2,7 @@
 import styles from './styles';
 
 import {default as renderHeader} from './Header';
+import {default as renderFooter} from './Footer';
 
 const logger = Loggers.create(module.filename);
 
@@ -36,6 +37,7 @@ export default function (props) {
    <body>
    ${renderHeader(Object.assign({icon: 'home'}, props))}
    ${article}
+   ${renderFooter(props)}
    </body>
    </html>
    `;

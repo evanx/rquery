@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _templateObject = _taggedTemplateLiteral(['<article>', '</article>'], ['<article>', '</article>']),
-    _templateObject2 = _taggedTemplateLiteral(['\n   <html>\n   <head>\n   <title>', '</title>\n   <style>', '</style>\n   <meta name="viewport" content=', '/>\n   </head>\n   <body>\n   ', '\n   ', '\n   </body>\n   </html>\n   '], ['\n   <html>\n   <head>\n   <title>', '</title>\n   <style>', '</style>\n   <meta name="viewport" content=', '/>\n   </head>\n   <body>\n   ', '\n   ', '\n   </body>\n   </html>\n   ']);
+    _templateObject2 = _taggedTemplateLiteral(['\n   <html>\n   <head>\n   <title>', '</title>\n   <style>', '</style>\n   <meta name="viewport" content=', '/>\n   </head>\n   <body>\n   ', '\n   ', '\n   ', '\n   </body>\n   </html>\n   '], ['\n   <html>\n   <head>\n   <title>', '</title>\n   <style>', '</style>\n   <meta name="viewport" content=', '/>\n   </head>\n   <body>\n   ', '\n   ', '\n   ', '\n   </body>\n   </html>\n   ']);
 
 exports.default = function (props) {
    logger.debug('props', Object.keys(props));
@@ -20,7 +20,7 @@ exports.default = function (props) {
    }
    var ua = props.req.get('user-agent');
    var styleSheet = Styles.getCachedUserAgentStyleSheet({ styles: _styles2.default, key: 'resets', ua: ua });
-   return html(_templateObject2, props.title, styleSheet, viewportContentArray.join(', '), (0, _Header2.default)(Object.assign({ icon: 'home' }, props)), article);
+   return html(_templateObject2, props.title, styleSheet, viewportContentArray.join(', '), (0, _Header2.default)(Object.assign({ icon: 'home' }, props)), article, (0, _Footer2.default)(props));
 };
 
 var _styles = require('./styles');
@@ -30,6 +30,10 @@ var _styles2 = _interopRequireDefault(_styles);
 var _Header = require('./Header');
 
 var _Header2 = _interopRequireDefault(_Header);
+
+var _Footer = require('./Footer');
+
+var _Footer2 = _interopRequireDefault(_Footer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

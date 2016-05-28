@@ -40,6 +40,13 @@ var styles = {
          }
       }
    },
+   footer: {
+      container: {
+         minHeight: 100,
+         paddingTop: 20,
+         clear: 'both'
+      }
+   },
    header: {
       container: {
          minHeight: 30,

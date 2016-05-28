@@ -4,11 +4,11 @@ set -u -e
 set -x 
 
 c1set() {
-  curl -s -E ~/.redishub/privcert.pem "https://cli.redishub.com/ak/evanxsummers/privateks/set-encrypt/encrypted1/$1"
+  curl -s -E ~/.redishub/live/privcert.pem "https://cli.redishub.com/ak/evanxsummers/privateks/set-encrypt/encrypted1/$1"
 }
 
 c0get() {
-  encrypted=`curl -s -E ~/.redishub/privcert.pem "$url"`
+  encrypted=`curl -s -E ~/.redishub/live/privcert.pem "$url"`
   privkey=~/.redishub/privkey.pem encrypted="$encrypted" node cli/rsaDecrypt.js
 }
 
