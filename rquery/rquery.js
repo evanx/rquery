@@ -1932,10 +1932,10 @@ export default class {
       }
       if (command.access) {
          if (command.access === 'admin') {
-            if (!admined) {
+            if (!reqx.admined) {
                this.logger.warn('validateAccess admined', keyspace, command.key, time);
             } else {
-               const duration = time - admined;
+               const duration = time - reqx.admined;
                if (duration < this.config.adminLimit) {
                   throw {message: `Admin command interval not elapsed: ${this.config.adminLimit}s`};
                }
