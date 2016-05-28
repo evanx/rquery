@@ -136,19 +136,20 @@ var _class = function () {
                while (1) {
                   switch (_context2.prev = _context2.next) {
                      case 0:
+                        this.commandMap = new Map();
                         this.logger.info('init');
-                        _context2.next = 3;
+                        _context2.next = 4;
                         return this.testExit();
 
-                     case 3:
+                     case 4:
                         if (!_context2.sent) {
-                           _context2.next = 5;
+                           _context2.next = 6;
                            break;
                         }
 
                         process.exit(1);
 
-                     case 5:
+                     case 6:
                      case 'end':
                         return _context2.stop();
                   }
@@ -1434,10 +1435,7 @@ var _class = function () {
                   while (1) {
                      switch (_context28.prev = _context28.next) {
                         case 0:
-                           reqx.hints = [{
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
-                           }];
+                           reqx.hints = [];
                            _context28.next = 3;
                            return _this5.redis.hgetallAsync(reqx.accountKey);
 
@@ -1469,14 +1467,9 @@ var _class = function () {
                            keyspace = reqx.keyspace;
 
                            reqx.hints = [{
-                              uri: ['ttls'],
-                              description: 'to view all TTLs in this keyspace'
+                              uri: ['ttls']
                            }, {
-                              uri: ['types'],
-                              description: 'to view all key types in this keyspace'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['types']
                            }];
                            _context29.next = 5;
                            return _this5.redis.keysAsync(_this5.keyspaceKey(account, keyspace, '*'));
@@ -1501,7 +1494,8 @@ var _class = function () {
          }());
          this.addKeyspaceCommand({
             key: 'types',
-            access: 'debug'
+            access: 'debug',
+            description: 'view all key types in this keyspace'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee30(req, res, reqx) {
                var account, keyspace, keys, keyIndex, multi, results, result;
@@ -1510,11 +1504,7 @@ var _class = function () {
                      switch (_context30.prev = _context30.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['ttls'],
-                              description: 'to view all TTLs in this keyspace'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['ttls']
                            }];
                            account = reqx.account;
                            keyspace = reqx.keyspace;
@@ -1556,7 +1546,8 @@ var _class = function () {
          }());
          this.addKeyspaceCommand({
             key: 'ttls',
-            access: 'debug'
+            access: 'debug',
+            description: 'view all TTLs in this keyspace'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee31(req, res, reqx) {
                var account, keyspace, keys, keyIndex, multi, results, result;
@@ -1565,11 +1556,7 @@ var _class = function () {
                      switch (_context31.prev = _context31.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['types'],
-                              description: 'to view all key types in this keyspace'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['types']
                            }];
                            account = reqx.account;
                            keyspace = reqx.keyspace;
@@ -1612,7 +1599,8 @@ var _class = function () {
          this.addKeyspaceCommand({
             key: 'ttl',
             params: ['key'],
-            access: 'debug'
+            access: 'debug',
+            description: 'check the key TTL'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee32(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee32$(_context32) {
@@ -1620,11 +1608,7 @@ var _class = function () {
                      switch (_context32.prev = _context32.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['type', reqx.key],
-                              description: 'to check the key type'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['type', reqx.key]
                            }];
                            _context32.next = 3;
                            return _this5.redis.ttlAsync(reqx.keyspaceKey);
@@ -1646,7 +1630,8 @@ var _class = function () {
          this.addKeyspaceCommand({
             key: 'type',
             params: ['key'],
-            access: 'debug'
+            access: 'debug',
+            description: 'check the key type'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee33(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee33$(_context33) {
@@ -1654,11 +1639,7 @@ var _class = function () {
                      switch (_context33.prev = _context33.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['ttl', reqx.key],
-                              description: 'to check the key TTL'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['ttl', reqx.key]
                            }];
                            _context33.next = 3;
                            return _this5.redis.typeAsync(reqx.keyspaceKey);
@@ -1736,7 +1717,7 @@ var _class = function () {
                         case 0:
                            reqx.hint = {
                               uri: ['get', reqx.key],
-                              description: 'to get the value you have set'
+                              description: 'get the value you have set'
                            };
                            _context35.next = 3;
                            return _this5.redis.setAsync(reqx.keyspaceKey, req.params.value);
@@ -1774,11 +1755,7 @@ var _class = function () {
                               string = string.replace(/(\W)(\w+):/g, '$1"$2":');
                            }
                            reqx.hints = [{
-                              uri: ['get-json', reqx.key],
-                              description: 'to get the value you have set'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['get-json', reqx.key]
                            }];
                            _context36.next = 5;
                            return _this5.redis.setAsync(reqx.keyspaceKey, string);
@@ -1808,11 +1785,7 @@ var _class = function () {
                      switch (_context37.prev = _context37.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['get-json', reqx.key],
-                              description: 'to get the value you have set'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['get-json', reqx.key]
                            }];
                            _context37.next = 3;
                            return _this5.redis.setAsync(reqx.keyspaceKey, JSON.stringify(req.query));
@@ -1844,14 +1817,9 @@ var _class = function () {
                      switch (_context38.prev = _context38.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['get', reqx.key],
-                              description: 'to get the value you have set'
+                              uri: ['get', reqx.key]
                            }, {
-                              uri: ['ttl', reqx.key],
-                              description: 'to check the expiry of the key'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['ttl', reqx.key]
                            }];
                            _req$params6 = req.params;
                            seconds = _req$params6.seconds;
@@ -1903,7 +1871,8 @@ var _class = function () {
          }());
          this.addKeyspaceCommand({
             key: 'get',
-            params: ['key']
+            params: ['key'],
+            description: 'get the value you have set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee40(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee40$(_context40) {
@@ -1911,11 +1880,7 @@ var _class = function () {
                      switch (_context40.prev = _context40.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['ttl', reqx.key],
-                              description: 'to see the TTL of your key'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['ttl', reqx.key]
                            }];
                            _context40.next = 3;
                            return _this5.redis.getAsync(reqx.keyspaceKey);
@@ -1936,7 +1901,8 @@ var _class = function () {
          }());
          this.addKeyspaceCommand({
             key: 'get-json',
-            params: ['key']
+            params: ['key'],
+            description: 'get the JSON value you have set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee41(req, res, reqx) {
                var key, keyspaceKey, value;
@@ -1945,11 +1911,7 @@ var _class = function () {
                      switch (_context41.prev = _context41.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['ttl', reqx.key],
-                              description: 'to see the TTL of your key'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['ttl', reqx.key]
                            }];
                            key = reqx.key;
                            keyspaceKey = reqx.keyspaceKey;
@@ -2088,11 +2050,9 @@ var _class = function () {
                      switch (_context45.prev = _context45.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['sismember', reqx.key, req.params.member],
-                              description: 'to check that the value /exists in your set'
+                              uri: ['sismember', reqx.key, req.params.member]
                            }, {
-                              uri: ['smembers', reqx.key],
-                              description: 'to get the members of your set'
+                              uri: ['smembers', reqx.key]
                            }];
                            _context45.next = 3;
                            return _this5.redis.saddAsync(reqx.keyspaceKey, req.params.member);
@@ -2184,14 +2144,13 @@ var _class = function () {
             params: ['key'],
             access: 'set'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee48(req, res, _ref25) {
-               var keyspaceKey = _ref25.keyspaceKey;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee48(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee48$(_context48) {
                   while (1) {
                      switch (_context48.prev = _context48.next) {
                         case 0:
                            _context48.next = 2;
-                           return _this5.redis.spopAsync(keyspaceKey);
+                           return _this5.redis.spopAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context48.abrupt('return', _context48.sent);
@@ -2209,7 +2168,8 @@ var _class = function () {
          }());
          this.addKeyspaceCommand({
             key: 'smembers',
-            params: ['key']
+            params: ['key'],
+            description: 'get the members of your set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee49(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee49$(_context49) {
@@ -2217,11 +2177,7 @@ var _class = function () {
                      switch (_context49.prev = _context49.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['scard', reqx.key],
-                              description: 'to get the cardinality of your set'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['scard', reqx.key]
                            }];
                            _context49.next = 3;
                            return _this5.redis.smembersAsync(reqx.keyspaceKey);
@@ -2242,7 +2198,8 @@ var _class = function () {
          }());
          this.addKeyspaceCommand({
             key: 'sismember',
-            params: ['key', 'member']
+            params: ['key', 'member'],
+            description: 'check that the value /exists in your set'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee50(req, res, reqx) {
                var reply;
@@ -2257,16 +2214,12 @@ var _class = function () {
                            reply = _context50.sent;
 
                            reqx.hints = [{
-                              uri: ['smembers', reqx.key],
-                              description: 'to get the members of your set'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['smembers', reqx.key]
                            }];
                            if (reply) {
                               reqx.hints.push({
                                  uri: ['ttl', reqx.key],
-                                 description: 'to check the TTL of your key'
+                                 description: 'check the TTL of your key'
                               });
                            }
                            return _context50.abrupt('return', reply);
@@ -2284,7 +2237,8 @@ var _class = function () {
          }());
          this.addKeyspaceCommand({
             key: 'scard',
-            params: ['key']
+            params: ['key'],
+            description: 'to get the cardinality of the zset'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee51(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee51$(_context51) {
@@ -2292,11 +2246,7 @@ var _class = function () {
                      switch (_context51.prev = _context51.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['smembers', reqx.key],
-                              description: 'to get the members of your set'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['smembers', reqx.key]
                            }];
                            _context51.next = 3;
                            return _this5.redis.scardAsync(reqx.keyspaceKey);
@@ -2326,11 +2276,9 @@ var _class = function () {
                      switch (_context52.prev = _context52.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['lrange', reqx.key, 0, 10],
-                              description: 'to get items from the left of your list'
+                              uri: ['lrange', reqx.key, 0, 10]
                            }, {
-                              uri: ['llen', reqx.key],
-                              description: 'to check the length of your list'
+                              uri: ['llen', reqx.key]
                            }];
                            _context52.next = 3;
                            return _this5.redis.lpushAsync(reqx.keyspaceKey, req.params.value);
@@ -2354,8 +2302,8 @@ var _class = function () {
             params: ['key', 'length', 'value'],
             access: 'set'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee53(req, res, _ref26, multi) {
-               var keyspaceKey = _ref26.keyspaceKey;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee53(req, res, _ref25, multi) {
+               var keyspaceKey = _ref25.keyspaceKey;
 
                var _req$params8, value, length;
 
@@ -2543,10 +2491,10 @@ var _class = function () {
             params: ['key', 'dest', 'timeout'],
             access: 'set'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee59(req, res, _ref27, multi) {
-               var account = _ref27.account;
-               var keyspace = _ref27.keyspace;
-               var keyspaceKey = _ref27.keyspaceKey;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee59(req, res, _ref26, multi) {
+               var account = _ref26.account;
+               var keyspace = _ref26.keyspace;
+               var keyspaceKey = _ref26.keyspaceKey;
 
                var _req$params9, dest, timeout, destKey, result;
 
@@ -2581,7 +2529,7 @@ var _class = function () {
          this.addKeyspaceCommand({
             key: 'llen',
             params: ['key'],
-            access: 'set'
+            description: 'check the length of your list'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee60(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee60$(_context60) {
@@ -2589,14 +2537,13 @@ var _class = function () {
                      switch (_context60.prev = _context60.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['lrange', reqx.key, 0, 10],
-                              description: 'to get items from the left of your list'
+                              uri: ['lrange', reqx.key, 0, 10]
                            }, {
                               uri: ['lrange', reqx.key, -10, -1],
-                              description: 'to get items from the right of your list'
+                              description: 'get items from the right of your list'
                            }, {
                               uri: ['help'],
-                              description: 'to see sample commands'
+                              description: 'see sample commands'
                            }];
                            _context60.next = 3;
                            return _this5.redis.llenAsync(reqx.keyspaceKey);
@@ -2724,7 +2671,8 @@ var _class = function () {
          }());
          this.addKeyspaceCommand({
             key: 'lrange',
-            params: ['key', 'start', 'stop']
+            params: ['key', 'start', 'stop'],
+            description: 'get items from the left of your list'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee65(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee65$(_context65) {
@@ -2733,7 +2681,7 @@ var _class = function () {
                         case 0:
                            reqx.hints = [{
                               uri: ['llen', reqx.key],
-                              description: 'to check the length of your list'
+                              description: 'check the length of your list'
                            }];
                            _context65.next = 3;
                            return _this5.redis.lrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
@@ -2764,7 +2712,7 @@ var _class = function () {
                         case 0:
                            reqx.hints = [{
                               uri: ['llen', reqx.key],
-                              description: 'to check the length of your list'
+                              description: 'check the length of your list'
                            }];
                            _context66.next = 3;
                            return _this5.redis.lrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
@@ -2795,8 +2743,7 @@ var _class = function () {
                      switch (_context67.prev = _context67.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['llen', reqx.key],
-                              description: 'to check the length of your list'
+                              uri: ['llen', reqx.key]
                            }];
 
                            if (!(req.params.start < 0)) {
@@ -2860,8 +2807,7 @@ var _class = function () {
 
                         case 4:
                            reqx.hints = [{
-                              uri: ['llen', reqx.key],
-                              description: 'to check the length of your list'
+                              uri: ['llen', reqx.key]
                            }];
                            _context68.next = 7;
                            return _this5.redis.lrangeAsync(reqx.keyspaceKey, 0 - req.params.stop, 0 - req.params.start - 1);
@@ -2893,16 +2839,16 @@ var _class = function () {
                         case 0:
                            reqx.hints = [{
                               uri: ['hget', reqx.key, req.params.field],
-                              description: 'to check the contents of the field you have set'
+                              description: 'check the contents of the field you have set'
                            }, {
                               uri: ['hgetall', reqx.key],
-                              description: 'to get all the fields of your hashes key'
+                              description: 'get all the fields of your hashes key'
                            }, {
                               uri: ['hlen', reqx.key],
-                              description: 'to get the number of fields in your hashes key'
+                              description: 'get the number of fields in your hashes key'
                            }, {
                               uri: ['hkeys', reqx.key],
-                              description: 'to get the keys of the fields in your hashes'
+                              description: 'get the keys of the fields in your hashes'
                            }];
                            _context69.next = 3;
                            return _this5.redis.hsetAsync(reqx.keyspaceKey, req.params.field, req.params.value);
@@ -2933,16 +2879,16 @@ var _class = function () {
                         case 0:
                            reqx.hints = [{
                               uri: ['hget', reqx.key, req.params.field],
-                              description: 'to check the contents of the field you have set'
+                              description: 'check the contents of the field you have set'
                            }, {
                               uri: ['hgetall', reqx.key],
-                              description: 'to get all the fields of your hashes key'
+                              description: 'get all the fields of your hashes key'
                            }, {
                               uri: ['hlen', reqx.key],
-                              description: 'to get the number of fields in your hashes key'
+                              description: 'get the number of fields in your hashes key'
                            }, {
                               uri: ['hkeys', reqx.key],
-                              description: 'to get the keys of the fields in your hashes'
+                              description: 'get the keys of the fields in your hashes'
                            }];
                            _context70.next = 3;
                            return _this5.redis.hsetnxAsync(reqx.keyspaceKey, req.params.field, req.params.value);
@@ -2972,13 +2918,13 @@ var _class = function () {
                         case 0:
                            reqx.hints = [{
                               uri: ['hgetall', reqx.key],
-                              description: 'to get all the fields of your hashes key'
+                              description: 'get all the fields of your hashes key'
                            }, {
                               uri: ['hlen', reqx.key],
-                              description: 'to get the number of fields in your hashes key'
+                              description: 'get the number of fields in your hashes key'
                            }, {
                               uri: ['hkeys', reqx.key],
-                              description: 'to get the keys of the fields in your hashes'
+                              description: 'get the keys of the fields in your hashes'
                            }];
                            _context71.next = 3;
                            return _this5.redis.hgetAsync(reqx.keyspaceKey, req.params.field);
@@ -3009,16 +2955,16 @@ var _class = function () {
                         case 0:
                            reqx.hints = [{
                               uri: ['hexists', reqx.key, req.params.field],
-                              description: 'to check if the field exists'
+                              description: 'check if the field exists'
                            }, {
                               uri: ['hgetall', reqx.key],
-                              description: 'to get all the fields of your hashes key'
+                              description: 'get all the fields of your hashes key'
                            }, {
                               uri: ['hlen', reqx.key],
-                              description: 'to get the number of fields in your hashes key'
+                              description: 'get the number of fields in your hashes key'
                            }, {
                               uri: ['hkeys', reqx.key],
-                              description: 'to get the keys of the fields in your hashes'
+                              description: 'get the keys of the fields in your hashes'
                            }];
                            _context72.next = 3;
                            return _this5.redis.hdelAsync(reqx.keyspaceKey, req.params.field);
@@ -3049,16 +2995,16 @@ var _class = function () {
                         case 0:
                            reqx.hints = [{
                               uri: ['hget', reqx.key, req.params.field],
-                              description: 'to get this field in the hashes'
+                              description: 'get this field in the hashes'
                            }, {
                               uri: ['hgetall', reqx.key],
-                              description: 'to get all the fields of this hashes key'
+                              description: 'get all the fields of this hashes key'
                            }, {
                               uri: ['hlen', reqx.key],
-                              description: 'to get the number of fields'
+                              description: 'get the number of fields'
                            }, {
                               uri: ['hkeys', reqx.key],
-                              description: 'to get the keys of the fields'
+                              description: 'get the keys of the fields'
                            }];
                            _context73.next = 3;
                            return _this5.redis.hincrbyAsync(reqx.keyspaceKey, req.params.field, req.params.increment);
@@ -3089,13 +3035,13 @@ var _class = function () {
                         case 0:
                            reqx.hints = [{
                               uri: ['hkeys', reqx.key],
-                              description: 'to get the keys of the fields in your hashes'
+                              description: 'get the keys of the fields in your hashes'
                            }, {
                               uri: ['hgetall', reqx.key],
-                              description: 'to get all the fields of your hashes key'
+                              description: 'get all the fields of your hashes key'
                            }, {
                               uri: ['hlen', reqx.key],
-                              description: 'to get the number of fields in your hashes key'
+                              description: 'get the number of fields in your hashes key'
                            }];
                            _context74.next = 3;
                            return _this5.redis.hexistsAsync(reqx.keyspaceKey, req.params.field);
@@ -3106,7 +3052,7 @@ var _class = function () {
                            if (reply) {
                               reqx.hints.push({
                                  uri: ['hget', reqx.key, req.params.field],
-                                 description: 'to get the field in the hashes'
+                                 description: 'get the field in the hashes'
                               });
                            }
                            return _context74.abrupt('return', reply);
@@ -3133,10 +3079,10 @@ var _class = function () {
                         case 0:
                            reqx.hints = [{
                               uri: ['hkeys', reqx.key],
-                              description: 'to get the keys of the fields in your hashes'
+                              description: 'get the keys of the fields in your hashes'
                            }, {
                               uri: ['hgetall', reqx.key],
-                              description: 'to get all the fields of your hashes key'
+                              description: 'get all the fields of your hashes key'
                            }];
                            _context75.next = 3;
                            return _this5.redis.hlenAsync(reqx.keyspaceKey);
@@ -3166,10 +3112,10 @@ var _class = function () {
                         case 0:
                            reqx.hints = [{
                               uri: ['hgetall', reqx.key],
-                              description: 'to get all the fields of your hashes key'
+                              description: 'get all the fields of your hashes key'
                            }, {
                               uri: ['hlen', reqx.key],
-                              description: 'to get the number of fields in your hashes key'
+                              description: 'get the number of fields in your hashes key'
                            }];
                            _context76.next = 3;
                            return _this5.redis.hkeysAsync(reqx.keyspaceKey);
@@ -3199,10 +3145,10 @@ var _class = function () {
                         case 0:
                            reqx.hints = [{
                               uri: ['hlen', reqx.key],
-                              description: 'to get the number of fields in your hashes key'
+                              description: 'get the number of fields in your hashes key'
                            }, {
                               uri: ['hkeys', reqx.key],
-                              description: 'to get the keys of the fields in your hashes'
+                              description: 'get the keys of the fields in your hashes'
                            }];
                            _context77.next = 3;
                            return _this5.redis.hgetallAsync(reqx.keyspaceKey);
@@ -3223,7 +3169,8 @@ var _class = function () {
          }());
          this.addKeyspaceCommand({
             key: 'zcard',
-            params: ['key']
+            params: ['key'],
+            description: 'get the cardinality of the zset'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee78(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee78$(_context78) {
@@ -3231,11 +3178,7 @@ var _class = function () {
                      switch (_context78.prev = _context78.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['zrange', reqx.key, 0, 10],
-                              description: 'to range items in the zset'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['zrange', reqx.key, 0, 10]
                            }];
                            _context78.next = 3;
                            return _this5.redis.zcardAsync(reqx.keyspaceKey);
@@ -3266,11 +3209,9 @@ var _class = function () {
                         switch (_context79.prev = _context79.next) {
                            case 0:
                               reqx.hints = [{
-                                 uri: ['zrange', reqx.key, 0, 10],
-                                 description: 'to range items in the zset'
+                                 uri: ['zrange', reqx.key, 0, 10]
                               }, {
-                                 uri: ['zcard', reqx.key],
-                                 description: 'to get the cardinality of the zset'
+                                 uri: ['zcard', reqx.key]
                               }];
                               _context79.next = 3;
                               return _this5.redis.zaddAsync(reqx.keyspaceKey, 'NX', req.params.score, req.params.member);
@@ -3301,11 +3242,9 @@ var _class = function () {
                      switch (_context80.prev = _context80.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['zrange', reqx.key, 0, 10],
-                              description: 'to range items in the zset'
+                              uri: ['zrange', reqx.key, 0, 10]
                            }, {
-                              uri: ['zcard', reqx.key],
-                              description: 'to get the cardinality of the zset'
+                              uri: ['zcard', reqx.key]
                            }];
                            _context80.next = 3;
                            return _this5.redis.zincrbyAsync(reqx.keyspaceKey, req.params.increment, req.params.member);
@@ -3335,11 +3274,9 @@ var _class = function () {
                      switch (_context81.prev = _context81.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['zrange', reqx.key, 0, 10],
-                              description: 'to range items in the zset'
+                              uri: ['zrange', reqx.key, 0, 10]
                            }, {
-                              uri: ['zcard', reqx.key],
-                              description: 'to get the cardinality of the zset'
+                              uri: ['zcard', reqx.key]
                            }];
                            _context81.next = 3;
                            return _this5.redis.zaddAsync(reqx.keyspaceKey, req.params.score, req.params.member);
@@ -3369,11 +3306,9 @@ var _class = function () {
                      switch (_context82.prev = _context82.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['zrange', reqx.key, 0, 10],
-                              description: 'to range items in the zset'
+                              uri: ['zrange', reqx.key, 0, 10]
                            }, {
-                              uri: ['zcard', reqx.key],
-                              description: 'to get the cardinality of the zset'
+                              uri: ['zcard', reqx.key]
                            }];
                            _context82.next = 3;
                            return _this5.redis.zremAsync(reqx.keyspaceKey, req.params.member);
@@ -3394,7 +3329,9 @@ var _class = function () {
          }());
          this.addKeyspaceCommand({
             key: 'zrange',
-            params: ['key', 'start', 'stop']
+            params: ['key', 'start', 'stop'],
+            description: 'range items in the zset',
+            hintKeyParams: [0, 10]
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee83(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee83$(_context83) {
@@ -3402,14 +3339,9 @@ var _class = function () {
                      switch (_context83.prev = _context83.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['zrevrange', reqx.key, 0, 10],
-                              description: 'to reverse range items in the zset'
+                              uri: ['zrevrange', reqx.key, 0, 10]
                            }, {
-                              uri: ['zcard', reqx.key],
-                              description: 'to get the cardinality of the zset'
-                           }, {
-                              uri: ['help'],
-                              description: 'to view sample keyspace commands'
+                              uri: ['zcard', reqx.key]
                            }];
                            _context83.next = 3;
                            return _this5.redis.zrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
@@ -3430,7 +3362,8 @@ var _class = function () {
          }());
          this.addKeyspaceCommand({
             key: 'zrevrange',
-            params: ['key', 'start', 'stop']
+            params: ['key', 'start', 'stop'],
+            description: 'reverse range items in the zset'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee84(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee84$(_context84) {
@@ -3438,11 +3371,9 @@ var _class = function () {
                      switch (_context84.prev = _context84.next) {
                         case 0:
                            reqx.hints = [{
-                              uri: ['zrange', reqx.key, 0, 10],
-                              description: 'to range items in the zset'
+                              uri: ['zrange', reqx.key, 0, 10]
                            }, {
-                              uri: ['zcard', reqx.key],
-                              description: 'to get the cardinality of the zset'
+                              uri: ['zcard', reqx.key]
                            }];
                            _context84.next = 3;
                            return _this5.redis.zrevrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
@@ -3557,7 +3488,7 @@ var _class = function () {
                return ref.apply(this, arguments);
             };
          }());
-         this.commands.push(command);
+         this.addCommand(command);
       }
    }, {
       key: 'addPublicRoute',
@@ -3685,7 +3616,8 @@ var _class = function () {
          }());
          this.addPublicCommand({
             key: 'register-account-telegram',
-            params: ['account']
+            params: ['account'],
+            description: 'register a new account linked to an authoritative Telegram.org account'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee90(req, res) {
                return regeneratorRuntime.wrap(function _callee90$(_context90) {
@@ -3818,13 +3750,13 @@ var _class = function () {
                },
                access: 'admin'
             }, function () {
-               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee92(req, res, _ref28) {
-                  var account = _ref28.account;
-                  var accountKey = _ref28.accountKey;
-                  var time = _ref28.time;
-                  var clientCertDigest = _ref28.clientCertDigest;
+               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee92(req, res, _ref27) {
+                  var account = _ref27.account;
+                  var accountKey = _ref27.accountKey;
+                  var time = _ref27.time;
+                  var clientCertDigest = _ref27.clientCertDigest;
 
-                  var _ref29, _ref30, cert;
+                  var _ref28, _ref29, cert;
 
                   return regeneratorRuntime.wrap(function _callee92$(_context92) {
                      while (1) {
@@ -3836,9 +3768,9 @@ var _class = function () {
                               });
 
                            case 2:
-                              _ref29 = _context92.sent;
-                              _ref30 = _slicedToArray(_ref29, 1);
-                              cert = _ref30[0];
+                              _ref28 = _context92.sent;
+                              _ref29 = _slicedToArray(_ref28, 1);
+                              cert = _ref29[0];
                               throw { message: 'Unimplemented' };
 
                            case 6:
@@ -3868,7 +3800,7 @@ var _class = function () {
                      case 0:
                         _context94.prev = 0;
                         return _context94.delegateYield(regeneratorRuntime.mark(function _callee93() {
-                           var errorMessage, account, v, dn, clientCert, clientCertDigest, otpSecret, accountKey, _ref31, _ref32, hsetnx, saddAccount, saddCert, result;
+                           var errorMessage, account, v, dn, clientCert, clientCertDigest, otpSecret, accountKey, _ref30, _ref31, hsetnx, saddAccount, saddCert, result;
 
                            return regeneratorRuntime.wrap(function _callee93$(_context93) {
                               while (1) {
@@ -3923,11 +3855,11 @@ var _class = function () {
                                        });
 
                                     case 18:
-                                       _ref31 = _context93.sent;
-                                       _ref32 = _slicedToArray(_ref31, 3);
-                                       hsetnx = _ref32[0];
-                                       saddAccount = _ref32[1];
-                                       saddCert = _ref32[2];
+                                       _ref30 = _context93.sent;
+                                       _ref31 = _slicedToArray(_ref30, 3);
+                                       hsetnx = _ref31[0];
+                                       saddAccount = _ref31[1];
+                                       saddCert = _ref31[2];
 
                                        if (hsetnx) {
                                           _context93.next = 25;
@@ -4022,7 +3954,7 @@ var _class = function () {
                                        case 0:
                                           _context96.prev = 0;
                                           return _context96.delegateYield(regeneratorRuntime.mark(function _callee95() {
-                                             var message, account, accountKey, _ref33, _ref34, _ref34$, time, admined, certs, duration, dn, result;
+                                             var message, account, accountKey, _ref32, _ref33, _ref33$, time, admined, certs, duration, dn, result;
 
                                              return regeneratorRuntime.wrap(function _callee95$(_context95) {
                                                 while (1) {
@@ -4048,12 +3980,12 @@ var _class = function () {
                                                          });
 
                                                       case 7:
-                                                         _ref33 = _context95.sent;
-                                                         _ref34 = _slicedToArray(_ref33, 3);
-                                                         _ref34$ = _slicedToArray(_ref34[0], 1);
-                                                         time = _ref34$[0];
-                                                         admined = _ref34[1];
-                                                         certs = _ref34[2];
+                                                         _ref32 = _context95.sent;
+                                                         _ref33 = _slicedToArray(_ref32, 3);
+                                                         _ref33$ = _slicedToArray(_ref33[0], 1);
+                                                         time = _ref33$[0];
+                                                         admined = _ref33[1];
+                                                         certs = _ref33[2];
 
                                                          if (admined) {
                                                             _context95.next = 15;
@@ -4428,6 +4360,13 @@ var _class = function () {
          this.importTime = time;
       }
    }, {
+      key: 'addCommand',
+      value: function addCommand(command) {
+         assert(command.key);
+         this.commands.push(command);
+         this.commandMap.set(command.key, command);
+      }
+   }, {
       key: 'addKeyspaceCommand',
       value: function addKeyspaceCommand(command, fn) {
          assert(command.key, 'command.key');
@@ -4436,7 +4375,7 @@ var _class = function () {
          command.params = command.params || [];
          var key = command.key + command.params.length;
          this.logger.debug('addKeyspaceCommand', command.key, key, uri);
-         this.commands.push(command);
+         this.addCommand(command);
          var handler = this.createKeyspaceHandler(command, fn);
          if (command.key === this.config.indexCommand) {
             this.expressApp.get([this.config.location, uri].join('/'), handler);
@@ -4466,7 +4405,7 @@ var _class = function () {
                         case 0:
                            _context101.prev = 0;
                            return _context101.delegateYield(regeneratorRuntime.mark(function _callee100() {
-                              var _req$params11, account, keyspace, key, timeout, accountKey, helpPath, reqx, v, isSecureAccount, _ref35, _ref36, _ref36$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref37, _ref38, expire;
+                              var _req$params11, account, keyspace, key, timeout, accountKey, helpPath, reqx, v, isSecureAccount, _ref34, _ref35, _ref35$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref36, _ref37, expire;
 
                               return regeneratorRuntime.wrap(function _callee100$(_context100) {
                                  while (1) {
@@ -4559,14 +4498,14 @@ var _class = function () {
                                           });
 
                                        case 32:
-                                          _ref35 = _context100.sent;
-                                          _ref36 = _slicedToArray(_ref35, 5);
-                                          _ref36$ = _slicedToArray(_ref36[0], 1);
-                                          time = _ref36$[0];
-                                          registered = _ref36[1];
-                                          admined = _ref36[2];
-                                          accessed = _ref36[3];
-                                          certs = _ref36[4];
+                                          _ref34 = _context100.sent;
+                                          _ref35 = _slicedToArray(_ref34, 5);
+                                          _ref35$ = _slicedToArray(_ref35[0], 1);
+                                          time = _ref35$[0];
+                                          registered = _ref35[1];
+                                          admined = _ref35[2];
+                                          accessed = _ref35[3];
+                                          certs = _ref35[4];
 
                                           Objects.kvs({ time: time, registered: registered, admined: admined, accessed: accessed }).forEach(function (kv) {
                                              reqx[kv.key] = parseInt(kv.value);
@@ -4675,9 +4614,9 @@ var _class = function () {
                                           return multi.execAsync();
 
                                        case 76:
-                                          _ref37 = _context100.sent;
-                                          _ref38 = _toArray(_ref37);
-                                          expire = _ref38;
+                                          _ref36 = _context100.sent;
+                                          _ref37 = _toArray(_ref36);
+                                          expire = _ref37;
 
                                           if (expire) {
                                              _context100.next = 81;
@@ -4738,11 +4677,11 @@ var _class = function () {
    }, {
       key: 'migrateKeyspace',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee102(_ref39) {
-            var account = _ref39.account;
-            var keyspace = _ref39.keyspace;
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee102(_ref38) {
+            var account = _ref38.account;
+            var keyspace = _ref38.keyspace;
 
-            var accountKey, _ref40, _ref41, accessToken, token, _ref42, _ref43, hsetnx, hdel;
+            var accountKey, _ref39, _ref40, accessToken, token, _ref41, _ref42, hsetnx, hdel;
 
             return regeneratorRuntime.wrap(function _callee102$(_context102) {
                while (1) {
@@ -4756,10 +4695,10 @@ var _class = function () {
                         });
 
                      case 3:
-                        _ref40 = _context102.sent;
-                        _ref41 = _slicedToArray(_ref40, 2);
-                        accessToken = _ref41[0];
-                        token = _ref41[1];
+                        _ref39 = _context102.sent;
+                        _ref40 = _slicedToArray(_ref39, 2);
+                        accessToken = _ref40[0];
+                        token = _ref40[1];
 
                         if (!(!token && accessToken)) {
                            _context102.next = 20;
@@ -4773,10 +4712,10 @@ var _class = function () {
                         });
 
                      case 10:
-                        _ref42 = _context102.sent;
-                        _ref43 = _slicedToArray(_ref42, 2);
-                        hsetnx = _ref43[0];
-                        hdel = _ref43[1];
+                        _ref41 = _context102.sent;
+                        _ref42 = _slicedToArray(_ref41, 2);
+                        hsetnx = _ref42[0];
+                        hdel = _ref42[1];
 
                         if (hsetnx) {
                            _context102.next = 18;
@@ -4874,8 +4813,8 @@ var _class = function () {
       }
    }, {
       key: 'validateAccess',
-      value: function validateAccess(req, reqx, _ref44) {
-         var certs = _ref44.certs;
+      value: function validateAccess(req, reqx, _ref43) {
+         var certs = _ref43.certs;
          var command = reqx.command;
          var account = reqx.account;
          var keyspace = reqx.keyspace;
@@ -4937,20 +4876,20 @@ var _class = function () {
          }
          if (!certs) {
             throw { message: 'No enrolled certs', hint: {
-                  uri: ['register-account']
+                  commandKey: ['register-account-telegram']
                } };
          }
          var clientCert = req.get('ssl_client_cert');
          if (!clientCert) {
             throw { message: 'No client cert sent', hint: {
-                  uri: ['register-account']
+                  commandKey: ['register-account-telegram']
                } };
          }
          var clientCertDigest = this.digestPem(clientCert);
          this.logger.info('validateCert', clientCertDigest, account);
          if (!certs.includes(clientCertDigest)) {
             throw { message: 'Invalid cert', hint: {
-                  uri: ['register-account']
+                  accountKey: ['register-account-telegram']
                } };
          }
       }
@@ -5238,11 +5177,23 @@ var _class = function () {
             });
             hints.push({
                uri: ['help'],
-               description: 'to view sample keyspace commands, or click on the header'
+               description: 'view sample keyspace commands, or click on the header'
             });
             var renderedPathHints = hints.map(function (hint) {
-               var path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace].concat(_toConsumableArray(hint.uri)).join('/'));
-               return Object.assign({ path: path }, hint);
+               if (hint.uri && hint.uri.length) {
+                  if (!hint.description) {
+                     var commandKey = hint.uri[0];
+                     var _command = _this15.commandMap.get(commandKey);
+                     _this15.logger.debug('hint command description', commandKey, _command);
+                     if (_command && _command.description) {
+                        hint = Object.assign({ description: _command.description }, hint);
+                     }
+                  }
+                  var path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace].concat(_toConsumableArray(hint.uri)).join('/'));
+                  hint = Object.assign({ path: path }, hint);
+                  return hint;
+               }
+               return hint;
             }).map(function (hint) {
                var uriLabel = [Hc.b(hint.uri[0])].concat(_toConsumableArray(hint.uri.slice(1))).join('/');
                _this15.logger.debug('hint', uriLabel, hint);
