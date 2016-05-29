@@ -1270,10 +1270,15 @@ export default class {
          if (!dn) throw {message: 'No client cert DN'};
          const dns = this.parseDn(dn);
          if (!dns.ou) throw {message: 'No client cert OU name'};
-         const [oMatching, account, domain] = dns.o.match(/^([\-_a-z]+)@(.*)$/);
-         if (!oMatching) throw {message: 'Cert O name not matching "account @ service domain"'};
-         if (!domain.match(req.hostname)) throw {message: 'O domain not matching: ' + req.hostname};
-         return {account, domain};
+         const matching = dns.ou.match(/^([\-_a-z]+)+%([\-_a-z]+)@(.*)$/);
+         this.logger.debug('OU', matching);
+         if (!matching) {
+            throw {message: 'Cert OU name not matching "role%account@domain"'};
+         } else {
+            const [role, account, domain] = matching.slice(1);
+            if (!domain.match(req.hostname)) throw {message: 'O domain not matching: ' + req.hostname};
+            return {account, domain};
+         }
       });
    }
 

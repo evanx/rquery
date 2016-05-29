@@ -3648,7 +3648,7 @@ var _class = function () {
             key: 'register-cert'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee95(req, res) {
-               var dn, clientCert, dns, _dns$o$match, _dns$o$match2, oMatching, account, domain;
+               var dn, clientCert, dns, matching, _matching$slice, _matching$slice2, role, account, domain;
 
                return regeneratorRuntime.wrap(function _callee95$(_context95) {
                   while (1) {
@@ -3683,31 +3683,35 @@ var _class = function () {
                            throw { message: 'No client cert OU name' };
 
                         case 9:
-                           _dns$o$match = dns.o.match(/^([\-_a-z]+)@(.*)$/);
-                           _dns$o$match2 = _slicedToArray(_dns$o$match, 3);
-                           oMatching = _dns$o$match2[0];
-                           account = _dns$o$match2[1];
-                           domain = _dns$o$match2[2];
+                           matching = dns.ou.match(/^([\-_a-z]+)+%([\-_a-z]+)@(.*)$/);
 
-                           if (oMatching) {
-                              _context95.next = 16;
+                           _this8.logger.debug('OU', matching);
+
+                           if (matching) {
+                              _context95.next = 15;
                               break;
                            }
 
-                           throw { message: 'Cert O name not matching "account @ service domain"' };
+                           throw { message: 'Cert OU name not matching "role%account@domain"' };
 
-                        case 16:
+                        case 15:
+                           _matching$slice = matching.slice(1);
+                           _matching$slice2 = _slicedToArray(_matching$slice, 3);
+                           role = _matching$slice2[0];
+                           account = _matching$slice2[1];
+                           domain = _matching$slice2[2];
+
                            if (domain.match(req.hostname)) {
-                              _context95.next = 18;
+                              _context95.next = 22;
                               break;
                            }
 
                            throw { message: 'O domain not matching: ' + req.hostname };
 
-                        case 18:
+                        case 22:
                            return _context95.abrupt('return', { account: account, domain: domain });
 
-                        case 19:
+                        case 23:
                         case 'end':
                            return _context95.stop();
                      }
