@@ -208,7 +208,7 @@ export default class {
       const now = new Date().getTime();
       this.logger.info('handleTelegramGrant', request);
       const match = request.text.match(/\/grant-cert (\w+)$/);
-      if (!matching) {
+      if (!match) {
          await this.sendTelegramReply(request, {
             format: 'html',
             content: [`Hi ${request.greetName}.`,

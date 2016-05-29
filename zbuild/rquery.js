@@ -223,7 +223,7 @@ var _class = function () {
 
             var _ref2 = _slicedToArray(_ref, 3);
 
-            var _matching = _ref2[0];
+            var matching = _ref2[0];
             var account = _ref2[1];
             var keyspace = _ref2[2];
 
@@ -549,7 +549,7 @@ var _class = function () {
                         this.logger.info('handleTelegramGrant', request);
                         match = request.text.match(/\/grant-cert (\w+)$/);
 
-                        if (matching) {
+                        if (match) {
                            _context7.next = 7;
                            break;
                         }
