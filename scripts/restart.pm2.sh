@@ -26,7 +26,18 @@ waitCommitted() {
   fi
 }
 
-[ -f ~/tmp/rquery-notify ] && waitCommitted ~/tmp/rquery-notify
+if [ $# -gt 0 ]
+then
+  if [ "$1" != "nowait" ]
+  then
+    rm -f ~/tmp/rquery-notify
+  fi
+fi
+
+if [ -f ~/tmp/rquery-notify ] 
+then
+  waitCommitted ~/tmp/rquery-notify
+fi
 
 git pull && git submodule update
 
