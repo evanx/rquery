@@ -28,7 +28,7 @@ waitCommitted() {
 
 if [ $# -gt 0 ]
 then
-  if [ "$1" != "nowait" ]
+  if [ "$1" = "nowait" ]
   then
     rm -f ~/tmp/rquery-notify
   fi
