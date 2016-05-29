@@ -211,8 +211,8 @@ export default class {
       if (!match) {
          await this.sendTelegramReplyText(request,
             `Sorry, invalid. Try <code>/grant-cert HASH_TAIL</code>,`,
-            `where <code>HASH</code> is the last 8 digits of <code>cert.pem</code> hash,`
-            `e.g. via <code>cat ~/.redishub/live/privcert.pem | tail -2 | grep '^\w' | tail -c-8</code>`
+            `where <code>HASH</code> is the last 8 digits of <code>cert.pem</code> hash,`,
+            `e.g. see https://redishub.com/docs/cert-hash-tail`
          );
          return;
       }
