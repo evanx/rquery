@@ -555,7 +555,7 @@ var _class = function () {
                         }
 
                         _context7.next = 6;
-                        return this.sendTelegramReplyText(request, 'Sorry, invalid. Try <code>/grant-cert &lt;hash tail8&gt;</code>,', 'where <code>hash tail</code> is the last 12 digits of <code>cert.pem</code> hash,', 'e.g. see github.com/evanx/redishub/docs/cert-tail.md');
+                        return this.sendTelegramReplyText(request, 'Sorry, that appears to be invalid. Try <code>/grant-cert &lt;hash tail8&gt;</code>,', 'where <code>hash tail</code> is the last 12 digits of <code>cert.pem</code> hash.', 'See github.com/evanx/redishub/docs/cert-tail.md.');
 
                      case 6:
                         return _context7.abrupt('return');
