@@ -469,7 +469,7 @@ export default class {
             ['hsetnx', 'myhashes1/field2/value2'],
             ['hgetall', 'myhashes1'],
             ['zadd', 'myzset1/10/member10'],
-            ['zaddnx', 'myzset1/20/member20'],
+            ['zadd', 'myzset1/20/member20'],
             ['zrange', 'myzset1/0/-1'],
             ['zrevrange', 'myzset1/0/-1'],
          ];
@@ -1158,7 +1158,7 @@ export default class {
          key: 'zrange',
          params: ['key', 'start', 'stop'],
          description: 'range items in the zset',
-         hintKeyParams: [0, 10],
+         exampleKeyParams: [0, 10],
          relatedCommands: ['zrevrange', 'zcard']
       }, async (req, res, reqx) => {
          return await this.redis.zrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
