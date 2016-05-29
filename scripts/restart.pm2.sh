@@ -1,6 +1,8 @@
 
 set -u -e
 
+git status
+
 waitCommitted() {
   notifyFile=$1
   ls -l $notifyFile
@@ -19,6 +21,7 @@ waitCommitted() {
       sleep .500
       count=`echo "$count + 1" | bc`
     done
+    sleep 4
   fi
 }
 
