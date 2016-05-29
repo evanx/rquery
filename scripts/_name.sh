@@ -53,6 +53,23 @@ fi
 echo $instance | grep -q '^[0-9]$'
 port="${port}${instance}"
 
+# bot 
+
+bot=redishub
+if [ $config = test ] 
+then
+  bot=rhtest
+elif [ $config = demo ] 
+then
+  bot=rhdemo
+fi
+
+botSecret=`cat ~/.bot.$bot/secret`
+echo botSecret $botSecret
+
+botUrl=`cat ~/.bot.$bot/url`
+echo botUrl $botUrl
+
 # ok 
 
 >&2 echo "$0 $name $config $instance $port"
