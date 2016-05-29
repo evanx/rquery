@@ -547,7 +547,7 @@ var _class = function () {
                         now = new Date().getTime();
 
                         this.logger.info('handleTelegramGrant', request);
-                        match = request.text.match(/\/grant-cert (\w+)$)/);
+                        match = request.text.match(/\/grant-cert (\w+)$/);
 
                         if (matching) {
                            _context7.next = 7;

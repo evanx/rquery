@@ -207,7 +207,7 @@ export default class {
    async handleTelegramGrant(request) {
       const now = new Date().getTime();
       this.logger.info('handleTelegramGrant', request);
-      const match = request.text.match(/\/grant-cert (\w+)$)/);
+      const match = request.text.match(/\/grant-cert (\w+)$/);
       if (!matching) {
          await this.sendTelegramReply(request, {
             format: 'html',
