@@ -318,14 +318,14 @@ var _class = function () {
       key: 'handleTelegram',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee5(req, res, telegram) {
-            var cert, message, content;
+            var dn, message, content;
             return regeneratorRuntime.wrap(function _callee5$(_context5) {
                while (1) {
                   switch (_context5.prev = _context5.next) {
                      case 0:
-                        cert = req.get('ssl_client_cert');
+                        dn = this.parseCertDn(req);
 
-                        this.logger.debug('telegram', telegram, cert);
+                        this.logger.debug('telegram', telegram, dn);
 
                         if (cert) {
                            _context5.next = 6;
@@ -3797,53 +3797,34 @@ var _class = function () {
             key: 'register-cert'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee97(req, res) {
-               var dn, clientCert, dns, matching, _matching$slice, _matching$slice2, role, account, domain;
+               var dn, matching, _matching$slice, _matching$slice2, role, account, domain;
 
                return regeneratorRuntime.wrap(function _callee97$(_context97) {
                   while (1) {
                      switch (_context97.prev = _context97.next) {
                         case 0:
-                           dn = req.get('ssl_client_s_dn');
-                           clientCert = req.get('ssl_client_cert');
+                           dn = _this8.parseCertDn(req);
 
-                           if (clientCert) {
-                              _context97.next = 4;
-                              break;
-                           }
-
-                           throw { message: 'No client cert' };
-
-                        case 4:
-                           if (dn) {
-                              _context97.next = 6;
-                              break;
-                           }
-
-                           throw { message: 'No client cert DN' };
-
-                        case 6:
-                           dns = _this8.parseDn(dn);
-
-                           if (dns.ou) {
-                              _context97.next = 9;
+                           if (dn.ou) {
+                              _context97.next = 3;
                               break;
                            }
 
                            throw { message: 'No client cert OU name' };
 
-                        case 9:
-                           matching = dns.ou.match(/^([\-_a-z]+)+%([\-_a-z]+)@(.*)$/);
+                        case 3:
+                           matching = dn.ou.match(/^([\-_a-z]+)+%([\-_a-z]+)@(.*)$/);
 
                            _this8.logger.debug('OU', matching);
 
                            if (matching) {
-                              _context97.next = 15;
+                              _context97.next = 9;
                               break;
                            }
 
                            throw { message: 'Cert OU name not matching "role%account@domain"' };
 
-                        case 15:
+                        case 9:
                            _matching$slice = matching.slice(1);
                            _matching$slice2 = _slicedToArray(_matching$slice, 3);
                            role = _matching$slice2[0];
@@ -3851,16 +3832,16 @@ var _class = function () {
                            domain = _matching$slice2[2];
 
                            if (lodash.endsWith(req.hostname, domain)) {
-                              _context97.next = 22;
+                              _context97.next = 16;
                               break;
                            }
 
                            throw { message: 'O domain not matching: ' + req.hostname };
 
-                        case 22:
+                        case 16:
                            return _context97.abrupt('return', { account: account, domain: domain });
 
-                        case 23:
+                        case 17:
                         case 'end':
                            return _context97.stop();
                      }
@@ -3871,6 +3852,15 @@ var _class = function () {
                return ref.apply(this, arguments);
             };
          }());
+      }
+   }, {
+      key: 'parseCertDn',
+      value: function parseCertDn(req) {
+         var clientCert = req.get('ssl_client_cert');
+         if (!clientCert) throw { message: 'No client cert' };
+         var dn = req.get('ssl_client_s_dn');
+         if (!dn) throw { message: 'No client cert DN' };
+         return this.parseDn(dn);
       }
    }, {
       key: 'parseDn',
@@ -5606,3 +5596,4 @@ var _class = function () {
 }();
 
 exports.default = _class;
+//# sourceMappingURL=rquery.js.map
