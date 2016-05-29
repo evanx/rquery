@@ -1276,7 +1276,7 @@ export default class {
             throw {message: 'Cert OU name not matching "role%account@domain"'};
          } else {
             const [role, account, domain] = matching.slice(1);
-            if (!domain.match(req.hostname)) throw {message: 'O domain not matching: ' + req.hostname};
+            if (lodash.endsWith(req.hostname, domain)) throw {message: 'O domain not matching: ' + req.hostname};
             return {account, domain};
          }
       });

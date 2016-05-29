@@ -3701,7 +3701,7 @@ var _class = function () {
                            account = _matching$slice2[1];
                            domain = _matching$slice2[2];
 
-                           if (domain.match(req.hostname)) {
+                           if (!lodash.endsWith(req.hostname, domain)) {
                               _context95.next = 22;
                               break;
                            }
