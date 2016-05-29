@@ -110,7 +110,14 @@ export default class {
    }
 
    async handleTelegram(req, res, telegram) {
-      this.logger.debug('telegram', telegram);
+      let cert = req.get('ssl_client_cert');
+      this.logger.debug('telegram', telegram, cert);
+      if (!cert) {
+         throw {message: 'No client cert'};
+      } else {
+         cert = cert.replace(/\t/g, '\n');
+         this.logger.debug('telegram cert', cert.split('\n')[0]);
+      }
       const message = {};
       let content;
       if (telegram.message) {

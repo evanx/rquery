@@ -3,10 +3,11 @@ set -u -e
 
 . ./scripts/_name.sh
 
-botSecret=`cat ~/.bot.redishub/secret`
+bot=${botName-redishub}
+botSecret=`cat ~/.bot.$botName/secret`
 echo botSecret $botSecret
 
-botUrl=`cat ~/.bot.redishub/url`
+botUrl=`cat ~/.bot.$botName/url`
 echo botUrl $botUrl
 
 rquery_botUrl=$botUrl rquery_botSecret=$botSecret rquery_port=$port \
