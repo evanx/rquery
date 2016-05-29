@@ -212,7 +212,7 @@ export default class {
          await this.sendTelegramReplyText(request,
             `Sorry, that appears to be invalid. Try <code>/grant-cert &lt;hash tail8&gt;</code>,`,
             `where <code>hash tail</code> is the last 12 digits of <code>cert.pem</code> hash.`,
-            `See github.com/evanx/redishub/docs/cert-tail.md.`
+            `See https://github.com/evanx/redishub/blob/master/docs/cert-tail.md.`
          );
          return;
       }
