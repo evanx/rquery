@@ -555,7 +555,7 @@ var _class = function () {
                         }
 
                         _context7.next = 6;
-                        return this.sendTelegramReplyText(request, 'Sorry, that appears to be invalid. Try <code>/grant cert &lt;tail&gt;</code>,', 'where <code>hash</code> is the last 12 digits of <code>cert.pem</code> hash.', 'See https://github.com/evanx/redishub/blob/master/docs/cert-tail.md.');
+                        return this.sendTelegramReplyText(request, 'Sorry, that appears to be invalid. Try <code>/grant cert &lt;tail&gt;</code>,', 'where <code>hash</code> is the last 12 digits of <code>cert.pem</code> hash.', 'See github.com/evanx/redishub/blob/master/docs/cert-tail.md.');
 
                      case 6:
                         return _context7.abrupt('return');
@@ -598,7 +598,7 @@ var _class = function () {
                         }
 
                         _context7.next = 27;
-                        return this.sendTelegramReplyText(request, 'You have approved enrollment of cert PEM ending with <b>' + cert + '</b>,', 'so that identity can now enroll via ' + this.config.hostUrl + '/register-cert.', 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request.');
+                        return this.sendTelegramReplyText(request, 'You have approved enrollment of cert PEM ending with <b>' + cert + '</b>.', 'That identity can now enroll via ' + this.config.hostUrl + '/register-cert.', 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request.');
 
                      case 27:
                         _context7.next = 31;
