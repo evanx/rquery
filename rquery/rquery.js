@@ -223,7 +223,7 @@ export default class {
       await this.sendTelegramReply(request, {
          format: 'html',
          content: [`Thanks, ${request.greetName}.`,
-            `You have approved access to cert <b>${message}</b>,`,
+            `You have approved access to cert <b>${request.text}</b>,`,
             `so that identity can now enroll via ${this.config.hostUrl}/register-cert`
          ].join(' ')
       });
