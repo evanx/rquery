@@ -197,7 +197,7 @@ export default class {
          await this.sendTelegramReply(request, {
             format: 'html',
             content: [`Hi ${request.greetName}.`,
-               `Your identity as was already verified to <b>${this.config.serviceLabel}</b>`,
+               `Your identity as was already verified to <i>${this.config.serviceLabel}</i>`,
                `${Millis.formatVerboseDuration(duration)} ago as <code>@${request.username}</code>`
             ].join(' ')
          });
@@ -208,11 +208,25 @@ export default class {
       const now = new Date().getTime();
       this.logger.info('handleTelegramGrant', request);
       const userKey = this.adminKey('telegram', 'user', request.username);
-      let [ismember, verified, secret] = await this.redis.multiExecAsync(multi => {
+      const grantKey = this.adminKey('telegram', 'user', request.username, 'grant-cert', request);
+      this.logger.info('handleTelegramGrant', userKey, grantKey, request);
+      let [ismember, verified, secret, exists] = await this.redis.multiExecAsync(multi => {
          multi.sismember(this.adminKey('telegram:verified:users'), request.username);
          multi.hget(userKey, 'verified');
          multi.hget(userKey, 'secret');
+         multi.exists(grantKey);
       });
+      let [setex] = await this.redis.multiExecAsync(multi => {
+         multi.setex(grantKey, request, this.config.enrollExpire);
+      });
+      await this.sendTelegramReply(request, {
+         format: 'html',
+         content: [`Thanks, ${request.greetName}.`,
+            `Your identity as is now verified to <b>${this.config.serviceLabel}</b>`,
+            `as <code>telegram.me/${request.username}.</code>`
+         ].join(' ')
+      });
+
       throw {message: 'Not implemented'};
    }
 
