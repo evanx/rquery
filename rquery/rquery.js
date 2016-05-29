@@ -207,10 +207,10 @@ export default class {
    async handleTelegramGrant(request) {
       const now = new Date().getTime();
       this.logger.info('handleTelegramGrant', request);
-      const match = request.text.match(/\/grant-cert (\w+)$/);
+      const match = request.text.match(/\/grant cert (\w+)$/);
       if (!match) {
          await this.sendTelegramReplyText(request,
-            `Sorry, that appears to be invalid. Try <code>/grant-cert &lt;tail&gt;</code>,`,
+            `Sorry, that appears to be invalid. Try <code>/grant cert &lt;tail&gt;</code>,`,
             `where <code>hash</code> is the last 12 digits of <code>cert.pem</code> hash.`,
             `See https://github.com/evanx/redishub/blob/master/docs/cert-tail.md.`
          );

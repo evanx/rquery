@@ -547,7 +547,7 @@ var _class = function () {
                         now = new Date().getTime();
 
                         this.logger.info('handleTelegramGrant', request);
-                        match = request.text.match(/\/grant-cert (\w+)$/);
+                        match = request.text.match(/\/grant cert (\w+)$/);
 
                         if (match) {
                            _context7.next = 7;
@@ -555,7 +555,7 @@ var _class = function () {
                         }
 
                         _context7.next = 6;
-                        return this.sendTelegramReplyText(request, 'Sorry, that appears to be invalid. Try <code>/grant-cert &lt;tail&gt;</code>,', 'where <code>hash</code> is the last 12 digits of <code>cert.pem</code> hash.', 'See https://github.com/evanx/redishub/blob/master/docs/cert-tail.md.');
+                        return this.sendTelegramReplyText(request, 'Sorry, that appears to be invalid. Try <code>/grant cert &lt;tail&gt;</code>,', 'where <code>hash</code> is the last 12 digits of <code>cert.pem</code> hash.', 'See https://github.com/evanx/redishub/blob/master/docs/cert-tail.md.');
 
                      case 6:
                         return _context7.abrupt('return');
