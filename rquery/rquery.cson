@@ -21,6 +21,10 @@ config:
       type: 'url'
    aboutUrl:
       type: 'url'
+   enrollExpire:
+      type: 'duration'
+      unit: 'seconds'
+      max: 999
    keyExpire:
       type: 'duration'
       unit: 'seconds'
