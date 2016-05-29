@@ -555,7 +555,7 @@ var _class = function () {
                         }
 
                         _context7.next = 6;
-                        return this.sendTelegramReplyText(request, 'Sorry, invalid. Try <tt>/grant-cert &lt;hash&gt;<tt> with the 8 digits of cert PEM hash,', 'e.g. via <tt>cat ~/.redishub/live/privcert.pem | tail -2 | grep \'^w\' | tail -c-8</tt>');
+                        return this.sendTelegramReplyText(request, 'Sorry, invalid. Try <code>/grant-cert HASH_TAIL</code>', 'where <code>HASH</code> is the last 8 digits of <code>cert.pem</code> hash.');
 
                      case 6:
                         return _context7.abrupt('return');
