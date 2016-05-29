@@ -22,8 +22,6 @@ function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defi
 
 function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 var CustomCommandKeys = ['ttls'];
 
 var logger = Loggers.create(module.filename, 'info');
@@ -37,8 +35,6 @@ function obscureKeyspaceLabel(reqx) {
 }
 
 function render(props) {
-   var _Object$assign;
-
    var keyspaceLabel = obscureKeyspaceLabel(props.reqx);
    logger.debug('props', keyspaceLabel, Object.keys(props), Object.keys(Hx));
    var commands = props.result.commands.filter(function (command) {
@@ -64,12 +60,14 @@ function render(props) {
    logger.debug('standardCommands', standardCommands.map(function (command) {
       return command.key;
    }).join(' '));
-   return Object.assign(props, (_Object$assign = {
+   return Object.assign(props, {
       title: [props.reqx.account, keyspaceLabel].join('/'),
       heading: [Hc.b(props.reqx.account), Hs.tt(_styles2.default.header.keyspace, keyspaceLabel)].join(''),
-      helpPath: '/routes',
-      icon: 'database'
-   }, _defineProperty(_Object$assign, 'helpPath', ['routes']), _defineProperty(_Object$assign, 'content', [Hc.h3(props.result.message), He.p(Styles.meta('repeat', _styles2.default.result.description), props.result.description), renderUrls(props.result.exampleUrls, props.commandMap), He.br(), Hs.h4(_styles2.default.result.message, props.result.commandReferenceMessage), renderStandardCommands(standardCommands), Hs.h4(_styles2.default.result.message, props.result.customCommandHeading), renderCustomCommands(customCommands)]), _Object$assign));
+      homePath: '/routes',
+      icon: 'database',
+      helpPath: ['routes'],
+      content: [Hc.h3(props.result.message), He.p(Styles.meta('repeat', _styles2.default.result.description), props.result.description), renderUrls(props.result.exampleUrls, props.commandMap), He.br(), Hs.h4(_styles2.default.result.message, props.result.commandReferenceMessage), renderStandardCommands(standardCommands), Hs.h4(_styles2.default.result.message, props.result.customCommandHeading), renderCustomCommands(customCommands)]
+   });
 }
 
 function renderUrls(urls, commandMap) {
