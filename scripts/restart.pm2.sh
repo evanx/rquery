@@ -21,7 +21,8 @@ waitCommitted() {
       sleep .500
       count=`echo "$count + 1" | bc`
     done
-    sleep 4
+    git pull && git submodule update
+    git pull && git submodule update
   fi
 }
 

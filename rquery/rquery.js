@@ -212,7 +212,8 @@ export default class {
          await this.sendTelegramReply(request, {
             format: 'html',
             content: [`Hi ${request.greetName}.`,
-               `Invalid. Try '/grant-cert <first line of cert hash>`
+               `Sorry, invalid. Try <tt>/grant-cert &lt;hash&gt;<tt> with the 8 digits of cert PEM hash,`
+               `e.g. via <tt>cat ~/.redishub/live/privcert.pem | tail -2 | grep '^\w' | tail -c-8</tt>`
             ].join(' ')
          });
          return;
@@ -235,7 +236,7 @@ export default class {
          await this.sendTelegramReply(request, {
             format: 'html',
             content: [`Thanks, ${request.greetName}.`,
-               `You have approved access to cert <b>${cert}</b>,`,
+               `You have approved access to cert PEM ending with <b>${cert}</b>,`,
                `so that identity can now enroll via ${this.config.hostUrl}/register-cert`
             ].join(' ')
          });

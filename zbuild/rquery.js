@@ -12,6 +12,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _templateObject = _taggedTemplateLiteral(['e.g. via <tt>cat ~/.redishub/live/privcert.pem | tail -2 | grep \'^w\' | tail -c-8</tt>'], ['e.g. via <tt>cat ~/.redishub/live/privcert.pem | tail -2 | grep \'^\\w\' | tail -c-8</tt>']);
+
 var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
@@ -91,6 +93,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -557,7 +561,7 @@ var _class = function () {
                         _context7.next = 6;
                         return this.sendTelegramReply(request, {
                            format: 'html',
-                           content: ['Hi ' + request.greetName + '.', 'Invalid. Try \'/grant-cert <first line of cert hash>'].join(' ')
+                           content: ['Hi ' + request.greetName + '.', 'Sorry, invalid. Try <tt>/grant-cert &lt;hash&gt;<tt> with the 8 digits of cert PEM hash,'(_templateObject)].join(' ')
                         });
 
                      case 6:
@@ -603,7 +607,7 @@ var _class = function () {
                         _context7.next = 27;
                         return this.sendTelegramReply(request, {
                            format: 'html',
-                           content: ['Thanks, ' + request.greetName + '.', 'You have approved access to cert <b>' + cert + '</b>,', 'so that identity can now enroll via ' + this.config.hostUrl + '/register-cert'].join(' ')
+                           content: ['Thanks, ' + request.greetName + '.', 'You have approved access to cert PEM ending with <b>' + cert + '</b>,', 'so that identity can now enroll via ' + this.config.hostUrl + '/register-cert'].join(' ')
                         });
 
                      case 27:
