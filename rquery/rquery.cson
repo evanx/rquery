@@ -15,6 +15,15 @@ config:
    keyspaceHostname:
       optional: true
       type: 'string'
+   serviceRepo:
+      defaultValue: 'https://github.com/evanx/rquery'
+      optional: true
+   serviceBranch:
+      defaultValue: 'master'
+      optional: true
+   serviceVersion:
+      defaultValue: 'HEAD'
+      optional: true
    port:
       defaultValue: 8080
    helpUrl:
