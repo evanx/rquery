@@ -1,2 +1,2 @@
 
-dd if=/dev/urandom bs=10 count=1 2>/dev/null | base32
+dd if=/dev/urandom bs=16 count=1 2>/dev/null | base32
