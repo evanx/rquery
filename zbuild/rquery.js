@@ -3740,7 +3740,7 @@ var _class = function () {
             var value = _part$split2[1];
 
             if (name && value) {
-               parts[name] = value;
+               parts[name.toLowerCase()] = value;
             } else {
                _this9.logger.warn('parseDn', dn, part, name, value);
             }

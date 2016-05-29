@@ -1288,7 +1288,7 @@ export default class {
       .forEach(part => {
          const [name, value] = part.split('=');
          if (name && value) {
-            parts[name] = value;
+            parts[name.toLowerCase()] = value;
          } else {
             this.logger.warn('parseDn', dn, part, name, value);
          }
