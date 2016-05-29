@@ -60,6 +60,7 @@ c0testWebhook() {
 c1setWebhook() {
   webhookUrl=$1
   echo "webhookUrl $webhookUrl"
+  echo | openssl sclient -connect api.telegram.org:443 | grep 'CN='
   openssl x509 -text -in cert.pem  | grep 'CN='
   echo "curl -s -F certificate=@cert.pem 'https://api.telegram.org/bot$bot/setWebhook?url=$webhookUrl'"
   #if ! curl -s -F certificate=@cert.pem "https://api.telegram.org/bot$bot/setWebhook?url=$webhookUrl" > res
