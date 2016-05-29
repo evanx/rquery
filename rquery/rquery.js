@@ -110,8 +110,8 @@ export default class {
    }
 
    async handleTelegram(req, res, telegram) {
-      let cert = req.get('ssl_client_cert');
-      this.logger.debug('telegram', telegram, cert);
+      const dn = this.parseCertDn(req);
+      this.logger.debug('telegram', telegram, dn);
       if (!cert) {
          throw {message: 'No client cert'};
       } else {
@@ -1315,13 +1315,9 @@ export default class {
       this.addPublicCommand({
          key: 'register-cert'
       }, async (req, res) => {
-         const dn = req.get('ssl_client_s_dn');
-         const clientCert = req.get('ssl_client_cert');
-         if (!clientCert) throw {message: 'No client cert'};
-         if (!dn) throw {message: 'No client cert DN'};
-         const dns = this.parseDn(dn);
-         if (!dns.ou) throw {message: 'No client cert OU name'};
-         const matching = dns.ou.match(/^([\-_a-z]+)+%([\-_a-z]+)@(.*)$/);
+         const dn = this.parseCertDn(req);
+         if (!dn.ou) throw {message: 'No client cert OU name'};
+         const matching = dn.ou.match(/^([\-_a-z]+)+%([\-_a-z]+)@(.*)$/);
          this.logger.debug('OU', matching);
          if (!matching) {
             throw {message: 'Cert OU name not matching "role%account@domain"'};
@@ -1333,6 +1329,14 @@ export default class {
             return {account, domain};
          }
       });
+   }
+
+   parseCertDn(req) {
+      const clientCert = req.get('ssl_client_cert');
+      if (!clientCert) throw {message: 'No client cert'};
+      const dn = req.get('ssl_client_s_dn');
+      if (!dn) throw {message: 'No client cert DN'};
+      return this.parseDn(dn);
    }
 
    parseDn(dn) {
