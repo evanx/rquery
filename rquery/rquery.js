@@ -156,12 +156,10 @@ export default class {
             message.action = 'grant';
             await this.handleTelegramGrant(message);
          } else {
-            await this.sendTelegramReply(message, {
-               content: `
-               /verify - verify your Telegram identity to RedisHub
-               /grant-cert <CN> - grant account access to a certificate
-               `
-            });
+            await this.sendTelegram(message, 'html',
+               `/verify - verify your Telegram identity to RedisHub`,
+               `/grant-cert <CN> - grant account access to a certificate`
+            );
          }
       }
       this.logger.info('telegram message', message, telegram);
@@ -185,22 +183,18 @@ export default class {
             multi.hsetnx(userKey, 'id', request.fromId);
             multi.hsetnx(userKey, 'secret', secret);
          });
-         await this.sendTelegramReply(request, {
-            format: 'html',
-            content: [`Thanks, ${request.greetName}.`,
-               `Your identity as is now verified to <b>${this.config.serviceLabel}</b>`,
-               `as <code>telegram.me/${request.username}.</code>`
-            ].join(' ')
-         });
+         await this.sendTelegram(request, 'html',
+            `Thanks, ${request.greetName}.`,
+            `Your identity as is now verified to <b>${this.config.serviceLabel}</b>`,
+            `as <code>telegram.me/${request.username}.</code>`
+         );
       } else {
          const duration = now - parseInt(verified);
-         await this.sendTelegramReply(request, {
-            format: 'html',
-            content: [`Hi ${request.greetName}.`,
-               `Your identity as was already verified to <i>${this.config.serviceLabel}</i>`,
-               `${Millis.formatVerboseDuration(duration)} ago as <code>@${request.username}</code>`
-            ].join(' ')
-         });
+         await this.sendTelegram(request, 'html',
+            `Hi ${request.greetName}.`,
+            `Your identity as was already verified to <i>${this.config.serviceLabel}</i>`,
+            `${Millis.formatVerboseDuration(duration)} ago as <code>@${request.username}</code>`
+         );
       }
    }
 
@@ -209,10 +203,10 @@ export default class {
       this.logger.info('handleTelegramGrant', request);
       const match = request.text.match(/\/grant cert (\w+)$/);
       if (!match) {
-         await this.sendTelegramReplyText(request,
+         await this.sendTelegramReply(request, 'html',
             `Sorry, that appears to be invalid. Try <code>/grant cert &lt;tail&gt;</code>,`,
-            `where <code>hash</code> is the last 12 digits of <code>cert.pem</code> hash.`,
-            `See github.com/evanx/redishub/blob/master/docs/cert-tail.md.`
+            `where <code>tail</code> is the last 12 digits of the new <code>cert.pem</code> hash.`,
+            `See redishub.com/docs/cert-tail.md.`
          );
          return;
       }
@@ -231,41 +225,49 @@ export default class {
          multi.setex(grantKey, cert, this.config.enrollExpire);
       });
       if (setex) {
-         await this.sendTelegramReplyText(request,
-            `You have approved enrollment of cert PEM ending with <b>${cert}</b>.`,
+         await this.sendTelegramReply(request, 'html',
+            `You have approved enrollment of a cert PEM ending with <b>${cert}</b>.`,
             `That identity can now enroll via ${this.config.hostUrl}/register-cert.`,
             `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.enrollExpire)}`,
             `otherwise you need to repeat this request.`
          );
       } else {
-         await this.sendTelegramReplyText(request,
+         await this.sendTelegramReply(request, 'html',
             `Apologies, the 'setex' command reply was <tt>${setex}</tt>`,
          );
       }
    }
 
-   async sendTelegramReplyText(request, ...text) {
-      await this.sendTelegramReply(request, {
-         format: 'html',
-         content: [`Thanks, ${request.greetName}.`, ...text].join(' ')
-      });
+   async sendTelegramReply(request, format, ...content) {
+      if (request.chatId && request.greetName) {
+         await this.sendTelegram(request.chatId, format,
+            `Thanks, ${request.greetName}.`,
+            ...content
+         );
+      } else {
+         this.logger.error('sendTelegramReply', request);
+      }
    }
 
-   async sendTelegramReply(request, response) {
-      this.logger.info('sendTelegramReply', response);
+   async sendTelegramAlert(account, format, ...context) {
+      await this.sendTelegram(account, format, ...context);
+   }
+
+   async sendTelegram(chatId, format, ...content) {
+      this.logger.info('sendTelegram', chatId, format, content);
       try {
-         assert(request.fromId, 'fromId');
-         const content = lodash.trim(response.content.replace(/\s\s+/g, ' '));
-         let uri = `sendMessage?chat_id=${request.fromId}`;
+         content = lodash.trim(content.join(' ').replace(/\s\s+/g, ' '));
+         assert(chatId, 'chatId');
+         let uri = `sendMessage?chat_id=${chatId}`;
          uri += '&disable_notification=true';
-         if (response.format === 'markdown') {
+         if (format === 'markdown') {
             uri += `&parse_mode=Markdown`;
-         } else if (response.format === 'html') {
+         } else if (format === 'html') {
             uri += `&parse_mode=HTML`;
          }
          uri += `&text=${encodeURIComponent(content)}`;
          const url = [this.config.botUrl, uri].join('/');
-         this.logger.info('sendTelegramReply url', url);
+         this.logger.info('sendTelegram url', url, chatId, format, ...content);
          await Requests.head({url});
       } catch (err) {
          this.logger.error(err);
@@ -531,11 +533,18 @@ export default class {
       }, async (req, res, reqx) => {
          const {time, account, keyspace, accountKey} = reqx;
          this.logger.debug('command', reqx);
-         this.logger.debug('hsetnx', accountKey, time);
-         const replies = await this.redis.multiExecAsync(multi => {
+         this.logger.debug('hsetnx', accountKey, time, Object.keys(reqx));
+         const [hsetnx] = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', time);
          });
-         return replies;
+         if (hsetnx) {
+            await this.sendTelegramAlert(reqx.account, 'html',
+               `Registered new keyspace <code>${reqx.keyspace}</code>`,
+            );
+            return 'OK';
+         } else {
+            throw {message: 'Failed to register keyspace', reqx};
+         }
       });
       this.addKeyspaceCommand({
          key: 'deregister-keyspace',
