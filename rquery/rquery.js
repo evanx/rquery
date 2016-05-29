@@ -233,14 +233,22 @@ export default class {
          multi.setex(grantKey, cert, this.config.enrollExpire);
       });
       if (setex) {
-         await this.sendTelegramReply(request, {
-            format: 'html',
-            content: [`Thanks, ${request.greetName}.`,
-               `You have approved access to cert PEM ending with <b>${cert}</b>,`,
-               `so that identity can now enroll via ${this.config.hostUrl}/register-cert`
-            ].join(' ')
-         });
+         await this.sendTelegramReplyText(request,
+            `You have approved access to cert PEM ending with <b>${cert}</b>,`,
+            `so that identity can now enroll via ${this.config.hostUrl}/register-cert`
+         );
+      } else {
+         await this.sendTelegramReplyText(request,
+            `Apologies, the 'setex' command reply was <tt>${setex}</tt>`,
+         );
       }
+   }
+
+   async sendTelegramReplyText(request, ...text) {
+      await this.sendTelegramReply(request, {
+         format: 'html',
+         content: [`Thanks, ${request.greetName}.`, ...text].join(' ')
+      });
    }
 
    async sendTelegramReply(request, response) {
