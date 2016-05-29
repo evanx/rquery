@@ -1,5 +1,5 @@
 
-rsync -ra rquery config lib joy:test-secure/.
+rsync -ra rquery config lib zbuild joy:test-secure/.
 
 ssh joy "
   cd test-secure 
