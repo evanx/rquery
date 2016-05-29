@@ -209,13 +209,10 @@ export default class {
       this.logger.info('handleTelegramGrant', request);
       const match = request.text.match(/\/grant-cert (\w+)$/);
       if (!match) {
-         await this.sendTelegramReply(request, {
-            format: 'html',
-            content: [`Hi ${request.greetName}.`,
-               `Sorry, invalid. Try <tt>/grant-cert &lt;hash&gt;<tt> with the 8 digits of cert PEM hash,`
-               `e.g. via <tt>cat ~/.redishub/live/privcert.pem | tail -2 | grep '^\w' | tail -c-8</tt>`
-            ].join(' ')
-         });
+         await this.sendTelegramReplyText(request,
+            `Sorry, invalid. Try <tt>/grant-cert &lt;hash&gt;<tt> with the 8 digits of cert PEM hash,`,
+            `e.g. via <tt>cat ~/.redishub/live/privcert.pem | tail -2 | grep '^\w' | tail -c-8</tt>`
+         );
          return;
       }
       const cert = match[1];
