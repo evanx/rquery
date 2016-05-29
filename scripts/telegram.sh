@@ -1,9 +1,21 @@
 
 set -u -e 
 
-bot=${bot}
+. ~/redishub/bin/rhlogging.sh
 
-echo bot $bot
+bot=${bot-}
+
+if [ $# -gt 0 ]
+then
+  if echo "$1" | grep '^[a-z][\-a-z]*_bot$'
+  then
+    bot=`echo "$1" | sed -n 's/^[^_]*_bot$/\1/p' || echo ''`
+  fi
+fi
+
+echo bot [$bot]
+
+[ -n "$bot" ]
 
 cd ~/.bot.$bot
 
@@ -13,7 +25,8 @@ echo
 
 botToken=`cat token`
 botSecret=`cat secret`
-echo botSecret $botSecret
+rhinfo botToken $botToken
+rhinfo botSecret $botSecret
 
 >&1 echo "curl -s https://api.telegram.org/bot$botToken/getMe"
 
@@ -66,8 +79,7 @@ c1setWebhook() {
   echo "webhookUrl $webhookUrl"
   echo | openssl s_client -connect api.telegram.org:443 | grep 'CN='
   openssl x509 -text -in cert.pem  | grep 'CN='
-  echo "curl -s -F certificate=@cert.pem 'https://api.telegram.org/bot$botToken/setWebhook?url=$webhookUrl'"
-  #if ! curl -s -F certificate=@cert.pem "https://api.telegram.org/bot$botToken/setWebhook?url=$webhookUrl" > res
+  rhinfo "curl -s -F certificate=@cert.pem 'https://api.telegram.org/bot$botToken/setWebhook?url=$webhookUrl'"
   if ! curl -s "https://api.telegram.org/bot$botToken/setWebhook?url=$webhookUrl" > res
   then
     >&2 echo "curl $?"
