@@ -1,20 +1,24 @@
 
 set -u -e 
 
-cd ~/.bot.redishub
+bot=${bot}
+
+echo bot $bot
+
+cd ~/.bot.$bot
+
 pwd
-ls -l
+ls -l 
+echo
 
-bot=`cat id`
+botToken=`cat token`
 botSecret=`cat secret`
+echo botSecret $botSecret
 
-#echo bot $bot
-#echo botSecret $botSecret
-
->&1 echo "curl -s https://api.telegram.org/bot$bot/getMe"
+>&1 echo "curl -s https://api.telegram.org/bot$botToken/getMe"
 
 curlb() {
-  curl -s "https://api.telegram.org/bot$bot/$1" > res
+  curl -s "https://api.telegram.org/bot$botToken/$1" > res
   if head -1 res | grep '^["\[{]'
   then
     cat res | python -mjson.tool
@@ -62,9 +66,9 @@ c1setWebhook() {
   echo "webhookUrl $webhookUrl"
   echo | openssl s_client -connect api.telegram.org:443 | grep 'CN='
   openssl x509 -text -in cert.pem  | grep 'CN='
-  echo "curl -s -F certificate=@cert.pem 'https://api.telegram.org/bot$bot/setWebhook?url=$webhookUrl'"
-  #if ! curl -s -F certificate=@cert.pem "https://api.telegram.org/bot$bot/setWebhook?url=$webhookUrl" > res
-  if ! curl -s "https://api.telegram.org/bot$bot/setWebhook?url=$webhookUrl" > res
+  echo "curl -s -F certificate=@cert.pem 'https://api.telegram.org/bot$botToken/setWebhook?url=$webhookUrl'"
+  #if ! curl -s -F certificate=@cert.pem "https://api.telegram.org/bot$botToken/setWebhook?url=$webhookUrl" > res
+  if ! curl -s "https://api.telegram.org/bot$botToken/setWebhook?url=$webhookUrl" > res
   then
     >&2 echo "curl $?"
   else
