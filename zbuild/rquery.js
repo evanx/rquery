@@ -568,8 +568,8 @@ var _class = function () {
                         exists = _ref8[3];
                         _context7.next = 15;
                         return this.redis.multiExecAsync(function (multi) {
-                           _this4.logger.info('handleTelegramGrant setex', grantKey, request.message, _this4.config.enrollExpire);
-                           multi.setex(grantKey, request.message, _this4.config.enrollExpire);
+                           _this4.logger.info('handleTelegramGrant setex', grantKey, request.text, _this4.config.enrollExpire);
+                           multi.setex(grantKey, request.text, _this4.config.enrollExpire);
                         });
 
                      case 15:

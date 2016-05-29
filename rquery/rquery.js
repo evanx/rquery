@@ -217,8 +217,8 @@ export default class {
          multi.exists(grantKey);
       });
       let [setex] = await this.redis.multiExecAsync(multi => {
-         this.logger.info('handleTelegramGrant setex', grantKey, request.message, this.config.enrollExpire);
-         multi.setex(grantKey, request.message, this.config.enrollExpire);
+         this.logger.info('handleTelegramGrant setex', grantKey, request.text, this.config.enrollExpire);
+         multi.setex(grantKey, request.text, this.config.enrollExpire);
       });
       await this.sendTelegramReply(request, {
          format: 'html',
