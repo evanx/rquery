@@ -20,6 +20,7 @@ curlak() {
   curli smembers/myset item1 item2
   curlm smembers/myset 2
   curlv srem/myset/item1
+  curlv smembers/myset
   curle spop/myset item2
   curle scard/myset 0
   curlv del/mysortedset

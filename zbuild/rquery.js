@@ -3675,12 +3675,12 @@ var _class = function () {
                         case 6:
                            dns = _this8.parseDn(dn);
 
-                           if (dns.o) {
+                           if (dns.ou) {
                               _context95.next = 9;
                               break;
                            }
 
-                           throw { message: 'No client cert O name' };
+                           throw { message: 'No client cert OU name' };
 
                         case 9:
                            _dns$o$match = dns.o.match(/^([\-_a-z]+)@(.*)$/);
@@ -5178,7 +5178,6 @@ var _class = function () {
                uri: ['help'],
                description: 'view sample keyspace commands'
             });
-            this.logger.debug('ZZ hints related', hints);
             var otherHints = hints.filter(function (hint) {
                return !hint.uri && hint.commandKey;
             });

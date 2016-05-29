@@ -1269,7 +1269,7 @@ export default class {
          if (!clientCert) throw {message: 'No client cert'};
          if (!dn) throw {message: 'No client cert DN'};
          const dns = this.parseDn(dn);
-         if (!dns.o) throw {message: 'No client cert O name'};
+         if (!dns.ou) throw {message: 'No client cert OU name'};
          const [oMatching, account, domain] = dns.o.match(/^([\-_a-z]+)@(.*)$/);
          if (!oMatching) throw {message: 'Cert O name not matching "account @ service domain"'};
          if (!domain.match(req.hostname)) throw {message: 'O domain not matching: ' + req.hostname};
@@ -2008,7 +2008,6 @@ export default class {
             uri: ['help'],
             description: 'view sample keyspace commands'
          });
-         this.logger.debug('ZZ hints related', hints);
          const otherHints = hints.filter(hint => !hint.uri && hint.commandKey);
          hints = hints
          .filter(hint => hint.uri);

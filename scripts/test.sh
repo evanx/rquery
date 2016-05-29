@@ -5,7 +5,10 @@ rurl=${rurl-`cat ~/.redishub/demo.url`}
 echo rurl $rurl
 
 check_ruri() {
-  echo $rurl/$1 `curl -s -A Mobile -I "$rurl/$1" | grep ^HTTP`
+  if echo "$1" | grep -qv 'rem\|pop'
+  then
+    echo $rurl/$1 `curl -s -A Mobile -I "$rurl/$1" | grep ^HTTP`
+  fi
 }
 
 curls() {
