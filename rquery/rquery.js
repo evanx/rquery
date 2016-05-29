@@ -208,7 +208,7 @@ export default class {
       const now = new Date().getTime();
       this.logger.info('handleTelegramGrant', request);
       const userKey = this.adminKey('telegram', 'user', request.username);
-      const grantKey = this.adminKey('telegram', 'user', request.username, 'grant-cert', request);
+      const grantKey = this.adminKey('telegram', 'user', request.username, 'grant');
       this.logger.info('handleTelegramGrant', userKey, grantKey, request);
       let [ismember, verified, secret, exists] = await this.redis.multiExecAsync(multi => {
          multi.sismember(this.adminKey('telegram:verified:users'), request.username);
@@ -217,7 +217,8 @@ export default class {
          multi.exists(grantKey);
       });
       let [setex] = await this.redis.multiExecAsync(multi => {
-         multi.setex(grantKey, request, this.config.enrollExpire);
+         this.logger.info('handleTelegramGrant setex', grantKey, request.message, this.config.enrollExpire);
+         multi.setex(grantKey, request.message, this.config.enrollExpire);
       });
       await this.sendTelegramReply(request, {
          format: 'html',

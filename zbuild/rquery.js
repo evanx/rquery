@@ -548,7 +548,7 @@ var _class = function () {
 
                         this.logger.info('handleTelegramGrant', request);
                         userKey = this.adminKey('telegram', 'user', request.username);
-                        grantKey = this.adminKey('telegram', 'user', request.username, 'grant-cert', request);
+                        grantKey = this.adminKey('telegram', 'user', request.username, 'grant');
 
                         this.logger.info('handleTelegramGrant', userKey, grantKey, request);
                         _context7.next = 7;
@@ -568,7 +568,8 @@ var _class = function () {
                         exists = _ref8[3];
                         _context7.next = 15;
                         return this.redis.multiExecAsync(function (multi) {
-                           multi.setex(grantKey, request, _this4.config.enrollExpire);
+                           _this4.logger.info('handleTelegramGrant setex', grantKey, request.message, _this4.config.enrollExpire);
+                           multi.setex(grantKey, request.message, _this4.config.enrollExpire);
                         });
 
                      case 15:
