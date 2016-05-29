@@ -22,6 +22,7 @@ config:
    aboutUrl:
       type: 'url'
    enrollExpire:
+      defaultValue: 180
       type: 'duration'
       unit: 'seconds'
       max: 999
