@@ -223,11 +223,10 @@ export default class {
       await this.sendTelegramReply(request, {
          format: 'html',
          content: [`Thanks, ${request.greetName}.`,
-            `Your identity as is now verified to <b>${this.config.serviceLabel}</b>`,
-            `as <code>telegram.me/${request.username}.</code>`
+            `You have approved access to cert <b>${message}</b>,`,
+            `so that identity can now enroll via ${this.config.hostUrl}/register-cert`
          ].join(' ')
       });
-
       throw {message: 'Not implemented'};
    }
 
