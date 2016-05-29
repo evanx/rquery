@@ -4,10 +4,8 @@ Object.defineProperty(exports, "__esModule", {
    value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-var _templateObject = _taggedTemplateLiteral(['\n         <div style="', '">\n         <a href=', '><b>', '</b>', '</a>\n         </div>\n         '], ['\n         <div style="', '">\n         <a href=', '><b>', '</b>', '</a>\n         </div>\n         ']),
-    _templateObject2 = _taggedTemplateLiteral(['\n         <div style="', '">\n         <a href=', '>', '</a>\n         </div>\n         '], ['\n         <div style="', '">\n         <a href=', '>', '</a>\n         </div>\n         ']);
+var _templateObject = _taggedTemplateLiteral(['\n         <div style=', '>\n            <a href=', '>\n               <div style=', '>\n                  <b>', '</b> ', '\n               </div>\n               <div style=', '>', '</div>\n            </a>\n         </div>\n         '], ['\n         <div style=', '>\n            <a href=', '>\n               <div style=', '>\n                  <b>', '</b> ', '\n               </div>\n               <div style=', '>', '</div>\n            </a>\n         </div>\n         ']),
+    _templateObject2 = _taggedTemplateLiteral(['\n         <div style="', '">\n            <a href=', '>', '</a>\n         </div>\n         '], ['\n         <div style="', '">\n            <a href=', '>', '</a>\n         </div>\n         ']);
 
 exports.obscureKeyspaceLabel = obscureKeyspaceLabel;
 exports.render = render;
@@ -21,6 +19,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
+function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -69,22 +69,31 @@ function render(props) {
       heading: [Hc.b(props.reqx.account), Hs.tt(_styles2.default.header.keyspace, keyspaceLabel)].join(''),
       helpPath: '/routes',
       icon: 'database'
-   }, _defineProperty(_Object$assign, 'helpPath', ['routes']), _defineProperty(_Object$assign, 'content', [Hc.h3(props.result.message), He.p(Styles.meta('repeat', _styles2.default.result.description), props.result.description), renderUrls(props.result.exampleUrls), He.br(), Hs.h4(_styles2.default.result.message, props.result.commandReferenceMessage), renderStandardCommands(standardCommands), Hs.h4(_styles2.default.result.message, props.result.customCommandHeading), renderCustomCommands(customCommands)]), _Object$assign));
+   }, _defineProperty(_Object$assign, 'helpPath', ['routes']), _defineProperty(_Object$assign, 'content', [Hc.h3(props.result.message), He.p(Styles.meta('repeat', _styles2.default.result.description), props.result.description), renderUrls(props.result.exampleUrls, props.commandMap), He.br(), Hs.h4(_styles2.default.result.message, props.result.commandReferenceMessage), renderStandardCommands(standardCommands), Hs.h4(_styles2.default.result.message, props.result.customCommandHeading), renderCustomCommands(customCommands)]), _Object$assign));
 }
 
-function renderUrls(urls) {
+function renderUrls(urls, commandMap) {
    return urls.map(function (url, index) {
-      var _ref = url.match(/^(https?:\/\/[^\/]+)\/ak\/[^\/]+\/[^\/]+\/([^\/]+)(\/\S+)?$/) || [];
+      var urip = url.split('://')[1].split('/').slice(2);
 
-      var _ref2 = _slicedToArray(_ref, 4);
+      var _urip = _toArray(urip);
 
-      var matching = _ref2[0];
-      var hostUrl = _ref2[1];
-      var command = _ref2[2];
-      var params = _ref2[3];
+      var account = _urip[0];
+      var keyspace = _urip[1];
+      var commandKey = _urip[2];
 
-      if (matching) {
-         return html(_templateObject, _styles2.default.keyspaceHelp.linkContainer, url, command, params || '');
+      var params = _urip.slice(3);
+
+      logger.debug('render url', url, commandKey, params, commandMap.get(commandKey));
+      if (commandKey) {
+         var description = '';
+         var command = commandMap.get(commandKey);
+         if (command) {
+            if (command.description) {
+               description = lodash.capitalize(command.description);
+            }
+         }
+         return html(_templateObject, _styles2.default.keyspaceHelp.linkContainer, url, _styles2.default.keyspaceHelp.command, commandKey, params || '', _styles2.default.keyspaceHelp.commandDescription, description);
       } else {
          return html(_templateObject2, _styles2.default.keyspaceHelp.linkContainer, url, url);
       }

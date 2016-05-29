@@ -429,7 +429,8 @@ export default class {
             if (true) {
                res.set('Content-Type', 'text/html');
                res.send(renderPage(KeyspaceHelp.render({
-                  config: this.config, req, reqx, result
+                  config: this.config, commandMap: this.commandMap,
+                  req, reqx, result
                })));
             } else if (!this.isMobile(req)) {
                res.set('Content-Type', 'text/html');
@@ -452,10 +453,10 @@ export default class {
             `Also edit the URL in the location bar to try other combinations.`
          ];
          const exampleParams = [
+            ['ttls'],
+            ['types'],
             ['set', 'mykey1/myvalue'],
             ['get', 'mykey1'],
-            ['set-json-query', 'myobject1?name=myname&id=12346'],
-            ['get-json', 'myobject1'],
             ['sadd', 'myset1/myvalue'],
             ['smembers', 'myset1'],
             ['lpush', 'mylist1/myvalue1'],
@@ -468,11 +469,13 @@ export default class {
             ['hsetnx', 'myhashes1/field2/value2'],
             ['hgetall', 'myhashes1'],
             ['zadd', 'myzset1/10/member10'],
-            ['zadd', 'myzset1/20/member20'],
+            ['zaddnx', 'myzset1/20/member20'],
             ['zrange', 'myzset1/0/-1'],
             ['zrevrange', 'myzset1/0/-1'],
-            ['ttls'],
-            ['types'],
+         ];
+         const customExampleParams = [
+            ['set-json-query', 'myobject1?name=myname&id=12346'],
+            ['get-json', 'myobject1'],
          ];
          const exampleUrls = exampleParams.map(params => {
             const key = params.shift();
@@ -615,7 +618,7 @@ export default class {
          key: 'type',
          params: ['key'],
          access: 'debug',
-         description: 'check the key type'
+         description: 'check the type of a key'
       }, async (req, res, reqx) => {
          reqx.hints = [
             {
@@ -627,7 +630,8 @@ export default class {
       this.addKeyspaceCommand({
          key: 'set-encrypt',
          params: ['key', 'value'],
-         access: 'set'
+         access: 'set',
+         description: 'set the string value of a key, encrypting using client cert'
       }, async (req, res, {keyspaceKey}) => {
          const {key, value} = req.params;
          let cert = req.get('ssl_client_cert');
@@ -642,7 +646,8 @@ export default class {
       this.addKeyspaceCommand({
          key: 'set',
          params: ['key', 'value'],
-         access: 'set'
+         access: 'set',
+         description: 'set the string value of a key'
       }, async (req, res, reqx) => {
          reqx.hint =  {
             uri: ['get', reqx.key],
@@ -652,9 +657,9 @@ export default class {
       });
       this.addKeyspaceCommand({
          key: 'set-json-object',
-         description: 'Set JSON via URL encoded object',
+         description: 'set JSON via URL encoded object',
          params: ['key', 'value'],
-         access: 'set'
+         access: 'set',
       }, async (req, res, reqx) => {
          let string = req.params.value;
          if (/^\w/.test(req.params.value)) {
@@ -671,7 +676,8 @@ export default class {
       this.addKeyspaceCommand({
          key: 'set-json-query',
          params: ['key'],
-         access: 'set'
+         access: 'set',
+         description: 'set JSON via URL query'
       }, async (req, res, reqx) => {
          reqx.hints = [
             {
@@ -683,7 +689,8 @@ export default class {
       this.addKeyspaceCommand({
          key: 'setex',
          params: ['key', 'seconds', 'value'],
-         access: 'set'
+         access: 'set',
+         description: 'set the value and expiration of a key'
       }, async (req, res, reqx) => {
          reqx.hints = [
             {
@@ -699,7 +706,8 @@ export default class {
       this.addKeyspaceCommand({
          key: 'setnx',
          params: ['key', 'value'],
-         access: 'add'
+         access: 'add',
+         description: 'set the value of a key if it does not exist'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.setnxAsync(keyspaceKey, req.params.value);
       });
@@ -734,34 +742,40 @@ export default class {
             } else {
                res.json(JSON.parse(value));
             }
-         } else {
+         } else if (false) {
             this.sendStatusMessage(req, res, 404, 'Not found: ' + key);
+         } else {
+            return JSON.parse(null);
          }
       });
       this.addKeyspaceCommand({
          key: 'incr',
          params: ['key'],
-         access: 'add'
+         access: 'add',
+         description: 'increment the integer value of a key'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.incrAsync(keyspaceKey);
       });
       this.addKeyspaceCommand({
          key: 'exists',
-         params: ['key']
+         params: ['key'],
+         description: 'check if a key exists in the keyspace'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.existsAsync(keyspaceKey);
       });
       this.addKeyspaceCommand({
          key: 'del',
          params: ['key'],
-         access: 'set'
+         access: 'set',
+         description: 'delete a key from the keyspace'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.delAsync(keyspaceKey);
       });
       this.addKeyspaceCommand({
          key: 'sadd',
          params: ['key', 'member'],
-         access: 'add'
+         access: 'add',
+         description: 'add a member to the list'
       }, async (req, res, reqx) => {
          reqx.hints = [
             {
@@ -776,7 +790,8 @@ export default class {
       this.addKeyspaceCommand({
          key: 'srem',
          params: ['key', 'member'],
-         access: 'set'
+         access: 'set',
+         description: 'remove an element from the set'
       }, async (req, res, {keyspaceKey}) => {
          return await this.redis.sremAsync(keyspaceKey, req.params.member);
       });
@@ -818,12 +833,12 @@ export default class {
          const reply = await this.redis.sismemberAsync(reqx.keyspaceKey, req.params.member);
          reqx.hints = [
             {
-               uri: ['smembers', reqx.key],
+               uri: ['smembers'],
             }
          ];
          if (reply) {
             reqx.hints.push({
-               uri: ['ttl', reqx.key],
+               uri: ['ttl'],
                description: 'check the TTL of your key'
             });
          }
@@ -853,7 +868,6 @@ export default class {
             },
             {
                uri: ['lrange', reqx.key, -10, -1],
-               description: 'view items at the end of the list'
             },
             {
                uri: ['llen', reqx.key],
@@ -876,7 +890,6 @@ export default class {
             },
             {
                uri: ['lrange', reqx.key, -10, -1],
-               description: 'view items at the end of the list'
             },
             {
                uri: ['llen', reqx.key],
@@ -896,21 +909,25 @@ export default class {
       this.addKeyspaceCommand({
          key: 'rpush',
          params: ['key', 'value'],
-         access: 'add'
+         rest: true,
+         access: 'add',
+         description: 'append a value to the list (on the right)'
       }, async (req, res, reqx) => {
          return await this.redis.rpushAsync(reqx.keyspaceKey, req.params.value);
       });
       this.addKeyspaceCommand({
          key: 'lpop',
          params: ['key'],
-         access: 'set'
+         access: 'set',
+         description: 'get and remove the first element in the list'
       }, async (req, res, reqx) => {
          return await this.redis.lpopAsync(reqx.keyspaceKey);
       });
       this.addKeyspaceCommand({
          key: 'blpop',
          params: ['key', 'timeout'],
-         access: 'set'
+         access: 'set',
+         description: 'get and remove the first element of the list (blocking)'
       }, async (req, res, reqx) => {
          const reply = await this.redis.blpopAsync(reqx.keyspaceKey, req.params.timeout);
          if (!reply) {
@@ -920,9 +937,18 @@ export default class {
          }
       });
       this.addKeyspaceCommand({
+         key: 'rpop',
+         params: ['key'],
+         access: 'set',
+         description: 'get and remove the last element of the list'
+      }, async (req, res, reqx) => {
+         return await this.redis.rpopAsync(reqx.keyspaceKey);
+      });
+      this.addKeyspaceCommand({
          key: 'brpop',
          params: ['key', 'timeout'],
-         access: 'set'
+         access: 'set',
+         description: 'get and remove the last element of the list (blocking)'
       }, async (req, res, reqx) => {
          const reply = await this.redis.brpopAsync(reqx.keyspaceKey, req.params.timeout);
          if (!reply) {
@@ -932,16 +958,10 @@ export default class {
          }
       });
       this.addKeyspaceCommand({
-         key: 'rpop',
-         params: ['key'],
-         access: 'set'
-      }, async (req, res, reqx) => {
-         return await this.redis.rpopAsync(reqx.keyspaceKey);
-      });
-      this.addKeyspaceCommand({
          key: 'brpoplpush',
          params: ['key', 'dest', 'timeout'],
-         access: 'set'
+         access: 'set',
+         description: 'get and remove the last element of the list and prepend to another'
       }, async (req, res, {account, keyspace, keyspaceKey}, multi) => {
          const {dest, timeout} = req.params;
          const destKey = this.keyspaceKey(account, keyspace, dest);
@@ -952,7 +972,7 @@ export default class {
       this.addKeyspaceCommand({
          key: 'llen',
          params: ['key'],
-         description: 'check the length of your list'
+         description: 'get the number of elements in a list'
       }, async (req, res, reqx) => {
          reqx.hints = [
             {
@@ -960,39 +980,38 @@ export default class {
             },
             {
                uri: ['lrange', reqx.key, -10, -1],
-               description: 'get items from the right of your list'
-            },
-            {
-               uri: ['help'],
-               description: 'see sample commands'
             }
          ];
          return await this.redis.llenAsync(reqx.keyspaceKey);
       });
       this.addKeyspaceCommand({
          key: 'lindex',
-         params: ['key', 'index']
+         params: ['key', 'index'],
+         description: 'get an element from a list by its index'
       }, async (req, res, reqx) => {
          return await this.redis.lindexAsync(reqx.keyspaceKey, req.params.index);
       });
       this.addKeyspaceCommand({
          key: 'lrem',
          params: ['key', 'count', 'value'],
-         access: 'set'
+         access: 'set',
+         description: 'remove elements from the list'
       }, async (req, res, reqx) => {
          return await this.redis.lremAsync(reqx.keyspaceKey, req.params.count, req.params.value);
       });
       this.addKeyspaceCommand({
          key: 'lset',
          params: ['key', 'index', 'value'],
-         access: 'set'
+         access: 'set',
+         description: 'set the value of an element in a list by its index'
       }, async (req, res, reqx) => {
          return await this.redis.lsetAsync(reqx.keyspaceKey, req.params.index, req.params.value);
       });
       this.addKeyspaceCommand({
          key: 'ltrim',
          params: ['key', 'start', 'stop'],
-         access: 'set'
+         access: 'set',
+         description: 'trim the list to the specified range',
       }, async (req, res, reqx) => {
          return await this.redis.ltrimAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
       });
@@ -1000,7 +1019,7 @@ export default class {
          key: 'lrange',
          params: ['key', 'start', 'stop'],
          exampleKeyParams: [0, 10],
-         description: 'get items from the left of your list'
+         description: 'get a range of elements of a list (from the left)'
       }, async (req, res, reqx) => {
          reqx.hints = [
             {
@@ -1019,7 +1038,7 @@ export default class {
          key: 'lrevrange',
          params: ['key', 'start', 'stop'],
          exampleKeyParams: [0, 10],
-         description: 'get items from the left of your list in reverse order'
+         description: 'get some elements of your list in reverse order'
       }, async (req, res, reqx) => {
          reqx.hints = [
             {
@@ -1033,7 +1052,7 @@ export default class {
          key: 'rrange',
          params: ['key', 'start', 'stop'],
          exampleKeyParams: [0, 10],
-         description: 'get items from the right of your list'
+         description: 'get elements from the right of your list'
       }, async (req, res, reqx) => {
          reqx.hints = [
             {
@@ -1056,7 +1075,7 @@ export default class {
          key: 'rrevrange',
          params: ['key', 'start', 'stop'],
          exampleKeyParams: [0, 10],
-         description: 'get items from the right of your list in reverse order'
+         description: 'get elements from the right of your list in reverse order'
       }, async (req, res, reqx) => {
          if (req.params.start < 0) {
             throw {message: `${reqx.command.key} start must be zero or greater`};
@@ -1075,278 +1094,157 @@ export default class {
       this.addKeyspaceCommand({
          key: 'hset',
          params: ['key', 'field', 'value'],
-         access: 'set'
+         access: 'set',
+         description: 'set the string value of a hash field',
+         relatedCommands: ['hget', 'hgetall', 'hkeys', 'hvals']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['hget', reqx.key, req.params.field],
-            },
-            {
-               uri: ['hgetall'],
-            },
-            {
-               uri: ['hlen'],
-            },
-            {
-               uri: ['hkeys'],
-            }
-         ];
          return await this.redis.hsetAsync(reqx.keyspaceKey, req.params.field, req.params.value);
       });
       this.addKeyspaceCommand({
          key: 'hsetnx',
          params: ['key', 'field', 'value'],
-         access: 'add'
+         access: 'add',
+         description: 'set the string value of a hash field if it does not exist',
+         relatedCommands: ['hget', 'hgetall', 'hkeys', 'hvals']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['hget', reqx.key, req.params.field],
-            },
-            {
-               uri: ['hgetall', reqx.key],
-            },
-            {
-               uri: ['hlen', reqx.key],
-            },
-            {
-               uri: ['hkeys', reqx.key],
-            }
-         ];
          return await this.redis.hsetnxAsync(reqx.keyspaceKey, req.params.field, req.params.value);
       });
       this.addKeyspaceCommand({
          key: 'hget',
          params: ['key', 'field'],
-         description: 'get the contents of the field you have set in a hashes key'
+         description: 'get the contents of a hash field',
+         relatedCommands: ['hexists', 'hgetall', 'hkeys', 'hvals']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['hgetall', reqx.key],
-            },
-            {
-               uri: ['hlen', reqx.key],
-            },
-            {
-               uri: ['hkeys', reqx.key],
-            }
-         ];
          return await this.redis.hgetAsync(reqx.keyspaceKey, req.params.field);
       });
       this.addKeyspaceCommand({
          key: 'hdel',
          params: ['key', 'field'],
          access: 'set',
-         description: 'delete a field in a hashes key'
+         description: 'delete a hash field',
+         relatedCommands: ['hexists', 'hget']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['hexists', reqx.key, req.params.field],
-            },
-            {
-               uri: ['hgetall', reqx.key],
-            },
-            {
-               uri: ['hlen', reqx.key],
-            },
-            {
-               uri: ['hkeys', reqx.key],
-            }
-         ];
          return await this.redis.hdelAsync(reqx.keyspaceKey, req.params.field);
       });
       this.addKeyspaceCommand({
          key: 'hincrby',
          params: ['key', 'field', 'increment'],
-         access: 'add'
+         access: 'add',
+         description: 'increment the integer value of a hash field',
+         relatedCommands: ['hget']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['hget', reqx.key, req.params.field],
-            },
-            {
-               uri: ['hgetall', reqx.key],
-            },
-            {
-               uri: ['hlen', reqx.key],
-            },
-            {
-               uri: ['hkeys', reqx.key],
-            }
-         ];
          return await this.redis.hincrbyAsync(reqx.keyspaceKey, req.params.field, req.params.increment);
       });
       this.addKeyspaceCommand({
          key: 'hexists',
          params: ['key', 'field'],
-         description: 'check if the field exists'
+         description: 'check if the hash field exists',
+         relatedCommands: ['hkeys', 'hgetall']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['hkeys', reqx.key],
-            },
-            {
-               uri: ['hgetall', reqx.key],
-            },
-            {
-               uri: ['hlen', reqx.key],
-            },
-         ];
          const reply = await this.redis.hexistsAsync(reqx.keyspaceKey, req.params.field);
-         if (reply) {
-            reqx.hints.push({
-               uri: ['hget', reqx.key, req.params.field],
-            });
-         }
          return reply;
       });
       this.addKeyspaceCommand({
          key: 'hlen',
          params: ['key'],
-         description: 'get the number of fields in your hashes key'
+         description: 'get the number of fields in a hash',
+         relatedCommands: ['hkeys', 'hvals', 'hgetall']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['hkeys', reqx.key],
-            },
-            {
-               uri: ['hgetall', reqx.key],
-            },
-         ];
          return await this.redis.hlenAsync(reqx.keyspaceKey);
       });
       this.addKeyspaceCommand({
          key: 'hkeys',
          params: ['key'],
-         description: 'get the keys of the fields in your hashes'
+         description: 'get the keys of the fields in your hashes',
+         relatedCommands: ['hlen', 'hvals', 'hgetall']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['hgetall', reqx.key],
-            },
-            {
-               uri: ['hlen', reqx.key],
-            },
-         ];
+         return await this.redis.hkeysAsync(reqx.keyspaceKey);
+      });
+      this.addKeyspaceCommand({
+         key: 'hvals',
+         params: ['key'],
+         description: 'get all the values in a hash',
+         relatedCommands: ['hkeys', 'hgetall']
+      }, async (req, res, reqx) => {
          return await this.redis.hkeysAsync(reqx.keyspaceKey);
       });
       this.addKeyspaceCommand({
          key: 'hgetall',
          params: ['key'],
-         description: 'get all the fields of your hashes key'
+         description: 'get all the fields in a hash',
+         relatedCommands: ['hlen', 'hkeys', 'hvals']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['hlen'],
-            },
-            {
-               uri: ['hkeys'],
-            }
-         ];
          return await this.redis.hgetallAsync(reqx.keyspaceKey);
       });
       this.addKeyspaceCommand({
          key: 'zcard',
          params: ['key'],
-         description: 'get the cardinality of the zset'
+         description: 'get the cardinality of the zset',
+         relatedCommands: ['zrange', 'zrevrange']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['zrange', reqx.key, 0, 10]
-            }
-         ];
          return await this.redis.zcardAsync(reqx.keyspaceKey);
       });
       if (this.config.redisVersion && this.config.redisVersion[0] >= 3) {
          this.addKeyspaceCommand({
             key: 'zaddnx',
             params: ['key', 'score', 'member'],
-            access: 'add'
+            access: 'add',
+            relatedCommands: ['zrange', 'zcard'],
+            description: 'add a member to a sorted set if it does not exist'
          }, async (req, res, reqx) => {
-            reqx.hints = [
-               {
-                  uri: ['zrange', reqx.key, 0, 10]
-               },
-               {
-                  uri: ['zcard', reqx.key],
-               }
-            ];
             return await this.redis.zaddAsync(reqx.keyspaceKey, 'NX', req.params.score, req.params.member);
          });
       }
       this.addKeyspaceCommand({
          key: 'zincrby',
          params: ['key', 'increment', 'member'],
-         access: 'add'
+         access: 'add',
+         description: 'increment the score of a member of a sorted set',
+         relatedCommands: ['zrange', 'zcard']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['zrange', reqx.key, 0, 10],
-            },
-            {
-               uri: ['zcard', reqx.key],
-            }
-         ];
          return await this.redis.zincrbyAsync(reqx.keyspaceKey, req.params.increment, req.params.member);
       });
       this.addKeyspaceCommand({
          key: 'zadd',
          params: ['key', 'score', 'member'],
-         access: 'add'
+         access: 'add',
+         command: 'add a member to a sorted set',
+         relatedCommands: ['zrange', 'zcard']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['zrange', reqx.key, 0, 10],
-            },
-            {
-               uri: ['zcard', reqx.key],
-            }
-         ];
          return await this.redis.zaddAsync(reqx.keyspaceKey, req.params.score, req.params.member);
       });
       this.addKeyspaceCommand({
          key: 'zrem',
          params: ['key', 'member'],
-         access: 'set'
+         access: 'set',
+         command: 'remove a member from a sorted set',
+         relatedCommands: ['zrange', 'zcard']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['zrange', reqx.key, 0, 10],
-            },
-            {
-               uri: ['zcard', reqx.key],
-            }
-         ];
          return await this.redis.zremAsync(reqx.keyspaceKey, req.params.member);
       });
       this.addKeyspaceCommand({
          key: 'zrange',
          params: ['key', 'start', 'stop'],
          description: 'range items in the zset',
-         hintKeyParams: [0, 10]
+         hintKeyParams: [0, 10],
+         relatedCommands: ['zrevrange', 'zcard']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['zrevrange', reqx.key, 0, 10],
-            },
-            {
-               uri: ['zcard', reqx.key],
-            }
-         ];
          return await this.redis.zrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
       });
       this.addKeyspaceCommand({
          key: 'zrevrange',
          params: ['key', 'start', 'stop'],
-         description: 'reverse range items in the zset'
+         description: 'reverse range items in the zset',
+         relatedCommands: ['zrange', 'zcard']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['zrange', reqx.key, 0, 10]
-            },
-            {
-               uri: ['zcard', reqx.key]
-            }
-         ];
+         return await this.redis.zrevrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
+      });
+      this.addKeyspaceCommand({
+         key: 'zrevrange',
+         params: ['key', 'start', 'stop'],
+         description: 'reverse range items in the zset',
+         relatedCommands: ['zrange', 'zcard']
+      }, async (req, res, reqx) => {
          return await this.redis.zrevrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
       });
    }
@@ -2167,7 +2065,9 @@ export default class {
       }
       content.push(Hs.pre(styles.result.resultArray, lodash.compact(resultArray).join('\n')));
       let hints = [];
-      if (reqx) {
+      if (reqx.account && req.keyspace && !lodash.isEmpty(command.relatedCommands)) {
+         hints = this.getRelatedCommandHints(reqx);
+      } else if (reqx) {
          if (reqx.hint) {
             hints.push(reqx.hint);
          }
@@ -2176,7 +2076,7 @@ export default class {
          }
       }
       if (hints.length && reqx.account && reqx.keyspace) {
-         const otherHints = hints.filter(hint => !hint.uri && hint.commandKey)
+         const otherHints = hints.filter(hint => !hint.uri && hint.commandKey);
          hints = hints
          .filter(hint => hint.uri && hint.uri[0] !== 'help');
          hints.push({
@@ -2196,12 +2096,13 @@ export default class {
                      }
                      if (command.uri) {
                         if (command.uri.length === 1) {
-                           command.uri.push(reqx.key);
+                           hint.uri.push(reqx.key);
                         }
                      }
                      if (command.exampleKeyParams) {
-                        command.uri = [command.key, reqx.key, ...command.exampleKeyParams];
+                        hint.uri = [command.key, reqx.key, ...command.exampleKeyParams];
                      }
+                     this.logger.info('example', command);
                   }
                }
                const path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace, ...hint.uri].join('/'));
@@ -2219,7 +2120,7 @@ export default class {
             }, [
                Hso.div(styles.result.hint.message, hint.message),
                Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, uriLabel)),
-               Hso.div(styles.result.hint.description, hint.description)
+               Hso.div(styles.result.hint.description, lodash.capitalize(hint.description))
             ]);
          });
          this.logger.debug('renderedPathHints', renderedPathHints);
@@ -2236,6 +2137,27 @@ export default class {
       res.status(statusCode).send(renderPage({
          config: this.config, req, reqx, title, heading, icon, content
       }));
+   }
+
+   getRelatedCommandHints(reqx, relatedCommands) {
+      return lodash.compact(relatedCommands
+         .map(commandKey => this.commandMap.get(commandKey))
+         .filter(command => command)
+         .map(command => {
+            let uri = [commandKey, reqx.key];
+            if (lodash.includes(command.params, 'field')) {
+               uri.push(reqx.params.field);
+            }
+            let exampleKeyParams = command.exampleKeyParams;
+            if (exampleKeyParams) {
+               uri = uri.concat(exampleKeyParams);
+            }
+            return {
+               uri: [commandKey, ...exampleKeyParams],
+               description: command.description
+            }
+         })
+      );
    }
 
    isDevelopment(req) {

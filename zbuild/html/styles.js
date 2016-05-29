@@ -88,13 +88,21 @@ var styles = {
       }
    },
    keyspaceHelp: {
+      linkContainer: {
+         lineHeight: 1.5,
+         fontFamily: 'monospace',
+         fontSize: 16,
+         marginBottom: 6
+      },
       command: {
          fontFamily: 'monospace',
-         lineHeight: 1.5
-      },
-      linkContainer: {
          lineHeight: 1.75,
-         fontFamily: 'monospace'
+         fontSize: 14
+      },
+      commandDescription: {
+         fontFamily: 'sansserif',
+         fontStyle: 'italic',
+         fontSize: 14
       }
    },
    routes: {
@@ -193,9 +201,9 @@ var styles = {
       hint: {
          container: {
             paddingTop: 20,
-            fontSize: 16,
-            color: '#424242'
+            fontSize: 16
          },
+         //color: '#424242'
          message: {
             fontSize: 16
          },
@@ -203,7 +211,7 @@ var styles = {
             paddingTop: 8,
             fontSize: 16,
             fontStyle: 'italic',
-            color: '#424242'
+            color: '#600000'
          },
          link: {
             fontSize: 14,

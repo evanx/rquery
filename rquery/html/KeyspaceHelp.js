@@ -37,7 +37,7 @@ export function render(props) {
       content: [
          Hc.h3(props.result.message),
          He.p(Styles.meta('repeat', styles.result.description), props.result.description),
-         renderUrls(props.result.exampleUrls),
+         renderUrls(props.result.exampleUrls, props.commandMap),
          He.br(),
          Hs.h4(styles.result.message, props.result.commandReferenceMessage),
          renderStandardCommands(standardCommands),
@@ -47,19 +47,33 @@ export function render(props) {
    });
 }
 
-function renderUrls(urls) {
+function renderUrls(urls, commandMap) {
    return urls.map((url, index) => {
-      const [matching, hostUrl, command, params] = url.match(/^(https?:\/\/[^\/]+)\/ak\/[^\/]+\/[^\/]+\/([^\/]+)(\/\S+)?$/) || [];
-      if (matching) {
+      const urip = url.split('://')[1].split('/').slice(2);
+      const [account, keyspace, commandKey, ...params] = urip;
+      logger.debug('render url', url, commandKey, params, commandMap.get(commandKey));
+      if (commandKey) {
+         let description = '';
+         const command = commandMap.get(commandKey);
+         if (command) {
+            if (command.description) {
+               description = lodash.capitalize(command.description);
+            }
+         }
          return html`
-         <div style="${styles.keyspaceHelp.linkContainer}">
-         <a href=${url}><b>${command}</b>${params || ''}</a>
+         <div style=${styles.keyspaceHelp.linkContainer}>
+            <a href=${url}>
+               <div style=${styles.keyspaceHelp.command}>
+                  <b>${commandKey}</b> ${params || ''}
+               </div>
+               <div style=${styles.keyspaceHelp.commandDescription}>${description}</div>
+            </a>
          </div>
          `;
       } else {
          return html`
          <div style="${styles.keyspaceHelp.linkContainer}">
-         <a href=${url}>${url}</a>
+            <a href=${url}>${url}</a>
          </div>
          `;
       }
