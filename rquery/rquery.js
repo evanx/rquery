@@ -64,7 +64,7 @@ export default class {
             return;
          }
          const [matching, account, keyspace] = req.path.match(/^\/ak\/([^\/]+)\/([^\/]+)\//) || [];
-         this.logger.debug('sendErrorRoute', req.path,  account, keyspace, this.isBrowser(req));
+         this.logger.debug('sendErrorRoute', req.path, account, keyspace, this.isBrowser(req));
          if (this.isBrowser(req)) {
             let redirectPath = '/routes';
             if (account && keyspace) {
