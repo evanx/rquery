@@ -223,7 +223,7 @@ var _class = function () {
 
             var _ref2 = _slicedToArray(_ref, 3);
 
-            var matching = _ref2[0];
+            var _matching = _ref2[0];
             var account = _ref2[1];
             var keyspace = _ref2[2];
 
@@ -538,7 +538,7 @@ var _class = function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee7(request) {
             var _this4 = this;
 
-            var now, userKey, grantKey, _ref7, _ref8, ismember, verified, secret, exists, _ref9, _ref10, setex;
+            var now, match, cert, userKey, grantKey, _ref7, _ref8, ismember, verified, secret, exists, _ref9, _ref10, setex;
 
             return regeneratorRuntime.wrap(function _callee7$(_context7) {
                while (1) {
@@ -547,11 +547,29 @@ var _class = function () {
                         now = new Date().getTime();
 
                         this.logger.info('handleTelegramGrant', request);
+                        match = request.text.match(/\/grant-cert (\w+)$)/);
+
+                        if (matching) {
+                           _context7.next = 7;
+                           break;
+                        }
+
+                        _context7.next = 6;
+                        return this.sendTelegramReply(request, {
+                           format: 'html',
+                           content: ['Hi ' + request.greetName + '.', 'Invalid. Try \'/grant-cert <first line of cert hash>'].join(' ')
+                        });
+
+                     case 6:
+                        return _context7.abrupt('return');
+
+                     case 7:
+                        cert = match[1];
                         userKey = this.adminKey('telegram', 'user', request.username);
                         grantKey = this.adminKey('telegram', 'user', request.username, 'grant');
 
-                        this.logger.info('handleTelegramGrant', userKey, grantKey, request);
-                        _context7.next = 7;
+                        this.logger.info('handleTelegramGrant', userKey, grantKey, request, cert);
+                        _context7.next = 13;
                         return this.redis.multiExecAsync(function (multi) {
                            multi.sismember(_this4.adminKey('telegram:verified:users'), request.username);
                            multi.hget(userKey, 'verified');
@@ -559,33 +577,36 @@ var _class = function () {
                            multi.exists(grantKey);
                         });
 
-                     case 7:
+                     case 13:
                         _ref7 = _context7.sent;
                         _ref8 = _slicedToArray(_ref7, 4);
                         ismember = _ref8[0];
                         verified = _ref8[1];
                         secret = _ref8[2];
                         exists = _ref8[3];
-                        _context7.next = 15;
+                        _context7.next = 21;
                         return this.redis.multiExecAsync(function (multi) {
-                           _this4.logger.info('handleTelegramGrant setex', grantKey, request.text, _this4.config.enrollExpire);
-                           multi.setex(grantKey, request.text, _this4.config.enrollExpire);
+                           _this4.logger.info('handleTelegramGrant setex', grantKey, cert, _this4.config.enrollExpire);
+                           multi.setex(grantKey, cert, _this4.config.enrollExpire);
                         });
 
-                     case 15:
+                     case 21:
                         _ref9 = _context7.sent;
                         _ref10 = _slicedToArray(_ref9, 1);
                         setex = _ref10[0];
-                        _context7.next = 20;
+
+                        if (!setex) {
+                           _context7.next = 27;
+                           break;
+                        }
+
+                        _context7.next = 27;
                         return this.sendTelegramReply(request, {
                            format: 'html',
-                           content: ['Thanks, ' + request.greetName + '.', 'You have approved access to cert <b>' + request.text + '</b>,', 'so that identity can now enroll via ' + this.config.hostUrl + '/register-cert'].join(' ')
+                           content: ['Thanks, ' + request.greetName + '.', 'You have approved access to cert <b>' + cert + '</b>,', 'so that identity can now enroll via ' + this.config.hostUrl + '/register-cert'].join(' ')
                         });
 
-                     case 20:
-                        throw { message: 'Not implemented' };
-
-                     case 21:
+                     case 27:
                      case 'end':
                         return _context7.stop();
                   }

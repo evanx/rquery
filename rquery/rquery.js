@@ -207,9 +207,20 @@ export default class {
    async handleTelegramGrant(request) {
       const now = new Date().getTime();
       this.logger.info('handleTelegramGrant', request);
+      const match = request.text.match(/\/grant-cert (\w+)$)/);
+      if (!matching) {
+         await this.sendTelegramReply(request, {
+            format: 'html',
+            content: [`Hi ${request.greetName}.`,
+               `Invalid. Try '/grant-cert <first line of cert hash>`
+            ].join(' ')
+         });
+         return;
+      }
+      const cert = match[1];
       const userKey = this.adminKey('telegram', 'user', request.username);
       const grantKey = this.adminKey('telegram', 'user', request.username, 'grant');
-      this.logger.info('handleTelegramGrant', userKey, grantKey, request);
+      this.logger.info('handleTelegramGrant', userKey, grantKey, request, cert);
       let [ismember, verified, secret, exists] = await this.redis.multiExecAsync(multi => {
          multi.sismember(this.adminKey('telegram:verified:users'), request.username);
          multi.hget(userKey, 'verified');
@@ -217,17 +228,18 @@ export default class {
          multi.exists(grantKey);
       });
       let [setex] = await this.redis.multiExecAsync(multi => {
-         this.logger.info('handleTelegramGrant setex', grantKey, request.text, this.config.enrollExpire);
-         multi.setex(grantKey, request.text, this.config.enrollExpire);
+         this.logger.info('handleTelegramGrant setex', grantKey, cert, this.config.enrollExpire);
+         multi.setex(grantKey, cert, this.config.enrollExpire);
       });
-      await this.sendTelegramReply(request, {
-         format: 'html',
-         content: [`Thanks, ${request.greetName}.`,
-            `You have approved access to cert <b>${request.text}</b>,`,
-            `so that identity can now enroll via ${this.config.hostUrl}/register-cert`
-         ].join(' ')
-      });
-      throw {message: 'Not implemented'};
+      if (setex) {
+         await this.sendTelegramReply(request, {
+            format: 'html',
+            content: [`Thanks, ${request.greetName}.`,
+               `You have approved access to cert <b>${cert}</b>,`,
+               `so that identity can now enroll via ${this.config.hostUrl}/register-cert`
+            ].join(' ')
+         });
+      }
    }
 
    async sendTelegramReply(request, response) {
