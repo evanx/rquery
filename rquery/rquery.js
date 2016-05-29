@@ -157,9 +157,9 @@ export default class {
             await this.handleTelegramGrant(message);
          } else {
             await this.sendTelegramReply(message, {
-               content: `Commands:
-               /verify - verify your Telegram identity to redishub.com
-               /enroll - authorise a certificate
+               content: `
+               /verify - verify your Telegram identity to RedisHub
+               /grant-cert <CN> - grant account access to a certificate
                `
             });
          }

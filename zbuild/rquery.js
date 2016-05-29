@@ -430,7 +430,7 @@ var _class = function () {
                      case 44:
                         _context5.next = 46;
                         return this.sendTelegramReply(message, {
-                           content: 'Commands:\n               /verify - verify your Telegram identity to redishub.com\n               /enroll - authorise a certificate\n               '
+                           content: '\n               /verify - verify your Telegram identity to RedisHub\n               /grant-cert <CN> - grant account access to a certificate\n               '
                         });
 
                      case 46:
