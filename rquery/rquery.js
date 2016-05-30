@@ -508,6 +508,29 @@ export default class {
             return `Telegram user not yet verified: ${user}. Please Telegram '@redishub_bot /verify_me' e.g. via https://web.telegram.org`;
          }
       });
+      this.addPublicCommand({
+         key: 'generate-cert-script',
+         params: ['account'],
+         format: 'cli'
+      }, async (req, res) => {
+         const account = req.params.account;
+         const CN = `${account}@redishub.com`;
+         const OU = `admin%${account}@redishub.com`;
+         return [
+            `mkdir ~/.redishub/live &&`,
+            `  cd ~/.redishub/live &&`,
+            `  CN=${CN} \\`,
+            `  OU=${OU} \\`,
+            `  openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\`,
+            `    -subj '/CN=${CN}/OU=${OU}' \\`,
+            `    -keyout privkey.pem -out cert.pem &&`,
+            `  cat privkey.pem cert.pem > privcert.pem &&`,
+            `  openssl x509 -text -in privcert.pem | grep 'CN=' &&`,
+            `  curl -s -E privcert.pem ${this.config.hostUrl}/register-account-telegram/${account} &&`,
+            `  echo 'Registered account ${account} OK'`,
+            ``
+         ].join('\n');
+      });
       this.addRegisterRoutes();
       this.addAccountRoutes();
       this.addKeyspaceCommand({
@@ -2044,7 +2067,11 @@ export default class {
       } else if (this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain)
       || command.format === 'plain') {
          res.set('Content-Type', 'text/plain');
-         resultString = result.toString();
+         if (lodash.isArray(result)) {
+            resultString = result.join('\n');
+         } else {
+            resultString = result.toString();
+         }
       } else if (this.config.defaultFormat === 'json' && !mobile) {
          res.json(result);
          return;
