@@ -112,7 +112,7 @@ For secure access to permanent keyspaces, let's try SSL client cert authenticati
 
 Note that we will register an account using our Telegram.org username. (I like Telegram.org, have an Ubuntu phone, and want to build a Telegram Bot to win one of those prizes, woohoo!)
 
-So visit https://web.telegram.org or install the mobile app, and message `@redishub_bot /verify.` That will verify your Telegram username to Redishub.
+So visit https://web.telegram.org or install the mobile app, and message `@redishub_bot /verify-me.` That will verify your Telegram username to Redishub.
 
 <hr>
 <img src="https://evanx.github.io/images/rquery/rquery030-telegram.png"/>
