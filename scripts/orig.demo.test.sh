@@ -75,7 +75,7 @@ curl1() {
   curle $1 1
 }
 
-ruri=`curl -s $rurl/register-ephemeral`
+ruri=`curl -s $rurl/create-ephemeral`
 echo ruri $ruri
 rurl="$rurl/$ruri"
 echo rurl $rurl

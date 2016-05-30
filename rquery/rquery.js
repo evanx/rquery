@@ -354,7 +354,7 @@ export default class {
             .map(route => `${route}`)
             ,
             ephemeral: routes
-            .filter(route => route.includes('-ephemeral') && route !== '/register-ephemeral')
+            .filter(route => route.includes('-ephemeral') && route !== '/create-ephemeral')
             .map(route => `${route}`)
             ,
             telegram: routes
@@ -505,7 +505,7 @@ export default class {
          key: 'generate-cert-script',
          params: ['account'],
          format: 'cli'
-      }, async (req, res) => {
+      }, async (req, res, reqx) => {
          const account = req.params.account;
          const CN = `${account}@redishub.com`;
          const OU = `admin%${account}@redishub.com`;
@@ -528,7 +528,12 @@ export default class {
             `    curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt &&`,
             `    echo 'Registered account ${account} OK'`
          ]);
-         result.push(') | bash');
+         const hintUrl = [this.config.hostUrl, reqx.command.key, account];
+         result.push(`)`);
+         result.push(`# Try pipe this into bash as follows:`);
+         result.push(`#   curl -s ${hintUrl.join('/')} | bash`);
+         result.push(`# Then use: ~/.redishub/live/privcert.pem and/or privkey`);
+         result.push(`#   curl -E ~/.redishub/live/privcert.pem create-ephemeral`);
          return result;
       });
       this.addRegisterRoutes();
@@ -1325,7 +1330,7 @@ export default class {
             if (match) {
                throw {message: 'Invalid path: leading colon. Try substituting parameter: ' + match.pop()};
             }
-            const result = await fn(req, res);
+            const result = await fn(req, res, {command});
             if (command.access === 'redirect') {
             } else if (result !== undefined) {
                await this.sendResult(command, req, res, {}, result);
@@ -1354,20 +1359,26 @@ export default class {
 
    addRegisterRoutes() {
       this.addPublicCommand({
-         key: 'register-ephemeral'
+         key: 'register-ephemeral' // TODO remove 10 june
       }, async (req, res) => {
          req.params = {account: 'hub'};
          return this.registerEphemeral(req, res);
       });
       this.addPublicCommand({
-         key: 'register-ephemeral-named',
+         key: 'create-ephemeral'
+      }, async (req, res) => {
+         req.params = {account: 'hub'};
+         return this.registerEphemeral(req, res);
+      });
+      this.addPublicCommand({
+         key: 'create-ephemeral-named',
          params: ['keyspace', 'access']
       }, async (req, res) => {
          req.params = {account: 'hub'};
          return this.registerEphemeral(req, res);
       });
       this.addPublicCommand({
-         key: 'register-ephemeral-access',
+         key: 'create-ephemeral-access',
          params: ['access']
       }, async (req, res) => {
          req.params.account = 'hub';
@@ -1911,12 +1922,12 @@ export default class {
       } else if (!reqx.registered) {
          if (account === 'hub' || account === 'pub') {
             throw {message: 'Expired (or unregistered) keyspace', hint: {
-               uri: 'register-ephemeral',
+               uri: 'create-ephemeral',
                description: 'To register a new ephemeral keyspace'
             }};
          } else {
             throw {message: 'Unregistered keyspace', hint: {
-               uri: 'register-ephemeral',
+               uri: 'create-ephemeral',
                description: 'To register a new ephemeral keyspace'
             }};
          }

@@ -918,7 +918,7 @@ var _class = function () {
                               }),
 
                               ephemeral: routes.filter(function (route) {
-                                 return route.includes('-ephemeral') && route !== '/register-ephemeral';
+                                 return route.includes('-ephemeral') && route !== '/create-ephemeral';
                               }).map(function (route) {
                                  return '' + route;
                               }),
@@ -1381,8 +1381,8 @@ var _class = function () {
             params: ['account'],
             format: 'cli'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee26(req, res) {
-               var account, CN, OU, result;
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee26(req, res, reqx) {
+               var account, CN, OU, result, hintUrl;
                return regeneratorRuntime.wrap(function _callee26$(_context26) {
                   while (1) {
                      switch (_context26.prev = _context26.next) {
@@ -1396,17 +1396,23 @@ var _class = function () {
                               result = ['rm -rf ~/.redishub/live'].concat(_toConsumableArray(result));
                            }
                            result = result.concat(['  mkdir ~/.redishub/live &&', '    cd ~/.redishub/live &&', '    echo \'' + account + '\' > account &&', '    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\', '      -subj \'/CN=' + CN + '/OU=' + OU + '\' \\', '      -keyout privkey.pem -out cert.pem &&', '    cat privkey.pem cert.pem > privcert.pem &&', '    openssl x509 -text -in privcert.pem | grep \'CN=\' &&', '    curl -s -E privcert.pem ' + _this6.config.hostUrl + '/register-account-telegram/' + account + ' &&', '    openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem &&', '    echo && pwd && ls -l && echo &&', '    curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt &&', '    echo \'Registered account ' + account + ' OK\'']);
-                           result.push(') | bash');
+                           hintUrl = [_this6.config.hostUrl, reqx.command.key, account];
+
+                           result.push(')');
+                           result.push('# Try pipe this into bash as follows:');
+                           result.push('#   curl -s ' + hintUrl.join('/') + ' | bash');
+                           result.push('# Then use: ~/.redishub/live/privcert.pem and/or privkey');
+                           result.push('#   curl -E ~/.redishub/live/privcert.pem create-ephemeral');
                            return _context26.abrupt('return', result);
 
-                        case 8:
+                        case 13:
                         case 'end':
                            return _context26.stop();
                      }
                   }
                }, _callee26, _this6);
             }));
-            return function (_x39, _x40) {
+            return function (_x39, _x40, _x41) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1457,7 +1463,7 @@ var _class = function () {
                   }, _callee27, _this6);
                }));
 
-               function sendResult(_x41, _x42, _x43, _x44) {
+               function sendResult(_x42, _x43, _x44, _x45) {
                   return ref.apply(this, arguments);
                }
 
@@ -1508,7 +1514,7 @@ var _class = function () {
                   }
                }, _callee28, _this6);
             }));
-            return function (_x45, _x46, _x47) {
+            return function (_x46, _x47, _x48) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1561,7 +1567,7 @@ var _class = function () {
                   }
                }, _callee29, _this6);
             }));
-            return function (_x48, _x49, _x50) {
+            return function (_x49, _x50, _x51) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1625,7 +1631,7 @@ var _class = function () {
                   }
                }, _callee30, _this6);
             }));
-            return function (_x51, _x52, _x53) {
+            return function (_x52, _x53, _x54) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1670,7 +1676,7 @@ var _class = function () {
                   }
                }, _callee31, _this6);
             }));
-            return function (_x54, _x55) {
+            return function (_x55, _x56) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1697,7 +1703,7 @@ var _class = function () {
                   }
                }, _callee32, _this6);
             }));
-            return function (_x56, _x57, _x58) {
+            return function (_x57, _x58, _x59) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1736,7 +1742,7 @@ var _class = function () {
                   }
                }, _callee33, _this6);
             }));
-            return function (_x59, _x60, _x61) {
+            return function (_x60, _x61, _x62) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1788,7 +1794,7 @@ var _class = function () {
                   }
                }, _callee34, _this6);
             }));
-            return function (_x62, _x63, _x64) {
+            return function (_x63, _x64, _x65) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1841,7 +1847,7 @@ var _class = function () {
                   }
                }, _callee35, _this6);
             }));
-            return function (_x65, _x66, _x67) {
+            return function (_x66, _x67, _x68) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1872,7 +1878,7 @@ var _class = function () {
                   }
                }, _callee36, _this6);
             }));
-            return function (_x68, _x69, _x70) {
+            return function (_x69, _x70, _x71) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1903,7 +1909,7 @@ var _class = function () {
                   }
                }, _callee37, _this6);
             }));
-            return function (_x71, _x72, _x73) {
+            return function (_x72, _x73, _x74) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1951,7 +1957,7 @@ var _class = function () {
                   }
                }, _callee38, _this6);
             }));
-            return function (_x74, _x75, _x76) {
+            return function (_x75, _x76, _x77) {
                return ref.apply(this, arguments);
             };
          }());
@@ -1980,7 +1986,7 @@ var _class = function () {
                   }
                }, _callee39, _this6);
             }));
-            return function (_x77, _x78, _x79) {
+            return function (_x78, _x79, _x80) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2016,7 +2022,7 @@ var _class = function () {
                   }
                }, _callee40, _this6);
             }));
-            return function (_x80, _x81, _x82) {
+            return function (_x81, _x82, _x83) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2045,7 +2051,7 @@ var _class = function () {
                   }
                }, _callee41, _this6);
             }));
-            return function (_x83, _x84, _x85) {
+            return function (_x84, _x85, _x86) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2079,7 +2085,7 @@ var _class = function () {
                   }
                }, _callee42, _this6);
             }));
-            return function (_x86, _x87, _x88) {
+            return function (_x87, _x88, _x89) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2109,7 +2115,7 @@ var _class = function () {
                   }
                }, _callee43, _this6);
             }));
-            return function (_x89, _x90, _x91) {
+            return function (_x90, _x91, _x92) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2137,7 +2143,7 @@ var _class = function () {
                   }
                }, _callee44, _this6);
             }));
-            return function (_x92, _x93, _x94) {
+            return function (_x93, _x94, _x95) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2202,7 +2208,7 @@ var _class = function () {
                   }
                }, _callee45, _this6);
             }));
-            return function (_x95, _x96, _x97) {
+            return function (_x96, _x97, _x98) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2232,7 +2238,7 @@ var _class = function () {
                   }
                }, _callee46, _this6);
             }));
-            return function (_x98, _x99, _x100) {
+            return function (_x99, _x100, _x101) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2261,7 +2267,7 @@ var _class = function () {
                   }
                }, _callee47, _this6);
             }));
-            return function (_x101, _x102, _x103) {
+            return function (_x102, _x103, _x104) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2290,7 +2296,7 @@ var _class = function () {
                   }
                }, _callee48, _this6);
             }));
-            return function (_x104, _x105, _x106) {
+            return function (_x105, _x106, _x107) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2320,7 +2326,7 @@ var _class = function () {
                   }
                }, _callee49, _this6);
             }));
-            return function (_x107, _x108, _x109) {
+            return function (_x108, _x109, _x110) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2349,7 +2355,7 @@ var _class = function () {
                   }
                }, _callee50, _this6);
             }));
-            return function (_x110, _x111, _x112) {
+            return function (_x111, _x112, _x113) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2379,7 +2385,7 @@ var _class = function () {
                   }
                }, _callee51, _this6);
             }));
-            return function (_x113, _x114, _x115) {
+            return function (_x114, _x115, _x116) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2419,7 +2425,7 @@ var _class = function () {
                   }
                }, _callee52, _this6);
             }));
-            return function (_x116, _x117, _x118, _x119) {
+            return function (_x117, _x118, _x119, _x120) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2448,7 +2454,7 @@ var _class = function () {
                   }
                }, _callee53, _this6);
             }));
-            return function (_x120, _x121, _x122) {
+            return function (_x121, _x122, _x123) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2476,7 +2482,7 @@ var _class = function () {
                   }
                }, _callee54, _this6);
             }));
-            return function (_x123, _x124, _x125) {
+            return function (_x124, _x125, _x126) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2506,7 +2512,7 @@ var _class = function () {
                   }
                }, _callee55, _this6);
             }));
-            return function (_x126, _x127, _x128) {
+            return function (_x127, _x128, _x129) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2533,7 +2539,7 @@ var _class = function () {
                   }
                }, _callee56, _this6);
             }));
-            return function (_x129, _x130, _x131) {
+            return function (_x130, _x131, _x132) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2562,7 +2568,7 @@ var _class = function () {
                   }
                }, _callee57, _this6);
             }));
-            return function (_x132, _x133, _x134) {
+            return function (_x133, _x134, _x135) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2591,7 +2597,7 @@ var _class = function () {
                   }
                }, _callee58, _this6);
             }));
-            return function (_x135, _x136, _x137) {
+            return function (_x136, _x137, _x138) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2624,7 +2630,7 @@ var _class = function () {
                   }
                }, _callee59, _this6);
             }));
-            return function (_x138, _x139, _x140, _x141) {
+            return function (_x139, _x140, _x141, _x142) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2654,7 +2660,7 @@ var _class = function () {
                   }
                }, _callee60, _this6);
             }));
-            return function (_x142, _x143, _x144) {
+            return function (_x143, _x144, _x145) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2683,7 +2689,7 @@ var _class = function () {
                   }
                }, _callee61, _this6);
             }));
-            return function (_x145, _x146, _x147) {
+            return function (_x146, _x147, _x148) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2723,7 +2729,7 @@ var _class = function () {
                   }
                }, _callee62, _this6);
             }));
-            return function (_x148, _x149, _x150) {
+            return function (_x149, _x150, _x151) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2752,7 +2758,7 @@ var _class = function () {
                   }
                }, _callee63, _this6);
             }));
-            return function (_x151, _x152, _x153) {
+            return function (_x152, _x153, _x154) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2792,7 +2798,7 @@ var _class = function () {
                   }
                }, _callee64, _this6);
             }));
-            return function (_x154, _x155, _x156) {
+            return function (_x155, _x156, _x157) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2834,7 +2840,7 @@ var _class = function () {
                   }
                }, _callee65, _this6);
             }));
-            return function (_x157, _x158, _x159, _x160) {
+            return function (_x158, _x159, _x160, _x161) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2862,7 +2868,7 @@ var _class = function () {
                   }
                }, _callee66, _this6);
             }));
-            return function (_x161, _x162, _x163) {
+            return function (_x162, _x163, _x164) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2890,7 +2896,7 @@ var _class = function () {
                   }
                }, _callee67, _this6);
             }));
-            return function (_x164, _x165, _x166) {
+            return function (_x165, _x166, _x167) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2918,7 +2924,7 @@ var _class = function () {
                   }
                }, _callee68, _this6);
             }));
-            return function (_x167, _x168, _x169) {
+            return function (_x168, _x169, _x170) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2947,7 +2953,7 @@ var _class = function () {
                   }
                }, _callee69, _this6);
             }));
-            return function (_x170, _x171, _x172) {
+            return function (_x171, _x172, _x173) {
                return ref.apply(this, arguments);
             };
          }());
@@ -2976,7 +2982,7 @@ var _class = function () {
                   }
                }, _callee70, _this6);
             }));
-            return function (_x173, _x174, _x175) {
+            return function (_x174, _x175, _x176) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3008,7 +3014,7 @@ var _class = function () {
                   }
                }, _callee71, _this6);
             }));
-            return function (_x176, _x177, _x178) {
+            return function (_x177, _x178, _x179) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3042,7 +3048,7 @@ var _class = function () {
                   }
                }, _callee72, _this6);
             }));
-            return function (_x179, _x180, _x181) {
+            return function (_x180, _x181, _x182) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3092,7 +3098,7 @@ var _class = function () {
                   }
                }, _callee73, _this6);
             }));
-            return function (_x182, _x183, _x184) {
+            return function (_x183, _x184, _x185) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3142,7 +3148,7 @@ var _class = function () {
                   }
                }, _callee74, _this6);
             }));
-            return function (_x185, _x186, _x187) {
+            return function (_x186, _x187, _x188) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3171,7 +3177,7 @@ var _class = function () {
                   }
                }, _callee75, _this6);
             }));
-            return function (_x188, _x189, _x190) {
+            return function (_x189, _x190, _x191) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3200,7 +3206,7 @@ var _class = function () {
                   }
                }, _callee76, _this6);
             }));
-            return function (_x191, _x192, _x193) {
+            return function (_x192, _x193, _x194) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3228,7 +3234,7 @@ var _class = function () {
                   }
                }, _callee77, _this6);
             }));
-            return function (_x194, _x195, _x196) {
+            return function (_x195, _x196, _x197) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3257,7 +3263,7 @@ var _class = function () {
                   }
                }, _callee78, _this6);
             }));
-            return function (_x197, _x198, _x199) {
+            return function (_x198, _x199, _x200) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3286,7 +3292,7 @@ var _class = function () {
                   }
                }, _callee79, _this6);
             }));
-            return function (_x200, _x201, _x202) {
+            return function (_x201, _x202, _x203) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3316,7 +3322,7 @@ var _class = function () {
                   }
                }, _callee80, _this6);
             }));
-            return function (_x203, _x204, _x205) {
+            return function (_x204, _x205, _x206) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3344,7 +3350,7 @@ var _class = function () {
                   }
                }, _callee81, _this6);
             }));
-            return function (_x206, _x207, _x208) {
+            return function (_x207, _x208, _x209) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3372,7 +3378,7 @@ var _class = function () {
                   }
                }, _callee82, _this6);
             }));
-            return function (_x209, _x210, _x211) {
+            return function (_x210, _x211, _x212) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3400,7 +3406,7 @@ var _class = function () {
                   }
                }, _callee83, _this6);
             }));
-            return function (_x212, _x213, _x214) {
+            return function (_x213, _x214, _x215) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3428,7 +3434,7 @@ var _class = function () {
                   }
                }, _callee84, _this6);
             }));
-            return function (_x215, _x216, _x217) {
+            return function (_x216, _x217, _x218) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3456,7 +3462,7 @@ var _class = function () {
                   }
                }, _callee85, _this6);
             }));
-            return function (_x218, _x219, _x220) {
+            return function (_x219, _x220, _x221) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3486,7 +3492,7 @@ var _class = function () {
                      }
                   }, _callee86, _this6);
                }));
-               return function (_x221, _x222, _x223) {
+               return function (_x222, _x223, _x224) {
                   return ref.apply(this, arguments);
                };
             }());
@@ -3516,7 +3522,7 @@ var _class = function () {
                   }
                }, _callee87, _this6);
             }));
-            return function (_x224, _x225, _x226) {
+            return function (_x225, _x226, _x227) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3545,7 +3551,7 @@ var _class = function () {
                   }
                }, _callee88, _this6);
             }));
-            return function (_x227, _x228, _x229) {
+            return function (_x228, _x229, _x230) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3574,7 +3580,7 @@ var _class = function () {
                   }
                }, _callee89, _this6);
             }));
-            return function (_x230, _x231, _x232) {
+            return function (_x231, _x232, _x233) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3603,7 +3609,7 @@ var _class = function () {
                   }
                }, _callee90, _this6);
             }));
-            return function (_x233, _x234, _x235) {
+            return function (_x234, _x235, _x236) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3631,7 +3637,7 @@ var _class = function () {
                   }
                }, _callee91, _this6);
             }));
-            return function (_x236, _x237, _x238) {
+            return function (_x237, _x238, _x239) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3659,7 +3665,7 @@ var _class = function () {
                   }
                }, _callee92, _this6);
             }));
-            return function (_x239, _x240, _x241) {
+            return function (_x240, _x241, _x242) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3716,7 +3722,7 @@ var _class = function () {
 
                         case 4:
                            _context93.next = 6;
-                           return fn(req, res);
+                           return fn(req, res, { command: command });
 
                         case 6:
                            result = _context93.sent;
@@ -3755,7 +3761,7 @@ var _class = function () {
                   }
                }, _callee93, _this7, [[0, 15]]);
             }));
-            return function (_x242, _x243) {
+            return function (_x243, _x244) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3807,7 +3813,7 @@ var _class = function () {
                   }
                }, _callee94, _this8, [[0, 9]]);
             }));
-            return function (_x244, _x245) {
+            return function (_x245, _x246) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3818,7 +3824,7 @@ var _class = function () {
          var _this9 = this;
 
          this.addPublicCommand({
-            key: 'register-ephemeral'
+            key: 'register-ephemeral' // TODO remove 10 june
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee95(req, res) {
                return regeneratorRuntime.wrap(function _callee95$(_context95) {
@@ -3835,13 +3841,12 @@ var _class = function () {
                   }
                }, _callee95, _this9);
             }));
-            return function (_x246, _x247) {
+            return function (_x247, _x248) {
                return ref.apply(this, arguments);
             };
          }());
          this.addPublicCommand({
-            key: 'register-ephemeral-named',
-            params: ['keyspace', 'access']
+            key: 'create-ephemeral'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee96(req, res) {
                return regeneratorRuntime.wrap(function _callee96$(_context96) {
@@ -3858,20 +3863,20 @@ var _class = function () {
                   }
                }, _callee96, _this9);
             }));
-            return function (_x248, _x249) {
+            return function (_x249, _x250) {
                return ref.apply(this, arguments);
             };
          }());
          this.addPublicCommand({
-            key: 'register-ephemeral-access',
-            params: ['access']
+            key: 'create-ephemeral-named',
+            params: ['keyspace', 'access']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee97(req, res) {
                return regeneratorRuntime.wrap(function _callee97$(_context97) {
                   while (1) {
                      switch (_context97.prev = _context97.next) {
                         case 0:
-                           req.params.account = 'hub';
+                           req.params = { account: 'hub' };
                            return _context97.abrupt('return', _this9.registerEphemeral(req, res));
 
                         case 2:
@@ -3881,7 +3886,30 @@ var _class = function () {
                   }
                }, _callee97, _this9);
             }));
-            return function (_x250, _x251) {
+            return function (_x251, _x252) {
+               return ref.apply(this, arguments);
+            };
+         }());
+         this.addPublicCommand({
+            key: 'create-ephemeral-access',
+            params: ['access']
+         }, function () {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee98(req, res) {
+               return regeneratorRuntime.wrap(function _callee98$(_context98) {
+                  while (1) {
+                     switch (_context98.prev = _context98.next) {
+                        case 0:
+                           req.params.account = 'hub';
+                           return _context98.abrupt('return', _this9.registerEphemeral(req, res));
+
+                        case 2:
+                        case 'end':
+                           return _context98.stop();
+                     }
+                  }
+               }, _callee98, _this9);
+            }));
+            return function (_x253, _x254) {
                return ref.apply(this, arguments);
             };
          }());
@@ -3890,38 +3918,38 @@ var _class = function () {
             params: ['account'],
             description: 'register a new account linked to an authoritative Telegram.org account'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee98(req, res) {
-               return regeneratorRuntime.wrap(function _callee98$(_context98) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee99(req, res) {
+               return regeneratorRuntime.wrap(function _callee99$(_context99) {
                   while (1) {
-                     switch (_context98.prev = _context98.next) {
+                     switch (_context99.prev = _context99.next) {
                         case 0:
-                           return _context98.abrupt('return', _this9.registerAccount(req, res));
+                           return _context99.abrupt('return', _this9.registerAccount(req, res));
 
                         case 1:
                         case 'end':
-                           return _context98.stop();
+                           return _context99.stop();
                      }
                   }
-               }, _callee98, _this9);
+               }, _callee99, _this9);
             }));
-            return function (_x252, _x253) {
+            return function (_x255, _x256) {
                return ref.apply(this, arguments);
             };
          }());
          this.addPublicCommand({
             key: 'register-cert'
          }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee99(req, res) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee100(req, res) {
                var dn, matching, _matching$slice, _matching$slice2, role, account, domain;
 
-               return regeneratorRuntime.wrap(function _callee99$(_context99) {
+               return regeneratorRuntime.wrap(function _callee100$(_context100) {
                   while (1) {
-                     switch (_context99.prev = _context99.next) {
+                     switch (_context100.prev = _context100.next) {
                         case 0:
                            dn = _this9.parseCertDn(req);
 
                            if (dn.ou) {
-                              _context99.next = 3;
+                              _context100.next = 3;
                               break;
                            }
 
@@ -3933,7 +3961,7 @@ var _class = function () {
                            _this9.logger.debug('OU', matching);
 
                            if (matching) {
-                              _context99.next = 9;
+                              _context100.next = 9;
                               break;
                            }
 
@@ -3947,23 +3975,23 @@ var _class = function () {
                            domain = _matching$slice2[2];
 
                            if (lodash.endsWith(req.hostname, domain)) {
-                              _context99.next = 16;
+                              _context100.next = 16;
                               break;
                            }
 
                            throw { message: 'O domain not matching: ' + req.hostname };
 
                         case 16:
-                           return _context99.abrupt('return', { account: account, domain: domain });
+                           return _context100.abrupt('return', { account: account, domain: domain });
 
                         case 17:
                         case 'end':
-                           return _context99.stop();
+                           return _context100.stop();
                      }
                   }
-               }, _callee99, _this9);
+               }, _callee100, _this9);
             }));
-            return function (_x254, _x255) {
+            return function (_x257, _x258) {
                return ref.apply(this, arguments);
             };
          }());
@@ -4024,7 +4052,7 @@ var _class = function () {
                },
                access: 'admin'
             }, function () {
-               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee100(req, res, _ref35) {
+               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee101(req, res, _ref35) {
                   var account = _ref35.account;
                   var accountKey = _ref35.accountKey;
                   var time = _ref35.time;
@@ -4032,29 +4060,29 @@ var _class = function () {
 
                   var _ref36, _ref37, cert;
 
-                  return regeneratorRuntime.wrap(function _callee100$(_context100) {
+                  return regeneratorRuntime.wrap(function _callee101$(_context101) {
                      while (1) {
-                        switch (_context100.prev = _context100.next) {
+                        switch (_context101.prev = _context101.next) {
                            case 0:
-                              _context100.next = 2;
+                              _context101.next = 2;
                               return _this11.redis.multiExecAsync(function (multi) {
                                  multi.hgetall(_this11.adminKey('cert', certId));
                               });
 
                            case 2:
-                              _ref36 = _context100.sent;
+                              _ref36 = _context101.sent;
                               _ref37 = _slicedToArray(_ref36, 1);
                               cert = _ref37[0];
                               throw { message: 'Unimplemented' };
 
                            case 6:
                            case 'end':
-                              return _context100.stop();
+                              return _context101.stop();
                         }
                      }
-                  }, _callee100, _this11);
+                  }, _callee101, _this11);
                }));
-               return function (_x256, _x257, _x258) {
+               return function (_x259, _x260, _x261) {
                   return ref.apply(this, arguments);
                };
             }());
@@ -4063,32 +4091,32 @@ var _class = function () {
    }, {
       key: 'registerAccount',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee102(req, res) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee103(req, res) {
             var _this12 = this;
 
             var _ret;
 
-            return regeneratorRuntime.wrap(function _callee102$(_context102) {
+            return regeneratorRuntime.wrap(function _callee103$(_context103) {
                while (1) {
-                  switch (_context102.prev = _context102.next) {
+                  switch (_context103.prev = _context103.next) {
                      case 0:
-                        _context102.prev = 0;
-                        return _context102.delegateYield(regeneratorRuntime.mark(function _callee101() {
+                        _context103.prev = 0;
+                        return _context103.delegateYield(regeneratorRuntime.mark(function _callee102() {
                            var errorMessage, account, v, dn, clientCert, clientCertDigest, otpSecret, accountKey, _ref38, _ref39, hsetnx, saddAccount, saddCert, result;
 
-                           return regeneratorRuntime.wrap(function _callee101$(_context101) {
+                           return regeneratorRuntime.wrap(function _callee102$(_context102) {
                               while (1) {
-                                 switch (_context101.prev = _context101.next) {
+                                 switch (_context102.prev = _context102.next) {
                                     case 0:
                                        errorMessage = _this12.validateRegisterTime();
 
                                        if (!errorMessage) {
-                                          _context101.next = 4;
+                                          _context102.next = 4;
                                           break;
                                        }
 
                                        _this12.sendError(req, res, { message: errorMessage });
-                                       return _context101.abrupt('return', {
+                                       return _context102.abrupt('return', {
                                           v: void 0
                                        });
 
@@ -4097,7 +4125,7 @@ var _class = function () {
                                        v = _this12.validateRegisterAccount(account);
 
                                        if (!v) {
-                                          _context101.next = 8;
+                                          _context102.next = 8;
                                           break;
                                        }
 
@@ -4110,7 +4138,7 @@ var _class = function () {
                                        _this12.logger.info('registerAccount dn', dn);
 
                                        if (clientCert) {
-                                          _context101.next = 13;
+                                          _context102.next = 13;
                                           break;
                                        }
 
@@ -4120,7 +4148,7 @@ var _class = function () {
                                        clientCertDigest = _this12.digestPem(clientCert);
                                        otpSecret = _this12.generateTokenKey();
                                        accountKey = _this12.adminKey('account', account);
-                                       _context101.next = 18;
+                                       _context102.next = 18;
                                        return _this12.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', new Date().getTime());
                                           multi.sadd(_this12.adminKey('accounts'), account);
@@ -4129,14 +4157,14 @@ var _class = function () {
                                        });
 
                                     case 18:
-                                       _ref38 = _context101.sent;
+                                       _ref38 = _context102.sent;
                                        _ref39 = _slicedToArray(_ref38, 3);
                                        hsetnx = _ref39[0];
                                        saddAccount = _ref39[1];
                                        saddCert = _ref39[2];
 
                                        if (hsetnx) {
-                                          _context101.next = 25;
+                                          _context102.next = 25;
                                           break;
                                        }
 
@@ -4155,46 +4183,46 @@ var _class = function () {
                                           host: _this12.config.hostname,
                                           label: _this12.config.serviceLabel
                                        });
-                                       _context101.next = 30;
+                                       _context102.next = 30;
                                        return _this12.sendResult({}, req, res, {}, result);
 
                                     case 30:
                                     case 'end':
-                                       return _context101.stop();
+                                       return _context102.stop();
                                  }
                               }
-                           }, _callee101, _this12);
+                           }, _callee102, _this12);
                         })(), 't0', 2);
 
                      case 2:
-                        _ret = _context102.t0;
+                        _ret = _context103.t0;
 
                         if (!((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object")) {
-                           _context102.next = 5;
+                           _context103.next = 5;
                            break;
                         }
 
-                        return _context102.abrupt('return', _ret.v);
+                        return _context103.abrupt('return', _ret.v);
 
                      case 5:
-                        _context102.next = 10;
+                        _context103.next = 10;
                         break;
 
                      case 7:
-                        _context102.prev = 7;
-                        _context102.t1 = _context102['catch'](0);
+                        _context103.prev = 7;
+                        _context103.t1 = _context103['catch'](0);
 
-                        this.sendError(req, res, _context102.t1);
+                        this.sendError(req, res, _context103.t1);
 
                      case 10:
                      case 'end':
-                        return _context102.stop();
+                        return _context103.stop();
                   }
                }
-            }, _callee102, this, [[0, 7]]);
+            }, _callee103, this, [[0, 7]]);
          }));
 
-         function registerAccount(_x259, _x260) {
+         function registerAccount(_x262, _x263) {
             return ref.apply(this, arguments);
          }
 
@@ -4203,13 +4231,13 @@ var _class = function () {
    }, {
       key: 'addAccountCommand',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee105(command, fn) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee106(command, fn) {
             var _this13 = this;
 
             var uri;
-            return regeneratorRuntime.wrap(function _callee105$(_context105) {
+            return regeneratorRuntime.wrap(function _callee106$(_context106) {
                while (1) {
-                  switch (_context105.prev = _context105.next) {
+                  switch (_context106.prev = _context106.next) {
                      case 0:
                         uri = [command.key];
 
@@ -4219,25 +4247,25 @@ var _class = function () {
                            })));
                         }
                         this.expressApp.get([this.config.location].concat(_toConsumableArray(uri)).join('/'), function () {
-                           var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee104(req, res) {
+                           var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee105(req, res) {
                               var _ret2;
 
-                              return regeneratorRuntime.wrap(function _callee104$(_context104) {
+                              return regeneratorRuntime.wrap(function _callee105$(_context105) {
                                  while (1) {
-                                    switch (_context104.prev = _context104.next) {
+                                    switch (_context105.prev = _context105.next) {
                                        case 0:
-                                          _context104.prev = 0;
-                                          return _context104.delegateYield(regeneratorRuntime.mark(function _callee103() {
+                                          _context105.prev = 0;
+                                          return _context105.delegateYield(regeneratorRuntime.mark(function _callee104() {
                                              var message, account, accountKey, _ref40, _ref41, _ref41$, time, admined, certs, duration, dn, result;
 
-                                             return regeneratorRuntime.wrap(function _callee103$(_context103) {
+                                             return regeneratorRuntime.wrap(function _callee104$(_context104) {
                                                 while (1) {
-                                                   switch (_context103.prev = _context103.next) {
+                                                   switch (_context104.prev = _context104.next) {
                                                       case 0:
                                                          message = _this13.validatePath(req);
 
                                                          if (!message) {
-                                                            _context103.next = 3;
+                                                            _context104.next = 3;
                                                             break;
                                                          }
 
@@ -4246,7 +4274,7 @@ var _class = function () {
                                                       case 3:
                                                          account = req.params.account;
                                                          accountKey = _this13.adminKey('account', account);
-                                                         _context103.next = 7;
+                                                         _context104.next = 7;
                                                          return _this13.redis.multiExecAsync(function (multi) {
                                                             multi.time();
                                                             multi.hget(accountKey, 'admined');
@@ -4254,7 +4282,7 @@ var _class = function () {
                                                          });
 
                                                       case 7:
-                                                         _ref40 = _context103.sent;
+                                                         _ref40 = _context104.sent;
                                                          _ref41 = _slicedToArray(_ref40, 3);
                                                          _ref41$ = _slicedToArray(_ref41[0], 1);
                                                          time = _ref41$[0];
@@ -4262,7 +4290,7 @@ var _class = function () {
                                                          certs = _ref41[2];
 
                                                          if (admined) {
-                                                            _context103.next = 15;
+                                                            _context104.next = 15;
                                                             break;
                                                          }
 
@@ -4270,7 +4298,7 @@ var _class = function () {
 
                                                       case 15:
                                                          if (!lodash.isEmpty(certs)) {
-                                                            _context103.next = 17;
+                                                            _context104.next = 17;
                                                             break;
                                                          }
 
@@ -4280,80 +4308,80 @@ var _class = function () {
                                                          duration = time - admined;
 
                                                          if (!(duration < _this13.config.adminLimit)) {
-                                                            _context103.next = 20;
+                                                            _context104.next = 20;
                                                             break;
                                                          }
 
-                                                         return _context103.abrupt('return', {
+                                                         return _context104.abrupt('return', {
                                                             v: 'Admin command interval not elapsed: ' + _this13.config.adminLimit + 's'
                                                          });
 
                                                       case 20:
                                                          _this13.validateCert(req, certs, account);
                                                          dn = req.get('ssl_client_s_dn');
-                                                         _context103.next = 24;
+                                                         _context104.next = 24;
                                                          return fn(req, res, { account: account, accountKey: accountKey, time: time, admined: admined, clientCertDigest: clientCertDigest });
 
                                                       case 24:
-                                                         result = _context103.sent;
+                                                         result = _context104.sent;
 
                                                          if (!(result !== undefined)) {
-                                                            _context103.next = 28;
+                                                            _context104.next = 28;
                                                             break;
                                                          }
 
-                                                         _context103.next = 28;
+                                                         _context104.next = 28;
                                                          return _this13.sendResult({}, req, res, {}, result);
 
                                                       case 28:
                                                       case 'end':
-                                                         return _context103.stop();
+                                                         return _context104.stop();
                                                    }
                                                 }
-                                             }, _callee103, _this13);
+                                             }, _callee104, _this13);
                                           })(), 't0', 2);
 
                                        case 2:
-                                          _ret2 = _context104.t0;
+                                          _ret2 = _context105.t0;
 
                                           if (!((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object")) {
-                                             _context104.next = 5;
+                                             _context105.next = 5;
                                              break;
                                           }
 
-                                          return _context104.abrupt('return', _ret2.v);
+                                          return _context105.abrupt('return', _ret2.v);
 
                                        case 5:
-                                          _context104.next = 10;
+                                          _context105.next = 10;
                                           break;
 
                                        case 7:
-                                          _context104.prev = 7;
-                                          _context104.t1 = _context104['catch'](0);
+                                          _context105.prev = 7;
+                                          _context105.t1 = _context105['catch'](0);
 
-                                          _this13.sendError(req, res, _context104.t1);
+                                          _this13.sendError(req, res, _context105.t1);
 
                                        case 10:
                                        case 'end':
-                                          return _context104.stop();
+                                          return _context105.stop();
                                     }
                                  }
-                              }, _callee104, _this13, [[0, 7]]);
+                              }, _callee105, _this13, [[0, 7]]);
                            }));
-                           return function (_x263, _x264) {
+                           return function (_x266, _x267) {
                               return ref.apply(this, arguments);
                            };
                         }());
 
                      case 3:
                      case 'end':
-                        return _context105.stop();
+                        return _context106.stop();
                   }
                }
-            }, _callee105, this);
+            }, _callee106, this);
          }));
 
-         function addAccountCommand(_x261, _x262) {
+         function addAccountCommand(_x264, _x265) {
             return ref.apply(this, arguments);
          }
 
@@ -4440,14 +4468,14 @@ var _class = function () {
    }, {
       key: 'registerEphemeral',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee107(req, res, previousError) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee108(req, res, previousError) {
             var _this14 = this;
 
             var _req$params10, account, keyspace, access, v, _ret3;
 
-            return regeneratorRuntime.wrap(function _callee107$(_context107) {
+            return regeneratorRuntime.wrap(function _callee108$(_context108) {
                while (1) {
-                  switch (_context107.prev = _context107.next) {
+                  switch (_context108.prev = _context108.next) {
                      case 0:
                         _req$params10 = req.params;
                         account = _req$params10.account;
@@ -4457,19 +4485,19 @@ var _class = function () {
                         assert(account, 'account');
 
                         if (keyspace) {
-                           _context107.next = 9;
+                           _context108.next = 9;
                            break;
                         }
 
                         keyspace = this.generateTokenKey(12).toLowerCase();
-                        _context107.next = 12;
+                        _context108.next = 12;
                         break;
 
                      case 9:
                         v = this.validateRegisterKeyspace(keyspace);
 
                         if (!v) {
-                           _context107.next = 12;
+                           _context108.next = 12;
                            break;
                         }
 
@@ -4487,23 +4515,23 @@ var _class = function () {
                         if (previousError) {
                            this.logger.warn('registerEphemeral retry');
                         }
-                        _context107.prev = 14;
-                        return _context107.delegateYield(regeneratorRuntime.mark(function _callee106() {
+                        _context108.prev = 14;
+                        return _context108.delegateYield(regeneratorRuntime.mark(function _callee107() {
                            var errorMessage, clientIp, accountKey, replies, replyPath;
-                           return regeneratorRuntime.wrap(function _callee106$(_context106) {
+                           return regeneratorRuntime.wrap(function _callee107$(_context107) {
                               while (1) {
-                                 switch (_context106.prev = _context106.next) {
+                                 switch (_context107.prev = _context107.next) {
                                     case 0:
                                        _this14.logger.debug('registerEphemeral');
                                        errorMessage = _this14.validateRegisterTime();
 
                                        if (!errorMessage) {
-                                          _context106.next = 5;
+                                          _context107.next = 5;
                                           break;
                                        }
 
                                        _this14.sendError(req, res, { message: errorMessage });
-                                       return _context106.abrupt('return', {
+                                       return _context107.abrupt('return', {
                                           v: void 0
                                        });
 
@@ -4512,7 +4540,7 @@ var _class = function () {
                                        accountKey = _this14.accountKeyspace(account, keyspace);
 
                                        _this14.logger.debug('registerEphemeral clientIp', clientIp, account, keyspace, accountKey);
-                                       _context106.next = 10;
+                                       _context107.next = 10;
                                        return _this14.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', new Date().getTime());
                                           if (clientIp) {
@@ -4525,21 +4553,21 @@ var _class = function () {
                                        });
 
                                     case 10:
-                                       replies = _context106.sent;
+                                       replies = _context107.sent;
 
                                        if (replies[0]) {
-                                          _context106.next = 16;
+                                          _context107.next = 16;
                                           break;
                                        }
 
                                        _this14.logger.error('keyspace clash', account, keyspace);
 
                                        if (previousError) {
-                                          _context106.next = 15;
+                                          _context107.next = 15;
                                           break;
                                        }
 
-                                       return _context106.abrupt('return', {
+                                       return _context107.abrupt('return', {
                                           v: _this14.registerEphemeral(req, res, { message: 'keyspace clash' })
                                        });
 
@@ -4552,56 +4580,56 @@ var _class = function () {
                                        _this14.logger.debug('registerEphemeral replyPath', replyPath);
 
                                        if (!_this14.isBrowser(req)) {
-                                          _context106.next = 22;
+                                          _context107.next = 22;
                                           break;
                                        }
 
                                        res.redirect(302, ['', replyPath, 'help'].join('/'));
-                                       _context106.next = 23;
+                                       _context107.next = 23;
                                        break;
 
                                     case 22:
-                                       return _context106.abrupt('return', {
+                                       return _context107.abrupt('return', {
                                           v: replyPath
                                        });
 
                                     case 23:
                                     case 'end':
-                                       return _context106.stop();
+                                       return _context107.stop();
                                  }
                               }
-                           }, _callee106, _this14);
+                           }, _callee107, _this14);
                         })(), 't0', 16);
 
                      case 16:
-                        _ret3 = _context107.t0;
+                        _ret3 = _context108.t0;
 
                         if (!((typeof _ret3 === 'undefined' ? 'undefined' : _typeof(_ret3)) === "object")) {
-                           _context107.next = 19;
+                           _context108.next = 19;
                            break;
                         }
 
-                        return _context107.abrupt('return', _ret3.v);
+                        return _context108.abrupt('return', _ret3.v);
 
                      case 19:
-                        _context107.next = 24;
+                        _context108.next = 24;
                         break;
 
                      case 21:
-                        _context107.prev = 21;
-                        _context107.t1 = _context107['catch'](14);
+                        _context108.prev = 21;
+                        _context108.t1 = _context108['catch'](14);
 
-                        this.sendError(req, res, _context107.t1);
+                        this.sendError(req, res, _context108.t1);
 
                      case 24:
                      case 'end':
-                        return _context107.stop();
+                        return _context108.stop();
                   }
                }
-            }, _callee107, this, [[14, 21]]);
+            }, _callee108, this, [[14, 21]]);
          }));
 
-         function registerEphemeral(_x266, _x267, _x268) {
+         function registerEphemeral(_x269, _x270, _x271) {
             return ref.apply(this, arguments);
          }
 
@@ -4670,20 +4698,20 @@ var _class = function () {
          var _this15 = this;
 
          return function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee109(req, res) {
+            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee110(req, res) {
                var _ret4;
 
-               return regeneratorRuntime.wrap(function _callee109$(_context109) {
+               return regeneratorRuntime.wrap(function _callee110$(_context110) {
                   while (1) {
-                     switch (_context109.prev = _context109.next) {
+                     switch (_context110.prev = _context110.next) {
                         case 0:
-                           _context109.prev = 0;
-                           return _context109.delegateYield(regeneratorRuntime.mark(function _callee108() {
+                           _context110.prev = 0;
+                           return _context110.delegateYield(regeneratorRuntime.mark(function _callee109() {
                               var _req$params11, account, keyspace, key, timeout, accountKey, helpPath, reqx, v, isSecureAccount, _ref42, _ref43, _ref43$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref44, _ref45, expire;
 
-                              return regeneratorRuntime.wrap(function _callee108$(_context108) {
+                              return regeneratorRuntime.wrap(function _callee109$(_context109) {
                                  while (1) {
-                                    switch (_context108.prev = _context108.next) {
+                                    switch (_context109.prev = _context109.next) {
                                        case 0:
                                           _req$params11 = req.params;
                                           account = _req$params11.account;
@@ -4707,12 +4735,12 @@ var _class = function () {
                                           v = _this15.validateAccount(account);
 
                                           if (!v) {
-                                             _context108.next = 17;
+                                             _context109.next = 17;
                                              break;
                                           }
 
                                           _this15.sendStatusMessage(req, res, 400, 'Invalid account: ' + v);
-                                          return _context108.abrupt('return', {
+                                          return _context109.abrupt('return', {
                                              v: void 0
                                           });
 
@@ -4720,12 +4748,12 @@ var _class = function () {
                                           v = _this15.validateKeyspace(keyspace);
 
                                           if (!v) {
-                                             _context108.next = 21;
+                                             _context109.next = 21;
                                              break;
                                           }
 
                                           _this15.sendStatusMessage(req, res, 400, 'Invalid keyspace: ' + v);
-                                          return _context108.abrupt('return', {
+                                          return _context109.abrupt('return', {
                                              v: void 0
                                           });
 
@@ -4733,34 +4761,34 @@ var _class = function () {
                                           v = _this15.validateKey(key);
 
                                           if (!v) {
-                                             _context108.next = 25;
+                                             _context109.next = 25;
                                              break;
                                           }
 
                                           _this15.sendStatusMessage(req, res, 400, 'Invalid key: ' + v);
-                                          return _context108.abrupt('return', {
+                                          return _context109.abrupt('return', {
                                              v: void 0
                                           });
 
                                        case 25:
                                           if (!timeout) {
-                                             _context108.next = 29;
+                                             _context109.next = 29;
                                              break;
                                           }
 
                                           if (/^[0-9]$/.test(timeout)) {
-                                             _context108.next = 29;
+                                             _context109.next = 29;
                                              break;
                                           }
 
                                           _this15.sendStatusMessage(req, res, 400, 'Invalid timeout: require range 1 to 9 seconds');
-                                          return _context108.abrupt('return', {
+                                          return _context109.abrupt('return', {
                                              v: void 0
                                           });
 
                                        case 29:
                                           isSecureAccount = !/^(pub|hub)$/.test(account);
-                                          _context108.next = 32;
+                                          _context109.next = 32;
                                           return _this15.redis.multiExecAsync(function (multi) {
                                              multi.time();
                                              multi.hget(accountKey, 'registered');
@@ -4772,7 +4800,7 @@ var _class = function () {
                                           });
 
                                        case 32:
-                                          _ref42 = _context108.sent;
+                                          _ref42 = _context109.sent;
                                           _ref43 = _slicedToArray(_ref42, 5);
                                           _ref43$ = _slicedToArray(_ref43[0], 1);
                                           time = _ref43$[0];
@@ -4788,28 +4816,28 @@ var _class = function () {
                                           hostname = void 0;
 
                                           if (!(req.hostname === _this15.config.hostname)) {
-                                             _context108.next = 46;
+                                             _context109.next = 46;
                                              break;
                                           }
 
-                                          _context108.next = 58;
+                                          _context109.next = 58;
                                           break;
 
                                        case 46:
                                           if (!lodash.endsWith(req.hostname, _this15.config.keyspaceHostname)) {
-                                             _context108.next = 58;
+                                             _context109.next = 58;
                                              break;
                                           }
 
                                           hostname = req.hostname.replace(/\..*$/, '');
-                                          _context108.next = 50;
+                                          _context109.next = 50;
                                           return _this15.redis.hgetallAsync(_this15.adminKey('host', hostname));
 
                                        case 50:
-                                          hostHashes = _context108.sent;
+                                          hostHashes = _context109.sent;
 
                                           if (hostHashes) {
-                                             _context108.next = 53;
+                                             _context109.next = 53;
                                              break;
                                           }
 
@@ -4819,7 +4847,7 @@ var _class = function () {
                                           _this15.logger.debug('hostHashes', hostHashes);
 
                                           if (hostHashes.keyspaces) {
-                                             _context108.next = 56;
+                                             _context109.next = 56;
                                              break;
                                           }
 
@@ -4827,7 +4855,7 @@ var _class = function () {
 
                                        case 56:
                                           if (lodash.includes(hostHashes.keyspaces, keyspace)) {
-                                             _context108.next = 58;
+                                             _context109.next = 58;
                                              break;
                                           }
 
@@ -4835,7 +4863,7 @@ var _class = function () {
 
                                        case 58:
                                           if (keyspace) {
-                                             _context108.next = 60;
+                                             _context109.next = 60;
                                              break;
                                           }
 
@@ -4843,12 +4871,12 @@ var _class = function () {
 
                                        case 60:
                                           if (!timeout) {
-                                             _context108.next = 63;
+                                             _context109.next = 63;
                                              break;
                                           }
 
                                           if (!(timeout < 1 || timeout > 10)) {
-                                             _context108.next = 63;
+                                             _context109.next = 63;
                                              break;
                                           }
 
@@ -4862,18 +4890,18 @@ var _class = function () {
                                           if (command && command.access === 'admin') {
                                              multi.hset(accountKey, 'admined', time);
                                           }
-                                          _context108.next = 69;
+                                          _context109.next = 69;
                                           return fn(req, res, reqx, multi);
 
                                        case 69:
-                                          result = _context108.sent;
+                                          result = _context109.sent;
 
                                           if (!(result !== undefined)) {
-                                             _context108.next = 73;
+                                             _context109.next = 73;
                                              break;
                                           }
 
-                                          _context108.next = 73;
+                                          _context109.next = 73;
                                           return _this15.sendResult(command, req, res, reqx, result);
 
                                        case 73:
@@ -4884,16 +4912,16 @@ var _class = function () {
                                              multi.expire(reqx.keyspaceKey, _expire);
                                              _this15.logger.debug('expire', reqx.keyspaceKey, _expire);
                                           }
-                                          _context108.next = 76;
+                                          _context109.next = 76;
                                           return multi.execAsync();
 
                                        case 76:
-                                          _ref44 = _context108.sent;
+                                          _ref44 = _context109.sent;
                                           _ref45 = _toArray(_ref44);
                                           expire = _ref45;
 
                                           if (expire) {
-                                             _context108.next = 81;
+                                             _context109.next = 81;
                                              break;
                                           }
 
@@ -4901,40 +4929,40 @@ var _class = function () {
 
                                        case 81:
                                        case 'end':
-                                          return _context108.stop();
+                                          return _context109.stop();
                                     }
                                  }
-                              }, _callee108, _this15);
+                              }, _callee109, _this15);
                            })(), 't0', 2);
 
                         case 2:
-                           _ret4 = _context109.t0;
+                           _ret4 = _context110.t0;
 
                            if (!((typeof _ret4 === 'undefined' ? 'undefined' : _typeof(_ret4)) === "object")) {
-                              _context109.next = 5;
+                              _context110.next = 5;
                               break;
                            }
 
-                           return _context109.abrupt('return', _ret4.v);
+                           return _context110.abrupt('return', _ret4.v);
 
                         case 5:
-                           _context109.next = 10;
+                           _context110.next = 10;
                            break;
 
                         case 7:
-                           _context109.prev = 7;
-                           _context109.t1 = _context109['catch'](0);
+                           _context110.prev = 7;
+                           _context110.t1 = _context110['catch'](0);
 
-                           _this15.sendError(req, res, _context109.t1);
+                           _this15.sendError(req, res, _context110.t1);
 
                         case 10:
                         case 'end':
-                           return _context109.stop();
+                           return _context110.stop();
                      }
                   }
-               }, _callee109, _this15, [[0, 7]]);
+               }, _callee110, _this15, [[0, 7]]);
             }));
-            return function (_x269, _x270) {
+            return function (_x272, _x273) {
                return ref.apply(this, arguments);
             };
          }();
@@ -4951,48 +4979,48 @@ var _class = function () {
    }, {
       key: 'migrateKeyspace',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee110(_ref46) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee111(_ref46) {
             var account = _ref46.account;
             var keyspace = _ref46.keyspace;
 
             var accountKey, _ref47, _ref48, accessToken, token, _ref49, _ref50, hsetnx, hdel;
 
-            return regeneratorRuntime.wrap(function _callee110$(_context110) {
+            return regeneratorRuntime.wrap(function _callee111$(_context111) {
                while (1) {
-                  switch (_context110.prev = _context110.next) {
+                  switch (_context111.prev = _context111.next) {
                      case 0:
                         accountKey = this.accountKeyspace(account, keyspace);
-                        _context110.next = 3;
+                        _context111.next = 3;
                         return this.redis.multiExecAsync(function (multi) {
                            multi.hget(accountKey, 'accessToken');
                            multi.hget(accountKey, 'token');
                         });
 
                      case 3:
-                        _ref47 = _context110.sent;
+                        _ref47 = _context111.sent;
                         _ref48 = _slicedToArray(_ref47, 2);
                         accessToken = _ref48[0];
                         token = _ref48[1];
 
                         if (!(!token && accessToken)) {
-                           _context110.next = 20;
+                           _context111.next = 20;
                            break;
                         }
 
-                        _context110.next = 10;
+                        _context111.next = 10;
                         return this.redis.multiExecAsync(function (multi) {
                            multi.hsetnx(accountKey, 'token', accessToken);
                            multi.hdel(accountKey, 'accessToken');
                         });
 
                      case 10:
-                        _ref49 = _context110.sent;
+                        _ref49 = _context111.sent;
                         _ref50 = _slicedToArray(_ref49, 2);
                         hsetnx = _ref50[0];
                         hdel = _ref50[1];
 
                         if (hsetnx) {
-                           _context110.next = 18;
+                           _context111.next = 18;
                            break;
                         }
 
@@ -5000,7 +5028,7 @@ var _class = function () {
 
                      case 18:
                         if (hdel) {
-                           _context110.next = 20;
+                           _context111.next = 20;
                            break;
                         }
 
@@ -5008,13 +5036,13 @@ var _class = function () {
 
                      case 20:
                      case 'end':
-                        return _context110.stop();
+                        return _context111.stop();
                   }
                }
-            }, _callee110, this);
+            }, _callee111, this);
          }));
 
-         function migrateKeyspace(_x271) {
+         function migrateKeyspace(_x274) {
             return ref.apply(this, arguments);
          }
 
@@ -5108,12 +5136,12 @@ var _class = function () {
          } else if (!reqx.registered) {
             if (account === 'hub' || account === 'pub') {
                throw { message: 'Expired (or unregistered) keyspace', hint: {
-                     uri: 'register-ephemeral',
+                     uri: 'create-ephemeral',
                      description: 'To register a new ephemeral keyspace'
                   } };
             } else {
                throw { message: 'Unregistered keyspace', hint: {
-                     uri: 'register-ephemeral',
+                     uri: 'create-ephemeral',
                      description: 'To register a new ephemeral keyspace'
                   } };
             }
@@ -5201,11 +5229,11 @@ var _class = function () {
    }, {
       key: 'sendResult',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee111(command, req, res, reqx, result) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee112(command, req, res, reqx, result) {
             var userAgent, uaMatch, mobile, otherResult, resultString;
-            return regeneratorRuntime.wrap(function _callee111$(_context111) {
+            return regeneratorRuntime.wrap(function _callee112$(_context112) {
                while (1) {
-                  switch (_context111.prev = _context111.next) {
+                  switch (_context112.prev = _context112.next) {
                      case 0:
                         userAgent = req.get('User-Agent');
                         uaMatch = userAgent.match(/\s([A-Z][a-z]*\/[\.0-9]+)\s/);
@@ -5220,33 +5248,33 @@ var _class = function () {
                         } else {}
 
                         if (!command.sendResult) {
-                           _context111.next = 20;
+                           _context112.next = 20;
                            break;
                         }
 
                         if (!lodash.isFunction(command.sendResult)) {
-                           _context111.next = 19;
+                           _context112.next = 19;
                            break;
                         }
 
-                        _context111.next = 11;
+                        _context112.next = 11;
                         return command.sendResult(req, res, reqx, result);
 
                      case 11:
-                        otherResult = _context111.sent;
+                        otherResult = _context112.sent;
 
                         if (!(otherResult === undefined)) {
-                           _context111.next = 16;
+                           _context112.next = 16;
                            break;
                         }
 
-                        return _context111.abrupt('return');
+                        return _context112.abrupt('return');
 
                      case 16:
                         result = otherResult;
 
                      case 17:
-                        _context111.next = 20;
+                        _context112.next = 20;
                         break;
 
                      case 19:
@@ -5256,35 +5284,35 @@ var _class = function () {
                         resultString = '';
 
                         if (Values.isDefined(result)) {
-                           _context111.next = 25;
+                           _context112.next = 25;
                            break;
                         }
 
                         this.logger.error('sendResult none');
-                        _context111.next = 54;
+                        _context112.next = 54;
                         break;
 
                      case 25:
                         if (!(Values.isDefined(req.query.json) || command.format === 'json' && !mobile)) {
-                           _context111.next = 30;
+                           _context112.next = 30;
                            break;
                         }
 
                         res.json(result);
-                        return _context111.abrupt('return');
+                        return _context112.abrupt('return');
 
                      case 30:
                         if (!Values.isDefined(req.query.quiet)) {
-                           _context111.next = 33;
+                           _context112.next = 33;
                            break;
                         }
 
-                        _context111.next = 54;
+                        _context112.next = 54;
                         break;
 
                      case 33:
                         if (!(this.config.defaultFormat === 'cli' || Values.isDefined(req.query.line) || this.isCliDomain(req) || command.format === 'cli')) {
-                           _context111.next = 38;
+                           _context112.next = 38;
                            break;
                         }
 
@@ -5323,12 +5351,12 @@ var _class = function () {
                         } else if (result === null) {} else {
                            resultString = result.toString();
                         }
-                        _context111.next = 54;
+                        _context112.next = 54;
                         break;
 
                      case 38:
                         if (!(this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain) || command.format === 'plain')) {
-                           _context111.next = 43;
+                           _context112.next = 43;
                            break;
                         }
 
@@ -5338,42 +5366,42 @@ var _class = function () {
                         } else {
                            resultString = result.toString();
                         }
-                        _context111.next = 54;
+                        _context112.next = 54;
                         break;
 
                      case 43:
                         if (!(this.config.defaultFormat === 'json' && !mobile)) {
-                           _context111.next = 48;
+                           _context112.next = 48;
                            break;
                         }
 
                         res.json(result);
-                        return _context111.abrupt('return');
+                        return _context112.abrupt('return');
 
                      case 48:
                         if (!(this.config.defaultFormat === 'html' || Values.isDefined(req.query.html) || command.format === 'html' || this.isHtmlDomain(req) || mobile)) {
-                           _context111.next = 52;
+                           _context112.next = 52;
                            break;
                         }
 
-                        return _context111.abrupt('return', this.sendHtmlResult(command, req, res, reqx, result));
+                        return _context112.abrupt('return', this.sendHtmlResult(command, req, res, reqx, result));
 
                      case 52:
                         this.sendError(req, res, { message: 'Invalid default format: ' + this.config.defaultFormat });
-                        return _context111.abrupt('return');
+                        return _context112.abrupt('return');
 
                      case 54:
                         res.send(resultString + '\n');
 
                      case 55:
                      case 'end':
-                        return _context111.stop();
+                        return _context112.stop();
                   }
                }
-            }, _callee111, this);
+            }, _callee112, this);
          }));
 
-         function sendResult(_x272, _x273, _x274, _x275, _x276) {
+         function sendResult(_x275, _x276, _x277, _x278, _x279) {
             return ref.apply(this, arguments);
          }
 
@@ -5686,19 +5714,19 @@ var _class = function () {
    }, {
       key: 'end',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee112() {
-            return regeneratorRuntime.wrap(function _callee112$(_context112) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee113() {
+            return regeneratorRuntime.wrap(function _callee113$(_context113) {
                while (1) {
-                  switch (_context112.prev = _context112.next) {
+                  switch (_context113.prev = _context113.next) {
                      case 0:
                         this.logger.info('end');
 
                         if (!redis) {
-                           _context112.next = 4;
+                           _context113.next = 4;
                            break;
                         }
 
-                        _context112.next = 4;
+                        _context113.next = 4;
                         return this.redis.quitAsync();
 
                      case 4:
@@ -5708,10 +5736,10 @@ var _class = function () {
 
                      case 5:
                      case 'end':
-                        return _context112.stop();
+                        return _context113.stop();
                   }
                }
-            }, _callee112, this);
+            }, _callee113, this);
          }));
 
          function end() {

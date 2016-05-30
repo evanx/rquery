@@ -84,7 +84,7 @@ where we can get the Epoch time in seconds, milliseconds or nanoseconds.
 
 We can request an temporary keyspace that will expire after an idle period of 180s:
 ```shell
-rdemo=`curl -s https://demo.redishub.com/register-ephemeral | grep ^ak`
+rdemo=`curl -s https://demo.redishub.com/create-ephemeral | grep ^ak`
 rdemo="https://demo.redishub.com/$rdemo"
 echo $rdemo
 ```
