@@ -533,7 +533,7 @@ export default class {
          access: 'debug',
          resultObjectType: 'KeyedArrays',
          sendResult: async (req, res, reqx, result) => {
-            if (true) {
+            if (!this.isCliDomain(req)) {
                res.set('Content-Type', 'text/html');
                res.send(renderPage(KeyspaceHelp.render({
                   config: this.config, commandMap: this.commandMap,

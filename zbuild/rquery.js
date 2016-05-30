@@ -1415,7 +1415,7 @@ var _class = function () {
                      while (1) {
                         switch (_context27.prev = _context27.next) {
                            case 0:
-                              if (!true) {
+                              if (_this6.isCliDomain(req)) {
                                  _context27.next = 5;
                                  break;
                               }
