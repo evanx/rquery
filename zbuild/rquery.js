@@ -1377,7 +1377,7 @@ var _class = function () {
             };
          }());
          this.addPublicCommand({
-            key: 'generate-cert-script',
+            key: 'generate-cert-script', // TODO hardcoded in bot reply
             params: ['account'],
             format: 'cli'
          }, function () {
@@ -1390,21 +1390,24 @@ var _class = function () {
                            account = req.params.account;
                            CN = account + '@redishub.com';
                            OU = 'admin%' + account + '@redishub.com';
-                           result = [];
+                           result = ['mkdir -p ~/.redishub'];
 
-                           if (Values.isDefined(req.query.force)) {
+                           if (Values.isDefined(req.query.archive)) {
+                              result = ['mv -i ~/.redishub/live ~/.redishub/archive/' + timestamp].concat(_toConsumableArray(result));
+                           } else if (Values.isDefined(req.query.force)) {
                               result = ['rm -rf ~/.redishub/live'].concat(_toConsumableArray(result));
                            }
                            result = result.concat(['  mkdir ~/.redishub/live &&', '    cd ~/.redishub/live &&', '    echo \'' + account + '\' > account &&', '    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\', '      -subj \'/CN=' + CN + '/OU=' + OU + '\' \\', '      -keyout privkey.pem -out cert.pem &&', '    cat privkey.pem cert.pem > privcert.pem &&', '    openssl x509 -text -in privcert.pem | grep \'CN=\' &&', '    curl -s -E privcert.pem ' + _this6.config.hostUrl + '/register-account-telegram/' + account + ' &&', '    openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem &&', '    echo && pwd && ls -l && echo &&', '    curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt &&', '    echo \'Registered account ' + account + ' OK\'']);
                            hintUrl = [_this6.config.hostUrl, reqx.command.key, account];
 
-                           result.push('# Try curl this as follows, and cut and paste into your terminal directly:');
-                           result.push('#   curl -s ' + hintUrl.join('/'));
+                           result.push('# Cut and paste directly into your shell');
+                           result.push('# To force archiving an existing ~/.redishub/live, add \'?archive\' to the URL');
                            result.push('# Then use: ~/.redishub/live/privcert.pem (curl) and/or privcert.p12 (browser)');
                            result.push('#   curl -E ~/.redishub/live/privcert.pem create-ephemeral');
+                           result.push('');
                            return _context26.abrupt('return', result);
 
-                        case 12:
+                        case 13:
                         case 'end':
                            return _context26.stop();
                      }

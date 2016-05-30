@@ -502,16 +502,21 @@ export default class {
          }
       });
       this.addPublicCommand({
-         key: 'generate-cert-script',
+         key: 'generate-cert-script', // TODO hardcoded in bot reply
          params: ['account'],
          format: 'cli'
       }, async (req, res, reqx) => {
          const account = req.params.account;
          const CN = `${account}@redishub.com`;
          const OU = `admin%${account}@redishub.com`;
-         let result = [];
-         if (Values.isDefined(req.query.force)) {
-            result = [`rm -rf ~/.redishub/live`, ...result];
+         let result = ['mkdir -p ~/.redishub'];
+         if (Values.isDefined(req.query.archive)) {
+            result = [
+               `mv -i ~/.redishub/live ~/.redishub/archive/${timestamp}`,
+               ...result];
+         } else if (Values.isDefined(req.query.force)) {
+            result = [
+               `rm -rf ~/.redishub/live`, ...result];
          }
          result = result.concat([
             `  mkdir ~/.redishub/live &&`,
@@ -529,10 +534,11 @@ export default class {
             `    echo 'Registered account ${account} OK'`
          ]);
          const hintUrl = [this.config.hostUrl, reqx.command.key, account];
-         result.push(`# Try curl this as follows, and cut and paste into your terminal directly:`);
-         result.push(`#   curl -s ${hintUrl.join('/')}`);
+         result.push(`# Cut and paste directly into your shell`);
+         result.push(`# To force archiving an existing ~/.redishub/live, add '?archive' to the URL`);
          result.push(`# Then use: ~/.redishub/live/privcert.pem (curl) and/or privcert.p12 (browser)`);
          result.push(`#   curl -E ~/.redishub/live/privcert.pem create-ephemeral`);
+         result.push('');
          return result;
       });
       this.addRegisterRoutes();
