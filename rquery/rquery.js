@@ -162,14 +162,44 @@ export default class {
          } else if (/grant/.test(content.text)) {
             message.action = 'grant';
             await this.handleTelegramGrant(message);
+         } else if (/signup/.test(content.text)) {
+            message.action = 'signup';
+            await this.handleTelegramSignup(message);
          } else {
             await this.sendTelegram(message.chatId, 'html',
-               `//verifyme - verify your Telegram identity to RedisHub`,
-               `/grantcert <CN> - grant account access to a certificate`
+               `/signup - register RedisHub account<br>`,
+               `/verifyme - verify your Telegram identity to RedisHub<br>`,
+               `/grantcert CERT - grant account access to a certificate`
             );
          }
       }
       this.logger.info('telegram message', message, telegram);
+   }
+
+   async handleTelegramSignup(request) {
+      const now = new Date().getTime();
+      this.logger.info('handleTelegramSignup', request);
+      const userKey = this.adminKey('telegram', 'user', request.username);
+      let [sadd, verified, secret] = await this.redis.multiExecAsync(multi => {
+         multi.sadd(this.adminKey('telegram:verified:users'), request.username);
+         multi.hget(userKey, 'verified');
+         multi.hget(userKey, 'secret');
+      });
+      if (!secret) {
+         secret = this.generateTokenKey();
+      }
+      if (sadd || !verified) {
+         const [hmset] = await this.redis.multiExecAsync(multi => {
+            multi.hsetnx(userKey, 'verified', now);
+            multi.hsetnx(userKey, 'id', request.fromId);
+            multi.hsetnx(userKey, 'secret', secret);
+         });
+         await this.sendTelegram(request.chatId, 'html',
+            `Thanks, ${request.greetName}.`,
+            `Your identity as is now verified to <b>${this.config.serviceLabel}</b>`,
+            `as <code>telegram.me/${request.username}.</code>`
+         );
+      }
    }
 
    async handleTelegramVerify(request) {
