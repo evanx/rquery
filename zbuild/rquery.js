@@ -1396,7 +1396,7 @@ var _class = function () {
                               result = ['rm -rf ~/.redishub/live'].concat(_toConsumableArray(result));
                            }
                            result = result.concat(['  mkdir ~/.redishub/live &&', '    cd ~/.redishub/live &&', '    echo \'' + account + '\' > account &&', '    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\', '      -subj \'/CN=' + CN + '/OU=' + OU + '\' \\', '      -keyout privkey.pem -out cert.pem &&', '    cat privkey.pem cert.pem > privcert.pem &&', '    openssl x509 -text -in privcert.pem | grep \'CN=\' &&', '    curl -s -E privcert.pem ' + _this6.config.hostUrl + '/register-account-telegram/' + account + ' &&', '    openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem &&', '    echo && pwd && ls -l && echo &&', '    curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt &&', '    echo \'Registered account ' + account + ' OK\'']);
-                           result.push(')');
+                           result.push(') | bash');
                            return _context26.abrupt('return', result);
 
                         case 8:

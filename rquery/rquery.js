@@ -528,7 +528,7 @@ export default class {
             `    curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt &&`,
             `    echo 'Registered account ${account} OK'`
          ]);
-         result.push(')');
+         result.push(') | bash');
          return result;
       });
       this.addRegisterRoutes();
