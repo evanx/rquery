@@ -89,7 +89,7 @@ export default class {
       } else {
          this.expressApp.post('/webhook-telegram/*', async (req, res) => {
             try {
-               this.logger.debug('webhook auth', req.params[0], this.config.botSecret);
+               this.logger.debug('webhook auth', req.params[0].substring(0, 4));
                if (req.params[0] !== this.config.botSecret) {
                   throw {message: 'Invalid telegram webhook'};
                }
@@ -2016,7 +2016,10 @@ export default class {
       }
       let resultString = '';
       let resultArray = [];
-      if (result === null) {
+      if (!Values.isDefined(result)) {
+      } else if (result === null) {
+      } else if (Values.isInteger(result)) {
+         resultString = result.toString();
       } else if (lodash.isString(result)) {
          resultString = result;
       } else if (lodash.isArray(result)) {

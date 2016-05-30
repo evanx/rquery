@@ -100,21 +100,25 @@ var Supervisor = function () {
                         // TODO support external modules
                         assert(lodash.isString(componentName), 'component name');
                         this.logger.info('initComponent', componentName, componentModule, componentConfig);
-                        meta = CsonFiles.readFileSync('./' + componentModule + '/' + componentModule + '.cson'); // TODO support external modules
+                        meta = require('./' + componentModule + '.config');
 
+                        this.logger.debug('meta', componentModule, meta);
+                        assert(meta, 'meta: ' + componentModule);
+                        this.logger.debug('meta', componentModule, meta, Object.keys(meta));
+                        assert(meta.config, 'meta.config: ' + componentModule);
                         componentConfig = Object.assign(Metas.getDefault(meta.config), componentConfig);
                         componentConfig = Object.assign(componentConfig, Metas.getEnv(meta.config, componentName, process.env));
                         this.logger.debug('config', componentName, meta.config, componentConfig);
                         errorKeys = Metas.getErrorKeys(meta.config, componentConfig);
 
                         if (!errorKeys.length) {
-                           _context2.next = 9;
+                           _context2.next = 13;
                            break;
                         }
 
                         throw new ValidationError('config: ' + errorKeys.join(' '));
 
-                     case 9:
+                     case 13:
                         componentState = Object.assign({
                            config: componentConfig,
                            logger: Loggers.create(componentName, componentConfig.loggerLevel || this.config.loggerLevel),
@@ -126,17 +130,17 @@ var Supervisor = function () {
                         this.logger.debug('componentModule', componentModule);
 
                         if (!Metas.isSpecType(meta, 'icp')) {
-                           _context2.next = 16;
+                           _context2.next = 20;
                            break;
                         }
 
-                        _context2.next = 15;
+                        _context2.next = 19;
                         return ClassPreprocessor.buildSync(componentModule + '.js', Object.keys(componentState));
 
-                     case 15:
+                     case 19:
                         componentModule = _context2.sent;
 
-                     case 16:
+                     case 20:
                         componentClass = require('./' + componentModule);
 
                         if (componentClass.default) {
@@ -156,20 +160,20 @@ var Supervisor = function () {
                         this.validateComponent(component);
 
                         if (!component.init) {
-                           _context2.next = 26;
+                           _context2.next = 30;
                            break;
                         }
 
                         assert(lodash.isFunction(component.init), 'init function: ' + componentName);
-                        _context2.next = 26;
+                        _context2.next = 30;
                         return component.init(componentState);
 
-                     case 26:
+                     case 30:
                         this.initedComponents.push(component);
                         this.components[componentName] = component;
                         this.logger.info('initComponents components', componentName, Object.keys(this.components));
 
-                     case 29:
+                     case 33:
                      case 'end':
                         return _context2.stop();
                   }

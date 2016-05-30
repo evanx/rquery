@@ -262,7 +262,7 @@ var _class = function () {
                            case 0:
                               _context4.prev = 0;
 
-                              _this2.logger.debug('webhook auth', req.params[0], _this2.config.botSecret);
+                              _this2.logger.debug('webhook auth', req.params[0].substring(0, 4));
 
                               if (!(req.params[0] !== _this2.config.botSecret)) {
                                  _context4.next = 4;
@@ -5266,7 +5266,9 @@ var _class = function () {
          }
          var resultString = '';
          var resultArray = [];
-         if (result === null) {} else if (lodash.isString(result)) {
+         if (!Values.isDefined(result)) {} else if (result === null) {} else if (Values.isInteger(result)) {
+            resultString = result.toString();
+         } else if (lodash.isString(result)) {
             resultString = result;
          } else if (lodash.isArray(result)) {
             resultArray = result;
