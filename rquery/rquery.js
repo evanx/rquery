@@ -511,6 +511,7 @@ export default class {
          const OU = `admin%${account}@redishub.com`;
          return [
             `(`,
+            !Values.isDefined(req.query.force)? '': `rm -rf ~/.redishub/live &&`,
             `  mkdir ~/.redishub/live &&`,
             `    cd ~/.redishub/live &&`,
             `    echo '${account}' > account &&`,
