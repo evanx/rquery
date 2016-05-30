@@ -539,7 +539,7 @@ export default class {
                   config: this.config, commandMap: this.commandMap,
                   req, reqx, result
                })));
-            } else if (!this.isMobile(req)) {
+            } else if (false && !this.isMobile(req)) {
                res.set('Content-Type', 'text/html');
                res.send(ReactDOMServer.renderToString(<KeyspaceHelpPage reqx={reqx} result={result}/>));
             } else {
@@ -922,7 +922,7 @@ export default class {
       this.addKeyspaceCommand({
          key: 'sismember',
          params: ['key', 'member'],
-         description: 'check that the value /exists in your set',
+         description: 'check that the value exists in your set',
          relatedCommands: ['smembers'],
       }, async (req, res, reqx) => {
          const reply = await this.redis.sismemberAsync(reqx.keyspaceKey, req.params.member);

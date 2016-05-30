@@ -1429,7 +1429,7 @@ var _class = function () {
                               break;
 
                            case 5:
-                              if (_this6.isMobile(req)) {
+                              if (!(false && !_this6.isMobile(req))) {
                                  _context27.next = 10;
                                  break;
                               }
@@ -2476,7 +2476,7 @@ var _class = function () {
          this.addKeyspaceCommand({
             key: 'sismember',
             params: ['key', 'member'],
-            description: 'check that the value /exists in your set',
+            description: 'check that the value exists in your set',
             relatedCommands: ['smembers']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee55(req, res, reqx) {
