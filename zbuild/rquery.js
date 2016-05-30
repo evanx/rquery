@@ -517,7 +517,7 @@ var _class = function () {
                      case 21:
                         duration = now - parseInt(verified);
                         _context6.next = 24;
-                        return this.sendTelegram(request.chatId, 'html', 'Hi ' + request.greetName + '.', 'Your identity as was already verified to <b>' + this.config.serviceLabel + '</b>', Millis.formatVerboseDuration(duration) + ' ago as <code>@' + request.username + '</code>');
+                        return this.sendTelegram(request.chatId, 'html', 'Hi ' + request.greetName + '.', 'Your identity as was already verified', Millis.formatVerboseDuration(duration) + ' ago', 'as <code>@' + request.username + '</code>');
 
                      case 24:
                      case 'end':

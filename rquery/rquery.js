@@ -199,8 +199,9 @@ export default class {
          const duration = now - parseInt(verified);
          await this.sendTelegram(request.chatId, 'html',
             `Hi ${request.greetName}.`,
-            `Your identity as was already verified to <b>${this.config.serviceLabel}</b>`,
-            `${Millis.formatVerboseDuration(duration)} ago as <code>@${request.username}</code>`
+            `Your identity as was already verified`,
+            `${Millis.formatVerboseDuration(duration)} ago`,
+            `as <code>@${request.username}</code>`
          );
       }
    }
