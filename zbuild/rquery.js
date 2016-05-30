@@ -529,7 +529,7 @@ var _class = function () {
                         CN = account + '@redishub.com';
                         OU = 'admin%' + account + '@redishub.com';
                         _context6.next = 24;
-                        return this.sendTelegram(request.chatId, 'html', 'Thanks, ' + request.greetName + '.', 'Your RedisHub account name is <b>' + account + '</b>, taken as your Telegram user.', 'Please cut and paste the following command into your terminal to create a client cert:', '<pre>openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=$CN/OU=$OU" -keyout privkey.pem -out cert.pem</pre>');
+                        return this.sendTelegram(request.chatId, 'html', 'Thanks, ' + request.greetName + '.', 'Your RedisHub account name is <b>' + account + '</b>, taken as your Telegram user.', 'Please cut and paste the following command into your terminal to create a client cert:', '<pre>mkdir ~/.redishub/live && cd ~/.redishub/live && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=$CN/OU=$OU" -keyout privkey.pem -out cert.pem</pre>');
 
                      case 24:
                      case 'end':
