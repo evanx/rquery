@@ -509,8 +509,11 @@ export default class {
          const account = req.params.account;
          const CN = `${account}@redishub.com`;
          const OU = `admin%${account}@redishub.com`;
-         return [
-            `(` + !Values.isDefined(req.query.force)? '': 'rm -rf ~/.redishub/live &&',
+         let result = ['('];
+         if (Values.isDefined(req.query.force)) {
+            result = [`rm -rf ~/.redishub/live`, ...result];
+         }
+         result = result.concat([
             `  mkdir ~/.redishub/live &&`,
             `    cd ~/.redishub/live &&`,
             `    echo '${account}' > account &&`,
@@ -523,10 +526,10 @@ export default class {
             `    openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem &&`,
             `    echo && pwd && ls -l && echo &&`,
             `    curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt &&`,
-            `    echo 'Registered account ${account} OK'`,
-            `)`,
-            ``
-         ].join('\n');
+            `    echo 'Registered account ${account} OK'`
+         ]);
+         result.push(')');
+         return result;
       });
       this.addRegisterRoutes();
       this.addAccountRoutes();

@@ -1382,7 +1382,7 @@ var _class = function () {
             format: 'cli'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee26(req, res) {
-               var account, CN, OU;
+               var account, CN, OU, result;
                return regeneratorRuntime.wrap(function _callee26$(_context26) {
                   while (1) {
                      switch (_context26.prev = _context26.next) {
@@ -1390,9 +1390,16 @@ var _class = function () {
                            account = req.params.account;
                            CN = account + '@redishub.com';
                            OU = 'admin%' + account + '@redishub.com';
-                           return _context26.abrupt('return', ['(' + !Values.isDefined(req.query.force) ? '' : 'rm -rf ~/.redishub/live &&', '  mkdir ~/.redishub/live &&', '    cd ~/.redishub/live &&', '    echo \'' + account + '\' > account &&', '    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\', '      -subj \'/CN=' + CN + '/OU=' + OU + '\' \\', '      -keyout privkey.pem -out cert.pem &&', '    cat privkey.pem cert.pem > privcert.pem &&', '    openssl x509 -text -in privcert.pem | grep \'CN=\' &&', '    curl -s -E privcert.pem ' + _this6.config.hostUrl + '/register-account-telegram/' + account + ' &&', '    openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem &&', '    echo && pwd && ls -l && echo &&', '    curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt &&', '    echo \'Registered account ' + account + ' OK\'', ')', ''].join('\n'));
+                           result = ['('];
 
-                        case 4:
+                           if (Values.isDefined(req.query.force)) {
+                              result = ['rm -rf ~/.redishub/live'].concat(_toConsumableArray(result));
+                           }
+                           result = result.concat(['  mkdir ~/.redishub/live &&', '    cd ~/.redishub/live &&', '    echo \'' + account + '\' > account &&', '    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\', '      -subj \'/CN=' + CN + '/OU=' + OU + '\' \\', '      -keyout privkey.pem -out cert.pem &&', '    cat privkey.pem cert.pem > privcert.pem &&', '    openssl x509 -text -in privcert.pem | grep \'CN=\' &&', '    curl -s -E privcert.pem ' + _this6.config.hostUrl + '/register-account-telegram/' + account + ' &&', '    openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem &&', '    echo && pwd && ls -l && echo &&', '    curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt &&', '    echo \'Registered account ' + account + ' OK\'']);
+                           result.push(')');
+                           return _context26.abrupt('return', result);
+
+                        case 8:
                         case 'end':
                            return _context26.stop();
                      }
