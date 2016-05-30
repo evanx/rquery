@@ -164,8 +164,8 @@ export default class {
             await this.handleTelegramGrant(message);
          } else {
             await this.sendTelegram(message.chatId, 'html',
-               `/verify-me - verify your Telegram identity to RedisHub`,
-               `/grant-cert <CN> - grant account access to a certificate`
+               `//verifyme - verify your Telegram identity to RedisHub`,
+               `/grantcert <CN> - grant account access to a certificate`
             );
          }
       }
@@ -208,10 +208,10 @@ export default class {
    async handleTelegramGrant(request) {
       const now = new Date().getTime();
       this.logger.info('handleTelegramGrant', request);
-      const match = request.text.match(/\/grant-cert (\w+)$/);
+      const match = request.text.match(/\/grantcert (\w+)$/);
       if (!match) {
          await this.sendTelegramReply(request, 'html',
-            `Sorry, that appears to be invalid. Try <code>/grant-cert &lt;tail&gt;</code>,`,
+            `Sorry, that appears to be invalid. Try <code>/grantcert &lt;tail&gt;</code>,`,
             `where <code>tail</code> is the last 12 digits of the new <code>cert.pem</code> hash.`,
             `See redishub.com/docs/cert-tail.md.`
          );

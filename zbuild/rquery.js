@@ -438,7 +438,7 @@ var _class = function () {
 
                      case 45:
                         _context5.next = 47;
-                        return this.sendTelegram(message.chatId, 'html', '/verify-me - verify your Telegram identity to RedisHub', '/grant-cert <CN> - grant account access to a certificate');
+                        return this.sendTelegram(message.chatId, 'html', '//verifyme - verify your Telegram identity to RedisHub', '/grantcert <CN> - grant account access to a certificate');
 
                      case 47:
                         this.logger.info('telegram message', message, telegram);
@@ -548,7 +548,7 @@ var _class = function () {
                         now = new Date().getTime();
 
                         this.logger.info('handleTelegramGrant', request);
-                        match = request.text.match(/\/grant-cert (\w+)$/);
+                        match = request.text.match(/\/grantcert (\w+)$/);
 
                         if (match) {
                            _context7.next = 7;
@@ -556,7 +556,7 @@ var _class = function () {
                         }
 
                         _context7.next = 6;
-                        return this.sendTelegramReply(request, 'html', 'Sorry, that appears to be invalid. Try <code>/grant-cert &lt;tail&gt;</code>,', 'where <code>tail</code> is the last 12 digits of the new <code>cert.pem</code> hash.', 'See redishub.com/docs/cert-tail.md.');
+                        return this.sendTelegramReply(request, 'html', 'Sorry, that appears to be invalid. Try <code>/grantcert &lt;tail&gt;</code>,', 'where <code>tail</code> is the last 12 digits of the new <code>cert.pem</code> hash.', 'See redishub.com/docs/cert-tail.md.');
 
                      case 6:
                         return _context7.abrupt('return');
