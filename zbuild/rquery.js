@@ -318,36 +318,26 @@ var _class = function () {
       key: 'handleTelegram',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee5(req, res, telegram) {
-            var clientCert, dn, message, content;
+            var cert, dn, message, content;
             return regeneratorRuntime.wrap(function _callee5$(_context5) {
                while (1) {
                   switch (_context5.prev = _context5.next) {
                      case 0:
-                        clientCert = this.getClientCert(req);
+                        cert = this.getClientCert(req);
 
-                        if (clientCert) {
-                           dn = this.parseCertDn(req);
+                        if (!cert) {
+                           //throw {message: 'No client cert'};
+                        } else {
+                              this.logger.debug('telegram cert', cert.split('\n')[0]);
+                              dn = this.parseCertDn(req);
 
-                           this.logger.debug('telegram', telegram, dn);
-                        }
-
-                        if (cert) {
-                           _context5.next = 6;
-                           break;
-                        }
-
-                        throw { message: 'No client cert' };
-
-                     case 6:
-                        cert = cert.replace(/\t/g, '\n');
-                        this.logger.debug('telegram cert', cert.split('\n')[0]);
-
-                     case 8:
+                              this.logger.debug('telegram', telegram, dn);
+                           }
                         message = {};
                         content = void 0;
 
                         if (!telegram.message) {
-                           _context5.next = 16;
+                           _context5.next = 10;
                            break;
                         }
 
@@ -356,12 +346,12 @@ var _class = function () {
                         if (!content.text) {} else {
                            message.text = content.text;
                         }
-                        _context5.next = 24;
+                        _context5.next = 18;
                         break;
 
-                     case 16:
+                     case 10:
                         if (!telegram.inline_query) {
-                           _context5.next = 22;
+                           _context5.next = 16;
                            break;
                         }
 
@@ -370,46 +360,46 @@ var _class = function () {
                         if (!content.query) {} else {
                            message.text = content.query;
                         }
-                        _context5.next = 24;
+                        _context5.next = 18;
                         break;
 
-                     case 22:
+                     case 16:
                         this.logger.warn('telegram', telegram);
                         return _context5.abrupt('return');
 
-                     case 24:
+                     case 18:
                         if (!content.chat) {} else if (!content.chat.id) {} else {
                            message.chatId = content.chat.id;
                         }
                         this.logger.debug('tcm', { telegram: telegram, content: content, message: message });
 
                         if (content.from) {
+                           _context5.next = 23;
+                           break;
+                        }
+
+                        _context5.next = 47;
+                        break;
+
+                     case 23:
+                        if (content.from.username) {
+                           _context5.next = 26;
+                           break;
+                        }
+
+                        _context5.next = 47;
+                        break;
+
+                     case 26:
+                        if (content.from.id) {
                            _context5.next = 29;
                            break;
                         }
 
-                        _context5.next = 53;
+                        _context5.next = 47;
                         break;
 
                      case 29:
-                        if (content.from.username) {
-                           _context5.next = 32;
-                           break;
-                        }
-
-                        _context5.next = 53;
-                        break;
-
-                     case 32:
-                        if (content.from.id) {
-                           _context5.next = 35;
-                           break;
-                        }
-
-                        _context5.next = 53;
-                        break;
-
-                     case 35:
                         message.fromId = content.from.id;
                         message.greetName = content.from.username;
                         if (true && content.from.first_name) {
@@ -420,40 +410,40 @@ var _class = function () {
                         message.username = content.from.username;
 
                         if (!/verify/.test(content.text)) {
-                           _context5.next = 45;
+                           _context5.next = 39;
                            break;
                         }
 
                         message.action = 'verify';
-                        _context5.next = 43;
+                        _context5.next = 37;
                         return this.handleTelegramVerify(message);
 
-                     case 43:
-                        _context5.next = 53;
+                     case 37:
+                        _context5.next = 47;
                         break;
 
-                     case 45:
+                     case 39:
                         if (!/grant/.test(content.text)) {
-                           _context5.next = 51;
+                           _context5.next = 45;
                            break;
                         }
 
                         message.action = 'grant';
-                        _context5.next = 49;
+                        _context5.next = 43;
                         return this.handleTelegramGrant(message);
 
-                     case 49:
-                        _context5.next = 53;
+                     case 43:
+                        _context5.next = 47;
                         break;
 
-                     case 51:
-                        _context5.next = 53;
+                     case 45:
+                        _context5.next = 47;
                         return this.sendTelegram(message, 'html', '/verify - verify your Telegram identity to RedisHub', '/grant-cert <CN> - grant account access to a certificate');
 
-                     case 53:
+                     case 47:
                         this.logger.info('telegram message', message, telegram);
 
-                     case 54:
+                     case 48:
                      case 'end':
                         return _context5.stop();
                   }
@@ -3860,7 +3850,11 @@ var _class = function () {
    }, {
       key: 'getClientCert',
       value: function getClientCert(req) {
-         return req.get('ssl_client_cert');
+         var cert = req.get('ssl_client_cert');
+         if (cert) {
+            cert = cert.replace(/\t/g, '\n');
+         }
+         return cert;
       }
    }, {
       key: 'parseCertDn',
