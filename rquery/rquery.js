@@ -509,7 +509,7 @@ export default class {
          const account = req.params.account;
          const CN = `${account}@redishub.com`;
          const OU = `admin%${account}@redishub.com`;
-         let result = ['('];
+         let result = [];
          if (Values.isDefined(req.query.force)) {
             result = [`rm -rf ~/.redishub/live`, ...result];
          }
@@ -529,10 +529,9 @@ export default class {
             `    echo 'Registered account ${account} OK'`
          ]);
          const hintUrl = [this.config.hostUrl, reqx.command.key, account];
-         result.push(`)`);
-         result.push(`# Try pipe this into bash as follows:`);
-         result.push(`#   curl -s ${hintUrl.join('/')} | bash`);
-         result.push(`# Then use: ~/.redishub/live/privcert.pem and/or privkey`);
+         result.push(`# Try curl this as follows, and cut and paste into your terminal directly:`);
+         result.push(`#   curl -s ${hintUrl.join('/')}`);
+         result.push(`# Then use: ~/.redishub/live/privcert.pem (curl) and/or privcert.p12 (browser)`);
          result.push(`#   curl -E ~/.redishub/live/privcert.pem create-ephemeral`);
          return result;
       });
