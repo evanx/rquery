@@ -211,7 +211,7 @@ export default class {
          `\n  openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=${CN}/OU=${OU}" \\`,
          `\n  -keyout privkey.pem -out cert.pem`,
          `\ncat privkey.pem cert.pem > privcert.pem`,
-         `\ncurl -s -E privcert.pem https://${service.hostUrl}/register-account-telegram/${account}`,
+         `\ncurl -s -E privcert.pem https://${this.config.hostUrl}/register-account-telegram/${account}`,
          `</pre>`
       );
    }
