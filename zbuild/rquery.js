@@ -5526,7 +5526,7 @@ var _class = function () {
                })]
             }));
          } else {
-            this.logger.warn('status lines', req.path, statusCode, typeof err === 'undefined' ? 'undefined' : _typeof(err), Object.keys(err), messageLines.length);
+            this.logger.warn('status lines', req.path, statusCode, messageLines);
             // TODO hints
             res.status(statusCode).send(lodash.flatten([title].concat(_toConsumableArray(messageLines))).join('\n') + '\n');
          }

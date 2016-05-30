@@ -2272,7 +2272,7 @@ export default class {
             ]
          }));
       } else {
-         this.logger.warn('status lines', req.path, statusCode, typeof err, Object.keys(err), messageLines.length);
+         this.logger.warn('status lines', req.path, statusCode, messageLines);
          // TODO hints
          res.status(statusCode).send(lodash.flatten([title, ...messageLines]).join('\n') + '\n');
       }
