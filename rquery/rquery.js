@@ -156,20 +156,22 @@ export default class {
             message.greetName = [content.from.first_name, content.from.last_name].join(' ');
          }
          message.username = content.from.username;
-         if (/verify/.test(content.text)) {
+         if (/\/verify/.test(content.text)) {
             message.action = 'verify';
             await this.handleTelegramVerify(message);
-         } else if (/grant/.test(content.text)) {
+         } else if (/\/grant/.test(content.text)) {
             message.action = 'grant';
             await this.handleTelegramGrant(message);
-         } else if (/signup/.test(content.text)) {
+         } else if (/\/signup/.test(content.text)) {
             message.action = 'signup';
             await this.handleTelegramSignup(message);
          } else {
             await this.sendTelegram(message.chatId, 'html',
-               `/signup - register RedisHub account<br>`,
-               `/verifyme - verify your Telegram identity to RedisHub<br>`,
-               `/grantcert CERT - grant account access to a certificate`
+               `<pre>`,
+               `/signup - register RedisHub account`,
+               `/verifyme - verify your Telegram identity to RedisHub`,
+               `/grantcert CERT - grant account access to a certificate`,
+               `</pre>`
             );
          }
       }

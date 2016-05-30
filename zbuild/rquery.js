@@ -409,7 +409,7 @@ var _class = function () {
                         }
                         message.username = content.from.username;
 
-                        if (!/verify/.test(content.text)) {
+                        if (!/\/verify/.test(content.text)) {
                            _context5.next = 39;
                            break;
                         }
@@ -423,7 +423,7 @@ var _class = function () {
                         break;
 
                      case 39:
-                        if (!/grant/.test(content.text)) {
+                        if (!/\/grant/.test(content.text)) {
                            _context5.next = 45;
                            break;
                         }
@@ -437,7 +437,7 @@ var _class = function () {
                         break;
 
                      case 45:
-                        if (!/signup/.test(content.text)) {
+                        if (!/\/signup/.test(content.text)) {
                            _context5.next = 51;
                            break;
                         }
@@ -452,7 +452,7 @@ var _class = function () {
 
                      case 51:
                         _context5.next = 53;
-                        return this.sendTelegram(message.chatId, 'html', '/signup - register RedisHub account<br>', '/verifyme - verify your Telegram identity to RedisHub<br>', '/grantcert CERT - grant account access to a certificate');
+                        return this.sendTelegram(message.chatId, 'html', '<pre>', '/signup - register RedisHub account', '/verifyme - verify your Telegram identity to RedisHub', '/grantcert CERT - grant account access to a certificate', '</pre>');
 
                      case 53:
                         this.logger.info('telegram message', message, telegram);
