@@ -510,19 +510,21 @@ export default class {
          const CN = `${account}@redishub.com`;
          const OU = `admin%${account}@redishub.com`;
          return [
-            `mkdir ~/.redishub/live &&`,
-            `  cd ~/.redishub/live &&`,
-            `  echo '${account}' > account &&`,
-            `  CN=${CN} \\`,
-            `  OU=${OU} \\`,
-            `  openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\`,
-            `    -subj '/CN=${CN}/OU=${OU}' \\`,
-            `    -keyout privkey.pem -out cert.pem &&`,
-            `  cat privkey.pem cert.pem > privcert.pem &&`,
-            `  openssl x509 -text -in privcert.pem | grep 'CN=' &&`,
-            `  curl -s -E privcert.pem ${this.config.hostUrl}/register-account-telegram/${account} &&`,
-            `  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt &&`,
-            `  echo 'Registered account ${account} OK'`,
+            `(`,
+            `  mkdir ~/.redishub/live &&`,
+            `    cd ~/.redishub/live &&`,
+            `    echo '${account}' > account &&`,
+            `    CN=${CN} \\`,
+            `    OU=${OU} \\`,
+            `    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\`,
+            `      -subj '/CN=${CN}/OU=${OU}' \\`,
+            `      -keyout privkey.pem -out cert.pem &&`,
+            `    cat privkey.pem cert.pem > privcert.pem &&`,
+            `    openssl x509 -text -in privcert.pem | grep 'CN=' &&`,
+            `    curl -s -E privcert.pem ${this.config.hostUrl}/register-account-telegram/${account} &&`,
+            `    curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt &&`,
+            `    echo 'Registered account ${account} OK'`,
+            `)`,
             ``
          ].join('\n');
       });
