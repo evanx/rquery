@@ -869,7 +869,7 @@ var _class = function () {
                            case 4:
                               res.set('Content-Type', 'text/html');
                               res.send((0, _Page2.default)((0, _Help2.default)({
-                                 config: _this6.config, req: req, result: result
+                                 config: _this6.config, req: req, result: result, homePath: '/'
                               })));
 
                            case 6:
@@ -906,7 +906,7 @@ var _class = function () {
                            });
                            return _context13.abrupt('return', {
                               common: routes.filter(function (route) {
-                                 return route && !route.includes(':') && !['/epoch', '/register-cert'].includes(route);
+                                 return route && !route.includes(':') && !['/epoch', '/register-ephemeral'].includes(route);
                               }).map(function (route) {
                                  return '' + hostUrl + route;
                               }),
@@ -918,7 +918,7 @@ var _class = function () {
                               }),
 
                               ephemeral: routes.filter(function (route) {
-                                 return route.includes('-ephemeral') && route !== '/create-ephemeral';
+                                 return route.includes('-ephemeral') && route !== '/register-ephemeral';
                               }).map(function (route) {
                                  return '' + route;
                               }),

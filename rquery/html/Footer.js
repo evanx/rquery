@@ -6,10 +6,10 @@ const logger = Loggers.create(module.filename);
 export default function (props) {
    assert(Values.isDefined(props.config.assetsUrl), 'assetsUrl');
    const reqx = props.reqx || {};
-   const homePath = Hx.renderPath(props.helpPath || reqx.helpPath) || '/routes';
+   const backPath = Hx.renderPath(props.helpPath || reqx.helpPath) || '/routes';
    let clickScript = '';
-   if (homePath) {
-      clickScript = `window.location.pathname='${homePath}'`;
+   if (backPath) {
+      clickScript = `window.location.pathname='${backPath}'`;
    }
    const content = []
    content.push(He.img({style: styles.icon,

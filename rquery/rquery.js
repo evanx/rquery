@@ -331,7 +331,7 @@ export default class {
             } else {
                res.set('Content-Type', 'text/html');
                res.send(renderPage(renderHelp({
-                  config: this.config, req, result
+                  config: this.config, req, result, homePath: '/'
                })));
             }
          }
@@ -346,7 +346,7 @@ export default class {
          .filter(route => route.includes(':account') && !route.includes(':keyspace'));
          return {
             common: routes
-            .filter(route => route && !route.includes(':') && !['/epoch', '/register-cert'].includes(route))
+            .filter(route => route && !route.includes(':') && !['/epoch', '/register-ephemeral'].includes(route))
             .map(route => `${hostUrl}${route}`)
             ,
             misc: routes
@@ -354,7 +354,7 @@ export default class {
             .map(route => `${route}`)
             ,
             ephemeral: routes
-            .filter(route => route.includes('-ephemeral') && route !== '/create-ephemeral')
+            .filter(route => route.includes('-ephemeral') && route !== '/register-ephemeral')
             .map(route => `${route}`)
             ,
             telegram: routes
