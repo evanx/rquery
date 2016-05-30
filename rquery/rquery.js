@@ -211,7 +211,7 @@ export default class {
       this.logger.info('handleTelegramGrant', request);
       const match = request.text.match(/\/grantcert (\w+)$/);
       if (!match) {
-         await this.sendTelegramReply(request, 'html',
+         await this.sendTelegram(request.chatId, 'html',
             `Sorry, that appears to be invalid. Try <code>/grantcert &lt;tail&gt;</code>,`,
             `where <code>tail</code> is the last 12 digits of the new <code>cert.pem</code> hash.`,
             `See redishub.com/docs/cert-tail.md.`
