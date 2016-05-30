@@ -512,6 +512,7 @@ export default class {
          return [
             `mkdir ~/.redishub/live &&`,
             `  cd ~/.redishub/live &&`,
+            `  echo '${account}' > account &&`,
             `  CN=${CN} \\`,
             `  OU=${OU} \\`,
             `  openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\`,
