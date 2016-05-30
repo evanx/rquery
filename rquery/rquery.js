@@ -205,7 +205,7 @@ export default class {
          `Thanks, ${request.greetName}.`,
          `Your RedisHub account name is <b>${account}</b>, taken as your Telegram user.`,
          `Please cut and paste the following command into your terminal to create a client cert:`,
-         `<pre>mkdir ~/.redishub/live && cd ~/.redishub/live && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=${CN}/OU=${OU}" -keyout privkey.pem -out cert.pem && cat privkey.pem cert.pem > privcert.pem</pre>`
+         `<pre>mkdir ~/.redishub/live &&\n cd ~/.redishub/live && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=${CN}/OU=${OU}" -keyout privkey.pem -out cert.pem && cat privkey.pem cert.pem > privcert.pem</pre>`
       );
    }
 
@@ -301,7 +301,7 @@ export default class {
    async sendTelegram(chatId, format, ...content) {
       this.logger.info('sendTelegram', chatId, format, content);
       try {
-         const text = lodash.trim(content.join(' ').replace(/\s\s+/g, ' '));
+         const text = lodash.trim(content.join(' '));
          assert(chatId, 'chatId');
          let uri = `sendMessage?chat_id=${chatId}`;
          uri += '&disable_notification=true';
