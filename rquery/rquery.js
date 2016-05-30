@@ -510,8 +510,7 @@ export default class {
          const CN = `${account}@redishub.com`;
          const OU = `admin%${account}@redishub.com`;
          return [
-            `(`,
-            !Values.isDefined(req.query.force)? '': `rm -rf ~/.redishub/live &&`,
+            `($!Values.isDefined(req.query.force)? '': 'rm -rf ~/.redishub/live &&'}`,
             `  mkdir ~/.redishub/live &&`,
             `    cd ~/.redishub/live &&`,
             `    echo '${account}' > account &&`,
