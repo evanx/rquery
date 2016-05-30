@@ -237,7 +237,7 @@ export default class {
             `You have approved enrollment of a cert PEM ending with <b>${cert}</b>.`,
             `That identity can now enroll via ${this.config.hostUrl}/register-cert.`,
             `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.enrollExpire)}`,
-            `otherwise you need to repeat this request. See redishub.com/docs/register-cert`
+            `otherwise you need to repeat this request. See redishub.com/docs/register-cert.md`
          );
       } else {
          await this.sendTelegramReply(request, 'html',
