@@ -706,16 +706,15 @@ var _class = function () {
                content[_key3 - 2] = arguments[_key3];
             }
 
-            var _logger, uri, url;
-
+            var text, uri, url;
             return regeneratorRuntime.wrap(function _callee10$(_context10) {
                while (1) {
                   switch (_context10.prev = _context10.next) {
                      case 0:
                         this.logger.info('sendTelegram', chatId, format, content);
                         _context10.prev = 1;
+                        text = lodash.trim(content.join(' ').replace(/\s\s+/g, ' '));
 
-                        content = lodash.trim(content.join(' ').replace(/\s\s+/g, ' '));
                         assert(chatId, 'chatId');
                         uri = 'sendMessage?chat_id=' + chatId;
 
@@ -725,10 +724,10 @@ var _class = function () {
                         } else if (format === 'html') {
                            uri += '&parse_mode=HTML';
                         }
-                        uri += '&text=' + encodeURIComponent(content);
+                        uri += '&text=' + encodeURIComponent(text);
                         url = [this.config.botUrl, uri].join('/');
 
-                        (_logger = this.logger).info.apply(_logger, ['sendTelegram url', url, chatId, format].concat(_toConsumableArray(content)));
+                        this.logger.info('sendTelegram url', url, chatId, format, text);
                         _context10.next = 12;
                         return Requests.head({ url: url });
 

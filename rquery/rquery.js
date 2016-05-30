@@ -263,7 +263,7 @@ export default class {
    async sendTelegram(chatId, format, ...content) {
       this.logger.info('sendTelegram', chatId, format, content);
       try {
-         content = lodash.trim(content.join(' ').replace(/\s\s+/g, ' '));
+         const text = lodash.trim(content.join(' ').replace(/\s\s+/g, ' '));
          assert(chatId, 'chatId');
          let uri = `sendMessage?chat_id=${chatId}`;
          uri += '&disable_notification=true';
@@ -272,9 +272,9 @@ export default class {
          } else if (format === 'html') {
             uri += `&parse_mode=HTML`;
          }
-         uri += `&text=${encodeURIComponent(content)}`;
+         uri += `&text=${encodeURIComponent(text)}`;
          const url = [this.config.botUrl, uri].join('/');
-         this.logger.info('sendTelegram url', url, chatId, format, ...content);
+         this.logger.info('sendTelegram url', url, chatId, format, text);
          await Requests.head({url});
       } catch (err) {
          this.logger.error(err);
