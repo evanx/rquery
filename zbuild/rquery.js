@@ -452,7 +452,7 @@ var _class = function () {
 
                      case 51:
                         _context5.next = 53;
-                        return this.sendTelegram(message.chatId, 'html', '<pre>', '/signup - register RedisHub account', '/verifyme - verify your Telegram identity to RedisHub', '/grantcert CERT - grant account access to a certificate', '</pre>');
+                        return this.sendTelegram(message.chatId, 'html', '<pre>', '/signup - register RedisHub account', '\n/verifyme - verify your Telegram identity to RedisHub', '\n/grantcert CERT - grant account access to a certificate', '</pre>');
 
                      case 53:
                         this.logger.info('telegram message', message, telegram);

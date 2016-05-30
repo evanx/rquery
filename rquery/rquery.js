@@ -169,8 +169,8 @@ export default class {
             await this.sendTelegram(message.chatId, 'html',
                `<pre>`,
                `/signup - register RedisHub account`,
-               `/verifyme - verify your Telegram identity to RedisHub`,
-               `/grantcert CERT - grant account access to a certificate`,
+               `\n/verifyme - verify your Telegram identity to RedisHub`,
+               `\n/grantcert CERT - grant account access to a certificate`,
                `</pre>`
             );
          }
