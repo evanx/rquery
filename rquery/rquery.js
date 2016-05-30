@@ -110,7 +110,8 @@ export default class {
    }
 
    async handleTelegram(req, res, telegram) {
-      if (this.isClientCert(req)) {
+      const clientCert = this.getClientCert(req);
+      if (clientCert) {
          const dn = this.parseCertDn(req);
          this.logger.debug('telegram', telegram, dn);
       }
