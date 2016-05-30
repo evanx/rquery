@@ -521,11 +521,8 @@ export default class {
             `  cat privkey.pem cert.pem > privcert.pem &&`,
             `  openssl x509 -text -in privcert.pem | grep 'CN=' &&`,
             `  curl -s -E privcert.pem ${this.config.hostUrl}/register-account-telegram/${account} &&`,
+            `  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt &&`,
             `  echo 'Registered account ${account} OK'`,
-            `  echo 'Try the following:'`,
-            `  echo 'cd && git clone git@github.com:evanx/redishub.git && cd redishub &&'`,
-            `  echo 'alias rh=~/redishub/bin/rhcurl'`,
-            `  echo 'rh help'`,
             ``
          ].join('\n');
       });

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+echo 'Use ~/redishub/bin/rhcurl'
+echo 'Try:'
+echo 'cd && git clone git@github.com:evanx/redishub.git'
+exit 3
+
   set -u -e
 
   [ -z "$BASH" ] && rhabort 1 'Use bash' && exit 1
