@@ -199,8 +199,12 @@ export default class {
          );
       }
       const account = request.username;
+      const CN = `${account}@redishub.com`;
+      const OU = `admin%${account}@redishub.com`;
       await this.sendTelegram(request.chatId, 'html',
+         `Thanks, ${request.greetName}.`,
          `Your RedisHub account name is <b>${account}</b>, taken as your Telegram user.`,
+         `Please cut and paste the following command into your terminal to create a client cert:`,
          `<pre>openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=$CN/OU=$OU" -keyout privkey.pem -out cert.pem</pre>`
       );
    }

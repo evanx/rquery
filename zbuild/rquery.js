@@ -477,7 +477,7 @@ var _class = function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee6(request) {
             var _this3 = this;
 
-            var now, userKey, _ref3, _ref4, sadd, verified, secret, _ref5, _ref6, hmset, account;
+            var now, userKey, _ref3, _ref4, sadd, verified, secret, _ref5, _ref6, hmset, account, CN, OU;
 
             return regeneratorRuntime.wrap(function _callee6$(_context6) {
                while (1) {
@@ -526,10 +526,12 @@ var _class = function () {
 
                      case 19:
                         account = request.username;
-                        _context6.next = 22;
-                        return this.sendTelegram(request.chatId, 'html', 'Your RedisHub account name is <b>' + account + '</b>, taken as your Telegram user.', '<pre>openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=$CN/OU=$OU" -keyout privkey.pem -out cert.pem</pre>');
+                        CN = account + '@redishub.com';
+                        OU = 'admin%' + account + '@redishub.com';
+                        _context6.next = 24;
+                        return this.sendTelegram(request.chatId, 'html', 'Thanks, ' + request.greetName + '.', 'Your RedisHub account name is <b>' + account + '</b>, taken as your Telegram user.', 'Please cut and paste the following command into your terminal to create a client cert:', '<pre>openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=$CN/OU=$OU" -keyout privkey.pem -out cert.pem</pre>');
 
-                     case 22:
+                     case 24:
                      case 'end':
                         return _context6.stop();
                   }
