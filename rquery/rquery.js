@@ -110,8 +110,10 @@ export default class {
    }
 
    async handleTelegram(req, res, telegram) {
-      const dn = this.parseCertDn(req);
-      this.logger.debug('telegram', telegram, dn);
+      if (this.isClientCert(req)) {
+         const dn = this.parseCertDn(req);
+         this.logger.debug('telegram', telegram, dn);
+      }
       if (!cert) {
          throw {message: 'No client cert'};
       } else {
@@ -1329,6 +1331,10 @@ export default class {
             return {account, domain};
          }
       });
+   }
+
+   getClientCert(req) {
+      return req.get('ssl_client_cert');
    }
 
    parseCertDn(req) {

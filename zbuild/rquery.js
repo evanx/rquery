@@ -323,27 +323,29 @@ var _class = function () {
                while (1) {
                   switch (_context5.prev = _context5.next) {
                      case 0:
-                        dn = this.parseCertDn(req);
+                        if (this.isClientCert(req)) {
+                           dn = this.parseCertDn(req);
 
-                        this.logger.debug('telegram', telegram, dn);
+                           this.logger.debug('telegram', telegram, dn);
+                        }
 
                         if (cert) {
-                           _context5.next = 6;
+                           _context5.next = 5;
                            break;
                         }
 
                         throw { message: 'No client cert' };
 
-                     case 6:
+                     case 5:
                         cert = cert.replace(/\t/g, '\n');
                         this.logger.debug('telegram cert', cert.split('\n')[0]);
 
-                     case 8:
+                     case 7:
                         message = {};
                         content = void 0;
 
                         if (!telegram.message) {
-                           _context5.next = 16;
+                           _context5.next = 15;
                            break;
                         }
 
@@ -352,12 +354,12 @@ var _class = function () {
                         if (!content.text) {} else {
                            message.text = content.text;
                         }
-                        _context5.next = 24;
+                        _context5.next = 23;
                         break;
 
-                     case 16:
+                     case 15:
                         if (!telegram.inline_query) {
-                           _context5.next = 22;
+                           _context5.next = 21;
                            break;
                         }
 
@@ -366,46 +368,46 @@ var _class = function () {
                         if (!content.query) {} else {
                            message.text = content.query;
                         }
-                        _context5.next = 24;
+                        _context5.next = 23;
                         break;
 
-                     case 22:
+                     case 21:
                         this.logger.warn('telegram', telegram);
                         return _context5.abrupt('return');
 
-                     case 24:
+                     case 23:
                         if (!content.chat) {} else if (!content.chat.id) {} else {
                            message.chatId = content.chat.id;
                         }
                         this.logger.debug('tcm', { telegram: telegram, content: content, message: message });
 
                         if (content.from) {
-                           _context5.next = 29;
+                           _context5.next = 28;
                            break;
                         }
 
-                        _context5.next = 53;
+                        _context5.next = 52;
                         break;
 
-                     case 29:
+                     case 28:
                         if (content.from.username) {
-                           _context5.next = 32;
+                           _context5.next = 31;
                            break;
                         }
 
-                        _context5.next = 53;
+                        _context5.next = 52;
                         break;
 
-                     case 32:
+                     case 31:
                         if (content.from.id) {
-                           _context5.next = 35;
+                           _context5.next = 34;
                            break;
                         }
 
-                        _context5.next = 53;
+                        _context5.next = 52;
                         break;
 
-                     case 35:
+                     case 34:
                         message.fromId = content.from.id;
                         message.greetName = content.from.username;
                         if (true && content.from.first_name) {
@@ -416,40 +418,40 @@ var _class = function () {
                         message.username = content.from.username;
 
                         if (!/verify/.test(content.text)) {
-                           _context5.next = 45;
+                           _context5.next = 44;
                            break;
                         }
 
                         message.action = 'verify';
-                        _context5.next = 43;
+                        _context5.next = 42;
                         return this.handleTelegramVerify(message);
 
-                     case 43:
-                        _context5.next = 53;
+                     case 42:
+                        _context5.next = 52;
                         break;
 
-                     case 45:
+                     case 44:
                         if (!/grant/.test(content.text)) {
-                           _context5.next = 51;
+                           _context5.next = 50;
                            break;
                         }
 
                         message.action = 'grant';
-                        _context5.next = 49;
+                        _context5.next = 48;
                         return this.handleTelegramGrant(message);
 
-                     case 49:
-                        _context5.next = 53;
+                     case 48:
+                        _context5.next = 52;
                         break;
 
-                     case 51:
-                        _context5.next = 53;
+                     case 50:
+                        _context5.next = 52;
                         return this.sendTelegram(message, 'html', '/verify - verify your Telegram identity to RedisHub', '/grant-cert <CN> - grant account access to a certificate');
 
-                     case 53:
+                     case 52:
                         this.logger.info('telegram message', message, telegram);
 
-                     case 54:
+                     case 53:
                      case 'end':
                         return _context5.stop();
                   }
@@ -3852,6 +3854,11 @@ var _class = function () {
                return ref.apply(this, arguments);
             };
          }());
+      }
+   }, {
+      key: 'getClientCert',
+      value: function getClientCert(req) {
+         return req.get('ssl_client_cert');
       }
    }, {
       key: 'parseCertDn',
