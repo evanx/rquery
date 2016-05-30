@@ -163,7 +163,7 @@ export default class {
             message.action = 'grant';
             await this.handleTelegramGrant(message);
          } else {
-            await this.sendTelegram(message, 'html',
+            await this.sendTelegram(message.chatId, 'html',
                `/verify - verify your Telegram identity to RedisHub`,
                `/grant-cert <CN> - grant account access to a certificate`
             );
@@ -190,14 +190,14 @@ export default class {
             multi.hsetnx(userKey, 'id', request.fromId);
             multi.hsetnx(userKey, 'secret', secret);
          });
-         await this.sendTelegram(request, 'html',
+         await this.sendTelegram(request.chatId, 'html',
             `Thanks, ${request.greetName}.`,
             `Your identity as is now verified to <b>${this.config.serviceLabel}</b>`,
             `as <code>telegram.me/${request.username}.</code>`
          );
       } else {
          const duration = now - parseInt(verified);
-         await this.sendTelegram(request, 'html',
+         await this.sendTelegram(request.chatId, 'html',
             `Hi ${request.greetName}.`,
             `Your identity as was already verified to <i>${this.config.serviceLabel}</i>`,
             `${Millis.formatVerboseDuration(duration)} ago as <code>@${request.username}</code>`

@@ -438,7 +438,7 @@ var _class = function () {
 
                      case 45:
                         _context5.next = 47;
-                        return this.sendTelegram(message, 'html', '/verify - verify your Telegram identity to RedisHub', '/grant-cert <CN> - grant account access to a certificate');
+                        return this.sendTelegram(message.chatId, 'html', '/verify - verify your Telegram identity to RedisHub', '/grant-cert <CN> - grant account access to a certificate');
 
                      case 47:
                         this.logger.info('telegram message', message, telegram);
@@ -508,7 +508,7 @@ var _class = function () {
                         _ref6 = _slicedToArray(_ref5, 1);
                         hmset = _ref6[0];
                         _context6.next = 19;
-                        return this.sendTelegram(request, 'html', 'Thanks, ' + request.greetName + '.', 'Your identity as is now verified to <b>' + this.config.serviceLabel + '</b>', 'as <code>telegram.me/' + request.username + '.</code>');
+                        return this.sendTelegram(request.chatId, 'html', 'Thanks, ' + request.greetName + '.', 'Your identity as is now verified to <b>' + this.config.serviceLabel + '</b>', 'as <code>telegram.me/' + request.username + '.</code>');
 
                      case 19:
                         _context6.next = 24;
@@ -517,7 +517,7 @@ var _class = function () {
                      case 21:
                         duration = now - parseInt(verified);
                         _context6.next = 24;
-                        return this.sendTelegram(request, 'html', 'Hi ' + request.greetName + '.', 'Your identity as was already verified to <i>' + this.config.serviceLabel + '</i>', Millis.formatVerboseDuration(duration) + ' ago as <code>@' + request.username + '</code>');
+                        return this.sendTelegram(request.chatId, 'html', 'Hi ' + request.greetName + '.', 'Your identity as was already verified to <i>' + this.config.serviceLabel + '</i>', Millis.formatVerboseDuration(duration) + ' ago as <code>@' + request.username + '</code>');
 
                      case 24:
                      case 'end':
