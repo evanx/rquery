@@ -199,7 +199,7 @@ export default class {
          const duration = now - parseInt(verified);
          await this.sendTelegram(request.chatId, 'html',
             `Hi ${request.greetName}.`,
-            `Your identity as was already verified to <i>${this.config.serviceLabel}</i>`,
+            `Your identity as was already verified to <b>${this.config.serviceLabel}</b>`,
             `${Millis.formatVerboseDuration(duration)} ago as <code>@${request.username}</code>`
          );
       }
