@@ -205,7 +205,14 @@ export default class {
          `Thanks, ${request.greetName}.`,
          `Your RedisHub account name is <b>${account}</b>, taken as your Telegram user.`,
          `Please cut and paste the following command into your terminal to create a client cert:`,
-         `<pre>mkdir ~/.redishub/live &&\n cd ~/.redishub/live && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=${CN}/OU=${OU}" -keyout privkey.pem -out cert.pem && cat privkey.pem cert.pem > privcert.pem</pre>`
+         `<pre>`,
+         `mkdir ~/.redishub/live &&`,
+         `\n  cd ~/.redishub/live &&`,
+         `\n  openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=${CN}/OU=${OU}" \\`,
+         `\n  -keyout privkey.pem -out cert.pem`,
+         `\ncat privkey.pem cert.pem > privcert.pem`,
+         `\ncurl -s -E privcert.pem https://${service.hostUrl}/register-account-telegram/${account}`,
+         `</pre>`
       );
    }
 
