@@ -200,7 +200,8 @@ export default class {
       }
       const account = request.username;
       await this.sendTelegram(request.chatId, 'html',
-         `Your RedisHub account name is ${account}, taken as your Telegram user.`,
+         `Your RedisHub account name is <b>${account}</b>, taken as your Telegram user.`,
+         `<pre>openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=$CN/OU=$OU" -keyout privkey.pem -out cert.pem</pre>`
       );
    }
 
