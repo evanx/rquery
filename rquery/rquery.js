@@ -167,11 +167,7 @@ export default class {
             await this.handleTelegramSignup(message);
          } else {
             await this.sendTelegram(message.chatId, 'html',
-               `<pre>`,
-               `/signup - register RedisHub account`,
-               `\n/verifyme - verify your Telegram identity to RedisHub`,
-               `\n/grantcert CERT - grant account access to a certificate`,
-               `</pre>`
+               `Commands: <code>signup</code>, <code>verifyme</code>, <code>grantcert</code> `
             );
          }
       }
@@ -202,6 +198,10 @@ export default class {
             `as <code>telegram.me/${request.username}.</code>`
          );
       }
+      const account = request.username;
+      await this.sendTelegram(request.chatId, 'html',
+         `Your RedisHub account name is ${account}, taken as your Telegram user.`,
+      );
    }
 
    async handleTelegramVerify(request) {

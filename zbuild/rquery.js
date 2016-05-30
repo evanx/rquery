@@ -452,7 +452,7 @@ var _class = function () {
 
                      case 51:
                         _context5.next = 53;
-                        return this.sendTelegram(message.chatId, 'html', '<pre>', '/signup - register RedisHub account', '\n/verifyme - verify your Telegram identity to RedisHub', '\n/grantcert CERT - grant account access to a certificate', '</pre>');
+                        return this.sendTelegram(message.chatId, 'html', 'Commands: <code>signup</code>, <code>verifyme</code>, <code>grantcert</code> ');
 
                      case 53:
                         this.logger.info('telegram message', message, telegram);
@@ -477,7 +477,7 @@ var _class = function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee6(request) {
             var _this3 = this;
 
-            var now, userKey, _ref3, _ref4, sadd, verified, secret, _ref5, _ref6, hmset;
+            var now, userKey, _ref3, _ref4, sadd, verified, secret, _ref5, _ref6, hmset, account;
 
             return regeneratorRuntime.wrap(function _callee6$(_context6) {
                while (1) {
@@ -525,6 +525,11 @@ var _class = function () {
                         return this.sendTelegram(request.chatId, 'html', 'Thanks, ' + request.greetName + '.', 'Your identity as is now verified to <b>' + this.config.serviceLabel + '</b>', 'as <code>telegram.me/' + request.username + '.</code>');
 
                      case 19:
+                        account = request.username;
+                        _context6.next = 22;
+                        return this.sendTelegram(request.chatId, 'html', 'Your RedisHub account name is ' + account + ', taken as your Telegram user.');
+
+                     case 22:
                      case 'end':
                         return _context6.stop();
                   }
