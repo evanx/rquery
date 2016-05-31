@@ -13,6 +13,10 @@ if echo $name | grep -q 'demo'
 then
   port=8
   config=demo
+elif echo $name | grep -q 'replica'
+then
+  port=6
+  config=replica
 fi
 
 # env 
