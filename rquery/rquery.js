@@ -554,6 +554,7 @@ export default class {
             ``,
             `For CLI convenience, install rhcurl bash script, as per instructions:`,
             `  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
+            ``,
          ];
          result = result.concat([
             `(`,
