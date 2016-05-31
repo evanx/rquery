@@ -1476,7 +1476,7 @@ export default class {
             let {account, accountKey} = reqx;
             const scard = await this.redis.multiExecAsync(multi => {
                multi.scard(this.accountKey(account, 'keyspaces'));
-            });
+            });            
             if (scard > 0) {
                throw {message: 'All keyspaces must be destroyed individually first'};
             }
