@@ -6,7 +6,7 @@ set -u -e
 serviceId=`basename $PWD`
 if [ $serviceId -gt 0 ]
 then
-  name=$serviceId-$config
+  name=$config-$serviceId
 fi
 
 # bot 
