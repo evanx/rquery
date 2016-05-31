@@ -4342,27 +4342,22 @@ var _class = function () {
                                                          certs = _ref43[2];
 
                                                          _this13.logger.debug('admin command', { account: account, accountKey: accountKey, time: time, admined: admined, certs: certs });
-
-                                                         if (admined) {
-                                                            _context105.next = 16;
-                                                            break;
+                                                         if (!admined) {
+                                                            //throw {message: 'Invalid account'};
                                                          }
 
-                                                         throw { message: 'Invalid account' };
-
-                                                      case 16:
                                                          if (!lodash.isEmpty(certs)) {
-                                                            _context105.next = 18;
+                                                            _context105.next = 17;
                                                             break;
                                                          }
 
                                                          throw { message: 'No certs' };
 
-                                                      case 18:
+                                                      case 17:
                                                          duration = time - admined;
 
                                                          if (!(duration < _this13.config.adminLimit)) {
-                                                            _context105.next = 21;
+                                                            _context105.next = 20;
                                                             break;
                                                          }
 
@@ -4370,24 +4365,24 @@ var _class = function () {
                                                             v: 'Admin command interval not elapsed: ' + _this13.config.adminLimit + 's'
                                                          });
 
-                                                      case 21:
+                                                      case 20:
                                                          _this13.validateCert(req, certs, account);
                                                          dn = req.get('ssl_client_s_dn');
-                                                         _context105.next = 25;
+                                                         _context105.next = 24;
                                                          return fn(req, res, { account: account, accountKey: accountKey, time: time, admined: admined, clientCertDigest: clientCertDigest });
 
-                                                      case 25:
+                                                      case 24:
                                                          result = _context105.sent;
 
                                                          if (!(result !== undefined)) {
-                                                            _context105.next = 29;
+                                                            _context105.next = 28;
                                                             break;
                                                          }
 
-                                                         _context105.next = 29;
+                                                         _context105.next = 28;
                                                          return _this13.sendResult({}, req, res, {}, result);
 
-                                                      case 29:
+                                                      case 28:
                                                       case 'end':
                                                          return _context105.stop();
                                                    }

@@ -1597,7 +1597,7 @@ export default class {
                });
                this.logger.debug('admin command', {account, accountKey, time, admined, certs});
                if (!admined) {
-                  throw {message: 'Invalid account'};
+                  //throw {message: 'Invalid account'};
                }
                if (lodash.isEmpty(certs)) {
                   throw {message: 'No certs'};
