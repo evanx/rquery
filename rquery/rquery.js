@@ -713,7 +713,7 @@ export default class {
             const [keyspaces] = await this.redis.multiExecAsync(multi => {
                multi.smembers(this.accountKey(account, 'keyspaces'));
             });
-            this.logger.info('deregister', keyspace, keys.length, keyspaces);
+            this.logger.info('destroy-keyspace', keyspace, keys.length, keyspaces);
             const keyIndex = this.keyIndex(account, keyspace);
             const multiReply = await this.redis.multiExecAsync(multi => {
                keys.forEach(key => multi.del(key));
@@ -2072,8 +2072,8 @@ export default class {
          }, 3);
       }
 
-      accountKey(account) {
-         return this.adminKey('account', account);
+      accountKey(account, ...more) {
+         return this.adminKey('account', account, ...more);
       }
 
       accountKeyspace(account, keyspace) {
