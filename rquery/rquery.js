@@ -718,8 +718,8 @@ export default class {
             const multiReply = await this.redis.multiExecAsync(multi => {
                keys.forEach(key => multi.del(key));
                multi.del(this.accountKey(account, 'keyspaces'), keyspace);
-               multi.del(this.accountKey(account, 'certs'));
-               multi.del(accountKey);
+               //multi.del(this.accountKey(account, 'certs'));
+               //multi.del(accountKey);
             });
             return keys.map(key => key.substring(keyIndex));
          });
@@ -1467,6 +1467,20 @@ export default class {
             description: 'register a new account linked to an authoritative Telegram.org account'
          }, async (req, res, reqx) => {
             return this.registerAccount(req, res, reqx);
+         });
+         this.addPublicCommand({
+            key: 'destroy-account',
+            params: ['account'],
+            description: 'deregister an account'
+         }, async (req, res, reqx) => {
+            let {account, accountKey} = reqx;
+            const scard = await this.redis.multiExecAsync(multi => {
+               multi.scard(this.accountKey(account, 'keyspaces'));
+            });
+            if (scard > 0) {
+               throw {message: 'All keyspaces must be destroyed individually first'};
+            }
+            throw {message: 'Not implemented'};
          });
          this.addPublicCommand({
             key: 'register-cert'
