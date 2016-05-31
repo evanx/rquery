@@ -555,7 +555,7 @@ export default class {
             `For CLI convenience, install rhcurl bash script, as per instructions:`,
             `  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
          ];
-         result = result.concat(lodash.flatten([
+         result = result.concat([
             `(`,
                `  if mkdir ~/.redishub/live && cd ~/.redishub/live`,
                `  then`,
@@ -577,11 +577,13 @@ export default class {
                `      fi`,
                `      echo; pwd; ls -l`,
                `      curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
-               help.map(line => `      echo '${help}'`),
+            ]);
+            result = result.concat(help.map(line => `      echo '${line}'`));
+            result = result.concat([
                `    fi`,
                `  fi`,
                `)`,
-            ]));
+            ]);
             result.push('');
             result.push('');
             return lodash.flatten(result);
