@@ -4380,7 +4380,7 @@ var _class = function () {
                                                          }
 
                                                          _context105.next = 27;
-                                                         return _this13.sendResult({}, req, res, {}, result);
+                                                         return _this13.sendResult(command, req, res, reqx, result);
 
                                                       case 27:
                                                       case 'end':

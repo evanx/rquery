@@ -1610,7 +1610,7 @@ export default class {
                const clientCertDigest = this.validateCert(req, certs, account);
                const result = await fn(req, res, {command, account, accountKey, time, admined, clientCertDigest});
                if (result !== undefined) {
-                  await this.sendResult({}, req, res, {}, result);
+                  await this.sendResult(command, req, res, reqx, result);
                }
             } catch (err) {
                this.sendError(req, res, err);
