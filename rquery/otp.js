@@ -37,7 +37,7 @@ export default class {
       }
       this.expressApp.use((req, res) => this.sendErrorRoute(req, res));
       this.expressServer = await Express.listen(this.expressApp, this.config.port);
-      this.logger.info('listen', this.config.port, Express.getRoutes(this.expressApp), this.expressServer);
+      this.logger.info('listen', this.config.port);
    }
 
    sendErrorRoute(req, res) {

@@ -121,7 +121,7 @@ var _class = function () {
                      case 8:
                         this.expressServer = _context2.sent;
 
-                        this.logger.info('listen', this.config.port, Express.getRoutes(this.expressApp), this.expressServer);
+                        this.logger.info('listen', this.config.port);
 
                      case 10:
                      case 'end':
