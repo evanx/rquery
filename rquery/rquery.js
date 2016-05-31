@@ -690,9 +690,9 @@ export default class {
             },
             access: 'admin'
          }, async (req, res, reqx) => {
+            this.logger.debug(reqx.command.key, reqx);
             const [keyspaces] = await this.redis.multiExecAsync(multi => {
-               this.logger.debug('account', reqx);
-               multi.smembers(this.accountKey(reqx.account, 'keyspaces'));
+               multi.smembers(this.accountKey(reqx.accountKey, 'keyspaces'));
             });
             return keyspaces;
          });
@@ -1608,7 +1608,7 @@ export default class {
                   return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
                }
                const clientCertDigest = this.validateCert(req, certs, account);
-               const result = await fn(req, res, {account, accountKey, time, admined, clientCertDigest});
+               const result = await fn(req, res, {command, account, accountKey, time, admined, clientCertDigest});
                if (result !== undefined) {
                   await this.sendResult({}, req, res, {}, result);
                }

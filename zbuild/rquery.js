@@ -1597,19 +1597,19 @@ var _class = function () {
                   while (1) {
                      switch (_context30.prev = _context30.next) {
                         case 0:
-                           _context30.next = 2;
+                           _this6.logger.debug(reqx.command.key, reqx);
+                           _context30.next = 3;
                            return _this6.redis.multiExecAsync(function (multi) {
-                              _this6.logger.debug('account', reqx);
-                              multi.smembers(_this6.accountKey(reqx.account, 'keyspaces'));
+                              multi.smembers(_this6.accountKey(reqx.accountKey, 'keyspaces'));
                            });
 
-                        case 2:
+                        case 3:
                            _ref21 = _context30.sent;
                            _ref22 = _slicedToArray(_ref21, 1);
                            keyspaces = _ref22[0];
                            return _context30.abrupt('return', keyspaces);
 
-                        case 6:
+                        case 7:
                         case 'end':
                            return _context30.stop();
                      }
@@ -4369,7 +4369,7 @@ var _class = function () {
                                                       case 20:
                                                          clientCertDigest = _this13.validateCert(req, certs, account);
                                                          _context105.next = 23;
-                                                         return fn(req, res, { account: account, accountKey: accountKey, time: time, admined: admined, clientCertDigest: clientCertDigest });
+                                                         return fn(req, res, { command: command, account: account, accountKey: accountKey, time: time, admined: admined, clientCertDigest: clientCertDigest });
 
                                                       case 23:
                                                          result = _context105.sent;
