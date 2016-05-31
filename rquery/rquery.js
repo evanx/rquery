@@ -306,7 +306,7 @@ export default class {
    async sendTelegram(chatId, format, ...content) {
       this.logger.debug('sendTelegram', chatId, format, content);
       try {
-         const text = lodash.trim(content.join(' '));
+         const text = lodash.trim(lodash.flatten(content).join(' '));
          assert(chatId, 'chatId');
          let uri = `sendMessage?chat_id=${chatId}`;
          uri += '&disable_notification=true';

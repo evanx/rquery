@@ -801,7 +801,7 @@ var _class = function () {
                      case 0:
                         this.logger.debug('sendTelegram', chatId, format, content);
                         _context11.prev = 1;
-                        text = lodash.trim(content.join(' '));
+                        text = lodash.trim(lodash.flatten(content).join(' '));
 
                         assert(chatId, 'chatId');
                         uri = 'sendMessage?chat_id=' + chatId;
