@@ -211,8 +211,12 @@ export default class {
             `curl -s ${this.config.hostUrl}/generate-cert-script/${account} | bash`,
             `</pre>`
          ].join(''),
-         `Add <code>?archive</code> to the URL to archive first if <code>~/.redishub/live</code>exists.`
-
+         `Add <code>?archive</code> to the URL to archive first if <code>~/.redishub/live</code>exists.`,
+         [
+            `<pre>`,
+            `/generate-cert-script/${account}?archive`,
+            `</pre>`
+         ].join(''),
       ]);
    }
 
