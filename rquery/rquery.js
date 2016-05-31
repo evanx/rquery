@@ -537,10 +537,25 @@ export default class {
             ]);
          } else {
             result = result.concat([
-            `mkdir -p ~/.redishub`,
+               `mkdir -p ~/.redishub`,
             ]);
          }
-         result = result.concat([
+         const help = [
+            `To force archiving an existing ~/.redishub/live, add '?archive' to the URL`,
+            `   to first move ~/.redishub/live to ~/.redishub/archive/TIMESTAMP`,
+            ``,
+            `Use: ~/.redishub/live/privcert.pem (curl) and/or privcert.p12 (browser)`,
+            ``,
+            `Create a keyspace called 'tmp-10days' as follows:`,
+            `   curl -s -E ~/.redishub/live/privcert.pem ${this.config.hostUrl}/ak/${account}/tmp-10days/create-keyspace`,
+            ``,
+            `See help for keyspace 'tmp-10days' in your browser as follows:`,
+            `   ${this.config.hostUrl}/ak/${account}/tmp-10days/help`,
+            ``,
+            `For CLI convenience, install rhcurl bash script, as per instructions:`,
+            `  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
+         ];
+         result = result.concat(lodash.flatten([
             `(`,
                `  if mkdir ~/.redishub/live && cd ~/.redishub/live`,
                `  then`,
@@ -562,32 +577,12 @@ export default class {
                `      fi`,
                `      echo; pwd; ls -l`,
                `      curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
+               help.map(line => `      echo '${help}'`),
                `    fi`,
                `  fi`,
                `)`,
-            ]);
+            ]));
             result.push('');
-            result = result.concat([
-               `Cut and paste the above directly into your shell, or pipe to bash:`,
-               `  curl -s ${this.config.hostUrl}/${reqx.command.key}/${account} | bash`,
-               ``,
-               `To force archiving an existing ~/.redishub/live, add '?archive' to the URL`,
-               `   to first move ~/.redishub/live to ~/.redishub/archive/TIMESTAMP`,
-               ``,
-               `Generate a password-protected P12 cert as follows to load into your browser:`,
-               `  cd ~/.redishub/live && [ -f privcert.p12 ] && openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem`,
-               ``,
-               `Then use: ~/.redishub/live/privcert.pem (curl) and/or privcert.p12 (browser)`,
-               ``,
-               `Create a keyspace called 'tmp-10days' as follows:`,
-               `   curl -s -E ~/.redishub/live/privcert.pem ${this.config.hostUrl}/ak/${account}/tmp-10days/create-keyspace`,
-               ``,
-               `See help for keyspace 'tmp-10days' in your browser as follows:`,
-               `   ${this.config.hostUrl}/ak/${account}/tmp-10days/help`,
-               ``,
-               `For CLI convenience, install rhcurl bash script, as per instructions:`,
-               `  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
-            ].map(line => `echo '${line}'`))
             result.push('');
             return lodash.flatten(result);
          });
