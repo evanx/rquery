@@ -512,19 +512,20 @@ export default class {
          let result = [];
          if (Values.isDefined(req.query.archive)) {
             result = [
-               `mkdir -p ~/.redishub/archive`,
-               `mv -i ~/.redishub/live ~/.redishub/archive/\`date +'%Y-%M-%dT%H:%M:%S@%s'\``,
+               `  mkdir -p ~/.redishub/archive`,
+               `  mv -i ~/.redishub/live ~/.redishub/archive/\`date +'%Y-%M-%dT%H:%M:%S@%s'\``,
             ];
          } else if (Values.isDefined(req.query.force)) {
             result = [
-               `rm -rf ~/.redishub/live`,
+               `  rm -rf ~/.redishub/live`,
             ];
          } else {
             result = [
-               `mkdir -p ~/.redishub`,
+               `  mkdir -p ~/.redishub`,
             ];
          }
          result = result.concat([
+            `(`,
             `  if mkdir ~/.redishub/live && cd ~/.redishub/live`,
             `  then`,
             `    echo '${account}' > account`,
@@ -540,7 +541,9 @@ export default class {
             `      echo 'Registered account ${account} OK'`,
             `    fi`,
             `  fi`,
+            `)`,
          ]);
+         result.push('');
          result = result.concat([
             `Cut and paste the above directly into your shell.`,
             `To force archiving an existing ~/.redishub/live, add '?archive' to the URL`,
