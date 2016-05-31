@@ -1595,6 +1595,7 @@ export default class {
                   multi.hget(accountKey, 'admined');
                   multi.smembers(this.adminKey('account', account, 'certs'));
                });
+               this.logger.debug('admin command', {account, accountKey, time, admined, certs});
                if (!admined) {
                   throw {message: 'Invalid account'};
                }
