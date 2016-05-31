@@ -210,7 +210,9 @@ export default class {
             `<pre>`,
             `curl -s ${this.config.hostUrl}/generate-cert-script/${account} | bash`,
             `</pre>`
-         ].join('')
+         ].join(''),
+         `Add <code>?archive</code> to the URL to archive first if <code>~/.redishub/live</code>exists.`
+
       ]);
    }
 
