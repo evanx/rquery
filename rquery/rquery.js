@@ -576,10 +576,10 @@ export default class {
                `        echo 'Generated $PWD/privcert.p12 OK'`,
                `      fi`,
                `      echo; pwd; ls -l`,
-               `      curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
             ]);
             result = result.concat(help.map(line => `      echo '${line}'`));
             result = result.concat([
+               `      curl -s https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
                `    fi`,
                `  fi`,
                `)`,
