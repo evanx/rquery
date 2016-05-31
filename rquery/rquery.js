@@ -2057,8 +2057,8 @@ export default class {
             }};
          }
          const clientCertDigest = this.digestPem(clientCert);
-         this.logger.info('validateCert', clientCertDigest, account);
          if (!certs.includes(clientCertDigest)) {
+            this.logger.info('validateCert', account, clientCertDigest, certs);
             throw {message: 'Invalid cert', hint: {
                accountKey: ['register-account-telegram']
             }};
