@@ -691,7 +691,7 @@ export default class {
             },
             access: 'admin'
          }, async (req, res, reqx) => {
-            this.logger.debug(reqx.command.key, reqx);
+            this.logger.debug('keyspaces', reqx.command.key, reqx.account, this.accountKey(reqx.account, 'keyspaces'));
             const [keyspaces] = await this.redis.multiExecAsync(multi => {
                multi.smembers(this.accountKey(reqx.account, 'keyspaces'));
             });

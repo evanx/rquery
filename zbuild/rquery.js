@@ -1598,7 +1598,7 @@ var _class = function () {
                   while (1) {
                      switch (_context30.prev = _context30.next) {
                         case 0:
-                           _this6.logger.debug(reqx.command.key, reqx);
+                           _this6.logger.debug('keyspaces', reqx.command.key, reqx.account, _this6.accountKey(reqx.account, 'keyspaces'));
                            _context30.next = 3;
                            return _this6.redis.multiExecAsync(function (multi) {
                               multi.smembers(_this6.accountKey(reqx.account, 'keyspaces'));
