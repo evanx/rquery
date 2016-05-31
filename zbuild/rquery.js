@@ -1393,11 +1393,11 @@ var _class = function () {
                            result = [];
 
                            if (Values.isDefined(req.query.archive)) {
-                              result = ['  mkdir -p ~/.redishub/archive', '  mv -i ~/.redishub/live ~/.redishub/archive/`date +\'%Y-%M-%dT%H:%M:%S@%s\'`'];
+                              result = ['mkdir -p ~/.redishub/archive', 'mv -i ~/.redishub/live ~/.redishub/archive/`date +\'%Y-%M-%dT%H:%M:%S@%s\'`'];
                            } else if (Values.isDefined(req.query.force)) {
-                              result = ['  rm -rf ~/.redishub/live'];
+                              result = ['rm -rf ~/.redishub/live'];
                            } else {
-                              result = ['  mkdir -p ~/.redishub'];
+                              result = ['mkdir -p ~/.redishub'];
                            }
                            result = result.concat(['(', '  if mkdir ~/.redishub/live && cd ~/.redishub/live', '  then', '    echo \'' + account + '\' > account', '    if openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\', '      -subj \'/CN=' + CN + '/OU=' + OU + '\' \\', '      -keyout privkey.pem -out cert.pem', '    then', '      cat privkey.pem cert.pem > privcert.pem', '      openssl x509 -text -in privcert.pem | grep \'CN=\'', '      curl -s -E privcert.pem ' + _this6.config.hostUrl + '/register-account-telegram/' + account, '      echo; pwd; ls -l', '      curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt', '      echo \'Registered account ' + account + ' OK\'', '    fi', '  fi', ')']);
                            result.push('');
