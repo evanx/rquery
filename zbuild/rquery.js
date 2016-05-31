@@ -1581,6 +1581,7 @@ var _class = function () {
          }());
          this.addAccountCommand({
             key: 'account-keyspaces',
+            params: ['account'],
             description: 'list account keyspaces',
             relatedCommands: ['create-keyspace'],
             dangerousRelatedCommands: ['destoy-keyspace'],
