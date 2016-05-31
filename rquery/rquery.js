@@ -1608,7 +1608,8 @@ export default class {
                   return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
                }
                const clientCertDigest = this.validateCert(req, certs, account);
-               const result = await fn(req, res, {command, account, accountKey, time, admined, clientCertDigest});
+               const reqx = {command, account, accountKey, time, admined, clientCertDigest};
+               const result = await fn(req, res, reqx);
                if (result !== undefined) {
                   await this.sendResult(command, req, res, reqx, result);
                }

@@ -4309,7 +4309,7 @@ var _class = function () {
                                        case 0:
                                           _context106.prev = 0;
                                           return _context106.delegateYield(regeneratorRuntime.mark(function _callee105() {
-                                             var message, account, accountKey, _ref42, _ref43, _ref43$, time, admined, certs, duration, clientCertDigest, result;
+                                             var message, account, accountKey, _ref42, _ref43, _ref43$, time, admined, certs, duration, clientCertDigest, reqx, result;
 
                                              return regeneratorRuntime.wrap(function _callee105$(_context105) {
                                                 while (1) {
@@ -4368,21 +4368,22 @@ var _class = function () {
 
                                                       case 20:
                                                          clientCertDigest = _this13.validateCert(req, certs, account);
-                                                         _context105.next = 23;
-                                                         return fn(req, res, { command: command, account: account, accountKey: accountKey, time: time, admined: admined, clientCertDigest: clientCertDigest });
+                                                         reqx = { command: command, account: account, accountKey: accountKey, time: time, admined: admined, clientCertDigest: clientCertDigest };
+                                                         _context105.next = 24;
+                                                         return fn(req, res, reqx);
 
-                                                      case 23:
+                                                      case 24:
                                                          result = _context105.sent;
 
                                                          if (!(result !== undefined)) {
-                                                            _context105.next = 27;
+                                                            _context105.next = 28;
                                                             break;
                                                          }
 
-                                                         _context105.next = 27;
+                                                         _context105.next = 28;
                                                          return _this13.sendResult(command, req, res, reqx, result);
 
-                                                      case 27:
+                                                      case 28:
                                                       case 'end':
                                                          return _context105.stop();
                                                    }
