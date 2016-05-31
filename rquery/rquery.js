@@ -513,7 +513,7 @@ export default class {
          if (Values.isDefined(req.query.archive)) {
             result = [
                `mkdir -p ~/.redishub/archive`,
-               `mv -i ~/.redishub/live ~/.redishub/archive/\`date +'%Y-%M-%dT%H:%M:%S@%s'\``,
+               `mv -n ~/.redishub/live ~/.redishub/archive/\`date +'%Y-%M-%dT%H:%M:%S@%s'\``,
             ];
          } else if (Values.isDefined(req.query.force)) {
             result = [
@@ -539,10 +539,10 @@ export default class {
             `        echo 'Registered account ${account} ERROR $?'`,
             `      echo; pwd; ls -l`,
             `      curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
-            `      if ! openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem'`,
+            `      if ! openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem`,
             `      then`,
-            `        echo 'Try for your browser:'`,
-            `        echo 'cd ~/.redishub/live && [ ! -f privcert.p12 ] && openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem'`,
+            `        echo 'ERROR $?: openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem'`,
+            `      fi`,
             `    fi`,
             `  fi`,
             `)`,
