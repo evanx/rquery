@@ -1599,6 +1599,7 @@ var _class = function () {
                         case 0:
                            _context30.next = 2;
                            return _this6.redis.multiExecAsync(function (multi) {
+                              _this6.logger.debug('account', reqx);
                               multi.smembers(_this6.accountKey(reqx.account, 'keyspaces'));
                            });
 
