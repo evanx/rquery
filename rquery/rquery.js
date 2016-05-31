@@ -664,20 +664,25 @@ export default class {
             key: 'create-keyspace',
             access: 'admin'
          }, async (req, res, reqx) => {
-            const {time, account, keyspace, accountKey} = reqx;
-            this.logger.debug('command', reqx);
-            this.logger.debug('hsetnx', accountKey, time, Object.keys(reqx));
+            const {command, time, account, keyspace, accountKey} = reqx;
+            this.logger.debug('command', command.key, this.accountKey(account, 'keyspaces'));
+            const [sadd] = await this.redis.multiExecAsync(multi => {
+               multi.sadd(this.accountKey(account, 'keyspaces'), keyspace);
+            });
+            if (!sadd) {
+               throw {message: 'Already exists'};
+            }
+            this.logger.debug('hsetnx', accountKey, time);
             const [hsetnx] = await this.redis.multiExecAsync(multi => {
                multi.hsetnx(accountKey, 'registered', time);
             });
-            if (hsetnx) {
-               await this.sendTelegramAlert(reqx.account, 'html', [
-                  `Registered new keyspace <code>${reqx.keyspace}</code>`,
-               ]);
-               return 'OK';
-            } else {
+            if (!hsetnx) {
                throw {message: 'Failed to register keyspace', reqx};
             }
+            await this.sendTelegramAlert(account, 'html', [
+               `Registered new keyspace <code>${keyspace}</code>`,
+            ]);
+            return 'OK';
          });
          this.addAccountCommand({
             key: 'account-keyspaces',
@@ -1460,8 +1465,8 @@ export default class {
             key: 'register-account-telegram',
             params: ['account'],
             description: 'register a new account linked to an authoritative Telegram.org account'
-         }, async (req, res) => {
-            return this.registerAccount(req, res);
+         }, async (req, res, reqx) => {
+            return this.registerAccount(req, res, reqx);
          });
          this.addPublicCommand({
             key: 'register-cert'
