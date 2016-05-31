@@ -1586,6 +1586,7 @@ var _class = function () {
             relatedCommands: ['create-keyspace'],
             dangerousRelatedCommands: ['destoy-keyspace'],
             renderHtmlEach: function renderHtmlEach(req, res, reqx, keyspace) {
+               _this6.logger.debug('renderHtmlEach', keyspace);
                return '<a href="/ak/' + account + '/' + keyspace + '">' + keyspace + '</a>';
             },
             access: 'admin'
@@ -1600,7 +1601,7 @@ var _class = function () {
                            _this6.logger.debug(reqx.command.key, reqx);
                            _context30.next = 3;
                            return _this6.redis.multiExecAsync(function (multi) {
-                              multi.smembers(_this6.accountKey(reqx.accountKey, 'keyspaces'));
+                              multi.smembers(_this6.accountKey(reqx.account, 'keyspaces'));
                            });
 
                         case 3:

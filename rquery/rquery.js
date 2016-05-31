@@ -686,13 +686,14 @@ export default class {
             relatedCommands: ['create-keyspace'],
             dangerousRelatedCommands: ['destoy-keyspace'],
             renderHtmlEach: (req, res, reqx, keyspace) => {
+               this.logger.debug('renderHtmlEach', keyspace);
                return `<a href="/ak/${account}/${keyspace}">${keyspace}</a>`;
             },
             access: 'admin'
          }, async (req, res, reqx) => {
             this.logger.debug(reqx.command.key, reqx);
             const [keyspaces] = await this.redis.multiExecAsync(multi => {
-               multi.smembers(this.accountKey(reqx.accountKey, 'keyspaces'));
+               multi.smembers(this.accountKey(reqx.account, 'keyspaces'));
             });
             return keyspaces;
          });
