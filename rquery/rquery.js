@@ -212,12 +212,12 @@ export default class {
             `</pre>`
          ].join(''),
          `Add <code>?archive</code> to the URL to archive first if <code>~/.redishub/live</code>exists`,
-         `because the script will refuse to overwrite.`
          [
             `<pre>`,
             `/generate-cert-script/${account}?archive`,
             `</pre>`
          ].join(''),
+         `Because the script will refuse to overwrite an existing live cert.`,
       ]);
    }
 
