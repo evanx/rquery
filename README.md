@@ -4,7 +4,7 @@
 - HTTP API for Redis queries
 
 Notable features (June 2016):
-- Register adhoc ephemeral keyspaces
+- Create adhoc ephemeral keyspaces
 - Identity verification via Telegram.org chat bot `@redishub_bot`
 - Access secured via client-authenticated SSL
 - Generate tokens for Google Authenticator
@@ -143,7 +143,7 @@ _rhcurl() {
   local account=`cat ~/.redishub/live/account`
   if [ $# -eq 0 ]
   then
-    rhdebug "curl -s -E ~/.redishub/live/privcert.pem https://cli.redishub.com/ak/$account/:keyspace/register-keyspace"
+    rhdebug "curl -s -E ~/.redishub/live/privcert.pem https://cli.redishub.com/ak/$account/:keyspace/create-keyspace"
     return 1
   elif [ $# -eq 1 ]
   then
@@ -173,7 +173,7 @@ alias rh=_rhcurl
 
 First we register a keyspace:
 ```shell
-rh ks1 register-keyspace
+rh ks1 create-keyspace
 ```
 In a given keyspace e.g. `ks1` we can invoke Redis commands:
 ```shell

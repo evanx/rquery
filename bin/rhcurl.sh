@@ -19,7 +19,7 @@ exit 3
   if [ $# -eq 0 ]
   then
     rhinfo "Try as follows, with new keyspace name:"
-    rhinfo "curl -s -E ~/.redishub/live/privcert.pem $url/:keyspace/register-keyspace"
+    rhinfo "curl -s -E ~/.redishub/live/privcert.pem $url/:keyspace/create-keyspace"
     exit 1
   elif [ $# -eq 1 ]
   then
