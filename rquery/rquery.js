@@ -549,7 +549,7 @@ export default class {
             `To force archiving an existing ~/.redishub/live, add '?archive' to the URL`,
             `   to first move ~/.redishub/live to ~/.redishub/archive/TIMESTAMP`,
             `Generate a password-protected P12 cert as follows to load into your browser:`,
-            `   openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem`,
+            `  cd ~/.redishub/live && [ -f privcert.p12 ] && openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem`,
             `Then use: ~/.redishub/live/privcert.pem (curl) and/or privcert.p12 (browser)`,
             `Create a keyspace called 'tmp-10days' as follows:`,
             `   curl -s -E ~/.redishub/live/privcert.pem ${this.config.hostUrl}/ak/${account}/tmp-10days/create-keyspace`,
