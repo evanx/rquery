@@ -4308,7 +4308,7 @@ var _class = function () {
                                        case 0:
                                           _context106.prev = 0;
                                           return _context106.delegateYield(regeneratorRuntime.mark(function _callee105() {
-                                             var message, account, accountKey, _ref42, _ref43, _ref43$, time, admined, certs, duration, dn, result;
+                                             var message, account, accountKey, _ref42, _ref43, _ref43$, time, admined, certs, duration, clientCertDigest, result;
 
                                              return regeneratorRuntime.wrap(function _callee105$(_context105) {
                                                 while (1) {
@@ -4366,23 +4366,22 @@ var _class = function () {
                                                          });
 
                                                       case 20:
-                                                         _this13.validateCert(req, certs, account);
-                                                         dn = req.get('ssl_client_s_dn');
-                                                         _context105.next = 24;
+                                                         clientCertDigest = _this13.validateCert(req, certs, account);
+                                                         _context105.next = 23;
                                                          return fn(req, res, { account: account, accountKey: accountKey, time: time, admined: admined, clientCertDigest: clientCertDigest });
 
-                                                      case 24:
+                                                      case 23:
                                                          result = _context105.sent;
 
                                                          if (!(result !== undefined)) {
-                                                            _context105.next = 28;
+                                                            _context105.next = 27;
                                                             break;
                                                          }
 
-                                                         _context105.next = 28;
+                                                         _context105.next = 27;
                                                          return _this13.sendResult({}, req, res, {}, result);
 
-                                                      case 28:
+                                                      case 27:
                                                       case 'end':
                                                          return _context105.stop();
                                                    }
@@ -5243,6 +5242,7 @@ var _class = function () {
                   accountKey: ['register-account-telegram']
                } };
          }
+         return clientCertDigest;
       }
    }, {
       key: 'keyIndex',

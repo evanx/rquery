@@ -1606,8 +1606,7 @@ export default class {
                if (duration < this.config.adminLimit) {
                   return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
                }
-               this.validateCert(req, certs, account);
-               const dn = req.get('ssl_client_s_dn');
+               const clientCertDigest = this.validateCert(req, certs, account);
                const result = await fn(req, res, {account, accountKey, time, admined, clientCertDigest});
                if (result !== undefined) {
                   await this.sendResult({}, req, res, {}, result);
@@ -2056,6 +2055,7 @@ export default class {
                accountKey: ['register-account-telegram']
             }};
          }
+         return clientCertDigest;
       }
 
       keyIndex(account, keyspace) {
