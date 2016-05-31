@@ -553,7 +553,6 @@ export default class {
                `      openssl x509 -text -in privcert.pem | grep 'CN='`,
                `      curl -s -E privcert.pem ${this.config.hostUrl}/register-account-telegram/${account} ||`,
                `        echo 'Registered account ${account} ERROR $?'`,
-               `      curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
                `      if ! openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem`,
                `      then`,
                `        echo 'ERROR $? ($PWD): Try again as follows:'`,
@@ -562,6 +561,7 @@ export default class {
                `        echo 'Generated $PWD/privcert.p12 OK'`,
                `      fi`,
                `      echo; pwd; ls -l`,
+               `      curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
                `    fi`,
                `  fi`,
                `)`,
@@ -587,7 +587,7 @@ export default class {
                ``,
                `For CLI convenience, install rhcurl bash script, as per instructions:`,
                `  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
-            ].map(line => `# ${line}`))
+            ].map(line => `echo '${line}'`))
             result.push('');
             return lodash.flatten(result);
          });
