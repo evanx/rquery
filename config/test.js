@@ -4,8 +4,8 @@ module.exports = {
       rquery: {
          redisUrl: 'redis://localhost:6379/14',
          redisKeyspace: 'test:rquery',
-         openHostname: 'test.redishub.com',
-         hostname: 'redishub.com',
+         openHostname: 'open.redishub.com',
+         hostname: 'test.redishub.com',
          hostUrl: 'https://test.redishub.com',
          serviceName: 'redishub-test',
          serviceLabel: 'RH Test',
