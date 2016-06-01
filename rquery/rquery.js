@@ -33,7 +33,7 @@ export default class {
 
    async init() {
       this.commandMap = new Map();
-      this.logger.info('init');
+      this.logger.info('init', this.config.redisUrl);
       if (await this.testExit()) process.exit(1);
    }
 
@@ -54,7 +54,7 @@ export default class {
       }
       this.expressApp.use((req, res) => this.sendErrorRoute(req, res));
       this.expressServer = await Express.listen(this.expressApp, this.config.port);
-      this.logger.info('listen', this.config.port, Express.getRoutes(this.expressApp), this.expressServer);
+      this.logger.info('listen', this.config.port, this.config.redisUrl);
    }
 
    sendErrorRoute(req, res) {
@@ -1476,7 +1476,7 @@ export default class {
             let {account, accountKey} = reqx;
             const scard = await this.redis.multiExecAsync(multi => {
                multi.scard(this.accountKey(account, 'keyspaces'));
-            });            
+            });
             if (scard > 0) {
                throw {message: 'All keyspaces must be destroyed individually first'};
             }
