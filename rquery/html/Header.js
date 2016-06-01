@@ -6,14 +6,14 @@ const logger = Loggers.create(module.filename);
 export default function (props) {
    assert(Values.isDefined(props.config.assetsUrl), 'assetsUrl');
    const reqx = props.reqx || {};
-   let backPath = Hx.renderPath(props.backPath || reqx.backPath) || '/routes';
+   let backUrl = Hx.renderPath(props.backUrl || reqx.backUrl) || '/routes';
    const helpPath = Hx.renderPath(props.helpPath || reqx.helpPath) || '/routes';
    if (helpPath) {
-      backPath = helpPath;
+      backUrl = helpPath;
    }
    let clickScript = '';
-   if (backPath) {
-      clickScript = `window.location.pathname='${backPath}'`;
+   if (backUrl) {
+      clickScript = `window.location.pathname='${backUrl}'`;
    }
    const content = []
    content.push(He.img({style: styles.icon,

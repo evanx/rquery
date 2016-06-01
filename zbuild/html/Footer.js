@@ -7,10 +7,10 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = function (props) {
    assert(Values.isDefined(props.config.assetsUrl), 'assetsUrl');
    var reqx = props.reqx || {};
-   var backPath = Hx.renderPath(props.helpPath || reqx.helpPath) || '/routes';
+   var backUrl = Hx.renderPath(props.helpPath || reqx.helpPath) || '/routes';
    var clickScript = '';
-   if (backPath) {
-      clickScript = 'window.location.pathname=\'' + backPath + '\'';
+   if (backUrl) {
+      clickScript = 'window.location.pathname=\'' + backUrl + '\'';
    }
    var content = [];
    content.push(He.img({ style: _styles.footer.icon,

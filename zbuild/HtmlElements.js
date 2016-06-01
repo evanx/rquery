@@ -4,14 +4,14 @@ Object.defineProperty(exports, "__esModule", {
    value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-exports.html = html;
-exports.ms = ms;
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 exports.onClick = onClick;
 exports.renderPath = renderPath;
+exports.ms = ms;
+exports.html = html;
 exports.element = element;
 exports.createElements = createElements;
 exports.createStyleElements = createStyleElements;
@@ -21,15 +21,50 @@ exports.createMetaContentElements = createMetaContentElements;
 exports.createContentElements = createContentElements;
 exports.assignDeps = assignDeps;
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var logger = Loggers.create(__filename, 'info');
 
 var SelfClosingElementNames = Strings.splitSpace('\n   area base basefont br hr input img link meta\n   ');
 
 var ElementNames = Strings.splitSpace('\n   html head meta link script body\n   header footer nav section article aside\n   h1 h2 h3 h4 h5 h6\n   table thead tbody th tr td\n   div span pre p a hr br img i b tt\n   ');
+
+// to be moved to Urls
+
+function onClick(url) {
+   logger.debug('TBM');
+   if (!url) {
+      logger.debug('onClick empty');
+   } else if (url[0] === '/') {
+      return 'window.location.pathname=\'' + url + '\'';
+   } else {
+      return 'window.location=\'' + url + '\'';
+   }
+}
+
+// to be moved to Paths
+
+function renderPath(path) {
+   logger.debug('TBM');
+   if (lodash.isArray(path)) {
+      return [''].concat(_toConsumableArray(path)).join('/');
+   } else if (lodash.isString(path)) {
+      return path;
+   } else {
+      return '/routes';
+      logger.warn('path type', typeof path === 'undefined' ? 'undefined' : _typeof(path));
+   }
+}
+
+// util
+
+function ms(meta, style) {
+   return { meta: meta, style: style };
+}
+
+// experimental
 
 var Element = function Element(_ref) {
    var name = _ref.name;
@@ -57,6 +92,8 @@ var HtmlElement = function () {
 
    return HtmlElement;
 }();
+
+// html template literal function
 
 function html(strings) {
    strings = strings.map(function (string) {
@@ -112,24 +149,7 @@ function html(strings) {
    }, previousString);
 }
 
-function ms(meta, style) {
-   return { meta: meta, style: style };
-}
-
-function onClick(path) {
-   return 'window.location.pathname=\'' + path + '\'';
-}
-
-function renderPath(path) {
-   if (lodash.isArray(path)) {
-      return [''].concat(_toConsumableArray(path)).join('/');
-   } else if (lodash.isString(path)) {
-      return path;
-   } else {
-      return '/routes';
-      logger.warn('path type', typeof path === 'undefined' ? 'undefined' : _typeof(path));
-   }
-}
+// element renderer
 
 function element(name, attributes) {
    var content = [];

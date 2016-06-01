@@ -31,7 +31,7 @@ export function render(props) {
    return Object.assign(props, {
       title: [props.reqx.account, keyspaceLabel].join('/'),
       heading: [Hc.b(props.reqx.account), Hs.tt(styles.header.keyspace, keyspaceLabel)].join(''),
-      backPath: '/routes',
+      backUrl: '/routes',
       icon: 'database',
       helpPath: ['routes'],
       content: [

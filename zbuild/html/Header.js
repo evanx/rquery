@@ -9,14 +9,14 @@ exports.default = function (props) {
 
    assert(Values.isDefined(props.config.assetsUrl), 'assetsUrl');
    var reqx = props.reqx || {};
-   var backPath = Hx.renderPath(props.backPath || reqx.backPath) || '/routes';
+   var backUrl = Hx.renderPath(props.backUrl || reqx.backUrl) || '/routes';
    var helpPath = Hx.renderPath(props.helpPath || reqx.helpPath) || '/routes';
    if (helpPath) {
-      backPath = helpPath;
+      backUrl = helpPath;
    }
    var clickScript = '';
-   if (backPath) {
-      clickScript = 'window.location.pathname=\'' + backPath + '\'';
+   if (backUrl) {
+      clickScript = 'window.location.pathname=\'' + backUrl + '\'';
    }
    var content = [];
    content.push(He.img({ style: _styles.header.icon,
