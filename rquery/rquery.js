@@ -358,7 +358,10 @@ export default class {
          .filter(route => route.includes(':account') && !route.includes(':keyspace'));
          return {
             common: routes
-            .filter(route => route && !route.includes(':') && !['/epoch', '/register-ephemeral'].includes(route))
+            .filter(route => route)
+            .filter(route => !route.includes(':'))
+            .filter(route => !['/epoch', '/register-ephemeral'].includes(route))
+            .filter(route => route !== '/register-cert' || this.isSecureDomain(req))
             .map(route => `${hostUrl}${route}`)
             ,
             misc: routes
