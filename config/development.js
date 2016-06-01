@@ -5,6 +5,7 @@ module.exports = {
          loggerLevel: 'debug',
          redisUrl: 'redis://localhost:6379/14',
          redisKeyspace: 'demo:rquery',
+         openHostname: 'redishub.com',
          hostname: 'localhost',
          hostUrl: 'http://localhost:8765',
          serviceName: 'redishub-development',

@@ -35,6 +35,10 @@ module.exports = {
          optional: true,
          type: 'string'
       },
+      openHostname: {
+         optional: true,
+         type: 'string'
+      },
       port: {
          defaultValue: 8080
       },
