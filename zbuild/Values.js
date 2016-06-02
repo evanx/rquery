@@ -15,4 +15,3 @@ function isDefined(value) {
 function isInteger(value) {
    return parseInt(value) === value;
 }
-//# sourceMappingURL=Values.js.map

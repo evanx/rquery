@@ -152,13 +152,13 @@ var styles = {
    result: {
       message: {
          fontFamily: "'Ubuntu', 'Open Sans', sansserif",
-         fontSize: 17,
+         fontSize: 16,
          color: '#606060',
          fontWeight: 'bold'
       },
       description: {
          fontFamily: "'Ubuntu', 'Open Sans', sansserif",
-         fontSize: 16,
+         fontSize: 15,
          color: '#505050',
          lineHeight: 1.4,
          marginTop: 8
@@ -236,4 +236,3 @@ module.exports = Styles.renderStyles(styles);
 module.exports.source = styles;
 
 //throw module.exports;
-//# sourceMappingURL=styles.js.map

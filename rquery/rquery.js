@@ -2324,7 +2324,9 @@ export default class {
          return lodash.compact(relatedCommands
             .map(commandKey => this.commandMap.get(commandKey))
             .filter(command => command && command.key && command.params)
-            .filter(command => !command.access || lodash.includes(['get', 'debug'], command.access))
+            .filter(command => !this.isSecureDomain(req)
+            || !command.access || lodash.includes(['get', 'debug']
+            , command.access))
             .map(command => {
                let uri = [command.key];
                const params = command.params

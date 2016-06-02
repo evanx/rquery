@@ -10,4 +10,3 @@ var logger = Loggers.create(module.filename, 'info');
 function ms(meta, style) {
    return { meta: meta, style: style };
 }
-//# sourceMappingURL=Attributes.js.map
