@@ -1548,10 +1548,6 @@ export default class {
       }
 
       parseCertDn(req) {
-         let cert = req.get('ssl_client_cert');
-         if (!clientCert) {
-            throw new ValidationError({message: 'No client cert', hint: this.hints.signup});
-         }
          const dn = req.get('ssl_client_s_dn');
          if (!dn) throw new ValidationError({message: 'No client cert DN', hint: this.hints.signup});
          return this.parseDn(dn);
