@@ -33,6 +33,7 @@ export default function (props) {
    <title>${props.title}</title>
    <style>${styleSheet}</style>
    <meta name="viewport" content=${viewportContentArray.join(', ')}/>
+   <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
    </head>
    <body>
    ${renderHeader(Object.assign({icon: 'home'}, props))}

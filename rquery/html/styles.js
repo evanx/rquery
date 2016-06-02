@@ -157,7 +157,7 @@ const styles = {
       },
       description: {
          fontSize: 16,
-         fontFamily: 'sansserif',
+         fontFamily: "'Open Sans', sansserif",
          color: '#505050',
          lineHeight: 1.25,
          marginTop: 8,
