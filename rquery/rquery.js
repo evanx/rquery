@@ -2394,7 +2394,9 @@ export default class {
       }
 
       sendError(req, res, err) {
-         this.logger.warn(err);
+         if (lodash.isError(err) && err.name !== 'ValidationError') {
+            this.logger.warn(err);
+         }
          if (err.context) {
             this.logger.warn(err.context);
          }
