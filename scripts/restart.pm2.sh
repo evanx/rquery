@@ -13,6 +13,7 @@ waitCommitted() {
   cat $notifyFile
   if cat $notifyFile | grep 'committing$'
   then
+    git pull
     count=0
     while cat ~/tmp/rquery-notify | grep 'committing'
     do
