@@ -24,7 +24,7 @@ const styles = {
       },
       article: {
          clear: 'both',
-         cursor: 'pointer',
+         //cursor: 'pointer',
          marginTop: 10
       },
       pre: {

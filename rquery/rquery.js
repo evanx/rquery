@@ -520,7 +520,7 @@ export default class {
                return `OK: ${user}@telegram.me`;
             }
          } else {
-            return `Telegram user not yet verified: ${user}. Please Telegram '@redishub_bot /verify_me' e.g. via https://web.telegram.org`;
+            return `Telegram user not yet verified: ${user}. Please Telegram '@redishub_bot /verifyme' e.g. via https://web.telegram.org`;
          }
       });
       this.addPublicCommand({
@@ -1536,7 +1536,7 @@ export default class {
             if (!granted) {
                throw new ValidationError({message: 'Cert not granted via @redishub_bot',
                   hint: {
-                     message: `Try @redishub_bot /grant cert <b>${certTail}</b> e.g. via https://web.telegram.org`,
+                     message: `Try @redishub_bot /grantcert <b>${certTail}</b> e.g. via https://web.telegram.org`,
                      url: 'https://web.telegram.org/#/im?p=@redishub_bot'
                   }
                });
