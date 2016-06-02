@@ -280,7 +280,7 @@ export default class {
       }
       const cert = match[1];
       const userKey = this.adminKey('telegram', 'user', request.username);
-      const grantKey = this.adminKey('telegram', 'user', request.username, 'grant-cert');
+      const grantKey = this.adminKey('telegram', 'user', request.username, 'grantcert');
       this.logger.info('handleTelegramGrant', userKey, grantKey, request, cert);
       let [ismember, verified, secret, exists] = await this.redis.multiExecAsync(multi => {
          multi.sismember(this.adminKey('telegram:verified:users'), request.username);
@@ -1538,8 +1538,9 @@ export default class {
          });
       }
       const accountKey = this.adminKey('account', account);
-      const grantKey = this.adminKey('telegram', 'user', account, 'grant-cert');
+      const grantKey = this.adminKey('telegram', 'user', account, 'grantcert');
       const certDigest = this.digestPem(cert);
+      const shortDigest = certDigest.slice(-12);
       const [granted, sismember] = await this.redis.multiExecAsync(multi => {
          multi.get(grantKey);
          multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
@@ -1548,22 +1549,22 @@ export default class {
          throw new ValidationError({message: 'Cert not granted via @redishub_bot',
             hint: {
                message: [
-                  `Try @redishub_bot "/grantcert ${certDigest}"`,
+                  `Try @redishub_bot "/grantcert ${shortDigest}"`,
                   `e.g. via https://web.telegram.org,`,
                ].join(' '),
-               clipboard: certDigest,
-               url: 'https://web.telegram.org/#/im?p=@redishub_bot#grantcert_${certTail}'
+               clipboard: shortDigest,
+               url: `https://web.telegram.org/#/im?p=@redishub_bot#grantcert-${shortDigest}`
             }
          });
-      } else if (certDigest === granted) {
-         throw new ValidationError({message: 'Granted cert not matching: ' + certDigest,
+      } else if (granted === shortDigest) {
+         throw new ValidationError({message: 'Granted cert not matching: ' + shortDigest,
             hint: {
                message: `Try @redishub_bot "/grantcert {certDigest}`
                + ` from the authoritative Telegram account`
                + ` e.g. via https://web.telegram.org`
                ,
                clipboard: certDigest,
-               url: 'https://web.telegram.org/#/im?p=@redishub_bot#grantcert-${certDigest}'
+               url: `https://web.telegram.org/#/im?p=@redishub_bot#grantcert-${shortDigest}`
             }
          });
       } else {
