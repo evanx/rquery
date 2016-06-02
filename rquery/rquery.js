@@ -528,35 +528,38 @@ export default class {
          params: ['account'],
          format: 'cli'
       }, async (req, res, reqx) => {
+         if (req.query.dir && ['', '.', '..'].includes(req.query.dir)) {
+            throw new ValidationError('Empty or invalid "dir"');
+         }
          const account = req.params.account;
          const CN = `${account}@redishub.com`;
          const OU = `admin%${account}@redishub.com`;
          let result = [
+            ``,
             `Curl this script and pipe into bash as follows:`,
             ``,
             `  curl -s ${this.config.hostUrl}/${reqx.command.key}/${account} | bash`
          ].map(line => `# ${line}`);
          result.push('');
+         const dir = req.query.dir || '~/.redishub/live';
+         const archive = req.query.archive || '~/.redishub/archive';
          if (Values.isDefined(req.query.archive)) {
             result = result.concat([
-               `mkdir -p ~/.redishub/archive`,
-               `mv -n ~/.redishub/live ~/.redishub/archive/\`date +'%Y-%M-%dT%H:%M:%S@%s'\``,
+               `mkdir -p ${archive}`,
+               `mv -n ${dir} ${archive}/\`date +'%Y-%M-%dT%Hh%Mm%Ss%s'\``,
             ]);
-         } else if (Values.isDefined(req.query.force)) {
-            result = result.concat([
-               `rm -rf ~/.redishub/live`,
-            ]);
+         } else if (!lodash.isEmpty(req.query.dir)) {
          } else {
             result = result.concat([
                `mkdir -p ~/.redishub`,
             ]);
          }
          const help = [
-            `To force archiving an existing ~/.redishub/live, add '?archive' to the URL:`,
+            `To force archiving an existing ${dir}, add '?archive' to the URL:`,
             `   curl -s ${this.config.hostUrl}/${reqx.command.key}/${account}?archive | bash`,
-            `This will first move ~/.redishub/live to ~/.redishub/archive/TIMESTAMP`,
+            `This will first move ${dir} to ${archive}/TIMESTAMP`,
             ``,
-            `Use: ~/.redishub/live/privcert.pem (curl) and/or privcert.p12 (browser)`,
+            `Use: ${dir}/privcert.pem (curl) and/or privcert.p12 (browser)`,
             ``,
             `For example, Create a keyspace called 'tmp10days' as follows:`,
             `   curl -s -E ~/.redishub/live/privcert.pem ${this.config.hostUrl}/ak/${account}/tmp10days/create-keyspace`,
@@ -570,7 +573,7 @@ export default class {
          ];
          result = result.concat([
             `(`,
-               `  if mkdir ~/.redishub/live && cd ~/.redishub/live`,
+               `  if mkdir ${dir} && cd $_`,
                `  then`,
                `    echo '${account}' > account`,
                `    if openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\`,
@@ -584,9 +587,13 @@ export default class {
                `      if ! openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem`,
                `      then`,
                `        echo 'ERROR $? ($PWD): Try again as follows:'`,
-               `        echo 'cd ~/.redishub/live && [ ! -f privcert.p12 ] && openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem'`,
+               `        echo 'cd ${dir} && [ ! -f privcert.p12 ] &&'`,
+               `        echo '  openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem &&'`,
+               `        echo '  echo "Exported $PWD/privcert.p12 OK"'`,
                `      else`,
-               `        echo 'Generated $PWD/privcert.p12 OK'`,
+               `        openssl x509 -text -in cert.pem > x509.txt`,
+               `        openssl x509 -text -in cert.pem | grep 'CN='`,
+               `        echo "Exported $PWD/privcert.p12 OK"`,
                `      fi`,
                `      echo; pwd; ls -l`,
             ]);
@@ -597,7 +604,6 @@ export default class {
                `  fi`,
                `)`,
             ]);
-            result.push('');
             result.push('');
             return lodash.flatten(result);
          });
@@ -1456,27 +1462,27 @@ export default class {
             key: 'register-ephemeral' // TODO remove 10 june
          }, async (req, res) => {
             req.params = {account: 'hub'};
-            return this.registerEphemeral(req, res);
+            return this.createEphemeral(req, res);
          });
          this.addPublicCommand({
             key: 'create-ephemeral'
          }, async (req, res) => {
             req.params = {account: 'hub'};
-            return this.registerEphemeral(req, res);
+            return this.createEphemeral(req, res);
          });
          this.addPublicCommand({
             key: 'create-ephemeral-named',
             params: ['keyspace', 'access']
          }, async (req, res) => {
             req.params = {account: 'hub'};
-            return this.registerEphemeral(req, res);
+            return this.createEphemeral(req, res);
          });
          this.addPublicCommand({
             key: 'create-ephemeral-access',
             params: ['access']
          }, async (req, res) => {
             req.params.account = 'hub';
-            return this.registerEphemeral(req, res);
+            return this.createEphemeral(req, res);
          });
          this.addPublicCommand({
             key: 'register-account-telegram',
@@ -1758,7 +1764,7 @@ export default class {
          this.registerTime = time;
       }
 
-      async registerEphemeral(req, res, previousError) {
+      async createEphemeral(req, res, previousError) {
          let {account, keyspace, access} = req.params;
          assert(account, 'account');
          if (!keyspace) {
@@ -1779,10 +1785,10 @@ export default class {
             }});
          }
          if (previousError) {
-            this.logger.warn('registerEphemeral retry');
+            this.logger.warn('createEphemeral retry');
          }
          try {
-            this.logger.debug('registerEphemeral');
+            this.logger.debug('createEphemeral');
             let errorMessage = this.validateRegisterTime();
             if (errorMessage) {
                this.sendError(req, res, {message: errorMessage});
@@ -1790,7 +1796,7 @@ export default class {
             }
             let clientIp = req.get('x-forwarded-for');
             const accountKey = this.accountKeyspace(account, keyspace);
-            this.logger.debug('registerEphemeral clientIp', clientIp, account, keyspace, accountKey);
+            this.logger.debug('createEphemeral clientIp', clientIp, account, keyspace, accountKey);
             const replies = await this.redis.multiExecAsync(multi => {
                multi.hsetnx(accountKey, 'registered', new Date().getTime());
                if (clientIp) {
@@ -1804,12 +1810,12 @@ export default class {
             if (!replies[0]) {
                this.logger.error('keyspace clash', account, keyspace);
                if (!previousError) {
-                  return this.registerEphemeral(req, res, {message: 'keyspace clash'});
+                  return this.createEphemeral(req, res, {message: 'keyspace clash'});
                }
                throw {message: 'Keyspace already exists'};
             }
             const replyPath = ['ak', account, keyspace].join('/');
-            this.logger.debug('registerEphemeral replyPath', replyPath);
+            this.logger.debug('createEphemeral replyPath', replyPath);
             if (this.isBrowser(req)) {
                res.redirect(302, ['', replyPath, 'help'].join('/'));
             } else {
