@@ -1530,7 +1530,7 @@ export default class {
                multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
             });
             const certLines = cert.split('\n').slice(1);
-            this.logger.debug(index, certLines, certTail);
+            this.logger.debug('cert', certLines, certTail);
             const certTail = this.tailPem(cert);
             this.logger.debug('certTail', certTail, cert);
             if (!granted) {
