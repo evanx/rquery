@@ -1589,7 +1589,7 @@ export default class {
                   group: 'admin'
                },
                access: 'admin'
-            }, async (req, res, {account, accountKey, time, clientCertDigest}) => {
+            }, async (req, res, {account, accountKey, time, certDigest}) => {
                const [cert] = await this.redis.multiExecAsync(multi => {
                   multi.hgetall(this.adminKey('cert', certId));
                });
@@ -1611,19 +1611,19 @@ export default class {
                throw new ValidationError(v);
             }
             const dn = req.get('ssl_client_s_dn');
-            const clientCert = req.get('ssl_client_cert');
+            const cert = req.get('ssl_client_cert');
             this.logger.info('registerAccount dn', dn);
-            if (!clientCert) {
+            if (!cert) {
                throw new ValidationError({message: 'No client cert', hint: this.hints.signup});
             }
-            const clientCertDigest = this.digestPem(clientCert);
+            const certDigest = this.digestPem(cert);
             const otpSecret = this.generateTokenKey();
             const accountKey = this.adminKey('account', account);
             const [hsetnx, saddAccount, saddCert] = await this.redis.multiExecAsync(multi => {
                multi.hsetnx(accountKey, 'registered', new Date().getTime());
                multi.sadd(this.adminKey('accounts'), account);
                multi.sadd(this.adminKey('account', account, 'topt'), otpSecret);
-               multi.sadd(this.adminKey('account', account, 'certs'), clientCertDigest);
+               multi.sadd(this.adminKey('account', account, 'certs'), certDigest);
             });
             if (!hsetnx) {
                throw {message: 'Account exists'};
@@ -1676,8 +1676,8 @@ export default class {
                if (duration < this.config.adminLimit) {
                   return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
                }
-               const clientCertDigest = this.validateCert(req, certs, account);
-               const reqx = {command, account, accountKey, time, admined, clientCertDigest};
+               const certDigest = this.validateCert(req, certs, account);
+               const reqx = {command, account, accountKey, time, admined, certDigest};
                const result = await fn(req, res, reqx);
                if (result !== undefined) {
                   await this.sendResult(command, req, res, reqx, result);
@@ -2113,20 +2113,20 @@ export default class {
                commandKey: ['register-account-telegram']
             }};
          }
-         const clientCert = req.get('ssl_client_cert');
-         if (!clientCert) {
+         const cert = req.get('ssl_client_cert');
+         if (!cert) {
             throw {message: 'No client cert sent', hint: {
                commandKey: ['register-account-telegram']
             }};
          }
-         const clientCertDigest = this.digestPem(clientCert);
-         if (!certs.includes(clientCertDigest)) {
-            this.logger.info('validateCert', account, clientCertDigest, certs);
+         const certDigest = this.digestPem(cert);
+         if (!certs.includes(certDigest)) {
+            this.logger.info('validateCert', account, certDigest, certs);
             throw {message: 'Invalid cert', hint: {
                accountKey: ['register-account-telegram']
             }};
          }
-         return clientCertDigest;
+         return certDigest;
       }
 
       keyIndex(account, keyspace) {
