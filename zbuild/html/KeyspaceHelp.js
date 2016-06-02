@@ -66,7 +66,7 @@ function render(props) {
       backPath: '/routes',
       icon: 'database',
       helpPath: ['routes'],
-      content: [Hc.h3(props.result.message), He.p(Styles.meta('repeat', _styles2.default.result.description), props.result.description), renderUrls(props.result.exampleUrls, props.commandMap), He.br(), Hs.h4(_styles2.default.result.message, props.result.commandReferenceMessage), renderStandardCommands(standardCommands), Hs.h4(_styles2.default.result.message, props.result.customCommandHeading), renderCustomCommands(customCommands)]
+      content: [Hs.div(_styles2.default.result.message, props.result.message), He.p(Styles.meta('repeat', _styles2.default.result.description), props.result.description), renderUrls(props.result.exampleUrls, props.commandMap), He.br(), Hs.h4(_styles2.default.result.message, props.result.commandReferenceMessage), renderStandardCommands(standardCommands), Hs.h4(_styles2.default.result.message, props.result.customCommandHeading), renderCustomCommands(customCommands)]
    });
 }
 

@@ -151,10 +151,16 @@ var styles = {
    },
    result: {
       message: {
-         fontSize: 18
+         fontSize: 20,
+         color: '#606060',
+         fontWeight: 'bold'
       },
       description: {
-         fontSize: 16
+         fontSize: 16,
+         fontFamily: 'sansserif',
+         color: '#505050',
+         lineHeight: 1.25,
+         marginTop: 8
       },
       commandKey: {
          fontSize: 18,

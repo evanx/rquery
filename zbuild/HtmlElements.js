@@ -327,10 +327,12 @@ function onClick(url) {
    var parts = ['document.body.style.opacity=.4'];
    if (!url) {
       logger.debug('onClick empty');
+   } else if (/^https?:\/\//.test(url)) {
+      return renderScript.apply(undefined, parts.concat(['window.location=\'' + renderPath(url) + '\'']));
    } else if (url[0] === '/') {
       return renderScript.apply(undefined, parts.concat(['window.location.pathname=\'' + renderPath(url) + '\'']));
    } else {
-      return renderScript.apply(undefined, parts.concat(['window.location=\'' + renderPath(url) + '\'']));
+      return renderScript.apply(undefined, parts.concat(['window.location.pathname=\'/' + renderPath(url) + '\'']));
    }
 }
 

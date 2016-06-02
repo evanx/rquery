@@ -629,9 +629,9 @@ export default class {
             const message = `Try sample endpoints below on this keyspace.`;
             const commandReferenceMessage = `Read the Redis.io docs for the following commands`;
             const customCommandHeading = `Custom commands`;
-            const description = [`You can set, add and view keys, sets, lists, zsets, hashes etc.`,
-               `Also edit the URL in the location bar to try other combinations.`,
-               `<i>We'll offer a simple client-side command completion tool soon.</i>`
+            const description = [`You can set, add and view keys, sets, lists, zsets, hashes etc.` +
+               ` Also edit the URL in the location bar to try other combinations.` +
+               ` <i>(We'll offer a simple client-side command completion tool soon.)</i>`
             ];
             const exampleParams = [
                ['ttls'],

@@ -35,7 +35,7 @@ export function render(props) {
       icon: 'database',
       helpPath: ['routes'],
       content: [
-         Hc.h3(props.result.message),
+         Hs.div(styles.result.message, props.result.message),
          He.p(Styles.meta('repeat', styles.result.description), props.result.description),
          renderUrls(props.result.exampleUrls, props.commandMap),
          He.br(),
