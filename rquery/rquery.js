@@ -1515,40 +1515,38 @@ export default class {
                throw new ValidationError({message: 'Cert OU name not matching "role%account@domain"',
                   hint: this.hints.signup
                });
-            } else {
-               const [role, account, domain] = matching.slice(1);
-               if (!lodash.endsWith(req.hostname, domain)) {
-                  throw new ValidationError({message: 'O domain not matching: ' + req.hostname,
-                     hint: this.hints.signup
-                  });
-               }
-               const accountKey = this.adminKey('account', account);
-               const grantKey = this.adminKey('telegram', 'user', account, 'grant-cert');
-               const certDigest = this.digestPem(cert);
-               const [granted, sismember] = await this.redis.multiExecAsync(multi => {
-                  multi.get(grantKey);
-                  multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
-               });
-               if (granted) {
-                  const certTail = cert.substring(cert.length - 12);
-                  if (!cert.endsWith(granted)) {
-                     throw new ValidationError({message: 'O domain not matching: ' + certTail,
-                        hint: {
-                           message: `Try @redishub_bot /grant cert <b>${certTail}</b> e.g. via https://web.telegram.org`,
-                           url: 'https://web.telegram.org/#/im?p=@redishub_bot'
-                        }
-                     });
-                  } else {
-
-                  }
-               } else if (sismember) {
-                  const [sadd] = await this.redis.multiExecAsync(multi => {
-                     multi.get(grantKey);
-                     multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
-                  });
-               }
-               return {account, domain};
             }
+            const [role, account, domain] = matching.slice(1);
+            if (!lodash.endsWith(req.hostname, domain)) {
+               throw new ValidationError({message: 'OU domain not matching: ' + req.hostname,
+                  hint: this.hints.signup
+               });
+            }
+            const accountKey = this.adminKey('account', account);
+            const grantKey = this.adminKey('telegram', 'user', account, 'grant-cert');
+            const certDigest = this.digestPem(cert);
+            const [granted, sismember] = await this.redis.multiExecAsync(multi => {
+               multi.get(grantKey);
+               multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
+            });
+            const certTail = cert.substring(cert.length - 12);
+            if (!granted) {
+               throw new ValidationError({message: 'Cert not granted via @redishub_bot: ' + certTail,
+                  hint: {
+                     message: `Try @redishub_bot /grant cert <b>${certTail}</b> e.g. via https://web.telegram.org`,
+                     url: 'https://web.telegram.org/#/im?p=@redishub_bot'
+                  }
+               });
+            } else if (!cert.endsWith(granted)) {
+               throw new ValidationError({message: 'Granted cert not matching: ' + certTail,
+                  hint: {
+                     message: `Try @redishub_bot /grant cert <b>${certTail}</b> e.g. via https://web.telegram.org`,
+                     url: 'https://web.telegram.org/#/im?p=@redishub_bot'
+                  }
+               });
+            } else {
+            }
+            return {account, domain};
          });
       }
 
