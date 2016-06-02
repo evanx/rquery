@@ -1501,7 +1501,7 @@ export default class {
             if (!cert) throw new ValidationError({message: 'No client cert',
                hint: this.hints.signup
             });
-            const dn = this.parseCertDn(cert);
+            const dn = this.parseCertDn(req);
             if (!dn.ou) throw new ValidationError({message: 'No client cert OU name',
                hint: this.hints.signup
             });
