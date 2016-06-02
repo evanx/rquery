@@ -82,8 +82,8 @@ cd $tmp
 pwd
 
 c0register() {
-  curlx deregister-account/evanxsummers
-  curlv register-account/evanxsummers
+  curlx decreate-account/evanxsummers
+  curlv create-account/evanxsummers
 }
 
 c0register

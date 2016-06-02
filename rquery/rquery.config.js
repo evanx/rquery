@@ -42,6 +42,10 @@ module.exports = {
          optional: true,
          type: 'string'
       },
+      secureHostname: {
+         optional: true,
+         type: 'string'
+      },
       port: {
          defaultValue: 8080
       },

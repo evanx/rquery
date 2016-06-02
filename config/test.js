@@ -5,6 +5,7 @@ module.exports = {
          redisUrl: 'redis://localhost:6379/14',
          redisKeyspace: 'test:rquery',
          openHostname: 'open.redishub.com',
+         secureHostname: 'secure.redishub.com',
          hostDomain: 'test.redishub.com',
          hostUrl: 'https://test.redishub.com',
          serviceKey: 'test',
