@@ -2494,7 +2494,7 @@ export default class {
                if (hint.message) {
                   if (this.isBrowser(req)) {
                      if (hint.clipboard) {
-                        const onClick = `window.prompt("Copy to clipboard: Ctrl-C, Enter", "${hint.clipboard}")`;
+                        const onClick = `window.prompt('Copy to clipboard: Ctrl-C, Enter', '${hint.clipboard}')`;
                         hint.url = `<a href="${hint.url}" onClick="${onClick}">${hint.message}</a>`;
                      } else {
                         hint.url = `<a href="${hint.url}">${hint.message}</a>`;
