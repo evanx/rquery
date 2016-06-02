@@ -131,8 +131,7 @@ export default class {
          //throw {message: 'No client cert'};
       } else {
          this.logger.debug('telegram cert', cert.split('\n')[0]);
-         const cert = this.getClientCert(req);
-         const dn = this.parseCertDn(cert);
+         const dn = this.parseCertDn(req);
          this.logger.debug('telegram', telegram, dn);
       }
       const message = {};
@@ -554,11 +553,11 @@ export default class {
             ``,
             `Use: ~/.redishub/live/privcert.pem (curl) and/or privcert.p12 (browser)`,
             ``,
-            `Create a keyspace called 'tmp-10days' as follows:`,
-            `   curl -s -E ~/.redishub/live/privcert.pem ${this.config.hostUrl}/ak/${account}/tmp-10days/create-keyspace`,
+            `For example, Create a keyspace called 'tmp10days' as follows:`,
+            `   curl -s -E ~/.redishub/live/privcert.pem ${this.config.hostUrl}/ak/${account}/tmp10days/create-keyspace`,
             ``,
-            `See help for keyspace 'tmp-10days' in your browser as follows:`,
-            `   ${this.config.hostUrl}/ak/${account}/tmp-10days/help`,
+            `See help for keyspace 'tmp10days' in your browser as follows:`,
+            `   ${this.config.hostUrl}/ak/${account}/tmp10days/help`,
             ``,
             `For CLI convenience, install rhcurl bash script, as per instructions:`,
             `  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
@@ -1499,6 +1498,9 @@ export default class {
             key: 'register-cert'
          }, async (req, res, reqx) => {
             const cert = this.getClientCert(req);
+            if (!cert) throw new ValidationError({message: 'No client cert',
+               hint: this.hints.signup
+            });
             const dn = this.parseCertDn(cert);
             if (!dn.ou) throw new ValidationError({message: 'No client cert OU name',
                hint: this.hints.signup
@@ -1545,7 +1547,8 @@ export default class {
          return cert;
       }
 
-      parseCertDn(clientCert) {
+      parseCertDn(req) {
+         let cert = req.get('ssl_client_cert');
          if (!clientCert) {
             throw new ValidationError({message: 'No client cert', hint: this.hints.signup});
          }
