@@ -627,6 +627,7 @@ export default class {
             const customCommandHeading = `Custom commands`;
             const description = [`You can set, add and view keys, sets, lists, zsets, hashes etc.` +
                ` Also edit the URL in the location bar to try other combinations.` +
+               ` You can also try to read keys using the domain <tt>https://replica.redishub.com.</tt>` +
                ` <i>(We'll offer a simple client-side command completion tool soon.)</i>`
             ];
             const exampleParams = [
