@@ -35,6 +35,12 @@ export default class {
       this.commandMap = new Map();
       this.logger.info('init', this.config.redisUrl);
       if (await this.testExit()) process.exit(1);
+      this.hints = {
+         signup: {
+            message: 'Try @redishub_bot /signup on https://web.telegram.org',
+            url: 'https://web.telegram.org/#/im?p=@redishub_bot'
+         }
+      };
    }
 
    async start() {
@@ -1500,7 +1506,9 @@ export default class {
             key: 'register-cert'
          }, async (req, res, reqx) => {
             const dn = this.parseCertDn(req);
-            if (!dn.ou) throw {message: 'No client cert OU name'};
+            if (!dn.ou) throw new ValidationError({message: 'No client cert OU name',
+               hint: this.hints.signup
+            });
             const matching = dn.ou.match(/^([\-_a-z]+)+%([\-_a-z]+)@(.*)$/);
             this.logger.debug('OU', matching);
             if (!matching) {
@@ -1526,13 +1534,10 @@ export default class {
       parseCertDn(req) {
          const clientCert = req.get('ssl_client_cert');
          if (!clientCert) {
-            throw new ValidationError({message: 'No client cert', hint: {
-               message: 'Try @redishub_bot /signup on https://web.telegram.org',
-               url: 'https://web.telegram.org/#/im?p=@redishub_bot'
-            }});
+            throw new ValidationError({message: 'No client cert', hint: this.hints.signup});
          }
          const dn = req.get('ssl_client_s_dn');
-         if (!dn) throw {message: 'No client cert DN'};
+         if (!dn) throw new ValidationError({message: 'No client cert DN', hint: this.hints.signup});
          return this.parseDn(dn);
       }
 
@@ -1578,13 +1583,13 @@ export default class {
             const {account} = req.params;
             let v = this.validateRegisterAccount(account);
             if (v) {
-               throw {message: v, account};
+               throw new ValidationError(v);
             }
             const dn = req.get('ssl_client_s_dn');
             const clientCert = req.get('ssl_client_cert');
             this.logger.info('registerAccount dn', dn);
             if (!clientCert) {
-               throw {message: 'No client cert'};
+               throw new ValidationError({message: 'No client cert', hint: this.hints.signup});
             }
             const clientCertDigest = this.digestPem(clientCert);
             const otpSecret = this.generateTokenKey();
