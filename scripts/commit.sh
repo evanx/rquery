@@ -6,7 +6,6 @@ c2notify() {
 }
 
 startTimestamp=`date +%s`
-c2notify joy committing
 timestamp=`date +%s`
 duration=`echo "$timestamp - $startTimestamp" | bc`
 echo NOTIFY $duration "$*"
@@ -17,11 +16,13 @@ cat zbuild/rquery.js | grep '^\s*logger\|zz\|ZZ' && exit 1
 
 c1commit() {
   message="$1"
-  c2notify joy committing & 
+  c2notify joy committing &
+  c2notify stallman committing
   git add -A
   git commit -m "$message" 
   git push
   c2notify joy committed &
+  c2notify stallman committed &
   echo; echo "done"
   git status | sed '/^$/d'
 }
