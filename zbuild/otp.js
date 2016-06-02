@@ -208,7 +208,7 @@ var _class = function () {
                            throw { message: 'Webhook host not supported. Try: ' + supportedDomains[0] };
 
                         case 9:
-                           uri = ['webhook', _this2.config.serviceName, host, user].join('/');
+                           uri = ['webhook', _this2.config.serviceKey, host, user].join('/');
                            url = 'https://' + webhook + '/' + uri;
 
                            _this2.logger.debug('webhook url', url, host, user);

@@ -76,7 +76,7 @@ export default class {
          if (webhookDomain !== supportedDomains[0]) {
             throw {message: 'Webhook host not supported. Try: ' + supportedDomains[0]};
          }
-         const uri = ['webhook', this.config.serviceName, host, user].join('/');
+         const uri = ['webhook', this.config.serviceKey, host, user].join('/');
          const url = `https://${webhook}/${uri}`;
          this.logger.debug('webhook url', url, host, user);
          const response = await Requests.head({url, timeout: this.config.webhookTimeout});

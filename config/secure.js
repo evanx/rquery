@@ -7,7 +7,7 @@ module.exports = {
          openHostname: 'redishub.com',
          hostname: 'secure.redishub.com',
          hostUrl: 'https://secure.redishub.com',
-         serviceName: 'redishub-prod',
+         serviceKey: 'secure',
          serviceLabel: 'RedisHub',
          port: 4567,
          location: '',

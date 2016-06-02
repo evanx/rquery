@@ -13,6 +13,9 @@ module.exports = {
       }
    },
    config: {
+      serviceKey: {
+         type: 'string'         
+      },
       redisUrl: {
          type: 'string'
       },
@@ -113,7 +116,7 @@ module.exports = {
       addClientIp: {
          defaultValue: false
       },
-      serviceName: {
+      serviceKey: {
          type: 'string'
       },
       serviceLabel: {

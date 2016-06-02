@@ -18,6 +18,9 @@ module.exports = {
    },
    // use for deploy branch and config
    config: (_config = {
+      serviceKey: {
+         type: 'string'
+      },
       redisUrl: {
          type: 'string'
       },
@@ -114,7 +117,7 @@ module.exports = {
       unit: 'seconds'
    }), _defineProperty(_config, 'addClientIp', {
       defaultValue: false
-   }), _defineProperty(_config, 'serviceName', {
+   }), _defineProperty(_config, 'serviceKey', {
       type: 'string'
    }), _defineProperty(_config, 'serviceLabel', {
       type: 'string'

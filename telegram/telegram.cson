@@ -44,7 +44,7 @@ config:
       unit: 'seconds'
    addClientIp:
       defaultValue: false
-   serviceName:
+   serviceKey:
       type: 'string'
    serviceLabel:
       type: 'string'

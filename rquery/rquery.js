@@ -42,7 +42,7 @@ export default class {
       this.expressApp = expressLib();
       this.expressApp.use((req, res, next) => {
          const scheme = req.get('X-Forwarded-Proto');
-         if (scheme === 'http') {
+         if (scheme === 'http' && serviceKey !== 'development') {
             res.redirect(302, `https://${req.hostname}/${req.url}`);
          } else {
             next();
