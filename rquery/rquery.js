@@ -1529,12 +1529,8 @@ export default class {
                multi.get(grantKey);
                multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
             });
-            this.logger.debug('ZZ', index, cert.split('\n'));
-            if (index < 20) {
-               throw new ValidationError('Invald cert');
-            }
-            
             const certLines = cert.split('\n').slice(1);
+            this.logger.debug(index, certLines, certTail);
             const certTail = this.tailPem(cert);
             this.logger.debug('certTail', certTail, cert);
             if (!granted) {
