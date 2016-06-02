@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _templateObject = _taggedTemplateLiteral(['<article>', '</article>'], ['<article>', '</article>']),
-    _templateObject2 = _taggedTemplateLiteral(['\n   <html>\n   <head>\n   <title>', '</title>\n   <style>', '</style>\n   <meta name="viewport" content=', '/>\n   <link href=\'https://fonts.googleapis.com/css?family=Open+Sans\' rel=\'stylesheet\' type=\'text/css\'>\n   </head>\n   <body>\n   ', '\n   ', '\n   ', '\n   </body>\n   </html>\n   '], ['\n   <html>\n   <head>\n   <title>', '</title>\n   <style>', '</style>\n   <meta name="viewport" content=', '/>\n   <link href=\'https://fonts.googleapis.com/css?family=Open+Sans\' rel=\'stylesheet\' type=\'text/css\'>\n   </head>\n   <body>\n   ', '\n   ', '\n   ', '\n   </body>\n   </html>\n   ']);
+    _templateObject2 = _taggedTemplateLiteral(['\n   <html>\n   <head>\n   <title>', '</title>\n   <style>', '</style>\n   <meta name="viewport" content=', '/>\n   <link href=\'https://fonts.googleapis.com/css?family=Open+Sans\' rel=\'stylesheet\' type=\'text/css\'>\n   <link href=\'https://fonts.googleapis.com/css?family=Ubuntu\' rel=\'stylesheet\' type=\'text/css\'>\n   </head>\n   <body>\n   ', '\n   ', '\n   ', '\n   </body>\n   </html>\n   '], ['\n   <html>\n   <head>\n   <title>', '</title>\n   <style>', '</style>\n   <meta name="viewport" content=', '/>\n   <link href=\'https://fonts.googleapis.com/css?family=Open+Sans\' rel=\'stylesheet\' type=\'text/css\'>\n   <link href=\'https://fonts.googleapis.com/css?family=Ubuntu\' rel=\'stylesheet\' type=\'text/css\'>\n   </head>\n   <body>\n   ', '\n   ', '\n   ', '\n   </body>\n   </html>\n   ']);
 
 exports.default = function (props) {
    logger.debug('props', Object.keys(props));

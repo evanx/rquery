@@ -151,13 +151,14 @@ const styles = {
    },
    result: {
       message: {
-         fontSize: 20,
+         fontFamily: "'Ubuntu', 'Open Sans', sansserif",
+         fontSize: 18,
          color: '#606060',
          fontWeight: 'bold'
       },
       description: {
+         fontFamily: "'Ubuntu', 'Open Sans', sansserif",
          fontSize: 16,
-         fontFamily: "'Open Sans', sansserif",
          color: '#505050',
          lineHeight: 1.25,
          marginTop: 8,
