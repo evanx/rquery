@@ -1529,7 +1529,11 @@ export default class {
                multi.get(grantKey);
                multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
             });
-            const certTail = cert.substring(cert.length - 12);
+            const index = cert.indexOf('\n----');
+            if (index < 12) {
+               throw new ValidationError('Invald cert');
+            }
+            const certTail = cert.substring(index - 12);
             if (!granted) {
                throw new ValidationError({message: 'Cert not granted via @redishub_bot: ' + certTail,
                   hint: {
