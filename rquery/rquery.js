@@ -583,6 +583,8 @@ export default class {
             `      -subj '/CN=${CN}/OU=${OU}' \\`,
             `      -keyout privkey.pem -out cert.pem`,
             `    then`,
+            `      openssl x509 -text -in cert.pem > x509.txt`,
+            `      grep 'CN=' x509.txt`,
             `      cat privkey.pem cert.pem > privcert.pem`,
             `      openssl x509 -text -in privcert.pem | grep 'CN='`,
             `      curl -s -E privcert.pem ${this.config.hostUrl}/create-account-telegram/${account} ||`,
@@ -594,8 +596,6 @@ export default class {
             `        echo '  openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem &&'`,
             `        echo '  echo "Exported $PWD/privcert.p12 OK"'`,
             `      else`,
-            `        openssl x509 -text -in cert.pem > x509.txt`,
-            `        grep x509.txt`,
             `        echo "Exported $PWD/privcert.p12 OK"`,
             `      fi`,
             `      echo; pwd; ls -l`,
@@ -1541,6 +1541,7 @@ export default class {
       const grantKey = this.adminKey('telegram', 'user', account, 'grantcert');
       const certDigest = this.digestPem(cert);
       const shortDigest = certDigest.slice(-12);
+      const pemExtract = this.extractPem(cert);
       const [granted, sismember] = await this.redis.multiExecAsync(multi => {
          multi.get(grantKey);
          multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
@@ -1556,23 +1557,31 @@ export default class {
                url: `https://web.telegram.org/#/im?p=@redishub_bot#grantcert-${shortDigest}`
             }
          });
-      } else if (granted === shortDigest) {
+      }
+      if (granted.indexOf(shortDigest) < 0 &&
+         certDigest.indexOf(granted) < 0 &&
+         pemExtract != granted) {
          throw new ValidationError({message: 'Granted cert not matching: ' + shortDigest,
             hint: {
-               message: `Try @redishub_bot "/grantcert {certDigest}`
+               message: `Try @redishub_bot "/grantcert ${shortDigest}`
                + ` from the authoritative Telegram account`
                + ` e.g. via https://web.telegram.org`
                ,
-               clipboard: certDigest,
+               clipboard: shortDigest,
                url: `https://web.telegram.org/#/im?p=@redishub_bot#grantcert-${shortDigest}`
             }
          });
-      } else {
       }
-      const [del] = await this.redis.multiExecAsync(multi => {
+      const [del, sadd] = await this.redis.multiExecAsync(multi => {
          multi.del(grantKey);
-         multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
+         multi.sadd(this.adminKey('account', account, 'certs'), certDigest);
       });
+      if (!sadd) {
+         logger.debug('certs sadd');
+      }
+      if (!del) {
+         logger.warn('certs grant del');
+      }
       return {account, domain};
    }
 
