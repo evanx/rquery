@@ -532,7 +532,7 @@ export default class {
          const CN = `${account}@redishub.com`;
          const OU = `admin%${account}@redishub.com`;
          let result = [
-            `Cut and paste the above directly into your shell, or pipe to bash:`,
+            `Curl this script and pipe into bash as follows:`,
             ``,
             `  curl -s ${this.config.hostUrl}/${reqx.command.key}/${account} | bash`
          ].map(line => `# ${line}`);
@@ -552,8 +552,9 @@ export default class {
             ]);
          }
          const help = [
-            `To force archiving an existing ~/.redishub/live, add '?archive' to the URL`,
-            `   to first move ~/.redishub/live to ~/.redishub/archive/TIMESTAMP`,
+            `To force archiving an existing ~/.redishub/live, add '?archive' to the URL:`,
+            `   curl -s ${this.config.hostUrl}/${reqx.command.key}/${account}?archive | bash`,
+            `This will first move ~/.redishub/live to ~/.redishub/archive/TIMESTAMP`,
             ``,
             `Use: ~/.redishub/live/privcert.pem (curl) and/or privcert.p12 (browser)`,
             ``,
