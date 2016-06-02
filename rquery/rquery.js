@@ -1529,13 +1529,14 @@ export default class {
                multi.get(grantKey);
                multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
             });
-            const index = cert.indexOf('\n----');
             this.logger.debug('ZZ', index, cert.split('\n'));
             if (index < 20) {
                throw new ValidationError('Invald cert');
             }
-            const certTail = cert.substring(index - 20, 20).replace(/[ =]*$/, '').slice(-12);
-            this.logger.debug('certTail', certTail, index, cert);
+            
+            const certLines = cert.split('\n').slice(1);
+            const certTail = this.tailPem(cert);
+            this.logger.debug('certTail', certTail, cert);
             if (!granted) {
                throw new ValidationError({message: 'Cert not granted via @redishub_bot',
                   hint: {
@@ -1543,8 +1544,6 @@ export default class {
                      url: 'https://web.telegram.org/#/im?p=@redishub_bot'
                   }
                });
-
-               
             } else if (!certTail.endsWith(granted)) {
                throw new ValidationError({message: 'Granted cert not matching: ' + certTail,
                   hint: {
@@ -2538,7 +2537,7 @@ export default class {
          }
       }
 
-      digestPem(pem) {
+      splitPem(pem) {
          const lines = pem.split(/[\n\t]/);
          if (lines.length < 8) {
             throw new ValidationError('Invalid lines');
@@ -2552,6 +2551,16 @@ export default class {
          if (contentLines.length < 8) {
             throw new ValidationError('Invalid lines');
          }
+         return contentLines;
+      }
+
+      tailPem(pem) {
+         const contentLines = this.splitPem(pem);
+         return contentLines.join('').slice(-12);
+      }
+
+      digestPem(pem) {
+         const contentLines = this.splitPem(pem);
          const sha1 = crypto.createHash('sha1');
          contentLines.forEach(line => sha1.update(new Buffer(line)));
          const digest = sha1.digest('hex');
