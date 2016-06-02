@@ -592,7 +592,7 @@ export default class {
                `        echo '  echo "Exported $PWD/privcert.p12 OK"'`,
                `      else`,
                `        openssl x509 -text -in cert.pem > x509.txt`,
-               `        openssl x509 -text -in cert.pem | grep 'CN='`,
+               `        grep x509.txt`,
                `        echo "Exported $PWD/privcert.p12 OK"`,
                `      fi`,
                `      echo; pwd; ls -l`,
