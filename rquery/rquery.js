@@ -41,6 +41,14 @@ export default class {
       this.redis = redisLib.createClient(this.config.redisUrl);
       this.expressApp = expressLib();
       this.expressApp.use((req, res, next) => {
+         const scheme = req.get('X-Forwarded-Proto');
+         if (scheme === 'http') {
+            res.redirect(302, `https://${req.hostname}/${req.url}`);
+         } else {
+            next();
+         }
+      });
+      this.expressApp.use((req, res, next) => {
          req.pipe(concatStream(content => {
             req.body = content;
             next();
@@ -426,9 +434,6 @@ export default class {
             res.set('Content-Type', 'text/plain');
             res.send(await this.redis.infoAsync());
          });
-      }
-      if (this.config.allowKeyspaces) {
-         this.addPublicRoute('keyspaces', () => this.redis.smembersAsync(this.adminKey('keyspaces')));
       }
       this.addPublicRoute('epoch', async () => {
          const time = await this.redis.timeAsync();
