@@ -152,15 +152,15 @@ const styles = {
    result: {
       message: {
          fontFamily: "'Ubuntu', 'Open Sans', sansserif",
-         fontSize: 18,
-         color: '#606060',
+         fontSize: 17,
+         color: '#808080',
          fontWeight: 'bold'
       },
       description: {
          fontFamily: "'Ubuntu', 'Open Sans', sansserif",
          fontSize: 16,
          color: '#505050',
-         lineHeight: 1.25,
+         lineHeight: 1.4,
          marginTop: 8,
       },
       commandKey: {
