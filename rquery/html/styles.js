@@ -153,7 +153,7 @@ const styles = {
       message: {
          fontFamily: "'Ubuntu', 'Open Sans', sansserif",
          fontSize: 17,
-         color: '#808080',
+         color: '#606060',
          fontWeight: 'bold'
       },
       description: {
