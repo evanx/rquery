@@ -1530,18 +1530,20 @@ export default class {
                multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
             });
             const index = cert.indexOf('\n----');
-            if (index < 12) {
+            this.logger.debug('ZZ', index, cert.split('\n'));
+            if (index < w0) {
                throw new ValidationError('Invald cert');
             }
-            const certTail = cert.substring(index - 12);
+            const certTail = cert.substring(index - 20, 20).replace(/[ =]*$/, '').slice(-12);
+            this.logger.debug('certTail', certTail, index, cert);
             if (!granted) {
-               throw new ValidationError({message: 'Cert not granted via @redishub_bot: ' + certTail,
+               throw new ValidationError({message: 'Cert not granted via @redishub_bot',
                   hint: {
                      message: `Try @redishub_bot /grant cert <b>${certTail}</b> e.g. via https://web.telegram.org`,
                      url: 'https://web.telegram.org/#/im?p=@redishub_bot'
                   }
                });
-            } else if (!cert.endsWith(granted)) {
+            } else if (!certTail.endsWith(granted)) {
                throw new ValidationError({message: 'Granted cert not matching: ' + certTail,
                   hint: {
                      message: `Try @redishub_bot /grant cert <b>${certTail}</b> e.g. via https://web.telegram.org`,
@@ -1550,6 +1552,10 @@ export default class {
                });
             } else {
             }
+            const [del] = await this.redis.multiExecAsync(multi => {
+               multi.del(grantKey);
+               multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
+            });
             return {account, domain};
          });
       }
