@@ -216,7 +216,7 @@ const styles = {
             fontSize: 16,
          },
          description: {
-            paddingTop: 8,
+            paddingTop: 4,
             fontSize: 16,
             fontStyle: 'italic',
             color: '#600000',
