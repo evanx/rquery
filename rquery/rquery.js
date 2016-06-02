@@ -533,11 +533,6 @@ export default class {
          params: ['account'],
          format: 'cli'
       }, this.handleCertScript.bind(this));
-      this.addPublicCommand({
-         key: 'cert-script-id',
-         params: ['account', 'role', 'clientId'],
-         format: 'cli'
-      }, this.handleCertScript.bind(this));
       this.addRegisterRoutes();
       this.addAccountRoutes();
       this.addKeyspaceCommand({
@@ -2516,8 +2511,8 @@ export default class {
          throw new ValidationError('Empty or invalid "dir"');
       }
       const account = req.params.account;
-      const role = req.params.role || 'admin';
-      const CN = req.params.clientId || `${account}@redishub.com`;
+      const role = req.params.role || req.query.role || 'admin';
+      const CN = req.params.clientId || req.query.clientId || `${account}@redishub.com`;
       const OU = `${role}%${account}@redishub.com`;
       let result = [
          ``,
