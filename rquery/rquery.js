@@ -1531,7 +1531,7 @@ export default class {
             });
             const index = cert.indexOf('\n----');
             this.logger.debug('ZZ', index, cert.split('\n'));
-            if (index < w0) {
+            if (index < 20) {
                throw new ValidationError('Invald cert');
             }
             const certTail = cert.substring(index - 20, 20).replace(/[ =]*$/, '').slice(-12);
