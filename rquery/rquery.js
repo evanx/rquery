@@ -39,6 +39,10 @@ export default class {
          signup: {
             message: 'Try @redishub_bot /signup on https://web.telegram.org',
             url: 'https://web.telegram.org/#/im?p=@redishub_bot'
+         },
+         grantCert: {
+            message: `Try @redishub_bot /grant cert TAIL e.g. via https://web.telegram.org`,
+            url: 'https://web.telegram.org/#/im?p=@redishub_bot'
          }
       };
    }
@@ -1520,19 +1524,28 @@ export default class {
                }
                const accountKey = this.adminKey('account', account);
                const grantKey = this.adminKey('telegram', 'user', account, 'grant-cert');
-               const clientCertDigest = this.digestPem(clientCert);
+               const certDigest = this.digestPem(cert);
                const [granted, sismember] = await this.redis.multiExecAsync(multi => {
                   multi.get(grantKey);
-                  multi.sismember(this.adminKey('account', account, 'certs'), clientCertDigest);
+                  multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
                });
-               if (!granted) {
+               if (granted) {
+                  const certTail = cert.substring(cert.length - 12);
+                  if (!cert.endsWith(granted)) {
+                     throw new ValidationError({message: 'O domain not matching: ' + certTail,
+                        hint: {
+                           message: `Try @redishub_bot /grant cert <b>${certTail}</b> e.g. via https://web.telegram.org`,
+                           url: 'https://web.telegram.org/#/im?p=@redishub_bot'
+                        }
+                     });
+                  } else {
 
+                  }
                } else if (sismember) {
                   const [sadd] = await this.redis.multiExecAsync(multi => {
                      multi.get(grantKey);
-                     multi.sismember(this.adminKey('account', account, 'certs'), clientCertDigest);
+                     multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
                   });
-
                }
                return {account, domain};
             }
@@ -2459,6 +2472,8 @@ export default class {
                      if (this.isBrowser(req)) {
                         hint.url = `<a href="${hint.url}">${hint.message}</a>`;
                         hint.message = '';
+                     } else if (hint.message) {
+                        hint.message = hint.message.replace(/<\/?(b|tt|i|code|pre)>/g, '');
                      }
                   }
                } else if (hint.uri) {
