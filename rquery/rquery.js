@@ -1141,6 +1141,9 @@ export default class {
          this.addKeyspaceCommand({
             key: 'lindex',
             params: ['key', 'index'],
+            exampleKeyParams: {
+               index: 1
+            },
             description: 'get an element from a list by its index',
             relatedCommands: ['lset', 'lrange']
          }, async (req, res, reqx) => {
