@@ -2065,6 +2065,9 @@ export default class {
                throw {message: `Insecure scheme ${scheme}: ${req.hostname}`};
             }
          }
+         if (account !== 'hub' && account !== 'pub') {
+            this.validateCert(req, certs, account);
+         }
          if (command.key === 'create-keyspace') {
             if (reqx.registered) {
                throw {message: 'Already registered'};
@@ -2104,9 +2107,6 @@ export default class {
             } else if (command.access === 'get') {
             } else {
             }
-         }
-         if (account !== 'hub' && account !== 'pub') {
-            this.validateCert(req, certs, account);
          }
       }
 
