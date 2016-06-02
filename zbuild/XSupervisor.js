@@ -600,3 +600,4 @@ var Supervisor = function () {
 }();
 
 exports.default = Supervisor;
+//# sourceMappingURL=XSupervisor.js.map
