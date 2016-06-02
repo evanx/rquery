@@ -372,7 +372,9 @@ export default class {
             common: routes
             .filter(route => route)
             .filter(route => !route.includes(':'))
-            .filter(route => !['/epoch', '/register-ephemeral'].includes(route))
+            .filter(route => ![
+               '/epoch', '/register-ephemeral', '/cert-script-id'
+            ].includes(route))
             .filter(route => route !== '/enroll-cert' || this.isSecureDomain(req))
             .filter(route => route !== '/register-cert' || this.isSecureDomain(req))
             .map(route => `${hostUrl}${route}`)
@@ -527,89 +529,15 @@ export default class {
          }
       });
       this.addPublicCommand({
-         key: 'cert-script', // TODO hardcoded in bot reply
+         key: 'cert-script',
          params: ['account'],
          format: 'cli'
-      }, async (req, res, reqx) => {
-         if (req.query.dir && ['', '.', '..'].includes(req.query.dir)) {
-            throw new ValidationError('Empty or invalid "dir"');
-         }
-         const account = req.params.account;
-         const CN = `${account}@redishub.com`;
-         const OU = `admin%${account}@redishub.com`;
-         let result = [
-            ``,
-            `Curl this script and pipe into bash as follows:`,
-            ``,
-            `  curl -s ${this.config.hostUrl}/${reqx.command.key}/${account} | bash`
-         ].map(line => `# ${line}`);
-         result.push('');
-         const dir = req.query.dir || '~/.redishub/live';
-         const archive = req.query.archive || '~/.redishub/archive';
-         if (Values.isDefined(req.query.archive)) {
-            result = result.concat([
-               `mkdir -p ${archive}`,
-               `mv -n ${dir} ${archive}/\`date +'%Y-%M-%dT%Hh%Mm%Ss%s'\``,
-            ]);
-         } else if (!lodash.isEmpty(req.query.dir)) {
-         } else {
-            result = result.concat([
-               `mkdir -p ~/.redishub`,
-            ]);
-         }
-         const help = [
-            `To force archiving an existing ${dir}, add '?archive' to the URL:`,
-            `   curl -s ${this.config.hostUrl}/${reqx.command.key}/${account}?archive | bash`,
-            `This will first move ${dir} to ${archive}/TIMESTAMP`,
-            ``,
-            `Use: ${dir}/privcert.pem (curl) and/or privcert.p12 (browser)`,
-            ``,
-            `For example, Create a keyspace called 'tmp10days' as follows:`,
-            `   curl -s -E ~/.redishub/live/privcert.pem ${this.config.hostUrl}/ak/${account}/tmp10days/create-keyspace`,
-            ``,
-            `See help for keyspace 'tmp10days' in your browser as follows:`,
-            `   ${this.config.hostUrl}/ak/${account}/tmp10days/help`,
-            ``,
-            `For CLI convenience, install rhcurl bash script, as per instructions:`,
-            `  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
-            ``
-         ];
-         result = result.concat([
-            '(',
-            `  if mkdir ${dir} && cd $_`,
-            `  then`,
-            `    echo '${account}' > account`,
-            `    if openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\`,
-            `      -subj '/CN=${CN}/OU=${OU}' \\`,
-            `      -keyout privkey.pem -out cert.pem`,
-            `    then`,
-            `      openssl x509 -text -in cert.pem > x509.txt`,
-            `      grep 'CN=' x509.txt`,
-            `      cat privkey.pem cert.pem > privcert.pem`,
-            `      openssl x509 -text -in privcert.pem | grep 'CN='`,
-            `      curl -s -E privcert.pem ${this.config.hostUrl}/create-account-telegram/${account} ||`,
-            `        echo 'Registered account ${account} ERROR $?'`,
-            `      if ! openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem`,
-            `      then`,
-            `        echo 'ERROR $? ($PWD): Try again as follows:'`,
-            `        echo 'cd ${dir} && [ ! -f privcert.p12 ] &&'`,
-            `        echo '  openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem &&'`,
-            `        echo '  echo "Exported $PWD/privcert.p12 OK"'`,
-            `      else`,
-            `        echo "Exported $PWD/privcert.p12 OK"`,
-            `      fi`,
-            `      echo; pwd; ls -l`,
-         ]);
-         result = result.concat(help.map(line => `      echo '${line}'`));
-         result = result.concat([
-            `      curl -s https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
-            `    fi`,
-            `  fi`,
-            ')',
-         ]);
-         result.push('');
-         return lodash.flatten(result);
-      });
+      }, this.handleCertScript.bind(this));
+      this.addPublicCommand({
+         key: 'cert-script-id',
+         params: ['account', 'role', 'clientId'],
+         format: 'cli'
+      }, this.handleCertScript.bind(this));
       this.addRegisterRoutes();
       this.addAccountRoutes();
       this.addKeyspaceCommand({
@@ -1559,8 +1487,8 @@ export default class {
          });
       }
       if (granted.indexOf(shortDigest) < 0 &&
-         certDigest.indexOf(granted) < 0 &&
-         pemExtract != granted) {
+      certDigest.indexOf(granted) < 0 &&
+      pemExtract != granted) {
          throw new ValidationError({message: 'Granted cert not matching: ' + shortDigest,
             hint: {
                message: `Try @redishub_bot "/grantcert ${shortDigest}`
@@ -2581,6 +2509,88 @@ export default class {
          throw new ValidationError('Invalid lines');
       }
       return contentLines;
+   }
+
+   async handleCertScript(req, res, reqx) {
+      if (req.query.dir && ['', '.', '..'].includes(req.query.dir)) {
+         throw new ValidationError('Empty or invalid "dir"');
+      }
+      const account = req.params.account;
+      const role = req.params.role || 'admin';
+      const CN = req.params.clientId || `${account}@redishub.com`;
+      const OU = `${role}%${account}@redishub.com`;
+      let result = [
+         ``,
+         `Curl this script and pipe into bash as follows:`,
+         ``,
+         `  curl -s ${this.config.hostUrl}/${reqx.command.key}/${account} | bash`
+      ].map(line => `# ${line}`);
+      result.push('');
+      const dir = req.query.dir || '~/.redishub/live';
+      const archive = req.query.archive || '~/.redishub/archive';
+      if (Values.isDefined(req.query.archive)) {
+         result = result.concat([
+            `mkdir -p ${archive}`,
+            `mv -n ${dir} ${archive}/\`date +'%Y-%M-%dT%Hh%Mm%Ss%s'\``,
+         ]);
+      } else if (!lodash.isEmpty(req.query.dir)) {
+      } else {
+         result = result.concat([
+            `mkdir -p ~/.redishub`,
+         ]);
+      }
+      const help = [
+         `To force archiving an existing ${dir}, add '?archive' to the URL:`,
+         `   curl -s ${this.config.hostUrl}/${reqx.command.key}/${account}?archive | bash`,
+         `This will first move ${dir} to ${archive}/TIMESTAMP`,
+         ``,
+         `Use: ${dir}/privcert.pem (curl) and/or privcert.p12 (browser)`,
+         ``,
+         `For example, Create a keyspace called 'tmp10days' as follows:`,
+         `   curl -s -E ~/.redishub/live/privcert.pem ${this.config.hostUrl}/ak/${account}/tmp10days/create-keyspace`,
+         ``,
+         `See help for keyspace 'tmp10days' in your browser as follows:`,
+         `   ${this.config.hostUrl}/ak/${account}/tmp10days/help`,
+         ``,
+         `For CLI convenience, install rhcurl bash script, as per instructions:`,
+         `  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
+         ``
+      ];
+      result = result.concat([
+         '(',
+         `  if mkdir ${dir} && cd $_`,
+         `  then`,
+         `    echo '${account}' > account`,
+         `    if openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\`,
+         `      -subj '/CN=${CN}/OU=${OU}' \\`,
+         `      -keyout privkey.pem -out cert.pem`,
+         `    then`,
+         `      openssl x509 -text -in cert.pem > x509.txt`,
+         `      grep 'CN=' x509.txt`,
+         `      cat privkey.pem cert.pem > privcert.pem`,
+         `      openssl x509 -text -in privcert.pem | grep 'CN='`,
+         `      curl -s -E privcert.pem ${this.config.hostUrl}/create-account-telegram/${account} ||`,
+         `        echo 'Registered account ${account} ERROR $?'`,
+         `      if ! openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem`,
+         `      then`,
+         `        echo 'ERROR $? ($PWD): Try again as follows:'`,
+         `        echo 'cd ${dir} && [ ! -f privcert.p12 ] &&'`,
+         `        echo '  openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem &&'`,
+         `        echo '  echo "Exported $PWD/privcert.p12 OK"'`,
+         `      else`,
+         `        echo "Exported $PWD/privcert.p12 OK"`,
+         `      fi`,
+         `      echo; pwd; ls -l`,
+      ]);
+      result = result.concat(help.map(line => `      echo '${line}'`));
+      result = result.concat([
+         `      curl -s https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
+         `    fi`,
+         `  fi`,
+         ')',
+      ]);
+      result.push('');
+      return lodash.flatten(result);
    }
 
    extractPem(pem) {
