@@ -224,10 +224,10 @@ export default class {
       await this.sendTelegram(request.chatId, 'html', [
          `Thanks, ${request.greetName}.`,
          `Your RedisHub account name is <b>${account}</b>, as per your Telegram user.`,
-         `Please use the following link to create a client cert:`,
+         `Use the following link to create a client cert:`,
          `${this.config.openHostname}/cert-script/${account}.`,
-         `Add <code>?archive</code> to the URL to archive if <code>~/.redishub/live</code> exists.`,
-         `Because the script will refuse to overwrite an existing cert.`,
+         `Add <code>?archive</code> to the URL to archive if <code>~/.redishub/live</code> exists,`,
+         `because the script will refuse to overwrite an existing cert.`,
       ]);
    }
 
@@ -1537,14 +1537,14 @@ export default class {
                throw new ValidationError({message: 'Cert not granted via @redishub_bot',
                   hint: {
                      message: `Try @redishub_bot /grantcert <b>${certTail}</b> e.g. via https://web.telegram.org`,
-                     url: 'https://web.telegram.org/#/im?p=@redishub_bot'
+                     url: 'https://web.telegram.org/#/im?p=@redishub_bot#grantcert_${certTail}'
                   }
                });
             } else if (!certTail.endsWith(granted)) {
                throw new ValidationError({message: 'Granted cert not matching: ' + certTail,
                   hint: {
                      message: `Try @redishub_bot /grant cert <b>${certTail}</b> e.g. via https://web.telegram.org`,
-                     url: 'https://web.telegram.org/#/im?p=@redishub_bot'
+                     url: 'https://web.telegram.org/#/im?p=@redishub_bot#grantcert_${certTail}'
                   }
                });
             } else {
