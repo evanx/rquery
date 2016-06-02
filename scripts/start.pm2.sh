@@ -32,7 +32,7 @@ rquery_botUrl=$botUrl rquery_botSecret=$botSecret rquery_port=$port \
   ls -l ~/.pm2/logs/${name}*
   log=`ls -t ~/.pm2/logs/${name}-out-* | head -1`
   echo log $log
-  tail $log | bunyan --color -o short
+  tail -f $log | bunyan --color -o short
 )
 
 
