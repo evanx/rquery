@@ -15,18 +15,18 @@ c1commit() {
   git push
   git remote set-url origin https://github.com/evanx/libv.git
   echo; echo "done lib"
-  git status
+  git status | sed '/^$/d'
   echo; echo "sync"
   cd ..
   pwd 
-  git status
+  git status | sed '/^$/d'
   git add -A
   git commit -m "$message" 
   git remote -v 
   #git remote set-url origin git@github.com:evanx/rquery.git
   git push
   echo; echo "done"
-  git status
+  git status | sed '/^$/d'
 }
 
 if [ $# -eq 1 ]

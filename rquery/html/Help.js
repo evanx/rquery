@@ -6,7 +6,7 @@ const logger = Loggers.create(module.filename);
 export default function (props) {
    logger.debug('props', Object.keys(props));
    return Object.assign(props, {
-      backUrl: 'https://github.com/evanx/redishub/blob/master/README.md',
+      backPath: 'https://github.com/evanx/redishub/blob/master/README.md',
       title: props.config.serviceLabel,
       content: `
       <h3>Basic</h3>

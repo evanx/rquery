@@ -9,7 +9,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 exports.default = function (props) {
    logger.debug('props', Object.keys(props));
    return Object.assign(props, {
-      backUrl: 'https://github.com/evanx/redishub/blob/master/README.md',
+      backPath: 'https://github.com/evanx/redishub/blob/master/README.md',
       title: props.config.serviceLabel,
       content: '\n      <h3>Basic</h3>\n      ' + renderUrls(props.result.common).join('\n') + '\n      <h3>Ephemeral</h3>\n      ' + renderPaths(props.result.ephemeral).join('\n') + '\n      <h3>Miscellaneous</h3>\n      ' + renderPaths(props.result.misc).join('\n') + '\n      <h3>Telegram</h3>\n      ' + renderPaths(props.result.telegram).join('\n') + '\n      ' + renderAccount(props.result.account) + '\n      <h3>Account keyspace</h3>\n      ' + renderPaths(props.result.accountKeyspace).join('\n') + '\n      '
    });

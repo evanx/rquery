@@ -1488,7 +1488,7 @@ export default class {
          });
          this.addPublicCommand({
             key: 'register-cert'
-         }, async (req, res) => {
+         }, async (req, res, reqx) => {
             const dn = this.parseCertDn(req);
             if (!dn.ou) throw {message: 'No client cert OU name'};
             const matching = dn.ou.match(/^([\-_a-z]+)+%([\-_a-z]+)@(.*)$/);
@@ -1515,7 +1515,12 @@ export default class {
 
       parseCertDn(req) {
          const clientCert = req.get('ssl_client_cert');
-         if (!clientCert) throw {message: 'No client cert'};
+         if (!clientCert) {
+            throw new ValidationError({message: 'No client cert', hint: {
+               message: 'Try @redishub_bot /signup on https://web.telegram.org',
+               url: 'https://web.telegram.org/#/im?p=@redishub_bot'
+            }});
+         }
          const dn = req.get('ssl_client_s_dn');
          if (!dn) throw {message: 'No client cert DN'};
          return this.parseDn(dn);
@@ -1548,7 +1553,7 @@ export default class {
                const [cert] = await this.redis.multiExecAsync(multi => {
                   multi.hgetall(this.adminKey('cert', certId));
                });
-               throw {message: 'Unimplemented'};
+               throw new ApplicationError('Unimplemented');
             });
          }
       }
@@ -2384,7 +2389,7 @@ export default class {
       }
 
       sendCommandError(command, req, res, reqx, err) {
-         this.logger.warn(err);
+         this.logger.warn(err.message);
          try {
             this.sendStatusMessage(req, res, 500, err);
          } catch (error) {
@@ -2417,22 +2422,35 @@ export default class {
             if (err.hints) {
                hints = hints.concat(err.hints);
             }
-            hints = hints.map(hint => {
-               let url;
-               if (this.isBrowser(req)) {
-                  url = `/${hint.uri}`;
-               } else if (/localhost/.test(req.hostname)) {
-                  url = `http://localhost:8765/${hint.uri}`;
-               } else {
-                  url = `https://${req.hostname}/${hint.uri}`;
+            hints = hints.slice(0).map(hint => {
+               if (hint.url) {
+                  if (hint.message) {
+                     if (this.isBrowser(req)) {
+                        hint.url = `<a href="${hint.url}">${hint.message}</a>`;
+                        hint.message = '';
+                     }
+                  }
+               } else if (hint.uri) {
+                  let url;
+                  if (this.isBrowser(req)) {
+                     url = `/${hint.uri}`;
+                  } else if (/localhost/.test(req.hostname)) {
+                     url = `http://localhost:8765/${hint.uri}`;
+                  } else {
+                     url = `https://${req.hostname}/${hint.uri}`;
+                  }
+                  if (this.isBrowser(req)) {
+                     url = `Try <a href="${url}"><tt>${url}</tt></a>`;
+                  }
+                  hint.url = url;
                }
-               if (this.isBrowser(req)) {
-                  url = `Try <a href="${url}"><tt>${url}</tt></a>`;
-               }
-               return Object.assign({url}, hint);
+               return hint;
             });
             if (err.stack) {
-               messageLines.push(err.stack.split('\n').slice(0, 5));
+               if (err.name === 'ValidationError') {
+               } else {
+                  messageLines.push(err.stack.split('\n').slice(0, 5));
+               }
             }
          } else {
             this.logger.error('sendStatusMessage type', typeof err, err);

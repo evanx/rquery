@@ -146,7 +146,14 @@ function assignErrors(g) {
       this.name = 'ValidationError';
       var args = [].slice.call(arguments);
       if (args.length === 1) {
-         this.message = args[0].toString();
+         if (args[0].message) {
+            var err = args[0];
+            this.message = err.message;
+            this.hint = err.hint;
+            this.hints = err.hints;
+         } else {
+            this.message = args[0].toString();
+         }
       } else {
          this.message = args.toString();
       }
@@ -199,10 +206,18 @@ function assignDeps(g) {
    g.Promises = require('./Promises');
    g.Requests = require('./Requests');
    g.Strings = require('./Strings');
+   g.Values = require('./Values');
+   if (true) {
+      // TODO
+      assignDepsOptional(g);
+   }
+}
+
+function assignDepsOptional(g) {
    g.Styles = require('./Styles');
    g.HtmlElements = require('./HtmlElements');
    g.HtmlElements.assignDeps(g);
-   g.Values = require('./Values');
+   g.If = require('./If');
 }
 
 assignDeps(global);

@@ -23,7 +23,7 @@ c1commit() {
   git push
   c2notify joy committed &
   echo; echo "done"
-  git status
+  git status | sed '/^$/d'
 }
 
 if [ $# -eq 1 ]

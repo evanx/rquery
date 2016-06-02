@@ -9,15 +9,9 @@ exports.default = function (props) {
 
    assert(Values.isDefined(props.config.assetsUrl), 'assetsUrl');
    var reqx = props.reqx || {};
-   var backUrl = Hx.renderPath(props.backUrl || reqx.backUrl) || '/routes';
-   var helpPath = Hx.renderPath(props.helpPath || reqx.helpPath) || '/routes';
-   if (helpPath) {
-      backUrl = helpPath;
-   }
-   var clickScript = '';
-   if (backUrl) {
-      clickScript = 'window.location.pathname=\'' + backUrl + '\'';
-   }
+   var helpPath = props.helpPath || reqx.helpPath || '/routes';
+   var backPath = props.backPath || reqx.backPath || helpPath;
+   var clickScript = If.elseFn(backPath, '', HtmlElements.onClick);
    var content = [];
    content.push(He.img({ style: _styles.header.icon,
       src: props.config.assetsUrl + '/icomoon/png20-38/' + (props.icon || 'database') + '.png' }));

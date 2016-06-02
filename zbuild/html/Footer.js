@@ -7,11 +7,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = function (props) {
    assert(Values.isDefined(props.config.assetsUrl), 'assetsUrl');
    var reqx = props.reqx || {};
-   var backUrl = Hx.renderPath(props.helpPath || reqx.helpPath) || '/routes';
-   var clickScript = '';
-   if (backUrl) {
-      clickScript = 'window.location.pathname=\'' + backUrl + '\'';
-   }
+   var backPath = Hx.renderPath(props.helpPath || reqx.helpPath) || '/routes';
+   var clickScript = If.elseFn(backPath, '', HtmlElements.onClick);
    var content = [];
    content.push(He.img({ style: _styles.footer.icon,
       src: props.config.assetsUrl + '/icomoon/png20-38/' + (props.icon || 'database') + '.png' }));
