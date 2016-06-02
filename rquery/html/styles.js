@@ -209,6 +209,7 @@ const styles = {
          container: {
             paddingTop: 20,
             fontSize: 16,
+            cursor: 'pointer',
             //color: '#424242'
          },
          message: {
