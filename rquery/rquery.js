@@ -223,7 +223,7 @@ export default class {
          `Your RedisHub account name is <b>${account}</b>, as per your Telegram user.`,
          `Please use the following link to create a client cert:`,
          `${this.config.openHostname}/cert-script/${account}.`,
-         `E.g. use <code>curl</code> to pipe into <code>bash</code>.`
+         `E.g. use <code>curl</code> to pipe into <code>bash</code>.`,
          `Add <code>?archive</code> to the URL to archive if <code>~/.redishub/live</code> exists.`,
          `Because the script will refuse to overwrite an existing cert.`,
       ]);

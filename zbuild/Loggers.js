@@ -165,4 +165,3 @@ function create(filename, level) {
    level = level || global.loggerLevel;
    return new Logger({ name: name, level: level });
 };
-//# sourceMappingURL=Loggers.js.map

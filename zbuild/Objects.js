@@ -21,4 +21,3 @@ function kv(object, key) {
    assert.equal(typeof key === 'undefined' ? 'undefined' : _typeof(key), 'string');
    return { key: key, value: object[key] };
 }
-//# sourceMappingURL=Objects.js.map
