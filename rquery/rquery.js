@@ -1543,6 +1543,8 @@ export default class {
                      url: 'https://web.telegram.org/#/im?p=@redishub_bot'
                   }
                });
+
+               
             } else if (!certTail.endsWith(granted)) {
                throw new ValidationError({message: 'Granted cert not matching: ' + certTail,
                   hint: {
