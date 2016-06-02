@@ -2583,9 +2583,9 @@ export default class {
       return contentLines;
    }
 
-   tailPem(pem) {
+   extractPem(pem) {
       const contentLines = this.splitPem(pem);
-      return contentLines.join('').slice(-12);
+      return contentLines[4].slice(-12);
    }
 
    digestPem(pem) {
