@@ -4,7 +4,7 @@ config:
       type: 'string'
    redisKeyspace:
       type: 'string'
-   hostname:
+   hostDomain:
       type: 'string'
    location:
       defaultValue: '/'

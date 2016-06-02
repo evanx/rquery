@@ -14,7 +14,7 @@ module.exports = {
    },
    config: {
       serviceKey: {
-         type: 'string'         
+         type: 'string'
       },
       redisUrl: {
          type: 'string'
@@ -22,7 +22,7 @@ module.exports = {
       redisKeyspace: {
          type: 'string'
       },
-      hostname: {
+      hostDomain: {
          type: 'string'
       },
       hostUrl: {

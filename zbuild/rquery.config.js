@@ -27,7 +27,7 @@ module.exports = {
       redisKeyspace: {
          type: 'string'
       },
-      hostname: {
+      hostDomain: {
          type: 'string'
       },
       hostUrl: {

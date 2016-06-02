@@ -45,7 +45,7 @@ export default class {
          if (this.config.serviceKey === 'development') {
             next();
          } else if (scheme !== 'https') {
-            res.redirect(302, `https://${req.hostname}${req.url}`);
+            res.redirect(302, `https://${this.config.hostDomain}${req.url}`);
          } else {
             next();
          }
@@ -359,7 +359,7 @@ export default class {
          }
       }, async (req, res, reqx) => {
          let hostUrl = this.config.hostUrl;
-         if (this.config.hostname != 'localhost') {
+         if (this.config.hostDomain != 'localhost') {
             hostUrl = 'https://' + req.hostname;
          }
          const routes = Express.getRoutes(this.expressApp)
@@ -622,7 +622,7 @@ export default class {
          }, async (req, res, reqx) => {
             const {account, keyspace} = req.params;
             let hostUrl = this.config.hostUrl;
-            if (this.config.hostname !== 'localhost') {
+            if (this.config.hostDomain !== 'localhost') {
                hostUrl = `https://${req.hostname}`;
             }
             this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
@@ -1604,7 +1604,7 @@ export default class {
             const result = this.buildQrReply({
                otpSecret,
                user: account,
-               host: this.config.hostname,
+               host: this.config.hostDomain,
                label: this.config.serviceLabel
             });
             await this.sendResult({}, req, res, {}, result);
@@ -1883,16 +1883,16 @@ export default class {
                });
                this.validateAccess(req, reqx, {certs});
                let hostname;
-               if (req.hostname === this.config.hostname) {
+               if (req.hostname === this.config.hostDomain) {
                } else if (lodash.endsWith(req.hostname, this.config.keyspaceHostname)) {
                   hostname = req.hostname.replace(/\..*$/, '');
                   let hostHashes = await this.redis.hgetallAsync(this.adminKey('host', hostname));
                   if (!hostHashes) {
-                     throw new ValidationError(`Invalid hostname: ${hostname}`);
+                     throw new ValidationError(`Invalid host: ${hostname}`);
                   }
                   this.logger.debug('hostHashes', hostHashes);
                   if (!hostHashes.keyspaces) {
-                     throw new ValidationError(`Invalid hostname: ${hostname}`);
+                     throw new ValidationError(`Invalid host: ${hostname}`);
                   }
                   if (!lodash.includes(hostHashes.keyspaces, keyspace)) {
                      throw new ValidationError(`Invalid keyspace: ${keyspace}`);
