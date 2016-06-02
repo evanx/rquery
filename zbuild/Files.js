@@ -56,3 +56,4 @@ function writeFile(file, content) {
       return _fs2.default.writeFile(file, content, callback);
    });
 }
+//# sourceMappingURL=Files.js.map
