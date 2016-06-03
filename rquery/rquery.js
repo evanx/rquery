@@ -1448,7 +1448,7 @@ export default class {
       if (!dn.ou) throw new ValidationError({message: 'No client cert OU name',
          hint: this.hints.signup
       });
-      const [matching, role, account, domain] = dn.cn.split(':');
+      const [matching, account, role, id] = dn.cn.split(':');
       this.logger.debug('CN', matching);
       if (!matching) {
          throw new ValidationError({message: 'Cert CN mismatch',
