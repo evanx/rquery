@@ -18,6 +18,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
    const CN = ['rh', account, role, req.params.clientId || req.query.clientId || 'none'].join(':');
    const OU = role;
    const O = account;
+   const curlAccount = `curl -s -E ~/.redishub/live/privcert.pem \${serviceUrl}/ak/\${account}`;
    const help = [
       `To force archiving an existing \${dir}, add '?archive' to the URL:`,
       `   curl -s \${serviceUrl}/\${commandKey}/\${account}?archive | bash`,
@@ -25,10 +26,15 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       ``,
       `Use: \${dir}/privcert.pem (curl) and/or privcert.p12 (browser)`,
       ``,
-      `For example, Create a keyspace called 'tmp10days' as follows:`,
-      `   curl -s -E ~/.redishub/live/privcert.pem \${serviceUrl}/ak/\${account}/tmp10days/create-keyspace`,
+      `For example, create a keyspace called 'tmp10days' as follows:`,
+      `   ${curlAccount}/tmp10days/create-keyspace`,
       ``,
-      `See help for keyspace 'tmp10days' in your browser as follows:`,
+      `Then try Redis commands on this keyspace for example:`,
+      `   ${curlAccount}/tmp10days/help`,
+      `   ${curlAccount}/tmp10days/set/mykey/myvalue`,
+      `   ${curlAccount}/tmp10days/get/mykey`,
+      ``,
+      `Then in your browser, load 'privcert.p12' and try:`,
       `   \${serviceUrl}/ak/\${account}/tmp10days/help`,
       ``,
       `For CLI convenience, install rhcurl bash script, as per instructions:`,
