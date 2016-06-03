@@ -2098,7 +2098,7 @@ export default class {
       });
       const names = this.parseDn(dn);
       if (names.o !== account) throw new ValidationError({
-         message: 'O mismatches account', hint: this.hints.signup
+         message: 'Cert O name mismatches account', hint: this.hints.signup
       });
       const role = names.ou;
       if (!lodash.isEmpty(roles) && !roles.includes(role)) throw new ValidationError({
@@ -2107,9 +2107,7 @@ export default class {
       const certDigest = this.digestPem(cert);
       if (!certs.includes(certDigest)) {
          this.logger.info('validateCert', account, role, certDigest, certs);
-         throw {message: 'Invalid cert', hint: {
-            accountKey: ['create-account-telegram']
-         }};
+         throw {message: 'Invalid cert', hints: lodash.pick(this.hints, ['signup', 'grantCert'])};
       }
       return {certDigest, role};
    }
