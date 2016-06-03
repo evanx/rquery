@@ -16,7 +16,7 @@ export default async function (req, res, reqx, config) {
    const serviceUrl = config.hostUrl;
    const account = req.params.account;
    const role = req.params.role || req.query.role || 'admin';
-   const CN = ['rh', account, role, req.params.clientId || req.query.clientId || 'original'].join('~');
+   const CN = ['rh', account, role, req.params.clientId || req.query.clientId || 'original'].join(':');
    const OU = role;
    const O = account;
    const help = [
@@ -75,7 +75,7 @@ export default async function (req, res, reqx, config) {
       `  then # mkdir ok so directory did not exist`,
       `    echo "\${account}" > account`,
       `    if openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\`,
-      `      -subj "/CN=\${CN}/OU=\${OU}/O=\${U}" \\`,
+      `      -subj "/CN=\${CN}/OU=\${OU}/O=\${O}" \\`,
       `      -keyout privkey.pem -out cert.pem`,
       `    then`,
       `      openssl x509 -text -in cert.pem > x509.txt`,
