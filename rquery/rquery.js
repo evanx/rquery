@@ -551,7 +551,7 @@ export default class {
                res.set('Content-Type', 'text/html');
                res.send(ReactDOMServer.renderToString(<KeyspaceHelpPage reqx={reqx} result={result}/>));
             } else {
-               return result;
+               return Object.assign(result, {commands: result.commands.map(command => command.key)});
             }
          }
       }, async (req, res, reqx) => {
