@@ -45,17 +45,17 @@ export default async function (req, res, reqx, config) {
    result.push('');
    result.push('(');
    result = result.concat([
+      `  dir=${dir} # must not exist, or be archived`,
+      `  # Note that the following files are created in this dir:`,
+      `  #   account privkey.pem cert.pem privcert.pem privcert.p12 x509.txt`,
       `  commandKey='${commandKey}'`,
       `  serviceUrl='${serviceUrl}'`,
       `  account='${account}'`,
       `  archive=${archive}`,
-      `  dir=${dir} # must not exist, or be archived`,
-      `  # Note that the following files are created in this dir:`,
-      `  # account privkey.pem cert.pem privcert.pem privcert.p12 x509.txt`,
       `  CN='${CN}' # unique client ID (service, account, role, id)`,
       `  OU='${OU}' # role for this cert`,
       `  O='${O}' # account name`,
-      `  curlWithCert="\${serviceUrl}/create-account-telegram/\${account}"`,
+      `  certWebhook="\${serviceUrl}/create-account-telegram/\${account}"`,
       ``,
    ]);
    if (Values.isDefined(req.query.archive)) {
@@ -82,7 +82,7 @@ export default async function (req, res, reqx, config) {
       `      grep 'CN=' x509.txt`,
       `      cat privkey.pem cert.pem > privcert.pem`,
       `      openssl x509 -text -in privcert.pem | grep 'CN='`,
-      `      curl -s -E privcert.pem $curlUrl ||`,
+      `      curl -s -E privcert.pem "$certWebhook" ||`,
       `        echo "Registered account \${account} ERROR $?"`,
       `      if ! openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem`,
       `      then`,
