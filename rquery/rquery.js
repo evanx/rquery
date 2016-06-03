@@ -1448,16 +1448,20 @@ export default class {
       if (!dn.ou) throw new ValidationError({message: 'No client cert OU name',
          hint: this.hints.signup
       });
-      const matching = dn.ou.match(/^([\-_a-z]+)+%([\-_a-z]+)@(.*)$/);
-      this.logger.debug('OU', matching);
+      const [matching, role, account, domain] = dn.cn.split(':');
+      this.logger.debug('CN', matching);
       if (!matching) {
-         throw new ValidationError({message: 'Cert OU name not matching "role%account@domain"',
+         throw new ValidationError({message: 'Cert CN mismatch',
             hint: this.hints.signup
          });
       }
-      const [role, account, domain] = matching.slice(1);
-      if (!lodash.endsWith(req.hostname, domain)) {
-         throw new ValidationError({message: 'OU domain not matching: ' + req.hostname,
+      if (dn.ou !== role) {
+         throw new ValidationError({message: 'Cert OU/role mismatch',
+            hint: this.hints.signup
+         });
+      }
+      if (dn.o !== account) {
+         throw new ValidationError({message: 'Cert O/account mismatch',
             hint: this.hints.signup
          });
       }
