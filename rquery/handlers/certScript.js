@@ -97,11 +97,11 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       `        echo "ERROR $?: openssl pkcs12 ($PWD)"`,
       `        false # error code 1`,
       `      else`,
-      `        echo; pwd; ls -l`,
       `        echo "Exported $PWD/privcert.p12 OK"`,
       ]);
       result = result.concat(help.map(line => `        echo "${line}"`));
       result = result.concat([
+      `        echo; pwd; ls -l`,
       `        curl -s https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
       `      fi`,
       `    fi`,
