@@ -46,6 +46,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       `Curl this script and pipe into bash as follows:`,
       ``,
       `curl -s ${serviceUrl}/${commandKey}/${account} | bash`,
+      ``,
    ].map(line => `# ${line}`);
    result.push('');
    result.push('(');

@@ -36,7 +36,7 @@ export function render(props) {
       helpPath: ['routes'],
       content: [
          Hs.div(styles.result.message, props.result.message),
-         He.p(Styles.meta('repeat', styles.result.description), props.result.description),
+         Ho.p(Styles.meta('repeat', styles.result.description), props.result.description),
          renderUrls(props.result.exampleUrls, props.commandMap),
          He.br(),
          Hs.h4(styles.result.message, props.result.commandReferenceMessage),

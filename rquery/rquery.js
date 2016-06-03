@@ -544,6 +544,7 @@ export default class {
          sendResult: async (req, res, reqx, result) => {
             if (!this.isCliDomain(req)) {
                res.set('Content-Type', 'text/html');
+               result = lodash.omit(result, 'description');
                res.send(renderPage(KeyspaceHelp.render({
                   config: this.config, commandMap: this.commandMap,
                   req, reqx, result
