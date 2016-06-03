@@ -26,7 +26,7 @@ import styles from './html/styles';
 const unsupportedAuth = ['twitter.com', 'github.com', 'gitlab.com', 'bitbucket.org'];
 const supportedAuth = ['telegram.org'];
 
-export default class {
+export default class rquery {
 
    async testExit() {
       return false;
@@ -46,10 +46,10 @@ export default class {
             url: 'https://web.telegram.org/#/im?p=@redishub_bot'
          }
       };
-      global.rquery = this;
    }
 
    async start() {
+      assert(global.rquery.config === this.config, 'global config');
       this.redis = redisLib.createClient(this.config.redisUrl);
       this.expressApp = expressLib();
       this.expressApp.use((req, res, next) => {

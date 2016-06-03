@@ -12,6 +12,10 @@ module.exports = {
          serviceKey: 'development', // use for deploy branch and config
       }
    },
+   singleton: {
+      key: 'rquery',
+      pick: ['config']
+   },
    config: {
       serviceKey: {
          type: 'string'
