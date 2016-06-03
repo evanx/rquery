@@ -1,6 +1,5 @@
 
-
-export default async function (req, res, reqx, config) {
+export default async function handle(req, res, reqx, {config}) {
    if (req.query.dir && ['', '.', '..'].includes(req.query.dir)) {
       throw new ValidationError('Empty or invalid "dir"');
    }

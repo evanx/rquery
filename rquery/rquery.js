@@ -46,6 +46,7 @@ export default class {
             url: 'https://web.telegram.org/#/im?p=@redishub_bot'
          }
       };
+      global.rquery = this;
    }
 
    async start() {
@@ -273,8 +274,8 @@ export default class {
       if (!match) {
          await this.sendTelegram(request.chatId, 'html', [
             `Sorry, that appears to be invalid. Try <code>/grantcert &lt;DIGEST&gt;</code>,`,
-            `where <code>DIGEST</code> is returned by <code>${this.config.secureHostname}/digest-cert</code>`,
-            `performed with the cert to be enrolled`,
+            `where <code>DIGEST</code> is returned by <code>${this.config.secureHostname}/register-cert</code>`,
+            `performed with the cert to be enrolled.`,
             ``
          ]);
          return;
@@ -533,7 +534,7 @@ export default class {
          key: 'cert-script',
          params: ['account'],
          format: 'cli'
-      }, (req, res, reqx) => handleCertScript(req, res, reqx, this.config));
+      }, (req, res, reqx) => handleCertScript(req, res, reqx, {config: this.config}));
       this.addRegisterRoutes();
       this.addAccountRoutes();
       this.addKeyspaceCommand({
