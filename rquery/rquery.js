@@ -1475,7 +1475,7 @@ export default class {
          multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
       });
       if (!granted) {
-         throw new ValidationError({message: 'Cert not granted via @redishub_bot',
+         throw new ValidationError({message: 'Cert not granted yet via @redishub_bot',
             hint: {
                message: [
                   `Try @redishub_bot "/grantcert ${shortDigest}"`,
@@ -2167,7 +2167,9 @@ export default class {
                resultString = lodash.flatten(Object.keys(result).map(key => {
                   let value = result[key];
                   if (lodash.isArray(value)) {
-                     return ['', key + ':', ...value];
+                     const array = value;
+                     return ['', key + ':'].concat(array.map(element => element.toString()));
+
                   } else if (typeof value === 'string') {
                      if (key === 'message') {
                         return value;
@@ -2500,8 +2502,14 @@ export default class {
             ]
          }));
       } else {
+         messageLines = messageLines.concat(lodash.compact(hints.map(hint => {
+            if (hint.message) {
+               return messageLines.push(this.message);
+            } else if (hint.url) {
+               return messageLines.push(this.url);
+            }
+         })));
          this.logger.warn('status lines', req.path, statusCode, messageLines);
-         // TODO hints
          res.status(statusCode).send(lodash.flatten([title, ...messageLines]).join('\n') + '\n');
       }
    }
