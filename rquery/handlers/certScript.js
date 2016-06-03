@@ -16,7 +16,7 @@ export default async function (req, res, reqx, config) {
    const serviceUrl = config.hostUrl;
    const account = req.params.account;
    const role = req.params.role || req.query.role || 'admin';
-   const CN = ['rh', account, role, req.params.clientId || req.query.clientId || 'me'].join('/');
+   const CN = ['rh', account, role, req.params.clientId || req.query.clientId || 'original'].join('%');
    const OU = role;
    const O = account;
    const help = [
