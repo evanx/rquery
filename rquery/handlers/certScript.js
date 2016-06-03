@@ -1,5 +1,5 @@
 
-export default async function handle(req, res, reqx, {config}) {
+export default async function handleCertScript(req, res, reqx, {config}) {
    if (req.query.dir && ['', '.', '..'].includes(req.query.dir)) {
       throw new ValidationError('Empty or invalid "dir"');
    }
@@ -60,7 +60,7 @@ export default async function handle(req, res, reqx, {config}) {
    if (Values.isDefined(req.query.archive)) {
       result = result.concat([
          `  mkdir -p \${archive} # ensure dir exists`,
-         `  mv -n \${dir} \${archive}/\`date +'%Y-%M-%dT%Hh%Mm%Ss%s'\``,
+         `  mv -n \${dir} \${archive}/\`date +'%Y-%m-%dT%Hh%Mm%Ss%s'\``,
       ]);
    } else if (!lodash.isEmpty(req.query.dir)) {
    } else {
