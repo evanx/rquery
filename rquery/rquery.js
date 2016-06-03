@@ -552,7 +552,15 @@ export default class {
                res.send(ReactDOMServer.renderToString(<KeyspaceHelpPage reqx={reqx} result={result}/>));
             } else {
                return Object.assign(result, {commands: result.commands.map(command => {
-                  return [command.key].concat(command.params || []).join('/');
+                  if (lodash.isEmpty(command.params)) {
+                     if (command.description) {
+                        return command.key;
+                     } else {
+                        return command.key;
+                     }
+                  } else {
+                     return [command.key].concat(command.params.map(param => ':' + param)).join('/');
+                  }
                })});
             }
          }
