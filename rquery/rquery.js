@@ -2454,7 +2454,8 @@ export default class rquery {
          if (err.hints) {
             hints = hints.concat(err.hints);
          }
-         hints = hints.slice(0).map(hint => {
+         hints = hints.map(hint => {
+            hint = Object.assign({}, hint);
             if (hint.url) {
                if (hint.message) {
                   if (this.isBrowser(req)) {
