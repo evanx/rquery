@@ -1485,13 +1485,13 @@ export default class rquery {
          multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
       });
       if (!granted) {
-         throw new ValidationError({message: 'Cert not granted yet via @redishub_bot',
+         throw new ValidationError({message: 'Cert must be granted via @redishub_bot',
             hint: {
                message: [
                   `Try @redishub_bot "/grantcert ${shortDigest}"`,
                   `e.g. via https://web.telegram.org,`,
                ].join(' '),
-               clipboard: shortDigest,
+               clipboard: `@redishub_bot "/grantcert ${shortDigest}`,
                url: `https://web.telegram.org/#/im?p=@redishub_bot#grantcert-${shortDigest}`
             }
          });
@@ -1505,7 +1505,7 @@ export default class rquery {
                + ` from the authoritative Telegram account`
                + ` e.g. via https://web.telegram.org`
                ,
-               clipboard: shortDigest,
+               clipboard: `@redishub_bot "/grantcert ${shortDigest}`,
                url: `https://web.telegram.org/#/im?p=@redishub_bot#grantcert-${shortDigest}`
             }
          });
