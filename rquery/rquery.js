@@ -2499,6 +2499,7 @@ export default class rquery {
          this.logger.debug('hints', hints);
          res.set('Content-Type', 'text/html');
          res.status(statusCode).send(renderPage({
+            backUrl: '/routes',
             config: this.config,
             req, reqx, title, heading,
             content: [

@@ -13,7 +13,7 @@ const lightTheme = {
       message: '#c2c2c2',
       description: '#808080',
       result: '#a2a2a2',
-      keyspaceName: '#606060'
+      keyspaceName: '#505050'
    },
    backgroundColors: {
       body: '#101010',
@@ -83,27 +83,24 @@ const styles = {
          border: 'bottom 1px #000'
       },
       icon: {
-         //float: 'left',
          display: 'inline-block',
          width: 20,
          height: 20
       },
       title: {
+         fontSize: 18,
+         fontWeight: 'bold',
          fontFamily: 'monospace',
-         //float: 'left',
          display: 'inline-block',
          margin: [0, 0, 0, 0],
          padding: [0, 0, 0, 12],
-         fontSize: 18,
-         fontWeight: 'bold'
       },
       heading: {
+         fontSize: 18,
          fontFamily: 'monospace',
-         //float: 'left',
          display: 'inline-block',
          margin: [0, 0, 0, 0],
          padding: [0, 0, 0, 12],
-         fontSize: 18,
       },
       keyspace: {
          display: 'inline-block',
