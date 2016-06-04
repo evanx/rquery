@@ -3,33 +3,45 @@ function iconBackgroundImage(name) {
    return `url(https://test.redishub.com/assets/icomoon/png20-38/${name}.png)`
 }
 
-const colors = {
-   body: '#808888',
-   error: '#808080',
-   link: '#116666',
-   commandParams: '#808080'
+const lightTheme = {
+   colors: {
+      body: '#a0a0a0',
+      error: '#808080',
+      link: '#13acac',
+      commandKey: '#c2c2c2',
+      commandParams: '#808080',
+      message: '#e2e2e2',
+      description: '#808080',
+      result: '#a2a2a2',
+      keyspaceName: '#606060'
+   },
+   backgroundColors: {
+      body: '#101010',
+      pre: '#181818',
+   }
 };
 
-const backgroundColors = {
-   body: '#101010',
-   pre: '#181818',
-   commandParams: colors.body
-};
+function createTheme(theme) {
+   theme.backgroundColors.commandParams = theme.colors.body;
+   return theme;
+}
+
+const theme = createTheme(lightTheme);
 
 const styles = {
    resets: {
       body: {
          padding: 10,
-         color: colors.body,
-         backgroundColor: backgroundColors.body,
+         color: theme.colors.body,
+         backgroundColor: theme.backgroundColors.body,
          fontFamily: 'verdana'
       },
       a: {
          textDecoration: 'none',
-         color: colors.link
+         color: theme.colors.link
       },
       "a:visited": {
-         color: colors.link
+         color: theme.colors.link
       },
       img_icon: {
          backgroundPosition: [0, 0],
@@ -43,7 +55,7 @@ const styles = {
          marginTop: 10
       },
       pre: {
-         backgroundColor: backgroundColors.pre
+         backgroundColor: theme.backgroundColors.pre
       }
    },
    _768: {
@@ -95,7 +107,7 @@ const styles = {
       },
       keyspace: {
          display: 'inline-block',
-         color: '#303030',
+         color: theme.colors.keyspaceName,
          paddingLeft: 8
       }
    },
@@ -105,6 +117,7 @@ const styles = {
          fontFamily: 'monospace',
          fontSize: 16,
          marginBottom: 6,
+         color: theme.colors.link
       },
       command: {
          fontFamily: 'monospace',
@@ -138,7 +151,7 @@ const styles = {
       status: {
          fontSize: 14,
          fontStyle: 'italic',
-         color: colors.error
+         color: theme.colors.error
       },
       message: {
          paddingTop: 0,
@@ -166,20 +179,20 @@ const styles = {
       message: {
          fontFamily: "'Ubuntu', 'Open Sans', sansserif",
          fontSize: 16,
-         color: '#606060',
-         fontWeight: 'bold'
+         fontWeight: 'bold',
+         color: theme.colors.message
       },
       description: {
          fontFamily: "'Ubuntu', 'Open Sans', sansserif",
          fontSize: 15,
-         color: '#505050',
          lineHeight: 1.4,
          marginTop: 8,
+         color: theme.colors.description
       },
       commandKey: {
-         fontSize: 18,
+         fontSize: 19,
          fontStyle: 'italic',
-         color: '#424242'
+         color: theme.colors.commandKey
       },
       commandParams: {
          display: 'inline-block',
@@ -187,7 +200,7 @@ const styles = {
          lineHeight: 1.5,
          margin: [4, 4, 8, 16],
          fontSize: 14,
-         color: colors.commandParams
+         color: theme.colors.commandParams
       },
       reqKey: {
          padding: [8, 0, 4, 4],
@@ -198,7 +211,7 @@ const styles = {
          marginTop: 8,
          fontSize: 16,
          fontFamily: 'monospace',
-         color: '#424242'
+         color: theme.colors.result
       },
       resultArray: {
          lineHeight: 2,
@@ -224,7 +237,7 @@ const styles = {
             paddingTop: 20,
             fontSize: 16,
             cursor: 'pointer',
-            //color: '#424242'
+            color: theme.colors.link,
          },
          message: {
             fontSize: 16,
@@ -233,11 +246,9 @@ const styles = {
             paddingTop: 5,
             fontSize: 16,
             fontStyle: 'italic',
-            color: '#116464',
          },
          link: {
             fontSize: 14,
-            color: '#116464',
          },
          uri: {
             fontSize: 12,
