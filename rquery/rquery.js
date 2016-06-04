@@ -2456,12 +2456,16 @@ export default class rquery {
             if (hint.url) {
                if (hint.message) {
                   if (this.isBrowser(req)) {
-                     if (hint.clipboard) {
-                        const onClick = `window.prompt('Copy to clipboard via Ctrl-C', '${hint.clipboard}')`;
-                        hint.url = `<a href="${hint.url}" onClick="${onClick}">${hint.message}</a>`;
-                     } else {
-                        hint.url = `<a href="${hint.url}">${hint.message}</a>`;
+                     const attributes = {
+                        href: hint.url
+                     };
+                     if (hint.url[0] !== '/') {
+                        attributes.target = '_blank';
                      }
+                     if (hint.clipboard) {
+                        attributes.onClick = `window.prompt('Copy to clipboard via Ctrl-C', '${hint.clipboard}')`;
+                     }
+                     hint.url = He.a(attributes, hint.message);
                      hint.message = '';
                   } else if (hint.message) {
                      hint.message = hint.message.replace(/<\/?(b|tt|i|code|pre)>/g, '');
