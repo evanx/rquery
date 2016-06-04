@@ -10,6 +10,7 @@ module.exports = {
          hostUrl: 'https://secure.redishub.com',
          serviceKey: 'secure',
          serviceLabel: 'RedisHub',
+         adminBotName: 'redishub',
          port: 4567,
          location: '',
          assetsUrl: '/assets',

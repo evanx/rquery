@@ -4,23 +4,24 @@ import styles from './styles';
 const logger = Loggers.create(module.filename);
 
 export default function (props) {
-   logger.debug('props', Object.keys(props));
+   logger.debug('props', Object.keys(props), props.result.message.join(' '));
    return Object.assign(props, {
       backPath: 'https://github.com/evanx/redishub/blob/master/README.md',
       title: props.config.serviceLabel,
-      content: `
-      <h3>Basic</h3>
-      ${renderUrls(props.result.common).join('\n')}
-      <h3>Ephemeral</h3>
-      ${renderPaths(props.result.ephemeral).join('\n')}
-      <h3>Miscellaneous</h3>
-      ${renderPaths(props.result.misc).join('\n')}
-      <h3>Telegram</h3>
-      ${renderPaths(props.result.telegram).join('\n')}
-      ${renderAccount(props.result.account)}
-      <h3>Account keyspace</h3>
-      ${renderPaths(props.result.accountKeyspace).join('\n')}
-      `
+      content: lodash.flatten([
+         He.p({}, props.result.message.join(' ')),
+         `<h3>Basic</h3>`,
+         renderUrls(props.result.common),
+         `<h3>Ephemeral</h3>`,
+         renderPaths(props.result.ephemeral),
+         `<h3>Miscellaneous</h3>`,
+         renderPaths(props.result.misc),
+         `<h3>Telegram</h3>`,
+         renderPaths(props.result.telegram),
+         renderAccount(props.result.account),
+         `<h3>Account keyspace</h3>`,
+         renderPaths(props.result.accountKeyspace)
+      ]).join('\n')
    });
 }
 

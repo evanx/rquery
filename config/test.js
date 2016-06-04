@@ -10,6 +10,7 @@ module.exports = {
          hostUrl: 'https://test.redishub.com',
          serviceKey: 'test',
          serviceLabel: 'RH Test',
+         adminBotName: 'rhtest',
          port: 4567,
          location: '',
          assetsUrl: '/assets',

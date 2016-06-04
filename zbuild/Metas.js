@@ -1,4 +1,114 @@
-'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports.isSpecType=isSpecType;exports.pickEnv=pickEnv;exports.getErrorKeys=getErrorKeys;exports.getDefault=getDefault;exports.getEnv=getEnv;var logger=Loggers.create(__filename,'info');function isSpecType(meta,type){logger.debug('isSpecType',meta.spec,type);return meta.spec.includes(type);}function pickEnv(meta,env){var result={};Object.keys(meta).filter(function(key){return env.hasOwnProperty(key);}).forEach(function(key){return result[key]=env[key];});return result;}function getErrorKeys(meta,props){return Object.keys(meta).filter(function(key){return !isValid(meta[key],key,props[key]);});}function isValid(meta,key,value){logger.debug('isValid',key,value,meta);if(lodash.isString(meta)){return lodash.isString(value);}else if(value===undefined){return meta.optional;}else if(meta.type==='url'){return typeof value==='string'&&value.match(/^http/);}else if(meta.type==='file'){return typeof value==='string'&&Files.existsFile(value);}else if(meta.type==='string'){return typeof value==='string';}else if(meta.type==='duration'){return parseInt(value)===value;}else if(meta.type==='integer'){return parseInt(value)===value;}else if(meta.type==='boolean'||lodash.isBoolean(meta.defaultValue)){return lodash.isBoolean(value);}else if(meta.type==='object'){return Object.keys(value).length;}else if(lodash.isString(meta.defaultValue)&&lodash.isString(value)){if(meta.regex){logger.debug('isValid',meta,value);return new RegExp('^'+meta.regex+'$').test(value);}else {return true;}}else if(meta.defaultValue>0&&value>0){if(meta.regex){return new RegExp('^'+meta.regex+'$').test(''+value);}else {return true;}return true;}else if(lodash.isArray(meta.defaultValue)&&lodash.isArray(value)){return true;}else {return false;}}function getDefault(meta){var result={};Object.keys(meta).filter(function(key){return Values.isDefined(translateMeta(meta[key]).defaultValue);}).forEach(function(key){return result[key]=translateMeta(meta[key]).defaultValue;});return result;}function translateMeta(meta){if(lodash.isString(meta)){return {type:'string',defaultValue:meta};}else {return meta;}}function getEnv(meta,componentName,env){var result={};Object.keys(meta).filter(function(key){var envKey=[componentName,key].join('_');return env.hasOwnProperty(envKey);}).forEach(function(key){var envKey=[componentName,key].join('_');result[key]=env[envKey];});logger.info('getEnv',componentName,Object.keys(result));return result;} // TODO integration the following
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+   value: true
+});
+exports.isSpecType = isSpecType;
+exports.pickEnv = pickEnv;
+exports.getErrorKeys = getErrorKeys;
+exports.getDefault = getDefault;
+exports.getEnv = getEnv;
+
+var logger = Loggers.create(__filename, 'info');
+
+function isSpecType(meta, type) {
+   logger.debug('isSpecType', meta.spec, type);
+   return meta.spec.includes(type);
+}
+
+function pickEnv(meta, env) {
+   var result = {};
+   Object.keys(meta).filter(function (key) {
+      return env.hasOwnProperty(key);
+   }).forEach(function (key) {
+      return result[key] = env[key];
+   });
+   return result;
+}
+
+function getErrorKeys(meta, props) {
+   return Object.keys(meta).filter(function (key) {
+      return !isValid(meta[key], key, props[key]);
+   });
+}
+
+function isValid(meta, key, value) {
+   logger.debug('isValid', key, value, meta);
+   if (lodash.isString(meta)) {
+      return lodash.isString(value);
+   } else if (value === undefined) {
+      return meta.optional;
+   } else if (meta.type === 'url') {
+      return typeof value === 'string' && value.match(/^http/);
+   } else if (meta.type === 'file') {
+      return typeof value === 'string' && Files.existsFile(value);
+   } else if (meta.type === 'string') {
+      return typeof value === 'string';
+   } else if (meta.type === 'duration') {
+      return parseInt(value) === value;
+   } else if (meta.type === 'integer') {
+      return parseInt(value) === value;
+   } else if (meta.type === 'boolean' || lodash.isBoolean(meta.defaultValue)) {
+      return lodash.isBoolean(value);
+   } else if (meta.type === 'object') {
+      return Object.keys(value).length;
+   } else if (lodash.isString(meta.defaultValue) && lodash.isString(value)) {
+      if (meta.regex) {
+         logger.debug('isValid', meta, value);
+         return new RegExp('^' + meta.regex + '$').test(value);
+      } else {
+         return true;
+      }
+   } else if (meta.defaultValue > 0 && value > 0) {
+      if (meta.regex) {
+         return new RegExp('^' + meta.regex + '$').test('' + value);
+      } else {
+         return true;
+      }
+      return true;
+   } else if (lodash.isArray(meta.defaultValue) && lodash.isArray(value)) {
+      return true;
+   } else {
+      return false;
+   }
+}
+
+function getDefault(meta) {
+   var result = {};
+   Object.keys(meta).filter(function (key) {
+      return Values.isDefined(translateMeta(meta[key]).defaultValue);
+   }).forEach(function (key) {
+      return result[key] = translateMeta(meta[key]).defaultValue;
+   });
+   return result;
+}
+
+function translateMeta(meta) {
+   if (lodash.isString(meta)) {
+      return {
+         type: 'string',
+         defaultValue: meta
+      };
+   } else {
+      return meta;
+   }
+}
+
+function getEnv(meta, componentName, env) {
+   var result = {};
+   Object.keys(meta).filter(function (key) {
+      var envKey = [componentName, key].join('_');
+      return env.hasOwnProperty(envKey);
+   }).forEach(function (key) {
+      var envKey = [componentName, key].join('_');
+      result[key] = env[envKey];
+   });
+   logger.info('getEnv', componentName, Object.keys(result));
+   return result;
+}
+
+// TODO integration the following
+
 /*
 var that = {
    minTimestamp: 1459109145,

@@ -28,6 +28,9 @@ function createTheme(theme) {
 
 const theme = createTheme(lightTheme);
 
+function assign(styles, theme) { // TODO
+}
+
 const styles = {
    resets: {
       body: {

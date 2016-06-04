@@ -11,20 +11,15 @@ import concatStream from 'concat-stream';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
-import * as Files from './Files';
-import * as Express from './Express';
-
 import {default as handleCertScript} from './handlers/certScript';
 import {default as renderPage} from './html/Page';
-import {default as renderHelp} from './html/Help';
 import * as KeyspaceHelp from './html/KeyspaceHelp';
+
+import * as Result from './handlers/Result';
 
 import KeyspaceHelpPage from './jsx/KeyspaceHelpPage';
 
 import styles from './html/styles';
-
-const unsupportedAuth = ['twitter.com', 'github.com', 'gitlab.com', 'bitbucket.org'];
-const supportedAuth = ['telegram.org'];
 
 export default class rquery {
 
@@ -46,12 +41,12 @@ export default class rquery {
             url: 'https://web.telegram.org/#/im?p=@redishub_bot'
          }
       };
+      this.redis = redisLib.createClient(this.config.redisUrl);
+      this.expressApp = expressLib();
    }
 
    async start() {
       assert(global.rquery.config === this.config, 'global config');
-      this.redis = redisLib.createClient(this.config.redisUrl);
-      this.expressApp = expressLib();
       this.expressApp.use((req, res, next) => {
          const scheme = req.get('X-Forwarded-Proto');
          if (this.config.serviceKey === 'development') {
@@ -68,6 +63,7 @@ export default class rquery {
             next();
          }));
       });
+      this.addMonitoringRoutes();
       this.addRoutes();
       if (this.config.disableTelegramHook) {
          this.logger.warn('telegram webhook disabled');
@@ -77,6 +73,9 @@ export default class rquery {
       this.expressApp.use((req, res) => this.sendErrorRoute(req, res));
       this.expressServer = await Express.listen(this.expressApp, this.config.port);
       this.logger.info('listen', this.config.port, this.config.redisUrl);
+   }
+
+   addMonitoringRoutes() { // TODO
    }
 
    sendErrorRoute(req, res) {
@@ -346,61 +345,8 @@ export default class rquery {
    }
 
    addRoutes() {
-      this.addPublicCommand({
-         key: 'routes',
-         access: 'debug',
-         aliases: ['/'],
-         resultObjectType: 'KeyedArrays',
-         sendResult: async (req, res, reqx, result) => {
-            if (this.isCliDomain(req)) {
-               return result;
-            } else {
-               res.set('Content-Type', 'text/html');
-               res.send(renderPage(renderHelp({
-                  config: this.config, req, result, homePath: '/'
-               })));
-            }
-         }
-      }, async (req, res, reqx) => {
-         let hostUrl = this.config.hostUrl;
-         if (this.config.hostDomain != 'localhost') {
-            hostUrl = 'https://' + req.hostname;
-         }
-         const routes = Express.getRoutes(this.expressApp)
-         .filter(route => !['/', '/routes', '/webhook-telegram/*', '/help', '/about'].includes(route));
-         const accountOnlyRoutes = routes
-         .filter(route => route.includes(':account') && !route.includes(':keyspace'));
-         return {
-            common: routes
-            .filter(route => route)
-            .filter(route => !route.includes(':'))
-            .filter(route => ![
-               '/epoch', '/register-ephemeral'
-            ].includes(route))
-            .filter(route => route !== '/enroll-cert' || this.isSecureDomain(req))
-            .filter(route => route !== '/register-cert' || this.isSecureDomain(req))
-            .map(route => `${hostUrl}${route}`)
-            ,
-            misc: routes
-            .filter(route => route.includes(':') && !route.includes('telegram') && !/\:(account|access)/.test(route))
-            .map(route => `${route}`)
-            ,
-            ephemeral: routes
-            .filter(route => route.includes('-ephemeral') && route !== '/register-ephemeral')
-            .map(route => `${route}`)
-            ,
-            telegram: routes
-            .filter(route => route.includes('telegram'))
-            .map(route => `${route}`)
-            ,
-            account: accountOnlyRoutes.map(route => `${route}`)
-            ,
-            accountKeyspace: routes
-            .filter(route => route.includes(':account') && route.includes(':keyspace/'))
-            .map(route => `${route}`)
-         };
-      });
-      this.addPublicCommand({
+      this.addPublicCommand(require('./handlers/routes'));
+      this.addPublicCommandHandler({
          key: 'about',
          access: 'redirect',
       }, async (req, res) => {
@@ -461,7 +407,7 @@ export default class rquery {
          return Math.ceil(time[0] * 1000 * 1000 + parseInt(time[1]));
       });
       this.addPublicRoute('time', () => this.redis.timeAsync());
-      this.addPublicCommand({
+      this.addPublicCommandHandler({
          key: 'genkey-otp',
          params: ['user', 'host'],
          format: 'json'
@@ -470,7 +416,7 @@ export default class rquery {
          this.logger.debug('genkey-otp', user, host);
          return this.buildQrReply({user, host});
       });
-      this.addPublicCommand({
+      this.addPublicCommandHandler({
          key: 'genkey-ga',
          params: ['address', 'issuer'],
          format: 'json'
@@ -482,7 +428,7 @@ export default class rquery {
       if (!this.config.secureDomain) {
          this.logger.warn('insecure mode');
       } else {
-         this.addPublicCommand({
+         this.addPublicCommandHandler({
             key: 'gentoken',
             params: ['account']
          }, async (req, res, reqx) => {
@@ -507,7 +453,7 @@ export default class rquery {
          });
          this.addSecureDomain();
       }
-      this.addPublicCommand({
+      this.addPublicCommandHandler({
          key: 'verify-user-telegram',
          params: ['user']
       }, async (req, res) => {
@@ -530,7 +476,7 @@ export default class rquery {
             return `Telegram user not yet verified: ${user}. Please Telegram '@redishub_bot /verifyme' e.g. via https://web.telegram.org`;
          }
       });
-      this.addPublicCommand({
+      this.addPublicCommandHandler({
          key: 'cert-script',
          params: ['account'],
          format: 'cli'
@@ -1355,7 +1301,15 @@ export default class rquery {
       }
    }
 
-   addPublicCommand(command, fn) {
+   addPublicCommandHandler(command, handleReq) {
+      assert(lodash.isFunction(handleReq), 'handleReq');
+      assert(!Values.isDefined(command.handleReq));
+      command.handleReq = handleReq;
+      this.addPublicCommand(command);
+   }
+
+   addPublicCommand(command) {
+      assert(Values.isDefined(command.handleReq), Loggers.keys(command, 'command'));
       let uri = command.key;
       if (command.params) {
          uri = [command.key, ... command.params.map(param => ':' + param)].join('/');
@@ -1366,10 +1320,11 @@ export default class rquery {
             if (match) {
                throw {message: 'Invalid path: leading colon. Try substituting parameter: ' + match.pop()};
             }
-            const result = await fn(req, res, {command});
+            this.logger.debug('command', command.key);
+            const result = await command.handleReq(req, res, {command});
             if (command.access === 'redirect') {
             } else if (result !== undefined) {
-               await this.sendResult(command, req, res, {}, result);
+               await Result.sendResult(command, req, res, {}, result);
             }
          } catch (err) {
             this.sendError(req, res, err);
@@ -1385,7 +1340,7 @@ export default class rquery {
          try {
             const result = await fn(req, res);
             if (result !== undefined) {
-               await this.sendResult({}, req, res, {}, result);
+               await Result.sendResult({}, req, res, {}, result);
             }
          } catch (err) {
             this.sendError(req, res, err);
@@ -1394,40 +1349,40 @@ export default class rquery {
    }
 
    addRegisterRoutes() {
-      this.addPublicCommand({
+      this.addPublicCommandHandler({
          key: 'register-ephemeral' // TODO remove 10 june
       }, async (req, res) => {
          req.params = {account: 'hub'};
          return this.createEphemeral(req, res);
       });
-      this.addPublicCommand({
+      this.addPublicCommandHandler({
          key: 'create-ephemeral'
       }, async (req, res) => {
          req.params = {account: 'hub'};
          return this.createEphemeral(req, res);
       });
-      this.addPublicCommand({
+      this.addPublicCommandHandler({
          key: 'create-ephemeral-named',
          params: ['keyspace', 'access']
       }, async (req, res) => {
          req.params = {account: 'hub'};
          return this.createEphemeral(req, res);
       });
-      this.addPublicCommand({
+      this.addPublicCommandHandler({
          key: 'create-ephemeral-access',
          params: ['access']
       }, async (req, res) => {
          req.params.account = 'hub';
          return this.createEphemeral(req, res);
       });
-      this.addPublicCommand({
+      this.addPublicCommandHandler({
          key: 'create-account-telegram',
          params: ['account'],
          description: 'create a new account linked to an authoritative Telegram.org account'
       }, async (req, res, reqx) => {
          return this.createAccount(req, res, reqx);
       });
-      this.addPublicCommand({
+      this.addPublicCommandHandler({
          key: 'destroy-account',
          params: ['account'],
          description: 'destroy an account'
@@ -1441,10 +1396,10 @@ export default class rquery {
          }
          throw {message: 'Not implemented'};
       });
-      this.addPublicCommand({
+      this.addPublicCommandHandler({
          key: 'register-cert'
       }, this.registerCert.bind(this));
-      this.addPublicCommand({
+      this.addPublicCommandHandler({
          key: 'enroll-cert'
       }, this.registerCert.bind(this));
    }
@@ -1614,7 +1569,7 @@ export default class rquery {
             host: this.config.hostDomain,
             label: this.config.serviceLabel
          });
-         await this.sendResult({}, req, res, {}, result);
+         await Result.sendResult({}, req, res, {}, result);
       } catch (err) {
          this.sendError(req, res, err);
       }
@@ -1654,7 +1609,7 @@ export default class rquery {
             const reqx = {command, account, accountKey, time, admined, certDigest};
             const result = await fn(req, res, reqx);
             if (result !== undefined) {
-               await this.sendResult(command, req, res, reqx, result);
+               await Result.sendResult(command, req, res, reqx, result);
             }
          } catch (err) {
             this.sendError(req, res, err);
@@ -1921,7 +1876,7 @@ export default class rquery {
             }
             const result = await fn(req, res, reqx, multi);
             if (result !== undefined) {
-               await this.sendResult(command, req, res, reqx, result);
+               await Result.sendResult(command, req, res, reqx, result);
             }
             if (key) {
                assert(reqx.keyspaceKey);
@@ -1969,8 +1924,7 @@ export default class rquery {
    validateRegisterAccount(account) {
       if (lodash.isEmpty(account)) {
          return 'Invalid account (empty)';
-      } else if (['hub', 'pub', 'public'].includes(account)) {
-         return 'Invalid account (reserved name)';
+      } else if (['hub', 'pub', 'public', 'ephemeral'].includes(account)) {
       } else if (!/^[\-_a-z0-9]+$/.test(account)) {
          return 'Account name is invalid. Try only lowercase/numeric with dash/underscore.';
       }
@@ -2137,240 +2091,6 @@ export default class rquery {
       return [this.config.redisKeyspace, ...parts].join(':');
    }
 
-   async sendResult(command, req, res, reqx, result) {
-      const userAgent = req.get('User-Agent');
-      const uaMatch = userAgent.match(/\s([A-Z][a-z]*\/[\.0-9]+)\s/);
-      this.logger.debug('sendResult ua', !uaMatch? userAgent: uaMatch[1]);
-      command = command || {};
-      const mobile = this.isMobile(req);
-      this.logger.debug('sendResult mobile', mobile, command.key);
-      if (this.isDevelopment(req)) {
-         this.logger.debug('sendResult command', command.key, req.params, lodash.isArray(result));
-      } else {
-      }
-      if (command.sendResult) {
-         if (lodash.isFunction(command.sendResult)) {
-            const otherResult = await command.sendResult(req, res, reqx, result);
-            if (otherResult === undefined) {
-               return;
-            } else {
-               result = otherResult;
-            }
-         } else {
-            throw {message: 'command.sendResult type: ' + typeof command.sendResult};
-         }
-      }
-      let resultString = '';
-      if (!Values.isDefined(result)) {
-         this.logger.error('sendResult none');
-      } else if (Values.isDefined(req.query.json) || (command.format === 'json' && !mobile)) {
-         res.json(result);
-         return;
-      } else if (Values.isDefined(req.query.quiet)) {
-      } else if (this.config.defaultFormat === 'cli' || Values.isDefined(req.query.line)
-      || this.isCliDomain(req) || command.format === 'cli') {
-         res.set('Content-Type', 'text/plain');
-         if (lodash.isArray(result)) {
-            if (mobile) {
-            } else {
-               resultString = result.join('\n');
-            }
-         } else if (lodash.isObject(result)) {
-            if (command.resultObjectType === 'KeyedArrays') {
-               resultString = lodash.flatten(Object.keys(result).map(key => {
-                  let value = result[key];
-                  if (lodash.isArray(value)) {
-                     const array = value;
-                     return ['', key + ':'].concat(array.map(element => element.toString()));
-
-                  } else if (typeof value === 'string') {
-                     if (key === 'message') {
-                        return value;
-                     } else {
-                        return key + ': ' + value;
-                     }
-                  } else {
-                     return ['', key + ':', 'type:' + typeof value];
-                  }
-               })).join('\n');
-            } else {
-               resultString = Object.keys(result).map(key => {
-                  let value = result[key];
-                  if (parseInt(value) === value) {
-                     value = parseInt(value);
-                  } else {
-                     value = `'${value}'`;
-                  }
-                  return [key, value].join('=');
-               }).join('\n');
-            }
-         } else if (result === null) {
-         } else {
-            resultString = result.toString();
-         }
-      } else if (this.config.defaultFormat === 'plain' || Values.isDefined(req.query.plain)
-      || command.format === 'plain') {
-         res.set('Content-Type', 'text/plain');
-         if (lodash.isArray(result)) {
-            resultString = result.join('\n');
-         } else {
-            resultString = result.toString();
-         }
-      } else if (this.config.defaultFormat === 'json' && !mobile) {
-         res.json(result);
-         return;
-      } else if (this.config.defaultFormat === 'html' || Values.isDefined(req.query.html)
-      || command.format === 'html' || this.isHtmlDomain(req) || mobile) {
-         return this.sendHtmlResult(command, req, res, reqx, result);
-      } else {
-         this.sendError(req, res, {message: `Invalid default format: ${this.config.defaultFormat}`});
-         return;
-      }
-      res.send(resultString + '\n');
-   }
-
-   sendHtmlResult(command, req, res, reqx, result) {
-      let title = this.config.serviceLabel;
-      let heading, icon;
-      if (reqx.account && reqx.keyspace) {
-         const keyspaceLabel = KeyspaceHelp.obscureKeyspaceLabel(reqx);
-         title = `${reqx.account}/${keyspaceLabel}`;
-         heading = [Hc.b(reqx.account), Hs.tt(styles.header.keyspace, keyspaceLabel)].join(''),
-         icon = 'database';
-      }
-      let resultString = '';
-      let resultArray = [];
-      if (!Values.isDefined(result)) {
-      } else if (result === null) {
-      } else if (Values.isInteger(result)) {
-         resultString = result.toString();
-      } else if (lodash.isString(result)) {
-         resultString = result;
-      } else if (lodash.isArray(result)) {
-         if (lodash.isFunction(command.renderHtmlEach)) {
-            resultArray = result.map(element => command.renderHtmlEach(element));
-         } else {
-            resultArray = result;
-         }
-      } else if (lodash.isObject(result)) {
-         resultArray = Object.keys(result).map(key => `<b>${key}</b> ${result[key]}`);
-      } else if (result) {
-         resultString = result.toString();
-      }
-      res.set('Content-Type', 'text/html');
-      const content = [];
-      this.logger.debug('sendResult reqx', reqx, command, resultString, resultArray.length);
-      if (command.key) {
-         content.push(Hso.div(styles.result.commandKey, command.key.replace(/-/g, ' ')));
-      }
-      if (reqx.key) {
-         content.push(Hso.div(styles.result.reqKey, reqx.key));
-      }
-      if (command.params) {
-         content.push(Hso.pre(styles.result.commandParams, command.params
-            .filter(key => key !== 'key')
-            .map(key => `<b>${key}</b> ${req.params[key]}`)
-            .join('\n'))
-         );
-         this.logger.info('params', lodash.last(content));
-      }
-      let statusCode = 200;
-      let emptyMessage;
-      if (resultArray.length) {
-         if (resultString) {
-            this.logger.error('sendResult resultString', command, req.path);
-         }
-      } else if (!resultString) {
-         //statusCode = 404;
-         resultString = '<i>&lt;empty&gt;</i>';
-      }
-      if (resultString) {
-         resultArray.push(resultString);
-      }
-      content.push(Hs.pre(styles.result.resultArray, lodash.compact(resultArray).join('\n')));
-      let hints = [];
-      if (command && reqx.account && reqx.keyspace) {
-         if (command.relatedCommands) {
-            try {
-               hints = this.getRelatedCommandHints(req, reqx, command.relatedCommands);
-            } catch (err) {
-               this.logger.error('related', err, err.stack);
-            }
-         }
-         hints.push({
-            uri: ['help'],
-            description: 'view sample keyspace commands'
-         });
-         const otherHints = hints.filter(hint => !hint.uri && hint.commandKey);
-         hints = hints
-         .filter(hint => hint.uri);
-         const renderedPathHints = hints
-         .map(hint => {
-            const path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace, ...hint.uri].join('/'));
-            hint = Object.assign({path}, hint);
-            return hint;
-         })
-         .map(hint => {
-            const uriLabel = [Hc.b(hint.uri[0]), ...hint.uri.slice(1)].join('/');
-            this.logger.debug('hint', uriLabel, hint);
-            return He.div({
-               style: styles.result.hint.container,
-               onClick: HtmlElements.onClick(hint.path)
-            }, [
-               Hso.div(styles.result.hint.message, hint.message),
-               Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, uriLabel)),
-               Hso.div(styles.result.hint.description, lodash.capitalize(hint.description))
-            ]);
-         });
-         this.logger.debug('renderedPathHints', renderedPathHints);
-         content.push(renderedPathHints);
-         const renderedOtherHints = otherHints.map(hint => He.div({
-            style: styles.result.hint.container
-         }, [
-            Hso.div(styles.result.hint.message, hint.message),
-            Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, Hc.b(hint.commandKey))),
-            Hso.div(styles.result.hint.description, hint.description)
-         ]));
-         content.push(renderedOtherHints);
-      }
-      res.status(statusCode).send(renderPage({
-         config: this.config, req, reqx, title, heading, icon, content
-      }));
-   }
-
-   getRelatedCommandHints(req, reqx, relatedCommands) {
-      return lodash.compact(relatedCommands
-         .map(commandKey => this.commandMap.get(commandKey))
-         .filter(command => command && command.key && command.params)
-         .filter(command => !this.isSecureDomain(req)
-         || !command.access || lodash.includes(['get', 'debug']
-         , command.access))
-         .map(command => {
-            let uri = [command.key];
-            const params = command.params
-            .map(key => {
-               let value = req.params[key] || [];
-               if (command && command.exampleKeyParams && command.exampleKeyParams.hasOwnProperty(key)) {
-                  value = command.exampleKeyParams[key]
-               }
-               this.logger.info('related', key, value);
-               return value;
-            });
-            this.logger.info('related params', params);
-            if (params.length !== command.params.length) {
-               this.logger.warn('params length', command);
-               return null;
-            } else {
-               uri = uri.concat(...params);
-            }
-            return {
-               uri,
-               description: command.description
-            };
-         })
-      );
-   }
-
    isDevelopment(req) {
       return req.hostname === 'localhost' && process.env.NODE_ENV === 'development';
    }
@@ -2514,7 +2234,7 @@ export default class rquery {
                Hs.div(styles.error.message, title),
                Hs.pre(styles.error.detail, lodash.flatten(messageLines).join('\n')),
                hints.map(hint => He.div(styles.error.hint, [
-                  Hso.div(styles.error.hintMessage, hint.message),
+                  Hso.div(styles.error.hintMessage, 'zz' + hint.message),
                   Hso.div(styles.error.hintUrl, hint.url),
                   Hso.div(styles.error.hintDescription, hint.description)
                ])),

@@ -64,7 +64,7 @@ export default class {
    }
 
    addSecureDomain() {
-      this.addPublicCommand({
+      this.addPublicCommandHandler({
          key: 'genkey-otp-webhook',
          params: ['host', 'user', 'webhookDomain']
       }, async (req, res) => {

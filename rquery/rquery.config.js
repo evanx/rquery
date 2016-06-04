@@ -14,9 +14,12 @@ module.exports = {
    },
    singleton: {
       key: 'rquery',
-      pick: ['config']
+      //pick: ['config']
    },
    config: {
+      adminBotName: {
+         type: 'string'
+      },
       serviceKey: {
          type: 'string'
       },

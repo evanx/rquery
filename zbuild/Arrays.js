@@ -1,2 +1,4 @@
-'use strict';var logger=Loggers.create(__filename,'info');
+'use strict';
+
+var logger = Loggers.create(__filename, 'info');
 //# sourceMappingURL=Arrays.js.map
