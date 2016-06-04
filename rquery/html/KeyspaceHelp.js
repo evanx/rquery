@@ -3,7 +3,7 @@ import styles from './styles';
 
 const CustomCommandKeys = ['ttls'];
 
-const logger = Loggers.create(module.filename, 'info');
+const logger = Loggers.create(module.filename, 'debug');
 
 export function obscureKeyspaceLabel(reqx) {
    if (reqx.account === 'hub' && reqx.keyspace.length > 6) {
@@ -28,6 +28,7 @@ export function render(props) {
    const standardCommands = commands
    .filter(command => !isCustomCommand(command));
    logger.debug('standardCommands', standardCommands.map(command => command.key).join(' '));
+   logger.debug('zz', Loggers.keys(props.result));
    return Object.assign(props, {
       title: [props.reqx.account, keyspaceLabel].join('/'),
       heading: [Hc.b(props.reqx.account), Hs.tt(styles.header.keyspace, keyspaceLabel)].join(''),
@@ -36,7 +37,7 @@ export function render(props) {
       helpPath: ['routes'],
       content: [
          Hs.div(styles.result.message, props.result.message),
-         Hsr.p(styles.result.description, props.result.description),
+         Hso.p(styles.result.description, props.result.description),
          renderUrls(props.result.exampleUrls, props.commandMap),
          He.br(),
          Hs.h4(styles.result.message, props.result.commandReferenceMessage),

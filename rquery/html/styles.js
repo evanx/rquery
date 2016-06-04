@@ -3,18 +3,33 @@ function iconBackgroundImage(name) {
    return `url(https://test.redishub.com/assets/icomoon/png20-38/${name}.png)`
 }
 
+const colors = {
+   body: '#808888',
+   error: '#808080',
+   link: '#116666',
+   commandParams: '#808080'
+};
+
+const backgroundColors = {
+   body: '#101010',
+   pre: '#181818',
+   commandParams: colors.body
+};
+
 const styles = {
    resets: {
       body: {
          padding: 10,
+         color: colors.body,
+         backgroundColor: backgroundColors.body,
          fontFamily: 'verdana'
       },
       a: {
          textDecoration: 'none',
-         color: '#800000'
+         color: colors.link
       },
       "a:visited": {
-         color: '#800000'
+         color: colors.link
       },
       img_icon: {
          backgroundPosition: [0, 0],
@@ -28,7 +43,7 @@ const styles = {
          marginTop: 10
       },
       pre: {
-         backgroundColor: '#f8f8f8'
+         backgroundColor: backgroundColors.pre
       }
    },
    _768: {
@@ -68,7 +83,6 @@ const styles = {
          margin: [0, 0, 0, 0],
          padding: [0, 0, 0, 12],
          fontSize: 18,
-         color: '#808080',
          fontWeight: 'bold'
       },
       heading: {
@@ -78,11 +92,10 @@ const styles = {
          margin: [0, 0, 0, 0],
          padding: [0, 0, 0, 12],
          fontSize: 18,
-         color: '#808080'
       },
       keyspace: {
          display: 'inline-block',
-         color: '#c0c0c0',
+         color: '#303030',
          paddingLeft: 8
       }
    },
@@ -125,7 +138,7 @@ const styles = {
       status: {
          fontSize: 14,
          fontStyle: 'italic',
-         color: '#424242'
+         color: colors.error
       },
       message: {
          paddingTop: 0,
@@ -169,11 +182,12 @@ const styles = {
          color: '#424242'
       },
       commandParams: {
+         display: 'inline-block',
+         padding: [0, 4],
          lineHeight: 1.5,
          margin: [4, 4, 8, 16],
          fontSize: 14,
-         color: '#808080',
-         backgroundColor: '#ffffff',
+         color: colors.commandParams
       },
       reqKey: {
          padding: [8, 0, 4, 4],
@@ -190,7 +204,7 @@ const styles = {
          lineHeight: 2,
          margin: [10, 0, 0, 0],
          padding: 5,
-         backgroundColor: '#f0f0f0',
+         backgroundColor: '#181818',
          borderTop: 'solid 1px #777777'
       },
       resultTable: {
@@ -219,11 +233,11 @@ const styles = {
             paddingTop: 5,
             fontSize: 16,
             fontStyle: 'italic',
-            color: '#600000',
+            color: '#116464',
          },
          link: {
             fontSize: 14,
-            color: '#800000',
+            color: '#116464',
          },
          uri: {
             fontSize: 12,

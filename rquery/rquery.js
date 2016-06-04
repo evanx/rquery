@@ -544,7 +544,6 @@ export default class rquery {
          sendResult: async (req, res, reqx, result) => {
             if (!this.isCliDomain(req)) {
                res.set('Content-Type', 'text/html');
-               result = lodash.omit(result, 'description');
                res.send(renderPage(KeyspaceHelp.render({
                   config: this.config, commandMap: this.commandMap,
                   req, reqx, result
@@ -553,7 +552,7 @@ export default class rquery {
                res.set('Content-Type', 'text/html');
                res.send(ReactDOMServer.renderToString(<KeyspaceHelpPage reqx={reqx} result={result}/>));
             } else {
-               return Object.assign(result, {commands: result.commands.map(command => {
+               return Object.assign(lodash.omit(result, 'description'), {commands: result.commands.map(command => {
                   if (lodash.isEmpty(command.params)) {
                      if (command.description) {
                         return command.key;
@@ -579,8 +578,8 @@ export default class rquery {
          const description = [`You can set, add and view keys, sets, lists, zsets, hashes etc.` +
             ` Also edit the URL in the location bar to try other combinations.` +
             ` You can also try changing the domain to 'replica.redishub.com' to read keys.` +
-            ` <i>(We'll offer a simple client-side command completion tool soon.)</i>`
-         ];
+            ` <i>(A client-side command completion tool will come later.)</i>`
+         ].join(' ');
          const exampleParams = [
             ['ttls'],
             ['types'],
@@ -743,7 +742,6 @@ export default class rquery {
          key: 'ttls',
          access: 'debug',
          description: 'view all TTLs in this keyspace',
-
       }, async (req, res, reqx) => {
          reqx.hints = [
             {
