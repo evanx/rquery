@@ -10,7 +10,7 @@ const lightTheme = {
       link: '#13acac',
       commandKey: '#c2c2c2',
       commandParams: '#808080',
-      message: '#e2e2e2',
+      message: '#c2c2c2',
       description: '#808080',
       result: '#a2a2a2',
       keyspaceName: '#606060'
