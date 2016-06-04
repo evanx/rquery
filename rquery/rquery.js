@@ -1485,7 +1485,7 @@ export default class rquery {
          multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
       });
       if (sismember) {
-         throw new ValidationError({message: 'Cert already granted', hint: {uri: '/routes'}});
+         throw new ValidationError({message: 'Cert already granted', hint: {uri: 'routes'}});
       }
       if (!granted) {
          throw new ValidationError({message: 'Cert must be granted via @redishub_bot',
@@ -2038,7 +2038,7 @@ export default class rquery {
       }
       if (command.key === 'create-keyspace') {
          if (reqx.registered) {
-            throw {message: 'Already registered', hint: {uri: '/routes'}};
+            throw {message: 'Already registered', hint: {uri: 'routes'}};
          }
       } else if (!reqx.registered) {
          if (account === 'hub' || account === 'pub') {
