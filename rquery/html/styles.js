@@ -5,11 +5,11 @@ function iconBackgroundImage(name) {
 
 const lightTheme = {
    colors: {
-      body: '#a0a0a0',
+      body: '#b0b0b0',
       error: '#808080',
       link: '#13acac',
       commandKey: '#c2c2c2',
-      commandParams: '#808080',
+      commandParams: '#a0a0a0',
       message: '#c2c2c2',
       description: '#808080',
       result: '#a2a2a2',
