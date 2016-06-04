@@ -2108,7 +2108,9 @@ export default class rquery {
       const certDigest = this.digestPem(cert);
       if (!certs.includes(certDigest)) {
          this.logger.info('validateCert', account, role, certDigest, certs);
-         throw {message: 'Invalid cert', hints: lodash.pick(this.hints, ['signup', 'grantCert'])};
+         throw new ValidationError({
+            message: 'Invalid cert', hints: lodash.pick(this.hints, ['signup', 'grantCert'])
+         });
       }
       return {certDigest, role};
    }
