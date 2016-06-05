@@ -56,7 +56,7 @@ module.exports = {
    }(),
    handleReq: function () {
       var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee2(req, res, reqx) {
-         var hostUrl, routes, accountOnlyRoutes, $;
+         var hostUrl, routes, accountOnlyRoutes, account, dn, names, $;
          return regeneratorRuntime.wrap(function _callee2$(_context2) {
             while (1) {
                switch (_context2.prev = _context2.next) {
@@ -78,10 +78,25 @@ module.exports = {
                      });
 
                      logger.debug('routes', routes.length);
+                     account = void 0;
+
+                     try {
+                        dn = req.get('ssl_client_s_dn');
+
+                        if (dn) {
+                           names = rquery.parseDn(dn);
+
+                           if (names.o.match(/^[\-_a-z]+)$/)) {
+                              account = names.o;
+                           }
+                        }
+                     } catch (err) {
+                        logger.error('cert', err);
+                     }
                      $ = rquery.getContentType(req) === 'html' ? He : Hp;
                      return _context2.abrupt('return', {
-                        message: If.thenElse(rquery.getClientCert(req) && reqx.account, $.a({
-                           href: '/account-keyspaces/' + reqx.accounts
+                        message: If.thenElse(account, $.a({
+                           href: '/account-keyspaces/' + account
                         }, 'List the keyspaces on your account'), $.a({
                            target: '_blank',
                            href: 'https://web.telegram.org/#/im?p=@redishub_bot'
@@ -129,7 +144,7 @@ module.exports = {
                         })
                      });
 
-                  case 10:
+                  case 12:
                   case 'end':
                      return _context2.stop();
                }

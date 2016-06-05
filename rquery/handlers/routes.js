@@ -34,11 +34,23 @@ module.exports = {
       const accountOnlyRoutes = routes
       .filter(route => route.includes(':account') && !route.includes(':keyspace'));
       logger.debug('routes', routes.length);
+      let account;
+      try {
+         const dn = req.get('ssl_client_s_dn');
+         if (dn) {
+            const names = rquery.parseDn(dn);
+            if (names.o.match(/^[\-_a-z]+)$/)) {
+               account = names.o;
+            }
+         }
+      } catch (err) {
+         logger.error('cert', err);
+      }
       const $ = rquery.getContentType(req) === 'html'? He : Hp;
       return {
-         message: If.thenElse(rquery.getClientCert(req) && reqx.account,
+         message: If.thenElse(account,
             $.a({
-               href: '/account-keyspaces/' + reqx.accounts
+               href: '/account-keyspaces/' + account
             }, `List the keyspaces on your account`)
             ,
             $.a({
