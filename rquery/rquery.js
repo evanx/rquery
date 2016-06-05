@@ -2218,8 +2218,11 @@ export default class rquery {
          });
          if (err.stack) {
             if (err.name === 'ValidationError') {
-            } else {
-               messageLines.push(err.stack.split('\n').slice(0, 5));
+            } else if (err.name) {
+               messageLines.push(err.name);
+            } else if (!lodash.isError(err)) {
+            } else if (err.stack) {
+               messageLines.push(err.stack.split('\n').slice(0, 2));
             }
          }
       } else {
