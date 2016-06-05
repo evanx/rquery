@@ -45,7 +45,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       ``,
       `Curl this script and pipe into bash as follows:`,
       ``,
-      `curl -s ${serviceUrl}/${commandKey}/${account} | bash`,
+      `curl -s '${serviceUrl}/${commandKey}/${account}?dir=~/.redishub/live&noarchive' | bash`,
       ``,
    ].map(line => `# ${line}`);
    result.push('');
@@ -78,7 +78,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       ]);
    }
    result = result.concat([
-      ``,
+      `  # TODO move following to static versioned github script for improved security`,
       `  if mkdir \${dir} && cd $_`,
       `  then # mkdir ok so directory did not exist`,
       `    echo "\${account}" > account`,
