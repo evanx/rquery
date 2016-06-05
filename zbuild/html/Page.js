@@ -20,7 +20,7 @@ exports.default = function (props) {
    }
    var ua = props.req.get('user-agent');
    var styleSheet = Styles.getCachedUserAgentStyleSheet({ styles: _styles2.default, key: 'resets', ua: ua });
-   return html(_templateObject2, props.title, styleSheet, viewportContentArray.join(', '), (0, _Header2.default)(Object.assign({ icon: 'home' }, props)), article, (0, _Footer2.default)(props));
+   return html(_templateObject2, props.title, styleSheet, viewportContent.join(', '), (0, _Header2.default)(Object.assign({ icon: 'home' }, props)), article, (0, _Footer2.default)(props));
 };
 
 var _styles = require('./styles');
@@ -41,7 +41,7 @@ function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defi
 
 var logger = Loggers.create(module.filename);
 
-var viewportContentArray = ['width=device-width', 'initial-scale=1'];
+var viewportContent = ['width=device-width', 'initial-scale=1'];
 //'maximum-scale=1.0',
 //'minimum-scale=1.0',
 //'user-scalable=no'

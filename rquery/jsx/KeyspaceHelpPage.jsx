@@ -3,7 +3,7 @@ import React from 'react';
 
 const logger = Loggers.create(module.filename);
 
-const viewportContentArray = [
+const viewportContent = [
    'width=device-width',
    'maximum-scale=1.0',
    'minimum-scale=1.0',
@@ -19,7 +19,7 @@ export default class extends React.Component {
          <html>
             <head>
                <title>{this.props.reqx.account}/{this.props.reqx.keyspace}</title>
-               <meta name='viewport' content={viewportContentArray.join(', ')}/>
+               <meta name='viewport' content={viewportContent.join(', ')}/>
             </head>
             <body style={{padding: 10}}>
                <h1>/ak/{this.props.reqx.account}/{this.props.reqx.keyspace}</h1>

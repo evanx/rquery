@@ -6,7 +6,7 @@ import {default as renderFooter} from './Footer';
 
 const logger = Loggers.create(module.filename);
 
-const viewportContentArray = [
+const viewportContent = [
    'width=device-width',
    'initial-scale=1',
    //'maximum-scale=1.0',
@@ -32,7 +32,7 @@ export default function (props) {
    <head>
    <title>${props.title}</title>
    <style>${styleSheet}</style>
-   <meta name="viewport" content=${viewportContentArray.join(', ')}/>
+   <meta name="viewport" content=${viewportContent.join(', ')}/>
    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
    <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
    </head>

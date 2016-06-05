@@ -220,8 +220,6 @@ function assignDepsOptional(g) {
    g.Styles = require('./Styles');
    g.HtmlElements = require('./HtmlElements');
    g.HtmlElements.assignDeps(g);
-   g.ContentArray = require('./ContentArray');
-   g.ContentArray.assignDeps(g);
    g.If = require('./If');
 }
 

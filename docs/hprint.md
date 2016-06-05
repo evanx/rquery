@@ -93,7 +93,7 @@ const renderers = {
 
 Let's consider creating objects whose properties are functions named for each HTML element:
 ```javascript
-export function createElements(names, renderer) {
+export function renders(names, renderer) {
    return names.reduce((accumulator, name) => {
       accumulator[name] = (...args) => renderer(name, ...args);
       return accumulator;

@@ -4,12 +4,18 @@ import styles from './styles';
 const logger = Loggers.create(module.filename);
 
 export default function (props) {
+   let message = '';
+   if (props.contentType === 'html') {
+      message = HtmlElements.render('a', {href: message.url}, message.content);
+   } else {
+      message = HtmlElements.plain('a', {href: message.url}, message.content);
+   }
    logger.debug('props', Object.keys(props), props.result.message, He.p({}, props.result.message));
    return Object.assign(props, {
       backPath: 'https://github.com/evanx/redishub/blob/master/README.md',
       title: props.config.serviceLabel,
       content: lodash.flatten([
-         He.p({}, props.result.message.join(' ')),
+         He.p({}, props.result.message),
          `<h3>Basic</h3>`,
          renderUrls(props.result.common),
          `<h3>Ephemeral</h3>`,

@@ -56,7 +56,7 @@ module.exports = {
    }(),
    handleReq: function () {
       var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee2(req, res, reqx) {
-         var hostUrl, routes, accountOnlyRoutes;
+         var hostUrl, routes, accountOnlyRoutes, $;
          return regeneratorRuntime.wrap(function _callee2$(_context2) {
             while (1) {
                switch (_context2.prev = _context2.next) {
@@ -78,11 +78,12 @@ module.exports = {
                      });
 
                      logger.debug('routes', routes.length);
+                     $ = rquery.getContentType(req) === 'html' ? He : Hp;
                      return _context2.abrupt('return', {
-                        message: [If.thenElse(req.params.account, 'Try to create a new keyspace', ContentArray.render(rquery.getContentType(req), [{
-                           url: 'https://web.telegram.org/#/im?p=@redishub_bot',
-                           content: 'Try "@' + rquery.config.adminBotName + '_bot /signup"'
-                        }]))],
+                        message: If.thenElse(req.params.account, 'Try to create a new keyspace', $.a({
+                           target: '_blank',
+                           href: 'https://web.telegram.org/#/im?p=@redishub_bot'
+                        }, 'Try "@' + rquery.config.adminBotName + '_bot /signup"')),
                         common: routes.filter(function (route) {
                            return route;
                         }).filter(function (route) {
@@ -126,7 +127,7 @@ module.exports = {
                         })
                      });
 
-                  case 9:
+                  case 10:
                   case 'end':
                      return _context2.stop();
                }

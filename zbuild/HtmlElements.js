@@ -9,12 +9,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 exports.html = html;
-exports.element = element;
-exports.createElements = createElements;
+exports.render = render;
+exports.renders = renders;
 exports.onClick = onClick;
 exports.renderScript = renderScript;
 exports.renderPath = renderPath;
 exports.ms = ms;
+exports.plain = plain;
 exports.assignDeps = assignDeps;
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -114,11 +115,12 @@ function html(strings) {
 
 // element renderer
 
-function element(name, attributes) {
+function render(name, attributes) {
    for (var _len2 = arguments.length, children = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
       children[_key2 - 2] = arguments[_key2];
    }
 
+   // TODO
    var content = [];
    if (!attributes) {
       return ['<', name, '/>'].join('');
@@ -127,20 +129,22 @@ function element(name, attributes) {
    if (!lodash.isObject(attributes)) {
       throw { message: 'attributes: ' + (typeof attributes === 'undefined' ? 'undefined' : _typeof(attributes)), context: { name: name, attributes: attributes, children: children } };
    }
-   var attrs = Objects.kvs(attributes).filter(function (kv) {
-      return kv.key !== 'meta';
-   }).filter(function (kv) {
-      return kv.value && kv.value.toString();
-   }).map(function (kv) {
-      return { key: kv.key, value: kv.value.toString() };
-   }).map(function (kv) {
-      return kv.key + '="' + kv.value + '"';
-   });
-   logger.debug('element', name, attrs);
-   return renderElements(name, attributes, attrs, children);
+   var attrs = renderAttributes(attributes);
+   logger.debug('render', name, attrs);
+   return renderChildrenRepeat(name, attributes, attrs, children);
 }
 
-function renderElements(name, attributes, attrs, children) {
+function renderAttributes(attributes) {
+   return Object.keys(attributes).filter(function (key) {
+      return !['meta'].includes(key);
+   }).filter(function (key) {
+      return attributes[key];
+   }).map(function (key) {
+      return key + '="' + attributes[key].toString() + '"';
+   });
+}
+
+function renderChildrenRepeat(name, attributes, attrs, children) {
    if (isMeta(attributes, 'repeat')) {
       if (!children.length) {
          return '';
@@ -150,15 +154,15 @@ function renderElements(name, attributes, attrs, children) {
          return '';
       } else {
          return lodash.flatten(children).map(function (child) {
-            return renderElementChildren(name, attributes, attrs, child);
+            return renderChildren(name, attributes, attrs, child);
          }).join('\n');
       }
    } else {
-      return renderElementChildren(name, attributes, attrs, children);
+      return renderChildren(name, attributes, attrs, children);
    }
 }
 
-function renderElementChildren(name, attributes, attrs) {
+function renderChildren(name, attributes, attrs) {
    for (var _len3 = arguments.length, children = Array(_len3 > 3 ? _len3 - 3 : 0), _key3 = 3; _key3 < _len3; _key3++) {
       children[_key3 - 3] = arguments[_key3];
    }
@@ -217,7 +221,7 @@ function joinContent(name, attributes) {
    }
 }
 
-function createElements(fn) {
+function renders(fn) {
    return ElementNames.reduce(function (result, name) {
       result[name] = function () {
          for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
@@ -270,22 +274,61 @@ function ms(meta, style) {
    return { meta: meta, style: style };
 }
 
+// plain
+
+function plain(name, attributes, content) {
+   if (['style'].includes(name)) {
+      return '';
+   }
+   if (lodash.isEmpty(content)) {
+      return '';
+   }
+   if (lodash.isString(content)) {
+      if (name === 'a') {
+         assert(attributes.href, 'href');
+         return [content, '  ' + attributes.href].join('\n');
+      }
+      return content;
+   }
+   if (lodash.isArray(content)) {
+      if (['pre'].includes(name)) {
+         return content.map(function (element) {
+            return plain({}, content);
+         }).join('\n');
+      } else {
+         return content.map(function (element) {
+            return plain({}, content);
+         }).join('\n');
+      }
+   }
+   if (lodash.isObject(element)) {
+      if (element.url && element.content) {
+         return [element.content, element.url].join('\n');
+      } else {
+         logger.debug('render object', typeof element === 'undefined' ? 'undefined' : _typeof(element));
+         return '';
+      }
+   }
+   return content.toString();
+}
+
 //
 
-function assignElements(r) {
-   Object.assign(r, createElements(function (name) {
+function assignElements($, delegate) {
+   Object.assign($, renders(function (name) {
       for (var _len7 = arguments.length, args = Array(_len7 > 1 ? _len7 - 1 : 0), _key7 = 1; _key7 < _len7; _key7++) {
          args[_key7 - 1] = arguments[_key7];
       }
 
-      return element.apply(undefined, [name].concat(args));
+      return delegate.apply(undefined, [name].concat(args));
    }));
-   return r;
+   return $;
 }
 
 function assignDeps(g) {
-   g.He = assignElements({});
-   g.Hs = createElements(function (name, style) {
+   g.He = assignElements({}, render);
+   g.Hp = assignElements({}, plain);
+   g.Hs = renders(function (name, style) {
       for (var _len8 = arguments.length, children = Array(_len8 > 2 ? _len8 - 2 : 0), _key8 = 2; _key8 < _len8; _key8++) {
          children[_key8 - 2] = arguments[_key8];
       }
@@ -294,50 +337,50 @@ function assignDeps(g) {
       if (typeof style !== 'string') {
          throw { message: 'style type: ' + (typeof style === 'undefined' ? 'undefined' : _typeof(style)), name: name, style: style, children: children };
       } else {
-         return element.apply(undefined, [name, { style: style }].concat(children));
+         return render.apply(undefined, [name, { style: style }].concat(children));
       }
    });
-   g.Hm = createElements(function (name, meta, attributes) {
+   g.Hm = renders(function (name, meta, attributes) {
       for (var _len9 = arguments.length, args = Array(_len9 > 3 ? _len9 - 3 : 0), _key9 = 3; _key9 < _len9; _key9++) {
          args[_key9 - 3] = arguments[_key9];
       }
 
-      return element(name, Object.assign({ meta: meta }, attributes), args);
+      return render(name, Object.assign({ meta: meta }, attributes), args);
    });
-   g.Hso = createElements(function (name, style) {
+   g.Hso = renders(function (name, style) {
       for (var _len10 = arguments.length, args = Array(_len10 > 2 ? _len10 - 2 : 0), _key10 = 2; _key10 < _len10; _key10++) {
          args[_key10 - 2] = arguments[_key10];
       }
 
-      return element(name, Object.assign({ meta: 'optional', style: style }), args);
+      return render(name, Object.assign({ meta: 'optional', style: style }), args);
    });
-   g.Hms = createElements(function (name, meta, style) {
+   g.Hms = renders(function (name, meta, style) {
       for (var _len11 = arguments.length, args = Array(_len11 > 3 ? _len11 - 3 : 0), _key11 = 3; _key11 < _len11; _key11++) {
          args[_key11 - 3] = arguments[_key11];
       }
 
-      return element(name, Object.assign({ meta: meta, style: style }), args);
+      return render(name, Object.assign({ meta: meta, style: style }), args);
    });
-   g.Hc = createElements(function (name) {
+   g.Hc = renders(function (name) {
       for (var _len12 = arguments.length, args = Array(_len12 > 1 ? _len12 - 1 : 0), _key12 = 1; _key12 < _len12; _key12++) {
          args[_key12 - 1] = arguments[_key12];
       }
 
-      return element(name, {}, args);
+      return render(name, {}, args);
    });
-   g.Hmc = createElements(function (name, meta) {
+   g.Hmc = renders(function (name, meta) {
       for (var _len13 = arguments.length, args = Array(_len13 > 2 ? _len13 - 2 : 0), _key13 = 2; _key13 < _len13; _key13++) {
          args[_key13 - 2] = arguments[_key13];
       }
 
-      return element(name, { meta: meta }, args);
+      return render(name, { meta: meta }, args);
    });
-   g.Hco = createElements(function (name) {
+   g.Hco = renders(function (name) {
       for (var _len14 = arguments.length, args = Array(_len14 > 1 ? _len14 - 1 : 0), _key14 = 1; _key14 < _len14; _key14++) {
          args[_key14 - 1] = arguments[_key14];
       }
 
-      return element(name, { meta: 'optional' }, args);
+      return render(name, { meta: 'optional' }, args);
    });
    g.Hx = module.exports;
    g.html = html;

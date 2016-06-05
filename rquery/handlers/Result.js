@@ -49,12 +49,15 @@ export async function sendResult(command, req, res, reqx, result) {
          }
       } else if (lodash.isObject(result)) {
          if (command.resultObjectType === 'KeyedArrays') {
-            resultString = lodash.flatten(Object.keys(result).map(key => {
+            resultString = lodash.flatten([
+               'message: ' + result.message
+            ].concat(Object.keys(result)
+            .filter(key => !['message'].includes(key))
+            .map(key => {
                let value = result[key];
                if (lodash.isArray(value)) {
                   const array = value;
                   return ['', key + ':'].concat(array.map(element => element.toString()));
-
                } else if (typeof value === 'string') {
                   if (key === 'message') {
                      return value;
@@ -62,9 +65,9 @@ export async function sendResult(command, req, res, reqx, result) {
                      return key + ': ' + value;
                   }
                } else {
-                  return ['', key + ':', 'type:' + typeof value];
+                  return ['', key + ': type ' + typeof value];
                }
-            })).join('\n');
+            }))).join('\n');
          } else {
             resultString = Object.keys(result).map(key => {
                let value = result[key];

@@ -34,16 +34,15 @@ module.exports = {
       const accountOnlyRoutes = routes
       .filter(route => route.includes(':account') && !route.includes(':keyspace'));
       logger.debug('routes', routes.length);
+      const $ = rquery.getContentType(req) === 'html'? He : Hp;
       return {
-         message: [
-            If.thenElse(req.params.account,
-               `Try to create a new keyspace`,
-               ContentArray.render(rquery.getContentType(req), [{
-                  url: 'https://web.telegram.org/#/im?p=@redishub_bot',
-                  content: `Try "@${rquery.config.adminBotName}_bot /signup"`
-               }])
-            )
-         ],
+         message: If.thenElse(req.params.account,
+            `Try to create a new keyspace`,
+            $.a({
+               target: '_blank',
+               href: 'https://web.telegram.org/#/im?p=@redishub_bot'
+            }, `Try "@${rquery.config.adminBotName}_bot /signup"`)
+         ),
          common: routes
          .filter(route => route)
          .filter(route => !route.includes(':'))

@@ -20,7 +20,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var logger = Loggers.create(module.filename);
 
-var viewportContentArray = ['width=device-width', 'maximum-scale=1.0', 'minimum-scale=1.0', 'initial-scale=1.0', 'user-scalable=no'];
+var viewportContent = ['width=device-width', 'maximum-scale=1.0', 'minimum-scale=1.0', 'initial-scale=1.0', 'user-scalable=no'];
 
 var _class = function (_React$Component) {
    _inherits(_class, _React$Component);
@@ -48,7 +48,7 @@ var _class = function (_React$Component) {
                   '/',
                   this.props.reqx.keyspace
                ),
-               _react2.default.createElement('meta', { name: 'viewport', content: viewportContentArray.join(', ') })
+               _react2.default.createElement('meta', { name: 'viewport', content: viewportContent.join(', ') })
             ),
             _react2.default.createElement(
                'body',

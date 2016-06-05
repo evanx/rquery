@@ -110,7 +110,9 @@ var sendResult = exports.sendResult = function () {
                      }
                   } else if (lodash.isObject(result)) {
                      if (command.resultObjectType === 'KeyedArrays') {
-                        resultString = lodash.flatten(Object.keys(result).map(function (key) {
+                        resultString = lodash.flatten(['message: ' + result.message].concat(Object.keys(result).filter(function (key) {
+                           return !['message'].includes(key);
+                        }).map(function (key) {
                            var value = result[key];
                            if (lodash.isArray(value)) {
                               var array = value;
@@ -124,9 +126,9 @@ var sendResult = exports.sendResult = function () {
                                  return key + ': ' + value;
                               }
                            } else {
-                              return ['', key + ':', 'type:' + (typeof value === 'undefined' ? 'undefined' : _typeof(value))];
+                              return ['', key + ': type ' + (typeof value === 'undefined' ? 'undefined' : _typeof(value))];
                            }
-                        })).join('\n');
+                        }))).join('\n');
                      } else {
                         resultString = Object.keys(result).map(function (key) {
                            var value = result[key];
