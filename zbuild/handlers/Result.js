@@ -179,7 +179,7 @@ var sendResult = exports.sendResult = function () {
                   return _context.abrupt('return', sendHtmlResult(command, req, res, reqx, result));
 
                case 56:
-                  rquery.sendError(req, res, { message: 'Invalid default format: ' + rquery.config.defaultFormat });
+                  rquery.sendError(req, res, reqx, { message: 'Invalid default format: ' + rquery.config.defaultFormat });
                   return _context.abrupt('return');
 
                case 58:

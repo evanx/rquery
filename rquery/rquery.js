@@ -523,11 +523,19 @@ export default class rquery {
          const message = `Try sample endpoints below on this keyspace.`;
          const commandReferenceMessage = `Read the Redis.io docs for the following commands`;
          const customCommandHeading = `Custom commands`;
-         const description = [`You can set, add and view keys, sets, lists, zsets, hashes etc.` +
-            ` Also edit the URL in the location bar to try other combinations.` +
-            ` You can also try changing the domain to 'replica.redishub.com' to read keys.` +
-            ` <i>(A client-side command completion tool will come later.)</i>`
-         ].join(' ');
+         let description = [
+            `You can set, add and view keys, sets, lists, zsets, hashes etc.`,
+            `Also edit the URL in the location bar to try other combinations.`
+         ];
+         if (this.isSecureDomain(req)) {
+            description.push(
+               `You can also try changing the domain to 'replica.redishub.com' to read keys.`
+            );
+         }
+         description.push(
+            `<i>(A client-side command completion tool will come later.)</i>`
+         );
+         description = description.join(' ');
          const exampleParams = [
             ['ttls'],
             ['types'],
@@ -1571,7 +1579,7 @@ export default class rquery {
             host: this.config.hostDomain,
             label: this.config.serviceLabel
          });
-         await Result.sendResult({}, req, res, {}, result);
+         await Result.sendResult({}, req, res, {account}, result);
       } catch (err) {
          this.sendError(req, res, err);
       }
@@ -1586,6 +1594,7 @@ export default class rquery {
          this.logger.warn('AddAccountCommand access', command.access);
       }
       this.expressApp.get([this.config.location, ...uri].join('/'), async (req, res) => {
+         const reqx = {command};
          try {
             let message = this.validatePath(req);
             if (message) throw {message};
@@ -1608,7 +1617,7 @@ export default class rquery {
                return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
             }
             const {certDigest, role} = this.validateCert(req, reqx, certs, account, []);
-            const reqx = {command, account, accountKey, time, admined, certDigest};
+            Object.assign(reqx, {account, accountKey, time, admined, certDigest});
             const result = await fn(req, res, reqx);
             if (result !== undefined) {
                await Result.sendResult(command, req, res, reqx, result);
@@ -2146,15 +2155,6 @@ export default class rquery {
       }
    }
 
-   sendCommandError(command, req, res, reqx, err) {
-      this.logger.warn(err.message);
-      try {
-         this.sendStatusMessage(req, res, 500, err);
-      } catch (error) {
-         this.logger.error(error);
-      }
-   }
-
    sendStatusMessage(req, res, statusCode, err) {
       const reqx = req.rquery || {};
       const command = reqx.command || {};
@@ -2168,6 +2168,15 @@ export default class rquery {
       let hints = [];
       if (lodash.isString(err)) {
          title = err;
+         if (/^WRONGTYPE/.test(title)) {
+            const {account, keyspace, key} = req.params.key;
+            if (account && keyspace && key) {
+               hints.push({
+                  message: 'Check the key type',
+                  uri: ['ak', account, keyspace, 'type', key].join('/')
+               });
+            }
+         }
       } else if (lodash.isArray(err)) {
          messageLines = messageLines.concat(err);
       } else if (typeof err === 'object') {

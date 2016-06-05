@@ -1386,7 +1386,13 @@ var rquery = function () {
                            message = 'Try sample endpoints below on this keyspace.';
                            commandReferenceMessage = 'Read the Redis.io docs for the following commands';
                            customCommandHeading = 'Custom commands';
-                           description = ['You can set, add and view keys, sets, lists, zsets, hashes etc.' + ' Also edit the URL in the location bar to try other combinations.' + ' You can also try changing the domain to \'replica.redishub.com\' to read keys.' + ' <i>(A client-side command completion tool will come later.)</i>'].join(' ');
+                           description = ['You can set, add and view keys, sets, lists, zsets, hashes etc.', 'Also edit the URL in the location bar to try other combinations.'];
+
+                           if (_this6.isSecureDomain(req)) {
+                              description.push('You can also try changing the domain to \'replica.redishub.com\' to read keys.');
+                           }
+                           description.push('<i>(A client-side command completion tool will come later.)</i>');
+                           description = description.join(' ');
                            exampleParams = [['ttls'], ['types'], ['set', 'mykey1/myvalue'], ['get', 'mykey1'], ['sadd', 'myset1/myvalue'], ['smembers', 'myset1'], ['lpush', 'mylist1/myvalue1'], ['lpushx', 'mylist1/myvalue2'], ['rpop', 'mylist1'], ['lrange', 'mylist1/0/10'], ['lrevrange', 'mylist1/0/10'], ['lrange', 'mylist1/-10/-1'], ['hset', 'myhashes1/field1/value1'], ['hsetnx', 'myhashes1/field2/value2'], ['hgetall', 'myhashes1'], ['zadd', 'myzset1/10/member10'], ['zadd', 'myzset1/20/member20'], ['zrange', 'myzset1/0/-1'], ['zrevrange', 'myzset1/0/-1']];
                            customExampleParams = [['set-json-query', 'myobject1?name=myname&id=12346'], ['get-json', 'myobject1']];
                            exampleUrls = exampleParams.map(function (params) {
@@ -1402,7 +1408,7 @@ var rquery = function () {
                               keyspaceCommands: _this6.listCommands('keyspace')
                            });
 
-                        case 14:
+                        case 17:
                         case 'end':
                            return _context25.stop();
                      }
@@ -4302,7 +4308,7 @@ var rquery = function () {
                                           label: _this13.config.serviceLabel
                                        });
                                        _context101.next = 30;
-                                       return Result.sendResult({}, req, res, {}, result);
+                                       return Result.sendResult({}, req, res, { account: account }, result);
 
                                     case 30:
                                     case 'end':
@@ -4369,15 +4375,16 @@ var rquery = function () {
                         }
                         this.expressApp.get([this.config.location].concat(_toConsumableArray(uri)).join('/'), function () {
                            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee104(req, res) {
-                              var _ret2;
+                              var reqx, _ret2;
 
                               return regeneratorRuntime.wrap(function _callee104$(_context104) {
                                  while (1) {
                                     switch (_context104.prev = _context104.next) {
                                        case 0:
-                                          _context104.prev = 0;
+                                          reqx = { command: command };
+                                          _context104.prev = 1;
                                           return _context104.delegateYield(regeneratorRuntime.mark(function _callee103() {
-                                             var message, account, accountKey, _ref48, _ref49, _ref49$, time, admined, certs, duration, _validateCert, certDigest, role, reqx, result;
+                                             var message, account, accountKey, _ref48, _ref49, _ref49$, time, admined, certs, duration, _validateCert, certDigest, role, result;
 
                                              return regeneratorRuntime.wrap(function _callee103$(_context103) {
                                                 while (1) {
@@ -4438,7 +4445,8 @@ var rquery = function () {
                                                          _validateCert = _this14.validateCert(req, reqx, certs, account, []);
                                                          certDigest = _validateCert.certDigest;
                                                          role = _validateCert.role;
-                                                         reqx = { command: command, account: account, accountKey: accountKey, time: time, admined: admined, certDigest: certDigest };
+
+                                                         Object.assign(reqx, { account: account, accountKey: accountKey, time: time, admined: admined, certDigest: certDigest });
                                                          _context103.next = 26;
                                                          return fn(req, res, reqx);
 
@@ -4459,34 +4467,34 @@ var rquery = function () {
                                                    }
                                                 }
                                              }, _callee103, _this14);
-                                          })(), 't0', 2);
+                                          })(), 't0', 3);
 
-                                       case 2:
+                                       case 3:
                                           _ret2 = _context104.t0;
 
                                           if (!((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object")) {
-                                             _context104.next = 5;
+                                             _context104.next = 6;
                                              break;
                                           }
 
                                           return _context104.abrupt('return', _ret2.v);
 
-                                       case 5:
-                                          _context104.next = 10;
+                                       case 6:
+                                          _context104.next = 11;
                                           break;
 
-                                       case 7:
-                                          _context104.prev = 7;
-                                          _context104.t1 = _context104['catch'](0);
+                                       case 8:
+                                          _context104.prev = 8;
+                                          _context104.t1 = _context104['catch'](1);
 
                                           _this14.sendError(req, res, _context104.t1);
 
-                                       case 10:
+                                       case 11:
                                        case 'end':
                                           return _context104.stop();
                                     }
                                  }
-                              }, _callee104, _this14, [[0, 7]]);
+                              }, _callee104, _this14, [[1, 8]]);
                            }));
                            return function (_x264, _x265) {
                               return ref.apply(this, arguments);
@@ -5428,16 +5436,6 @@ var rquery = function () {
          }
       }
    }, {
-      key: 'sendCommandError',
-      value: function sendCommandError(command, req, res, reqx, err) {
-         this.logger.warn(err.message);
-         try {
-            this.sendStatusMessage(req, res, 500, err);
-         } catch (error) {
-            this.logger.error(error);
-         }
-      }
-   }, {
       key: 'sendStatusMessage',
       value: function sendStatusMessage(req, res, statusCode, err) {
          var _this17 = this;
@@ -5454,6 +5452,19 @@ var rquery = function () {
          var hints = [];
          if (lodash.isString(err)) {
             title = err;
+            if (/^WRONGTYPE/.test(title)) {
+               var _req$params$key = req.params.key;
+               var account = _req$params$key.account;
+               var keyspace = _req$params$key.keyspace;
+               var key = _req$params$key.key;
+
+               if (account && keyspace && key) {
+                  hints.push({
+                     message: 'Check the key type',
+                     uri: ['ak', account, keyspace, 'type', key].join('/')
+                  });
+               }
+            }
          } else if (lodash.isArray(err)) {
             messageLines = messageLines.concat(err);
          } else if ((typeof err === 'undefined' ? 'undefined' : _typeof(err)) === 'object') {

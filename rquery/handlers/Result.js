@@ -98,7 +98,7 @@ export async function sendResult(command, req, res, reqx, result) {
    || command.format === 'html' || rquery.isHtmlDomain(req) || mobile) {
       return sendHtmlResult(command, req, res, reqx, result);
    } else {
-      rquery.sendError(req, res, {message: `Invalid default format: ${rquery.config.defaultFormat}`});
+      rquery.sendError(req, res, reqx, {message: `Invalid default format: ${rquery.config.defaultFormat}`});
       return;
    }
    res.send(resultString + '\n');
