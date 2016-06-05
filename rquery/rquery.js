@@ -2177,7 +2177,7 @@ export default class rquery {
             title = 'Wrong type for key';
             if (account && keyspace && key) {
                hints.push({
-                  message: `Check the key type of <tt>${key}</tt>`,
+                  message: `Check the key type`,
                   uri: ['ak', account, keyspace, 'type', key].join('/')
                });
             }
