@@ -1,6 +1,8 @@
 
+
 import styles from '../html/styles';
 import * as KeyspaceHelp from '../html/KeyspaceHelp';
+import {default as renderPage} from '../html/Page';
 
 const logger = Loggers.create(module.filename);
 
@@ -121,7 +123,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
       if (lodash.isFunction(command.renderHtmlEach)) {
          resultArray = result.map(element => command.renderHtmlEach(element));
       } else {
-         resultArray = result.map(element => {
+         resultArray = lodash.flatten(result.map(element => {
             if (lodash.isObject(element)) {
                if (element.url && element.content) {
                   if (rquery.isBrowser(req)) {
@@ -132,7 +134,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
                }
             }
             return element;
-         });
+         }));
       }
    } else if (lodash.isObject(result)) {
       resultArray = Object.keys(result).map(key => `<b>${key}</b> ${result[key]}`);

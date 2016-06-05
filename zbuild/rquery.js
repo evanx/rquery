@@ -90,6 +90,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var logger = Loggers.create(module.filename);
+
 var rquery = function () {
    function rquery() {
       _classCallCheck(this, rquery);
@@ -4093,10 +4095,10 @@ var rquery = function () {
                         sadd = _ref42[1];
 
                         if (!sadd) {
-                           logger.debug('certs sadd');
+                           this.logger.debug('certs sadd');
                         }
                         if (!del) {
-                           logger.warn('certs grant del');
+                           this.logger.warn('certs grant del');
                         }
                         return _context99.abrupt('return', { account: account, domain: domain });
 
@@ -5388,6 +5390,11 @@ var rquery = function () {
          return !/^curl\//.test(req.get('User-Agent'));
       }
    }, {
+      key: 'getContentType',
+      value: function getContentType(req) {
+         return this.isBrowser(req) ? 'html' : 'plain';
+      }
+   }, {
       key: 'isHtmlDomain',
       value: function isHtmlDomain(req) {
          return (/^web/.test(req.hostname)
@@ -5516,7 +5523,7 @@ var rquery = function () {
                content: [
                //Hs.div(styles.error.status, `Status ${statusCode}`),
                Hs.div(_styles2.default.error.message, title), Hs.pre(_styles2.default.error.detail, lodash.flatten(messageLines).join('\n')), hints.map(function (hint) {
-                  return He.div(_styles2.default.error.hint, [Hso.div(_styles2.default.error.hintMessage, 'zz' + hint.message), Hso.div(_styles2.default.error.hintUrl, hint.url), Hso.div(_styles2.default.error.hintDescription, hint.description)]);
+                  return He.div(_styles2.default.error.hint, [Hso.div(_styles2.default.error.hintMessage, hint.message), Hso.div(_styles2.default.error.hintUrl, hint.url), Hso.div(_styles2.default.error.hintDescription, hint.description)]);
                })]
             }));
          } else {

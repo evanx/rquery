@@ -203,6 +203,10 @@ var _KeyspaceHelp = require('../html/KeyspaceHelp');
 
 var KeyspaceHelp = _interopRequireWildcard(_KeyspaceHelp);
 
+var _Page = require('../html/Page');
+
+var _Page2 = _interopRequireDefault(_Page);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -236,7 +240,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
             return command.renderHtmlEach(element);
          });
       } else {
-         resultArray = result.map(function (element) {
+         resultArray = lodash.flatten(result.map(function (element) {
             if (lodash.isObject(element)) {
                if (element.url && element.content) {
                   if (rquery.isBrowser(req)) {
@@ -247,7 +251,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
                }
             }
             return element;
-         });
+         }));
       }
    } else if (lodash.isObject(result)) {
       resultArray = Object.keys(result).map(function (key) {
@@ -327,7 +331,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
       });
       content.push(renderedOtherHints);
    }
-   res.status(statusCode).send(renderPage({
+   res.status(statusCode).send((0, _Page2.default)({
       config: rquery.config, req: req, reqx: reqx, title: title, heading: heading, icon: icon, content: content
    }));
 }

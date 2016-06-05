@@ -21,6 +21,8 @@ import KeyspaceHelpPage from './jsx/KeyspaceHelpPage';
 
 import styles from './html/styles';
 
+const logger = Loggers.create(module.filename);
+
 export default class rquery {
 
    async testExit() {
@@ -1473,10 +1475,10 @@ export default class rquery {
          multi.sadd(this.adminKey('account', account, 'certs'), certDigest);
       });
       if (!sadd) {
-         logger.debug('certs sadd');
+         this.logger.debug('certs sadd');
       }
       if (!del) {
-         logger.warn('certs grant del');
+         this.logger.warn('certs grant del');
       }
       return {account, domain};
    }
@@ -2114,6 +2116,10 @@ export default class rquery {
       return !/^curl\//.test(req.get('User-Agent'));
    }
 
+   getContentType(req) {
+      return this.isBrowser(req)? 'html' : 'plain';
+   }
+
    isHtmlDomain(req) {
       return /^web/.test(req.hostname);
    }
@@ -2234,7 +2240,7 @@ export default class rquery {
                Hs.div(styles.error.message, title),
                Hs.pre(styles.error.detail, lodash.flatten(messageLines).join('\n')),
                hints.map(hint => He.div(styles.error.hint, [
-                  Hso.div(styles.error.hintMessage, 'zz' + hint.message),
+                  Hso.div(styles.error.hintMessage, hint.message),
                   Hso.div(styles.error.hintUrl, hint.url),
                   Hso.div(styles.error.hintDescription, hint.description)
                ])),

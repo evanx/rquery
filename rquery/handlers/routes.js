@@ -38,10 +38,10 @@ module.exports = {
          message: [
             If.thenElse(req.params.account,
                `Try to create a new keyspace`,
-               {
+               ContentArray.render(rquery.getContentType(req), [{
                   url: 'https://web.telegram.org/#/im?p=@redishub_bot',
                   content: `Try "@${rquery.config.adminBotName}_bot /signup"`
-               }
+               }])
             )
          ],
          common: routes
