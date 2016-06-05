@@ -145,11 +145,11 @@ var rquery = function () {
                      case 6:
                         this.hints = {
                            signup: {
-                              message: 'Try @redishub_bot /signup on https://web.telegram.org',
+                              message: 'Try "@redishub_bot /signup" on https://web.telegram.org',
                               url: 'https://web.telegram.org/#/im?p=@redishub_bot'
                            },
                            grantCert: {
-                              message: 'Try @redishub_bot "/grantcert EXTRACT" e.g. via https://web.telegram.org',
+                              message: 'Try "@redishub_bot /grantcert EXTRACT" e.g. via https://web.telegram.org',
                               url: 'https://web.telegram.org/#/im?p=@redishub_bot'
                            }
                         };
@@ -5530,7 +5530,8 @@ var rquery = function () {
             messageLines = messageLines.concat(lodash.compact(hints.map(function (hint) {
                if (hint.message) {
                   return messageLines.push(_this17.message);
-               } else if (hint.url) {
+               }
+               if (hint.url) {
                   return messageLines.push(_this17.url);
                }
             })));

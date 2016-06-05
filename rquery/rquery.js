@@ -35,11 +35,11 @@ export default class rquery {
       if (await this.testExit()) process.exit(1);
       this.hints = {
          signup: {
-            message: 'Try @redishub_bot /signup on https://web.telegram.org',
+            message: 'Try "@redishub_bot /signup" on https://web.telegram.org',
             url: 'https://web.telegram.org/#/im?p=@redishub_bot'
          },
          grantCert: {
-            message: `Try @redishub_bot "/grantcert EXTRACT" e.g. via https://web.telegram.org`,
+            message: `Try "@redishub_bot /grantcert EXTRACT" e.g. via https://web.telegram.org`,
             url: 'https://web.telegram.org/#/im?p=@redishub_bot'
          }
       };
@@ -2250,7 +2250,8 @@ export default class rquery {
          messageLines = messageLines.concat(lodash.compact(hints.map(hint => {
             if (hint.message) {
                return messageLines.push(this.message);
-            } else if (hint.url) {
+            }
+            if (hint.url) {
                return messageLines.push(this.url);
             }
          })));
