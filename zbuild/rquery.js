@@ -5452,23 +5452,24 @@ var rquery = function () {
          var hints = [];
          if (lodash.isString(err)) {
             title = err;
-            if (/^WRONGTYPE/.test(title)) {
-               var _req$params$key = req.params.key;
-               var account = _req$params$key.account;
-               var keyspace = _req$params$key.keyspace;
-               var key = _req$params$key.key;
+         } else if (lodash.isArray(err)) {
+            messageLines = messageLines.concat(err);
+         } else if ((typeof err === 'undefined' ? 'undefined' : _typeof(err)) === 'object') {
+            this.logger.debug('sendStatusMessage', err, req.params);
+            if (err.code === 'WRONGTYPE') {
+               var _req$params12 = req.params;
+               var account = _req$params12.account;
+               var keyspace = _req$params12.keyspace;
+               var key = _req$params12.key;
 
+               title = 'Wrong type for key';
                if (account && keyspace && key) {
                   hints.push({
                      message: 'Check the key type',
                      uri: ['ak', account, keyspace, 'type', key].join('/')
                   });
                }
-            }
-         } else if (lodash.isArray(err)) {
-            messageLines = messageLines.concat(err);
-         } else if ((typeof err === 'undefined' ? 'undefined' : _typeof(err)) === 'object') {
-            if (err.message) {
+            } else if (err.message) {
                title = err.message;
             }
             if (err.hint) {
@@ -5506,15 +5507,16 @@ var rquery = function () {
                   } else {
                      url = 'https://' + req.hostname + '/' + hint.uri;
                   }
-                  if (_this17.isBrowser(req)) {
-                     url = 'Try <a href="' + url + '"><tt>' + url + '</tt></a>';
-                  }
                   hint.url = url;
                }
                return hint;
             });
             if (err.stack) {
-               if (err.name === 'ValidationError') {} else if (err.name) {
+               if (err.name === 'ValidationError') {} else if (err.name === 'Error' && err.code) {
+                  if (!['WRONGTYPE'].includes(err.code)) {
+                     messageLines.push(err.code);
+                  }
+               } else if (err.name) {
                   messageLines.push(err.name);
                } else if (!lodash.isError(err)) {} else if (err.stack) {
                   messageLines.push(err.stack.split('\n').slice(0, 2));
@@ -5536,7 +5538,11 @@ var rquery = function () {
                content: [
                //Hs.div(styles.error.status, `Status ${statusCode}`),
                Hs.div(_styles2.default.error.message, title), Hs.pre(_styles2.default.error.detail, lodash.flatten(messageLines).join('\n')), hints.map(function (hint) {
-                  return He.div(_styles2.default.error.hint, [Hso.div(_styles2.default.error.hintMessage, hint.message), Hso.div(_styles2.default.error.hintUrl, hint.url), Hso.div(_styles2.default.error.hintDescription, hint.description)]);
+                  _this17.logger.debug('hint', hint);
+                  return He.div(_styles2.default.error.hint, lodash.flatten([If.thenElse(hint.message && hint.url, [He.a({
+                     style: _styles2.default.error.hintMessage,
+                     href: hint.url
+                  }, hint.message)], [Hso.div(_styles2.default.error.hintMessage, hint.message), Hso.div(_styles2.default.error.hintUrl, hint.url)]), Hso.div(_styles2.default.error.hintDescription, hint.description)]));
                })]
             }));
          } else {

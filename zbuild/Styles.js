@@ -45,7 +45,7 @@ function meta(meta, style) {
 }
 
 function renderStyles(object) {
-   var styles = renderKeys(object, 'root');
+   var styles = renderKeys(object, []);
    logger.debug('styles', styles);
    return styles;
 }
@@ -131,28 +131,28 @@ function renderUserAgentStylesheet(userAgent, object) {
    }).join('\n');
 }
 
-function renderKeys(object, key) {
+function renderKeys(object, parentKeys) {
    if (Object.keys(object).filter(function (key) {
       return isCssKey(key);
    }).length) {
       return lodash.compact(Object.keys(object).map(function (key) {
-         return { key: renderKey(key), value: renderValue(object[key], key) };
+         return { key: renderKey(key), value: renderValue(object[key], key, parentKeys) };
       }).map(function (entry) {
          if (entry.key && lodash.isString(entry.value)) {
             return entry.key + ':' + entry.value;
          } else {
             logger.warn('renderKeys', entry.key, _typeof(entry.value));
          }
-      })).join(';');
+      })).join(';') + ';-rh-key:' + lodash.compact(parentKeys).join('-');
    } else {
       return Object.keys(object).reduce(function (result, key) {
-         result[key] = renderValue(object[key], key);
+         result[key] = renderValue(object[key], key, parentKeys);
          return result;
       }, {});
    }
 }
 
-function renderValue(value, key) {
+function renderValue(value, key, parentKeys) {
    if (!Values.isDefined(value)) {
       logger.debug('renderValue empty', key);
       return '';
@@ -168,10 +168,10 @@ function renderValue(value, key) {
       return value;
    } else if (lodash.isArray(value)) {
       return value.map(function (v) {
-         return renderValue(v, key);
+         return renderValue(v, key, parentKeys);
       }).join(' ');
    } else if (lodash.isObject(value)) {
-      return renderKeys(value);
+      return renderKeys(value, parentKeys.concat([key]));
    } else {
       throw { message: 'Unsupported type: ' + (typeof value === 'undefined' ? 'undefined' : _typeof(value)), key: key };
    }

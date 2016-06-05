@@ -163,7 +163,7 @@ var styles = {
       hint: {},
       hintUrl: {
          lineHeight: 1.5,
-         fontSize: 16,
+         fontSize: 15,
          paddingTop: 10
       },
       hintDescription: {
@@ -173,7 +173,7 @@ var styles = {
       },
       detail: {
          lineHeight: 2,
-         margin: [10, 0, 0, 0],
+         margin: [10, 0, 10, 0],
          padding: [0, 10, 0, 10],
          borderTop: 'solid 1px #777777'
       }

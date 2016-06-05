@@ -2168,19 +2168,20 @@ export default class rquery {
       let hints = [];
       if (lodash.isString(err)) {
          title = err;
-         if (/^WRONGTYPE/.test(title)) {
-            const {account, keyspace, key} = req.params.key;
+      } else if (lodash.isArray(err)) {
+         messageLines = messageLines.concat(err);
+      } else if (typeof err === 'object') {
+         this.logger.debug('sendStatusMessage', err, req.params);
+         if (err.code === 'WRONGTYPE') {
+            const {account, keyspace, key} = req.params;
+            title = 'Wrong type for key';
             if (account && keyspace && key) {
                hints.push({
                   message: 'Check the key type',
                   uri: ['ak', account, keyspace, 'type', key].join('/')
                });
             }
-         }
-      } else if (lodash.isArray(err)) {
-         messageLines = messageLines.concat(err);
-      } else if (typeof err === 'object') {
-         if (err.message) {
+         } else if (err.message) {
             title = err.message;
          }
          if (err.hint) {
@@ -2218,15 +2219,16 @@ export default class rquery {
                } else {
                   url = `https://${req.hostname}/${hint.uri}`;
                }
-               if (this.isBrowser(req)) {
-                  url = `Try <a href="${url}"><tt>${url}</tt></a>`;
-               }
                hint.url = url;
             }
             return hint;
          });
          if (err.stack) {
             if (err.name === 'ValidationError') {
+            } else if (err.name === 'Error' && err.code) {
+               if (!['WRONGTYPE'].includes(err.code)) {
+                  messageLines.push(err.code);
+               }
             } else if (err.name) {
                messageLines.push(err.name);
             } else if (!lodash.isError(err)) {
@@ -2251,11 +2253,21 @@ export default class rquery {
                //Hs.div(styles.error.status, `Status ${statusCode}`),
                Hs.div(styles.error.message, title),
                Hs.pre(styles.error.detail, lodash.flatten(messageLines).join('\n')),
-               hints.map(hint => He.div(styles.error.hint, [
-                  Hso.div(styles.error.hintMessage, hint.message),
-                  Hso.div(styles.error.hintUrl, hint.url),
-                  Hso.div(styles.error.hintDescription, hint.description)
-               ])),
+               hints.map(hint => {
+                  this.logger.debug('hint', hint);
+                  return He.div(styles.error.hint, lodash.flatten([
+                     If.thenElse(hint.message && hint.url, [
+                        He.a({
+                           style: styles.error.hintMessage,
+                           href: hint.url
+                        }, hint.message),
+                     ], [
+                        Hso.div(styles.error.hintMessage, hint.message),
+                        Hso.div(styles.error.hintUrl, hint.url),
+                     ]),
+                     Hso.div(styles.error.hintDescription, hint.description)
+                  ]))
+               }),
             ]
          }));
       } else {
