@@ -2248,14 +2248,10 @@ export default class rquery {
          }));
       } else {
          messageLines = messageLines.concat(lodash.compact(hints.map(hint => {
-            if (hint.message) {
-               return messageLines.push(this.message);
-            }
-            if (hint.url) {
-               return messageLines.push(this.url);
-            }
+            return [hint.message, hint.url];
          })));
          this.logger.warn('status lines', req.path, statusCode, messageLines);
+         this.logger.debug('messageLines', messageLines, lodash.flatten(messageLines), hints);
          res.status(statusCode).send(lodash.flatten([title, ...messageLines]).join('\n') + '\n');
       }
    }
