@@ -43,7 +43,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
    ];
    let result = [
       ``,
-      `Curl this script and pipe into bash as follows:`,
+      `Curl this script and pipe into bash as follows to create key dir ~/.redishub/live:`,
       ``,
       `curl -s '${serviceUrl}/${commandKey}/${account}?dir=~/.redishub/live&noarchive' | bash`,
       ``,
@@ -62,7 +62,6 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       `  commandKey='${commandKey}'`,
       `  serviceUrl='${serviceUrl}'`,
       `  archive=${archive}`,
-      ``,
       `  certWebhook="\${serviceUrl}/create-account-telegram/\${account}"`,
       ``,
    ]);
@@ -78,7 +77,8 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       ]);
    }
    result = result.concat([
-      `  # TODO move following to static versioned github script for improved security`,
+      ``,
+      `  # TODO curl following from static stable versioned script from https://raw.githubusercontent.com/evanx/redishub`,
       `  if mkdir \${dir} && cd $_`,
       `  then # mkdir ok so directory did not exist`,
       `    echo "\${account}" > account`,

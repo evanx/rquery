@@ -1899,7 +1899,7 @@ var rquery = function () {
                               break;
                            }
 
-                           throw { message: 'No client cert' };
+                           throw new ValidationError({ message: 'No client cert', hint: _this6.hints.signup });
 
                         case 6:
                            cert = cert.replace(/\t/g, '\n');
@@ -5303,23 +5303,27 @@ var rquery = function () {
             return;
          }
          if (!certs) {
-            throw { message: 'No enrolled certs', hint: {
-                  commandKey: ['create-account-telegram']
-               } };
+            throw new ValidationError({
+               message: 'No enrolled certs',
+               hint: this.hints.signup
+            });
          }
          var cert = req.get('ssl_client_cert');
          if (!cert) {
-            throw { message: 'No client cert sent', hint: {
-                  commandKey: ['create-account-telegram']
-               } };
+            throw new ValidationError({
+               message: 'No client cert sent',
+               hint: this.hints.signup
+            });
          }
          var dn = req.get('ssl_client_s_dn');
          if (!dn) throw new ValidationError({
-            message: 'No client cert DN', hint: this.hints.signup
+            message: 'No client cert DN',
+            hint: this.hints.signup
          });
          var names = this.parseDn(dn);
          if (names.o !== account) throw new ValidationError({
-            message: 'Cert O name mismatches account', hint: this.hints.signup
+            message: 'Cert O name mismatches account',
+            hint: this.hints.signup
          });
          var role = names.ou;
          if (!lodash.isEmpty(roles) && !roles.includes(role)) throw new ValidationError({
@@ -5329,9 +5333,15 @@ var rquery = function () {
          if (!certs.includes(certDigest)) {
             this.logger.info('validateCert', account, role, certDigest, certs);
             throw new ValidationError({
-               message: 'Invalid cert', hints: lodash.pick(this.hints, ['signup', 'grantCert'])
+               message: 'Invalid cert',
+               hints: lodash.pick(this.hints, ['signup', 'grantCert'])
             });
          }
+
+         throw new ValidationError({
+            message: 'Invalid cert',
+            hints: lodash.pick(this.hints, ['signup', 'grantCert'])
+         });
          return { certDigest: certDigest, role: role };
       }
    }, {
@@ -5430,7 +5440,7 @@ var rquery = function () {
             this.logger.warn(err.context);
          }
          try {
-            this.sendStatusMessage(req, res, 500, err);
+            this.sendStatusMessage(req, res, err.status || 500, err);
          } catch (error) {
             this.logger.error(error);
          }
