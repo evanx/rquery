@@ -3,7 +3,7 @@ module.exports = {
    components: {
       rquery: {
          redisUrl: 'redis://localhost:6379/1',
-         redisKeyspace: 'demo:rquery',
+         redisKeyspace: 'rquery',
          openHostname: 'redishub.com',
          secureHostname: 'secure.redishub.com',
          hostDomain: 'secure.redishub.com',
