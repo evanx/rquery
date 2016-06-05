@@ -696,7 +696,7 @@ var rquery = function () {
                         _context8.next = 21;
                         return this.redis.multiExecAsync(function (multi) {
                            _this5.logger.info('handleTelegramGrant setex', grantKey, cert, _this5.config.enrollExpire);
-                           multi.setex(grantKey, cert, _this5.config.enrollExpire);
+                           multi.setex(grantKey, _this5.config.enrollExpire, cert);
                         });
 
                      case 21:

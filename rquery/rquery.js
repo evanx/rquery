@@ -293,7 +293,7 @@ export default class rquery {
       });
       let [setex] = await this.redis.multiExecAsync(multi => {
          this.logger.info('handleTelegramGrant setex', grantKey, cert, this.config.enrollExpire);
-         multi.setex(grantKey, cert, this.config.enrollExpire);
+         multi.setex(grantKey, this.config.enrollExpire, cert);
       });
       if (setex) {
          await this.sendTelegramReply(request, 'html', [
