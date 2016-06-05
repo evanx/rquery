@@ -124,7 +124,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
       resultString = result;
    } else if (lodash.isArray(result)) {
       if (lodash.isFunction(command.renderHtmlEach)) {
-         resultArray = result.map(element => command.renderHtmlEach(element));
+         resultArray = result.map(element => command.renderHtmlEach(req, res, reqx, element));
       } else {
          resultArray = lodash.flatten(result.map(element => {
             if (lodash.isObject(element)) {

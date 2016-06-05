@@ -239,7 +239,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
    } else if (lodash.isArray(result)) {
       if (lodash.isFunction(command.renderHtmlEach)) {
          resultArray = result.map(function (element) {
-            return command.renderHtmlEach(element);
+            return command.renderHtmlEach(req, res, reqx, element);
          });
       } else {
          resultArray = lodash.flatten(result.map(function (element) {

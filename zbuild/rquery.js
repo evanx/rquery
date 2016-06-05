@@ -247,14 +247,14 @@ var rquery = function () {
             var _ref2 = _slicedToArray(_ref, 3);
 
             var matching = _ref2[0];
-            var _account = _ref2[1];
+            var account = _ref2[1];
             var keyspace = _ref2[2];
 
-            this.logger.debug('sendErrorRoute', req.path, _account, keyspace, this.isBrowser(req));
+            this.logger.debug('sendErrorRoute', req.path, account, keyspace, this.isBrowser(req));
             if (this.isBrowser(req)) {
                var redirectPath = '/routes';
-               if (_account && keyspace) {
-                  redirectPath = ['/ak', _account, keyspace, 'help'].join('/');
+               if (account && keyspace) {
+                  redirectPath = ['/ak', account, keyspace, 'help'].join('/');
                }
                res.redirect(302, redirectPath);
             } else {
@@ -1490,10 +1490,10 @@ var rquery = function () {
             params: ['account'],
             description: 'list account keyspaces',
             relatedCommands: ['create-keyspace'],
-            dangerousRelatedCommands: ['destoy-keyspace'],
+            dangerousRelatedCommands: ['destroy-keyspace'],
             renderHtmlEach: function renderHtmlEach(req, res, reqx, keyspace) {
                _this6.logger.debug('renderHtmlEach', keyspace);
-               return '<a href="/ak/' + account + '/' + keyspace + '">' + keyspace + '</a>';
+               return '<a href="/ak/' + reqx.account + '/' + keyspace + '">' + keyspace + '</a>';
             },
             access: 'admin'
          }, function () {

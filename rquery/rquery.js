@@ -595,10 +595,10 @@ export default class rquery {
          params: ['account'],
          description: 'list account keyspaces',
          relatedCommands: ['create-keyspace'],
-         dangerousRelatedCommands: ['destoy-keyspace'],
+         dangerousRelatedCommands: ['destroy-keyspace'],
          renderHtmlEach: (req, res, reqx, keyspace) => {
             this.logger.debug('renderHtmlEach', keyspace);
-            return `<a href="/ak/${account}/${keyspace}">${keyspace}</a>`;
+            return `<a href="/ak/${reqx.account}/${keyspace}">${keyspace}</a>`;
          },
          access: 'admin'
       }, async (req, res, reqx) => {
