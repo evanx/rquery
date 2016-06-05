@@ -5465,7 +5465,7 @@ var rquery = function () {
                title = 'Wrong type for key';
                if (account && keyspace && key) {
                   hints.push({
-                     message: 'Check the key type',
+                     message: 'Check the key type of <tt>${key}</tt>',
                      uri: ['ak', account, keyspace, 'type', key].join('/')
                   });
                }
