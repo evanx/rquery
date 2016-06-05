@@ -162,6 +162,7 @@ var styles = {
       },
       hint: {},
       hintUrl: {
+         lineHeight: 1.5,
          fontSize: 16,
          paddingTop: 10
       },
