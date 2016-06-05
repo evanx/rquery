@@ -2247,9 +2247,9 @@ export default class rquery {
             ]
          }));
       } else {
-         messageLines = messageLines.concat(lodash.compact(hints.map(hint => {
-            return [hint.message, hint.url];
-         })));
+         messageLines = messageLines.concat(hints.map(hint => {
+            return lodash.compact([hint.message, hint.url]);
+         }));
          this.logger.warn('status lines', req.path, statusCode, messageLines);
          this.logger.debug('messageLines', messageLines, lodash.flatten(messageLines), hints);
          res.status(statusCode).send(lodash.flatten([title, ...messageLines]).join('\n') + '\n');
