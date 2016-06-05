@@ -18,5 +18,9 @@ export default function (props) {
    } else if (props.title) {
       content.push(Hs.span(styles.title, props.title));
    }
-   return He.header({style: styles.container, onClick: clickScript}, ...content);
+   if (backPath[0] != '/') {
+      return He.a({style: styles.container, href: backPath, target: '_blank'}, ...content);
+   } else {
+      return He.header({style: styles.container, onClick: clickScript}, ...content);
+   }
 }

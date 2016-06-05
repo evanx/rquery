@@ -80,7 +80,9 @@ module.exports = {
                      logger.debug('routes', routes.length);
                      $ = rquery.getContentType(req) === 'html' ? He : Hp;
                      return _context2.abrupt('return', {
-                        message: If.thenElse(req.params.account, 'Try to create a new keyspace', $.a({
+                        message: If.thenElse(rquery.getClientCert(req) && reqx.account, $.a({
+                           href: '/account-keyspaces/' + reqx.accounts
+                        }, 'List the keyspaces on your account'), $.a({
                            target: '_blank',
                            href: 'https://web.telegram.org/#/im?p=@redishub_bot'
                         }, 'Try "@' + rquery.config.adminBotName + '_bot /signup"')),

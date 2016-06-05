@@ -78,9 +78,10 @@ const styles = {
    },
    header: {
       container: {
+         display: 'block',
+         color: theme.colors.body,
          minHeight: 30,
          clear: 'both',
-         //position: 'relative',
          cursor: 'pointer',
          margin: [0, 0, 0, 0],
          border: 'bottom 1px #000'

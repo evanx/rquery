@@ -5,8 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 exports.default = function (props) {
-   var _He;
-
    assert(Values.isDefined(props.config.assetsUrl), 'assetsUrl');
    var reqx = props.reqx || {};
    var helpPath = props.helpPath || reqx.helpPath || '/routes';
@@ -20,7 +18,15 @@ exports.default = function (props) {
    } else if (props.title) {
       content.push(Hs.span(_styles.header.title, props.title));
    }
-   return (_He = He).header.apply(_He, [{ style: _styles.header.container, onClick: clickScript }].concat(content));
+   if (backPath[0] != '/') {
+      var _He;
+
+      return (_He = He).a.apply(_He, [{ style: _styles.header.container, href: backPath, target: '_blank' }].concat(content));
+   } else {
+      var _He2;
+
+      return (_He2 = He).header.apply(_He2, [{ style: _styles.header.container, onClick: clickScript }].concat(content));
+   }
 };
 
 var _styles = require('./styles');
