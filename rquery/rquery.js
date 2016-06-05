@@ -1480,7 +1480,7 @@ export default class rquery {
       if (!del) {
          this.logger.warn('certs grant del');
       }
-      return {account, domain};
+      return {account};
    }
 
    getClientCert(req) {

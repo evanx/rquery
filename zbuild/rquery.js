@@ -4100,7 +4100,7 @@ var rquery = function () {
                         if (!del) {
                            this.logger.warn('certs grant del');
                         }
-                        return _context99.abrupt('return', { account: account, domain: domain });
+                        return _context99.abrupt('return', { account: account });
 
                      case 45:
                      case 'end':
