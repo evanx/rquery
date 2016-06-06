@@ -104,7 +104,7 @@ exports.default = function () {
                      break;
                   }
 
-                  throw new ValidationError({ message: 'Cert already granted', hint: { uri: 'routes' } });
+                  throw new ValidationError({ message: 'Cert granted', hint: rquery.hints.routes });
 
                case 32:
                   if (granted) {

@@ -38,7 +38,7 @@ export default async function registerCert(req, res, reqx) {
       multi.sismember(rquery.adminKey('account', account, 'certs'), certDigest);
    });
    if (sismember) {
-      throw new ValidationError({message: 'Cert already granted', hint: {uri: 'routes'}});
+      throw new ValidationError({message: 'Cert granted', hint: rquery.hints.routes});
    }
    if (!granted) {
       throw new ValidationError({message: 'Cert must be granted via @redishub_bot',

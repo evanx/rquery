@@ -151,6 +151,10 @@ var rquery = function () {
                            grantCert: {
                               message: 'Try "@redishub_bot /grantcert certId" e.g. via https://web.telegram.org',
                               url: 'https://web.telegram.org/#/im?p=@redishub_bot'
+                           },
+                           routes: {
+                              message: 'See /routes to create a keyspace',
+                              url: '/routes'
                            }
                         };
                         this.redis = redisLib.createClient(this.config.redisUrl);
