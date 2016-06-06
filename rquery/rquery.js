@@ -2113,17 +2113,6 @@ export default class rquery {
             if (hint.url) {
                if (hint.message) {
                   if (this.isBrowser(req)) {
-                     const attributes = {
-                        href: hint.url
-                     };
-                     if (hint.url[0] !== '/') {
-                        attributes.target = '_blank';
-                     }
-                     if (hint.clipboard) {
-                        attributes.onClick = `window.prompt('Copy to clipboard via Ctrl-C', '${hint.clipboard}')`;
-                     }
-                     hint.url = He.a(attributes, hint.message);
-                     hint.message = '';
                   } else if (hint.message) {
                      hint.message = hint.message.replace(/<\/?(b|tt|i|code|pre)>/g, '');
                   }
@@ -2176,12 +2165,20 @@ export default class rquery {
                }, lodash.flatten(messageLines).join('\n')),
                hints.map(hint => {
                   this.logger.debug('hint', hint);
-                  return He.a({
-                     style: styles.error.hint,
+                  const attributes = {
+                     style: styles.error.hintContainer,
                      href: hint.url
-                  }, lodash.flatten([
+                  };
+                  if (this.isBrowser(req)) {
+                     if (hint.url[0] !== '/') {
+                        attributes.target = '_blank';
+                     }
+                     if (hint.clipboard) {
+                        attributes.onClick = `window.prompt('Copy to clipboard via Ctrl-C', '${hint.clipboard}')`;
+                     }
+                  }
+                  return He.a(attributes, lodash.flatten([
                      Hso.div(styles.error.hintMessage, hint.message),
-                     Hso.div(styles.error.hintUrl, hint.url),
                      Hso.div(styles.error.hintDescription, hint.description)
                   ]))
                }),

@@ -5320,19 +5320,7 @@ var rquery = function () {
                hint = Object.assign({}, hint);
                if (hint.url) {
                   if (hint.message) {
-                     if (_this16.isBrowser(req)) {
-                        var attributes = {
-                           href: hint.url
-                        };
-                        if (hint.url[0] !== '/') {
-                           attributes.target = '_blank';
-                        }
-                        if (hint.clipboard) {
-                           attributes.onClick = 'window.prompt(\'Copy to clipboard via Ctrl-C\', \'' + hint.clipboard + '\')';
-                        }
-                        hint.url = He.a(attributes, hint.message);
-                        hint.message = '';
-                     } else if (hint.message) {
+                     if (_this16.isBrowser(req)) {} else if (hint.message) {
                         hint.message = hint.message.replace(/<\/?(b|tt|i|code|pre)>/g, '');
                      }
                   }
@@ -5380,10 +5368,19 @@ var rquery = function () {
                   meta: 'optional'
                }, lodash.flatten(messageLines).join('\n')), hints.map(function (hint) {
                   _this16.logger.debug('hint', hint);
-                  return He.a({
-                     style: _styles2.default.error.hint,
+                  var attributes = {
+                     style: _styles2.default.error.hintContainer,
                      href: hint.url
-                  }, lodash.flatten([Hso.div(_styles2.default.error.hintMessage, hint.message), Hso.div(_styles2.default.error.hintUrl, hint.url), Hso.div(_styles2.default.error.hintDescription, hint.description)]));
+                  };
+                  if (_this16.isBrowser(req)) {
+                     if (hint.url[0] !== '/') {
+                        attributes.target = '_blank';
+                     }
+                     if (hint.clipboard) {
+                        attributes.onClick = 'window.prompt(\'Copy to clipboard via Ctrl-C\', \'' + hint.clipboard + '\')';
+                     }
+                  }
+                  return He.a(attributes, lodash.flatten([Hso.div(_styles2.default.error.hintMessage, hint.message), Hso.div(_styles2.default.error.hintDescription, hint.description)]));
                })]
             }));
          } else {

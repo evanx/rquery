@@ -159,10 +159,12 @@ const styles = {
          fontSize: 20,
          fontWeight: 'bold'
       },
-      hint: {
+      hintContainer: {
+         display: 'block',
+         margin: [10, 0, 0, 0],
+         lineHeight: 1.5
       },
       hintUrl: {
-         lineHeight: 1.5,
          fontSize: 15,
          paddingTop: 10,
       },
