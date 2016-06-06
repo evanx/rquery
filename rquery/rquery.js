@@ -12,7 +12,6 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
 import {default as handleCertScript} from './handlers/certScript';
-import {default as registerCert} from './handlers/registerCert';
 import {default as renderPage} from './html/Page';
 import * as KeyspaceHelp from './html/KeyspaceHelp';
 
@@ -1409,10 +1408,10 @@ export default class rquery {
       });
       this.addPublicCommandHandler({
          key: 'register-cert'
-      }, registerCert);
+      }, require('./handlers/registerCert').default);
       this.addPublicCommandHandler({
          key: 'enroll-cert'
-      }, registerCert);
+      }, require('./handlers/registerCert').default);
    }
 
    getClientCert(req) {

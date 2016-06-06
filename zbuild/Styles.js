@@ -184,3 +184,4 @@ function renderKey(key) {
 function isCssKey(key) {
    return IntegerKeys.includes(key) || key.match(CssKeyRegex);
 }
+//# sourceMappingURL=Styles.js.map

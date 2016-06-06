@@ -60,10 +60,6 @@ var _certScript = require('./handlers/certScript');
 
 var _certScript2 = _interopRequireDefault(_certScript);
 
-var _registerCert = require('./handlers/registerCert');
-
-var _registerCert2 = _interopRequireDefault(_registerCert);
-
 var _Page = require('./html/Page');
 
 var _Page2 = _interopRequireDefault(_Page);
@@ -3958,10 +3954,10 @@ var rquery = function () {
          }());
          this.addPublicCommandHandler({
             key: 'register-cert'
-         }, _registerCert2.default);
+         }, require('./handlers/registerCert').default);
          this.addPublicCommandHandler({
             key: 'enroll-cert'
-         }, _registerCert2.default);
+         }, require('./handlers/registerCert').default);
       }
    }, {
       key: 'getClientCert',
@@ -5486,3 +5482,4 @@ var rquery = function () {
 }();
 
 exports.default = rquery;
+//# sourceMappingURL=rquery.js.map
