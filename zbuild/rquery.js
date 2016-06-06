@@ -5171,13 +5171,12 @@ var rquery = function () {
             this.logger.info('validateCert', account, role, certDigest, certs);
             throw new ValidationError({
                message: 'Invalid cert',
-               hints: lodash.pick(this.hints, ['signup', 'grantCert'])
+               hints: [this.hints.signup, this.hints.grantCert]
             });
          }
-
          throw new ValidationError({
             message: 'Invalid cert',
-            hints: lodash.pick(this.hints, ['signup', 'grantCert'])
+            hints: [this.hints.signup, this.hints.grantCert]
          });
          return { certDigest: certDigest, role: role };
       }
