@@ -97,20 +97,22 @@ exports.default = function () {
                   certDigest = rquery.digestPem(cert);
                   shortDigest = certDigest.slice(-12);
                   pemExtract = rquery.extractPem(cert);
-                  _context.next = 26;
+
+                  logger.debug(Loggers.values({ certDigest: certDigest, shortDigest: shortDigest, pemExtract: pemExtract }, 'cert'));
+                  _context.next = 27;
                   return rquery.redis.multiExecAsync(function (multi) {
                      multi.get(grantKey);
                      multi.sismember(rquery.adminKey('account', account, 'certs'), certDigest);
                   });
 
-               case 26:
+               case 27:
                   _ref = _context.sent;
                   _ref2 = _slicedToArray(_ref, 2);
                   granted = _ref2[0];
                   sismember = _ref2[1];
 
                   if (!sismember) {
-                     _context.next = 32;
+                     _context.next = 33;
                      break;
                   }
 
@@ -120,9 +122,9 @@ exports.default = function () {
                      hint: rquery.hints.routes
                   });
 
-               case 32:
+               case 33:
                   if (granted) {
-                     _context.next = 34;
+                     _context.next = 35;
                      break;
                   }
 
@@ -135,9 +137,9 @@ exports.default = function () {
                      }
                   });
 
-               case 34:
+               case 35:
                   if (!(granted.indexOf(shortDigest) < 0 && certDigest.indexOf(granted) < 0 && pemExtract != granted)) {
-                     _context.next = 36;
+                     _context.next = 37;
                      break;
                   }
 
@@ -152,14 +154,14 @@ exports.default = function () {
                      }
                   });
 
-               case 36:
-                  _context.next = 38;
+               case 37:
+                  _context.next = 39;
                   return rquery.redis.multiExecAsync(function (multi) {
                      multi.del(grantKey);
                      multi.sadd(rquery.adminKey('account', account, 'certs'), certDigest);
                   });
 
-               case 38:
+               case 39:
                   _ref3 = _context.sent;
                   _ref4 = _slicedToArray(_ref3, 2);
                   del = _ref4[0];
@@ -173,7 +175,7 @@ exports.default = function () {
                   }
                   return _context.abrupt('return', { account: account });
 
-               case 45:
+               case 46:
                case 'end':
                   return _context.stop();
             }

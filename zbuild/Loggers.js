@@ -12,6 +12,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 exports.create = create;
 exports.keys = keys;
+exports.value = value;
+exports.values = values;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -174,6 +176,24 @@ function keys(object, label) {
       return label + ':{' + Object.keys(object).join(', ') + '}';
    } else {
       return Object.keys(object).join(' ');
+   }
+}
+
+function value(value, key) {
+   return [key, '=', value].join('');
+}
+
+function values(object, label) {
+   if (!object) {
+      return 'Empty:keys';
+   }
+   var message = Object.keys(object).map(function (key) {
+      return [key, value].join(':');
+   }).join(' ');
+   if (label) {
+      return label + ':{' + message + '}';
+   } else {
+      return message;
    }
 }
 //# sourceMappingURL=Loggers.js.map
