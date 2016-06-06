@@ -2176,16 +2176,12 @@ export default class rquery {
                }, lodash.flatten(messageLines).join('\n')),
                hints.map(hint => {
                   this.logger.debug('hint', hint);
-                  return He.div(styles.error.hint, lodash.flatten([
-                     If.thenElse(hint.message && hint.url, [
-                        He.a({
-                           style: styles.error.hintMessage,
-                           href: hint.url
-                        }, hint.message),
-                     ], [
-                        Hso.div(styles.error.hintMessage, hint.message),
-                        Hso.div(styles.error.hintUrl, hint.url),
-                     ]),
+                  return He.a({
+                     style: styles.error.hint,
+                     href: hint.url
+                  }, lodash.flatten([
+                     Hso.div(styles.error.hintMessage, hint.message),
+                     Hso.div(styles.error.hintUrl, hint.url),
                      Hso.div(styles.error.hintDescription, hint.description)
                   ]))
                }),

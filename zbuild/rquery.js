@@ -5380,10 +5380,10 @@ var rquery = function () {
                   meta: 'optional'
                }, lodash.flatten(messageLines).join('\n')), hints.map(function (hint) {
                   _this16.logger.debug('hint', hint);
-                  return He.div(_styles2.default.error.hint, lodash.flatten([If.thenElse(hint.message && hint.url, [He.a({
-                     style: _styles2.default.error.hintMessage,
+                  return He.a({
+                     style: _styles2.default.error.hint,
                      href: hint.url
-                  }, hint.message)], [Hso.div(_styles2.default.error.hintMessage, hint.message), Hso.div(_styles2.default.error.hintUrl, hint.url)]), Hso.div(_styles2.default.error.hintDescription, hint.description)]));
+                  }, lodash.flatten([Hso.div(_styles2.default.error.hintMessage, hint.message), Hso.div(_styles2.default.error.hintUrl, hint.url), Hso.div(_styles2.default.error.hintDescription, hint.description)]));
                })]
             }));
          } else {

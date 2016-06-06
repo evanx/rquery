@@ -168,7 +168,7 @@ var styles = {
       },
       hintDescription: {
          fontSize: 16,
-         paddingTop: 8,
+         paddingTop: 4,
          fontStyle: 'italic'
       },
       detail: {
