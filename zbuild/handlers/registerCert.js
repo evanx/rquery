@@ -114,7 +114,11 @@ exports.default = function () {
                      break;
                   }
 
-                  throw new ValidationError({ message: 'Cert granted', hint: rquery.hints.routes });
+                  throw new ValidationError({
+                     status: 200,
+                     message: 'Cert granted',
+                     hint: rquery.hints.routes
+                  });
 
                case 32:
                   if (granted) {
@@ -123,6 +127,7 @@ exports.default = function () {
                   }
 
                   throw new ValidationError({ message: 'Cert must be granted via @redishub_bot',
+                     status: 403,
                      hint: {
                         message: ['Try @redishub_bot "/grantcert ' + shortDigest + '"', 'e.g. via https://web.telegram.org,'].join(' '),
                         clipboard: '@redishub_bot /grantcert ' + shortDigest,
@@ -136,7 +141,9 @@ exports.default = function () {
                      break;
                   }
 
-                  throw new ValidationError({ message: 'Granted cert not matching: ' + shortDigest,
+                  throw new ValidationError({
+                     status: 422,
+                     message: 'Granted cert not matching: ' + shortDigest,
                      hint: {
                         message: 'Try @redishub_bot "/grantcert ' + shortDigest + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
 

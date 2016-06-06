@@ -48,10 +48,15 @@ export default async function registerCert(req, res, reqx) {
       multi.sismember(rquery.adminKey('account', account, 'certs'), certDigest);
    });
    if (sismember) {
-      throw new ValidationError({message: 'Cert granted', hint: rquery.hints.routes});
+      throw new ValidationError({
+         status: 200,
+         message: 'Cert granted',
+         hint: rquery.hints.routes
+      });
    }
    if (!granted) {
       throw new ValidationError({message: 'Cert must be granted via @redishub_bot',
+         status: 403,
          hint: {
             message: [
                `Try @redishub_bot "/grantcert ${shortDigest}"`,
@@ -65,7 +70,9 @@ export default async function registerCert(req, res, reqx) {
    if (granted.indexOf(shortDigest) < 0 &&
    certDigest.indexOf(granted) < 0 &&
    pemExtract != granted) {
-      throw new ValidationError({message: 'Granted cert not matching: ' + shortDigest,
+      throw new ValidationError({
+         status: 422,
+         message: 'Granted cert not matching: ' + shortDigest,
          hint: {
             message: `Try @redishub_bot "/grantcert ${shortDigest}`
             + ` from the authoritative Telegram account`
