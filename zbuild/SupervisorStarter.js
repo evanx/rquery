@@ -225,6 +225,7 @@ function assignDepsOptional(g) {
    g.HtmlElements = require('./HtmlElements');
    g.HtmlElements.assignDeps(g);
    g.If = require('./If');
+   g.Switch = require('./Switch');
 }
 
 assignDeps(global);

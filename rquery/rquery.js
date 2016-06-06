@@ -360,7 +360,7 @@ export default class rquery {
 
    addRoutes() {
       this.addPublicCommand(require('./handlers/routes'));
-      this.addPublicCommandHandler({
+      this.addPublicCommand({
          key: 'about',
          access: 'redirect',
       }, async (req, res) => {
@@ -421,7 +421,7 @@ export default class rquery {
          return Math.ceil(time[0] * 1000 * 1000 + parseInt(time[1]));
       });
       this.addPublicRoute('time', () => this.redis.timeAsync());
-      this.addPublicCommandHandler({
+      this.addPublicCommand({
          key: 'genkey-otp',
          params: ['user', 'host'],
          format: 'json'
@@ -430,7 +430,7 @@ export default class rquery {
          this.logger.debug('genkey-otp', user, host);
          return this.buildQrReply({user, host});
       });
-      this.addPublicCommandHandler({
+      this.addPublicCommand({
          key: 'genkey-ga',
          params: ['address', 'issuer'],
          format: 'json'
@@ -442,7 +442,7 @@ export default class rquery {
       if (!this.config.secureDomain) {
          this.logger.warn('insecure mode');
       } else {
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'gentoken',
             params: ['account']
          }, async (req, res, reqx) => {
@@ -467,7 +467,7 @@ export default class rquery {
          });
          this.addSecureDomain();
       }
-      this.addPublicCommandHandler({
+      this.addPublicCommand({
          key: 'verify-user-telegram',
          params: ['user']
       }, async (req, res) => {
@@ -494,7 +494,7 @@ export default class rquery {
             ].join(' ');
          }
       });
-      this.addPublicCommandHandler({
+      this.addPublicCommand({
          key: 'cert-script',
          params: ['account'],
          format: 'cli'
@@ -528,68 +528,72 @@ export default class rquery {
                   }
                })});
             }
-         }
-      }, async (req, res, reqx) => {
-         const {account, keyspace} = req.params;
-         let hostUrl = this.config.hostUrl;
-         if (this.config.hostDomain !== 'localhost') {
-            hostUrl = `https://${req.hostname}`;
-         }
-         this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
-         const message = `Welcome to your keyspace!`;
-         const commandReferenceMessage = `Read the Redis.io docs for the following commands`;
-         const customCommandHeading = `Custom commands`;
-         let description = [
-            `You can set, get and add data to sets, lists, zsets, hashes etc.`,
-            `Try click the example URLs below.`,
-            `Also edit the URL in the location bar to try other combinations.`
-         ];
-         if (this.isSecureDomain(req)) {
-            description.push(
-               `You can also try changing the domain to 'replica.redishub.com' to read keys.`
-            );
-         }
-         description.push(
-            `<i>(A client-side command completion tool will come later.)</i>`
-         );
-         description = description.join(' ');
-         const exampleParams = [
-            ['ttls'],
-            ['types'],
-            ['set', 'mykey1/myvalue'],
-            ['get', 'mykey1'],
-            ['sadd', 'myset1/myvalue'],
-            ['smembers', 'myset1'],
-            ['lpush', 'mylist1/myvalue1'],
-            ['lpushx', 'mylist1/myvalue2'],
-            ['rpop', 'mylist1'],
-            ['lrange', 'mylist1/0/10'],
-            ['lrevrange', 'mylist1/0/10'],
-            ['lrange', 'mylist1/-10/-1'],
-            ['hset', 'myhashes1/field1/value1'],
-            ['hsetnx', 'myhashes1/field2/value2'],
-            ['hgetall', 'myhashes1'],
-            ['zadd', 'myzset1/10/member10'],
-            ['zadd', 'myzset1/20/member20'],
-            ['zrange', 'myzset1/0/-1'],
-            ['zrevrange', 'myzset1/0/-1'],
-         ];
-         const customExampleParams = [
-            ['set-json-query', 'myobject1?name=myname&id=12346'],
-            ['get-json', 'myobject1'],
-         ];
-         const exampleUrls = exampleParams.map(params => {
-            const key = params.shift();
-            let url = `${hostUrl}/ak/${account}/${keyspace}/${key}`;
-            if (params) {
-               url += '/' + params;
+         },
+         handleReq: async (req, res, reqx) => {
+            const {account, keyspace} = req.params;
+            let hostUrl = this.config.hostUrl;
+            if (this.config.hostDomain !== 'localhost') {
+               hostUrl = `https://${req.hostname}`;
             }
-            return url;
-         })
-         return {message, commandReferenceMessage, customCommandHeading, description, exampleUrls,
-            commands: this.commands,
-            keyspaceCommands: this.listCommands('keyspace')
-         };
+            this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
+            const message = Switch.on(`Welcome to this keyspace`,
+               [reqx.account === 'hub', `Welcome to this ephemeral keyspace`],
+               [reqx.account, `Welcome to your account keyspace`]
+            );
+            const commandReferenceMessage = `Read the Redis.io docs for the following commands`;
+            const customCommandHeading = `Custom commands`;
+            let description = [
+               `You can set, get and add data to sets, lists, zsets, hashes etc.`,
+               `Try click the example URLs below.`,
+               `Also edit the URL in the location bar to try other combinations.`
+            ];
+            if (this.isSecureDomain(req)) {
+               description.push(
+                  `You can also try changing the domain to 'replica.redishub.com' to read keys.`
+               );
+            }
+            description.push(
+               `<i>(A client-side command completion tool will come later, after access control.)</i>`
+            );
+            description = description.join(' ');
+            const exampleParams = [
+               ['ttls'],
+               ['types'],
+               ['set', 'mykey1/myvalue'],
+               ['get', 'mykey1'],
+               ['sadd', 'myset1/myvalue'],
+               ['smembers', 'myset1'],
+               ['lpush', 'mylist1/myvalue1'],
+               ['lpushx', 'mylist1/myvalue2'],
+               ['rpop', 'mylist1'],
+               ['lrange', 'mylist1/0/10'],
+               ['lrevrange', 'mylist1/0/10'],
+               ['lrange', 'mylist1/-10/-1'],
+               ['hset', 'myhashes1/field1/value1'],
+               ['hsetnx', 'myhashes1/field2/value2'],
+               ['hgetall', 'myhashes1'],
+               ['zadd', 'myzset1/10/member10'],
+               ['zadd', 'myzset1/20/member20'],
+               ['zrange', 'myzset1/0/-1'],
+               ['zrevrange', 'myzset1/0/-1'],
+            ];
+            const customExampleParams = [
+               ['set-json-query', 'myobject1?name=myname&id=12346'],
+               ['get-json', 'myobject1'],
+            ];
+            const exampleUrls = exampleParams.map(params => {
+               const key = params.shift();
+               let url = `${hostUrl}/ak/${account}/${keyspace}/${key}`;
+               if (params) {
+                  url += '/' + params;
+               }
+               return url;
+            })
+            return {message, commandReferenceMessage, customCommandHeading, description, exampleUrls,
+               commands: this.commands,
+               keyspaceCommands: this.listCommands('keyspace')
+            };
+         }
       });
       this.addKeyspaceCommand({
          key: 'create-keyspace',
@@ -887,7 +891,7 @@ export default class rquery {
          params: ['key', 'member'],
          access: 'add',
          description: 'add a member to the list',
-         relatedCommands: ['sismember', 'scard'],
+         relatedCommands: ['sismember', 'scard', 'type', 'ttl'],
       }, async (req, res, reqx) => {
          return await this.redis.saddAsync(reqx.keyspaceKey, req.params.member);
       });
@@ -1154,7 +1158,7 @@ export default class rquery {
          params: ['key', 'field', 'value'],
          access: 'set',
          description: 'set the string value of a hash field',
-         relatedCommands: ['hget', 'hgetall', 'hkeys', 'hvals']
+         relatedCommands: ['hget', 'hgetall', 'hkeys', 'hvals', 'type', 'ttl']
       }, async (req, res, reqx) => {
          return await this.redis.hsetAsync(reqx.keyspaceKey, req.params.field, req.params.value);
       });
@@ -1321,15 +1325,9 @@ export default class rquery {
       }
    }
 
-   addPublicCommandHandler(command, handleReq) {
-      assert(lodash.isFunction(handleReq), 'handleReq');
-      assert(!Values.isDefined(command.handleReq));
-      command.handleReq = handleReq;
-      this.addPublicCommand(command);
-   }
-
-   addPublicCommand(command) {
-      assert(Values.isDefined(command.handleReq), Loggers.keys(command, 'command'));
+   addPublicCommand(command, handleReq) {
+      handleReq = handleReq || command.handleReq;
+      assert(Values.isDefined(handleReq), command.key);
       let uri = command.key;
       if (command.params) {
          uri = [command.key, ... command.params.map(param => ':' + param)].join('/');
@@ -1341,7 +1339,7 @@ export default class rquery {
                throw {message: 'Invalid path: leading colon. Try substituting parameter: ' + match.pop()};
             }
             this.logger.debug('command', command.key);
-            const result = await command.handleReq(req, res, {command});
+            const result = await handleReq(req, res, {command});
             if (command.access === 'redirect') {
             } else if (result !== undefined) {
                await Result.sendResult(command, req, res, {}, result);
@@ -1353,12 +1351,12 @@ export default class rquery {
       this.addCommand(command);
    }
 
-   addPublicRoute(uri, fn) {
+   addPublicRoute(uri, handleReq) {
       uri = [this.config.location, uri].join('/');
       this.logger.debug('addPublicRoute', uri);
       this.expressApp.get(uri, async (req, res) => {
          try {
-            const result = await fn(req, res);
+            const result = await handleReq(req, res);
             if (result !== undefined) {
                await Result.sendResult({}, req, res, {}, result);
             }
@@ -1369,40 +1367,40 @@ export default class rquery {
    }
 
    addRegisterRoutes() {
-      this.addPublicCommandHandler({
+      this.addPublicCommand({
          key: 'register-ephemeral' // TODO remove 10 june
       }, async (req, res) => {
          req.params = {account: 'hub'};
          return this.createEphemeral(req, res);
       });
-      this.addPublicCommandHandler({
+      this.addPublicCommand({
          key: 'create-ephemeral'
       }, async (req, res) => {
          req.params = {account: 'hub'};
          return this.createEphemeral(req, res);
       });
-      this.addPublicCommandHandler({
+      this.addPublicCommand({
          key: 'create-ephemeral-named',
          params: ['keyspace', 'access']
       }, async (req, res) => {
          req.params = {account: 'hub'};
          return this.createEphemeral(req, res);
       });
-      this.addPublicCommandHandler({
+      this.addPublicCommand({
          key: 'create-ephemeral-access',
          params: ['access']
       }, async (req, res) => {
          req.params.account = 'hub';
          return this.createEphemeral(req, res);
       });
-      this.addPublicCommandHandler({
+      this.addPublicCommand({
          key: 'create-account-telegram',
          params: ['account'],
          description: 'create a new account linked to an authoritative Telegram.org account'
       }, async (req, res, reqx) => {
          return this.createAccount(req, res, reqx);
       });
-      this.addPublicCommandHandler({
+      this.addPublicCommand({
          key: 'destroy-account',
          params: ['account'],
          description: 'destroy an account'
@@ -1416,10 +1414,10 @@ export default class rquery {
          }
          throw {message: 'Not implemented'};
       });
-      this.addPublicCommandHandler({
+      this.addPublicCommand({
          key: 'register-cert'
       }, require('./handlers/registerCert').default);
-      this.addPublicCommandHandler({
+      this.addPublicCommand({
          key: 'enroll-cert'
       }, require('./handlers/registerCert').default);
    }
@@ -1518,7 +1516,8 @@ export default class rquery {
       }
    }
 
-   async addAccountCommand(command, fn) {
+   async addAccountCommand(command, handleReq) {
+      handleReq = handleReq || command.handleReq;
       let uri = [command.key];
       if (command.params) {
          uri = [command.key, ...command.params.map(param => ':' + param)];
@@ -1551,7 +1550,7 @@ export default class rquery {
             }
             const {certDigest, role} = this.validateCert(req, reqx, certs, account, []);
             Object.assign(reqx, {account, accountKey, time, admined, certDigest});
-            const result = await fn(req, res, reqx);
+            const result = await handleReq(req, res, reqx);
             if (result !== undefined) {
                await Result.sendResult(command, req, res, reqx, result);
             }
@@ -1717,7 +1716,10 @@ export default class rquery {
       this.commandMap.set(command.key, command);
    }
 
-   addKeyspaceCommand(command, fn) {
+   addKeyspaceCommand(command, handleReq) {
+      if (handleReq) {
+         command.handleReq = handleReq;
+      }
       assert(command.key, 'command.key');
       command.context = 'keyspace';
       let uri = 'ak/:account/:keyspace';
@@ -1725,7 +1727,7 @@ export default class rquery {
       const key = command.key + command.params.length;
       this.logger.debug('addKeyspaceCommand', command.key, key, uri);
       this.addCommand(command);
-      const handler = this.createKeyspaceHandler(command, fn);
+      const handler = this.createKeyspaceHandler(command);
       if (command.key === this.config.indexCommand) {
          this.expressApp.get([this.config.location, uri].join('/'), handler);
       }
@@ -1738,7 +1740,7 @@ export default class rquery {
       this.logger.debug('add', command.key, uri);
    }
 
-   createKeyspaceHandler(command, fn) {
+   createKeyspaceHandler(command) {
       return async (req, res) => {
          try {
             const {account, keyspace, key, timeout} = req.params;
@@ -1818,7 +1820,7 @@ export default class rquery {
             if (command && command.access === 'admin') {
                multi.hset(accountKey, 'admined', time);
             }
-            const result = await fn(req, res, reqx, multi);
+            const result = await command.handleReq(req, res, reqx, multi);
             if (result !== undefined) {
                await Result.sendResult(command, req, res, reqx, result);
             }

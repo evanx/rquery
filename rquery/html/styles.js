@@ -184,7 +184,7 @@ const styles = {
       message: {
          fontFamily: "'Ubuntu', 'Open Sans', sansserif",
          fontSize: 16,
-         fontWeight: 'bold',
+         //fontWeight: 'bold',
          color: theme.colors.message
       },
       description: {

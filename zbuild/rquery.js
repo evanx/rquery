@@ -884,7 +884,7 @@ var rquery = function () {
          var _this6 = this;
 
          this.addPublicCommand(require('./handlers/routes'));
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'about',
             access: 'redirect'
          }, function () {
@@ -1114,7 +1114,7 @@ var rquery = function () {
          this.addPublicRoute('time', function () {
             return _this6.redis.timeAsync();
          });
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'genkey-otp',
             params: ['user', 'host'],
             format: 'json'
@@ -1144,7 +1144,7 @@ var rquery = function () {
                return ref.apply(this, arguments);
             };
          }());
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'genkey-ga',
             params: ['address', 'issuer'],
             format: 'json'
@@ -1177,7 +1177,7 @@ var rquery = function () {
          if (!this.config.secureDomain) {
             this.logger.warn('insecure mode');
          } else {
-            this.addPublicCommandHandler({
+            this.addPublicCommand({
                key: 'gentoken',
                params: ['account']
             }, function () {
@@ -1240,7 +1240,7 @@ var rquery = function () {
             }());
             this.addSecureDomain();
          }
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'verify-user-telegram',
             params: ['user']
          }, function () {
@@ -1304,7 +1304,7 @@ var rquery = function () {
                return ref.apply(this, arguments);
             };
          }());
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'cert-script',
             params: ['account'],
             format: 'cli'
@@ -1375,62 +1375,66 @@ var rquery = function () {
                }
 
                return sendResult;
-            }()
-         }, function () {
-            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee25(req, res, reqx) {
-               var _req$params3, account, keyspace, hostUrl, message, commandReferenceMessage, customCommandHeading, description, exampleParams, customExampleParams, exampleUrls;
+            }(),
+            handleReq: function () {
+               var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee25(req, res, reqx) {
+                  var _req$params3, account, keyspace, hostUrl, message, commandReferenceMessage, customCommandHeading, description, exampleParams, customExampleParams, exampleUrls;
 
-               return regeneratorRuntime.wrap(function _callee25$(_context25) {
-                  while (1) {
-                     switch (_context25.prev = _context25.next) {
-                        case 0:
-                           _req$params3 = req.params;
-                           account = _req$params3.account;
-                           keyspace = _req$params3.keyspace;
-                           hostUrl = _this6.config.hostUrl;
+                  return regeneratorRuntime.wrap(function _callee25$(_context25) {
+                     while (1) {
+                        switch (_context25.prev = _context25.next) {
+                           case 0:
+                              _req$params3 = req.params;
+                              account = _req$params3.account;
+                              keyspace = _req$params3.keyspace;
+                              hostUrl = _this6.config.hostUrl;
 
-                           if (_this6.config.hostDomain !== 'localhost') {
-                              hostUrl = 'https://' + req.hostname;
-                           }
-                           _this6.logger.ndebug('help', req.params, _this6.commands.map(function (command) {
-                              return command.key;
-                           }).join('/'));
-                           message = 'Welcome to your keyspace!';
-                           commandReferenceMessage = 'Read the Redis.io docs for the following commands';
-                           customCommandHeading = 'Custom commands';
-                           description = ['You can set, get and add data to sets, lists, zsets, hashes etc.', 'Try click the example URLs below.', 'Also edit the URL in the location bar to try other combinations.'];
-
-                           if (_this6.isSecureDomain(req)) {
-                              description.push('You can also try changing the domain to \'replica.redishub.com\' to read keys.');
-                           }
-                           description.push('<i>(A client-side command completion tool will come later.)</i>');
-                           description = description.join(' ');
-                           exampleParams = [['ttls'], ['types'], ['set', 'mykey1/myvalue'], ['get', 'mykey1'], ['sadd', 'myset1/myvalue'], ['smembers', 'myset1'], ['lpush', 'mylist1/myvalue1'], ['lpushx', 'mylist1/myvalue2'], ['rpop', 'mylist1'], ['lrange', 'mylist1/0/10'], ['lrevrange', 'mylist1/0/10'], ['lrange', 'mylist1/-10/-1'], ['hset', 'myhashes1/field1/value1'], ['hsetnx', 'myhashes1/field2/value2'], ['hgetall', 'myhashes1'], ['zadd', 'myzset1/10/member10'], ['zadd', 'myzset1/20/member20'], ['zrange', 'myzset1/0/-1'], ['zrevrange', 'myzset1/0/-1']];
-                           customExampleParams = [['set-json-query', 'myobject1?name=myname&id=12346'], ['get-json', 'myobject1']];
-                           exampleUrls = exampleParams.map(function (params) {
-                              var key = params.shift();
-                              var url = hostUrl + '/ak/' + account + '/' + keyspace + '/' + key;
-                              if (params) {
-                                 url += '/' + params;
+                              if (_this6.config.hostDomain !== 'localhost') {
+                                 hostUrl = 'https://' + req.hostname;
                               }
-                              return url;
-                           });
-                           return _context25.abrupt('return', { message: message, commandReferenceMessage: commandReferenceMessage, customCommandHeading: customCommandHeading, description: description, exampleUrls: exampleUrls,
-                              commands: _this6.commands,
-                              keyspaceCommands: _this6.listCommands('keyspace')
-                           });
+                              _this6.logger.ndebug('help', req.params, _this6.commands.map(function (command) {
+                                 return command.key;
+                              }).join('/'));
+                              message = Switch.on('Welcome to this keyspace', [reqx.account === 'hub', 'Welcome to this ephemeral keyspace'], [reqx.account, 'Welcome to your account keyspace']);
+                              commandReferenceMessage = 'Read the Redis.io docs for the following commands';
+                              customCommandHeading = 'Custom commands';
+                              description = ['You can set, get and add data to sets, lists, zsets, hashes etc.', 'Try click the example URLs below.', 'Also edit the URL in the location bar to try other combinations.'];
 
-                        case 17:
-                        case 'end':
-                           return _context25.stop();
+                              if (_this6.isSecureDomain(req)) {
+                                 description.push('You can also try changing the domain to \'replica.redishub.com\' to read keys.');
+                              }
+                              description.push('<i>(A client-side command completion tool will come later, after access control.)</i>');
+                              description = description.join(' ');
+                              exampleParams = [['ttls'], ['types'], ['set', 'mykey1/myvalue'], ['get', 'mykey1'], ['sadd', 'myset1/myvalue'], ['smembers', 'myset1'], ['lpush', 'mylist1/myvalue1'], ['lpushx', 'mylist1/myvalue2'], ['rpop', 'mylist1'], ['lrange', 'mylist1/0/10'], ['lrevrange', 'mylist1/0/10'], ['lrange', 'mylist1/-10/-1'], ['hset', 'myhashes1/field1/value1'], ['hsetnx', 'myhashes1/field2/value2'], ['hgetall', 'myhashes1'], ['zadd', 'myzset1/10/member10'], ['zadd', 'myzset1/20/member20'], ['zrange', 'myzset1/0/-1'], ['zrevrange', 'myzset1/0/-1']];
+                              customExampleParams = [['set-json-query', 'myobject1?name=myname&id=12346'], ['get-json', 'myobject1']];
+                              exampleUrls = exampleParams.map(function (params) {
+                                 var key = params.shift();
+                                 var url = hostUrl + '/ak/' + account + '/' + keyspace + '/' + key;
+                                 if (params) {
+                                    url += '/' + params;
+                                 }
+                                 return url;
+                              });
+                              return _context25.abrupt('return', { message: message, commandReferenceMessage: commandReferenceMessage, customCommandHeading: customCommandHeading, description: description, exampleUrls: exampleUrls,
+                                 commands: _this6.commands,
+                                 keyspaceCommands: _this6.listCommands('keyspace')
+                              });
+
+                           case 17:
+                           case 'end':
+                              return _context25.stop();
+                        }
                      }
-                  }
-               }, _callee25, _this6);
-            }));
-            return function (_x36, _x37, _x38) {
-               return ref.apply(this, arguments);
-            };
-         }());
+                  }, _callee25, _this6);
+               }));
+
+               function handleReq(_x36, _x37, _x38) {
+                  return ref.apply(this, arguments);
+               }
+
+               return handleReq;
+            }()
+         });
          this.addKeyspaceCommand({
             key: 'create-keyspace',
             access: 'admin'
@@ -2325,7 +2329,7 @@ var rquery = function () {
             params: ['key', 'member'],
             access: 'add',
             description: 'add a member to the list',
-            relatedCommands: ['sismember', 'scard']
+            relatedCommands: ['sismember', 'scard', 'type', 'ttl']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee48(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee48$(_context48) {
@@ -3150,7 +3154,7 @@ var rquery = function () {
             params: ['key', 'field', 'value'],
             access: 'set',
             description: 'set the string value of a hash field',
-            relatedCommands: ['hget', 'hgetall', 'hkeys', 'hvals']
+            relatedCommands: ['hget', 'hgetall', 'hkeys', 'hvals', 'type', 'ttl']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee73(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee73$(_context73) {
@@ -3686,19 +3690,12 @@ var rquery = function () {
          }
       }
    }, {
-      key: 'addPublicCommandHandler',
-      value: function addPublicCommandHandler(command, handleReq) {
-         assert(lodash.isFunction(handleReq), 'handleReq');
-         assert(!Values.isDefined(command.handleReq));
-         command.handleReq = handleReq;
-         this.addPublicCommand(command);
-      }
-   }, {
       key: 'addPublicCommand',
-      value: function addPublicCommand(command) {
+      value: function addPublicCommand(command, handleReq) {
          var _this7 = this;
 
-         assert(Values.isDefined(command.handleReq), Loggers.keys(command, 'command'));
+         handleReq = handleReq || command.handleReq;
+         assert(Values.isDefined(handleReq), command.key);
          var uri = command.key;
          if (command.params) {
             uri = [command.key].concat(_toConsumableArray(command.params.map(function (param) {
@@ -3725,7 +3722,7 @@ var rquery = function () {
                         case 4:
                            _this7.logger.debug('command', command.key);
                            _context91.next = 7;
-                           return command.handleReq(req, res, { command: command });
+                           return handleReq(req, res, { command: command });
 
                         case 7:
                            result = _context91.sent;
@@ -3772,7 +3769,7 @@ var rquery = function () {
       }
    }, {
       key: 'addPublicRoute',
-      value: function addPublicRoute(uri, fn) {
+      value: function addPublicRoute(uri, handleReq) {
          var _this8 = this;
 
          uri = [this.config.location, uri].join('/');
@@ -3786,7 +3783,7 @@ var rquery = function () {
                         case 0:
                            _context92.prev = 0;
                            _context92.next = 3;
-                           return fn(req, res);
+                           return handleReq(req, res);
 
                         case 3:
                            result = _context92.sent;
@@ -3826,7 +3823,7 @@ var rquery = function () {
       value: function addRegisterRoutes() {
          var _this9 = this;
 
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'register-ephemeral' // TODO remove 10 june
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee93(req, res) {
@@ -3848,7 +3845,7 @@ var rquery = function () {
                return ref.apply(this, arguments);
             };
          }());
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'create-ephemeral'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee94(req, res) {
@@ -3870,7 +3867,7 @@ var rquery = function () {
                return ref.apply(this, arguments);
             };
          }());
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'create-ephemeral-named',
             params: ['keyspace', 'access']
          }, function () {
@@ -3893,7 +3890,7 @@ var rquery = function () {
                return ref.apply(this, arguments);
             };
          }());
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'create-ephemeral-access',
             params: ['access']
          }, function () {
@@ -3916,7 +3913,7 @@ var rquery = function () {
                return ref.apply(this, arguments);
             };
          }());
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'create-account-telegram',
             params: ['account'],
             description: 'create a new account linked to an authoritative Telegram.org account'
@@ -3939,7 +3936,7 @@ var rquery = function () {
                return ref.apply(this, arguments);
             };
          }());
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'destroy-account',
             params: ['account'],
             description: 'destroy an account'
@@ -3981,10 +3978,10 @@ var rquery = function () {
                return ref.apply(this, arguments);
             };
          }());
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'register-cert'
          }, require('./handlers/registerCert').default);
-         this.addPublicCommandHandler({
+         this.addPublicCommand({
             key: 'enroll-cert'
          }, require('./handlers/registerCert').default);
       }
@@ -4221,7 +4218,7 @@ var rquery = function () {
    }, {
       key: 'addAccountCommand',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee104(command, fn) {
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee104(command, handleReq) {
             var _this13 = this;
 
             var uri;
@@ -4229,6 +4226,7 @@ var rquery = function () {
                while (1) {
                   switch (_context104.prev = _context104.next) {
                      case 0:
+                        handleReq = handleReq || command.handleReq;
                         uri = [command.key];
 
                         if (command.params) {
@@ -4314,7 +4312,7 @@ var rquery = function () {
 
                                                          Object.assign(reqx, { account: account, accountKey: accountKey, time: time, admined: admined, certDigest: certDigest });
                                                          _context102.next = 26;
-                                                         return fn(req, res, reqx);
+                                                         return handleReq(req, res, reqx);
 
                                                       case 26:
                                                          result = _context102.sent;
@@ -4367,7 +4365,7 @@ var rquery = function () {
                            };
                         }());
 
-                     case 4:
+                     case 5:
                      case 'end':
                         return _context104.stop();
                   }
@@ -4664,7 +4662,10 @@ var rquery = function () {
       }
    }, {
       key: 'addKeyspaceCommand',
-      value: function addKeyspaceCommand(command, fn) {
+      value: function addKeyspaceCommand(command, handleReq) {
+         if (handleReq) {
+            command.handleReq = handleReq;
+         }
          assert(command.key, 'command.key');
          command.context = 'keyspace';
          var uri = 'ak/:account/:keyspace';
@@ -4672,7 +4673,7 @@ var rquery = function () {
          var key = command.key + command.params.length;
          this.logger.debug('addKeyspaceCommand', command.key, key, uri);
          this.addCommand(command);
-         var handler = this.createKeyspaceHandler(command, fn);
+         var handler = this.createKeyspaceHandler(command);
          if (command.key === this.config.indexCommand) {
             this.expressApp.get([this.config.location, uri].join('/'), handler);
          }
@@ -4688,7 +4689,7 @@ var rquery = function () {
       }
    }, {
       key: 'createKeyspaceHandler',
-      value: function createKeyspaceHandler(command, fn) {
+      value: function createKeyspaceHandler(command) {
          var _this15 = this;
 
          return function () {
@@ -4885,7 +4886,7 @@ var rquery = function () {
                                              multi.hset(accountKey, 'admined', time);
                                           }
                                           _context107.next = 69;
-                                          return fn(req, res, reqx, multi);
+                                          return command.handleReq(req, res, reqx, multi);
 
                                        case 69:
                                           result = _context107.sent;

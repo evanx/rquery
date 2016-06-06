@@ -1,19 +1,21 @@
 
 ## rquery
 
-- HTTP API for Redis queries
+- HTTP API for Redis commands
+
+It is basically a Node SSL authentication and authorisation microservice for Redis access.
 
 Notable features (June 2016):
 - Create adhoc ephemeral keyspaces
 - Identity verification via Telegram.org chat bot `@redishub_bot`
 - Access secured via client-authenticated SSL
+- Certs granted access by admins via chat bot
 - Generate tokens for Google Authenticator
 - Excrypt keys using client cert via `set-encrypt`
 
 TODO (June 2016):
-- grant and revoke cert account access
+- revoke cert account access
 - keyspace role-based access control
-- refactor (separate auth modules for OTP, Telegram)
 
 
 ### Status
@@ -46,9 +48,11 @@ The following subset of Redis commands is supported for this demo:
 - keys: `keys` `exists` `set` `get` `type` `ttl` `incr`
 - sets: `sadd` `srem` `sismember` `smembers` `scard` `spop`
 - sorted sets: `zadd` `zrem` `zcard` `zrange` `zrevrange`
-- lists: `lpush` `rpop` `brpop` `brpoplpush` `llen` `lrange` `lset` `lindex` `lrem`
-- hashes: `hexists` `hset` `hincrby` `hget` `hdel` `hlen` `hkeys` `hgetall`
-- other: `time` `info` `keyspaces`
+- lists: `lpush` `rpop` `brpop` `brpoplpush` `llen` `lrange` `lrevrange` `lset` `lindex` `lrem`
+- hashes: `hexists` `hset` `hincrby` `hget` `hdel` `hlen` `hkeys` `hvals` `hgetall`
+- other: `time`
+
+Please create an issue for any unimplemented commands you want.
 
 See Redis commands: https://redis.io/commands
 
@@ -112,7 +116,7 @@ For secure access to permanent keyspaces, let's try SSL client cert authenticati
 
 Note that we will register an account using our Telegram.org username. (I like Telegram.org, have an Ubuntu phone, and want to build a Telegram Bot to win one of those prizes, woohoo!)
 
-So visit https://web.telegram.org or install the mobile app, and message `@redishub_bot //verifyme.` That will verify your Telegram username to Redishub.
+So visit https://web.telegram.org or install the mobile app, and message `@redishub_bot /verifyme.` That will verify your Telegram username to Redishub.
 
 <hr>
 <img src="https://evanx.github.io/images/rquery/rquery030-telegram.png"/>
@@ -171,7 +175,7 @@ _rhcurl() {
 alias rh=_rhcurl
 ```
 
-First we register a keyspace:
+First we create a keyspace:
 ```shell
 rh ks1 create-keyspace
 ```
