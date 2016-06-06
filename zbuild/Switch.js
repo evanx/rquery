@@ -42,3 +42,4 @@ function on(defaultValue) {
       return invokable(result, match);
    }
 }
+//# sourceMappingURL=Switch.js.map
