@@ -221,7 +221,7 @@ var styles = {
       },
       resultArray: {
          lineHeight: 2,
-         margin: [10, 0, 0, 0],
+         margin: [10, 0, 15, 0],
          padding: [4, 8, 4, 8],
          backgroundColor: '#181818',
          borderTop: 'solid 1px #777777'
@@ -240,7 +240,7 @@ var styles = {
       },
       hint: {
          container: {
-            paddingTop: 10,
+            margin: [10, 0, 10, 0],
             fontSize: 16,
             cursor: 'pointer',
             color: theme.colors.link
