@@ -190,10 +190,12 @@ function sendHtmlResult(command, req, res, reqx, result) {
             description: 'view account keyspaces'
          });
       }
-      hints.push({
-         url: 'https://web.telegram.org/#/im?p=@redishub_bot',
-         description: 'See @redishub_bot on Telegram.org'
-      });
+      if (false) {
+         hints.push({
+            url: 'https://web.telegram.org/#/im?p=@redishub_bot',
+            description: 'See @redishub_bot on Telegram.org'
+         });
+      }
       hints.push({
          uri: ['help'],
          description: 'view sample keyspace commands'
@@ -230,74 +232,74 @@ function sendHtmlResult(command, req, res, reqx, result) {
          ]);
       });
       renderedPathHints = renderedPathHints.concat(hints
-      .filter(hint => hint.url && !hint.uri)
-      .map(hint => {
-         return hint;
-      })
-      .map(hint => {
-         let uriLabel = hint.path;
-         if (hint.uri) {
-            uriLabel = [Hc.b(hint.uri[0]), ...hint.uri.slice(1)].join('/');
-         }
-         return He.div({
-            style: styles.result.hint.container,
-            onClick: HtmlElements.onClick({href: hint.url})
-         }, [
-            He.div({
-               style: styles.result.hint.message,
-               meta: 'optional'
-            }, hint.message),
-            Hso.div(styles.result.hint.link),
-            Hso.div(styles.result.hint.description, lodash.capitalize(hint.description))
-         ]);
-      }));
-      rquery.logger.debug('renderedPathHints', renderedPathHints);
-      content.push(renderedPathHints);
-      const otherHints = hints.filter(hint => !hint.uri && hint.commandKey);
-      const renderedOtherHints = otherHints.map(hint => He.div({
-         style: styles.result.hint.container
-      }, [
-         Hso.div(styles.result.hint.message, hint.message),
-         Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, Hc.b(hint.commandKey))),
-         Hso.div(styles.result.hint.description, hint.description)
-      ]));
-      content.push(renderedOtherHints);
-   }
-   res.status(statusCode).send(renderPage({
-      config: rquery.config, req, reqx, title, heading, icon, content
-   }));
-}
-
-function getRelatedCommandHints(req, reqx, relatedCommands) {
-   const {rquery} = global;
-   return lodash.compact(relatedCommands
-      .map(commandKey => rquery.commandMap.get(commandKey))
-      .filter(command => command && command.key && command.params)
-      .filter(command => !rquery.isSecureDomain(req)
-      || !command.access || lodash.includes(['get', 'debug']
-      , command.access))
-      .map(command => {
-         let uri = [command.key];
-         const params = command.params
-         .map(key => {
-            let value = req.params[key] || [];
-            if (command && command.exampleKeyParams && command.exampleKeyParams.hasOwnProperty(key)) {
-               value = command.exampleKeyParams[key]
+         .filter(hint => hint.url && !hint.uri)
+         .map(hint => {
+            return hint;
+         })
+         .map(hint => {
+            let uriLabel = hint.path;
+            if (hint.uri) {
+               uriLabel = [Hc.b(hint.uri[0]), ...hint.uri.slice(1)].join('/');
             }
-            rquery.logger.info('related', key, value);
-            return value;
-         });
-         rquery.logger.info('related params', params);
-         if (params.length !== command.params.length) {
-            rquery.logger.warn('params length', command);
-            return null;
-         } else {
-            uri = uri.concat(...params);
-         }
-         return {
-            uri,
-            description: command.description
-         };
-      })
-   );
-}
+            return He.div({
+               style: styles.result.hint.container,
+               onClick: HtmlElements.onClick({href: hint.url})
+            }, [
+               He.div({
+                  style: styles.result.hint.message,
+                  meta: 'optional'
+               }, hint.message),
+               Hso.div(styles.result.hint.link),
+               Hso.div(styles.result.hint.description, lodash.capitalize(hint.description))
+            ]);
+         }));
+         rquery.logger.debug('renderedPathHints', renderedPathHints);
+         content.push(renderedPathHints);
+         const otherHints = hints.filter(hint => !hint.uri && hint.commandKey);
+         const renderedOtherHints = otherHints.map(hint => He.div({
+            style: styles.result.hint.container
+         }, [
+            Hso.div(styles.result.hint.message, hint.message),
+            Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, Hc.b(hint.commandKey))),
+            Hso.div(styles.result.hint.description, hint.description)
+         ]));
+         content.push(renderedOtherHints);
+      }
+      res.status(statusCode).send(renderPage({
+         config: rquery.config, req, reqx, title, heading, icon, content
+      }));
+   }
+
+   function getRelatedCommandHints(req, reqx, relatedCommands) {
+      const {rquery} = global;
+      return lodash.compact(relatedCommands
+         .map(commandKey => rquery.commandMap.get(commandKey))
+         .filter(command => command && command.key && command.params)
+         .filter(command => !rquery.isSecureDomain(req)
+         || !command.access || lodash.includes(['get', 'debug']
+         , command.access))
+         .map(command => {
+            let uri = [command.key];
+            const params = command.params
+            .map(key => {
+               let value = req.params[key] || [];
+               if (command && command.exampleKeyParams && command.exampleKeyParams.hasOwnProperty(key)) {
+                  value = command.exampleKeyParams[key]
+               }
+               rquery.logger.info('related', key, value);
+               return value;
+            });
+            rquery.logger.info('related params', params);
+            if (params.length !== command.params.length) {
+               rquery.logger.warn('params length', command);
+               return null;
+            } else {
+               uri = uri.concat(...params);
+            }
+            return {
+               uri,
+               description: command.description
+            };
+         })
+      );
+   }

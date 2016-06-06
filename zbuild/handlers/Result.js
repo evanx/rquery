@@ -308,10 +308,12 @@ function sendHtmlResult(command, req, res, reqx, result) {
             description: 'view account keyspaces'
          });
       }
-      hints.push({
-         url: 'https://web.telegram.org/#/im?p=@redishub_bot',
-         description: 'See @redishub_bot on Telegram.org'
-      });
+      if (false) {
+         hints.push({
+            url: 'https://web.telegram.org/#/im?p=@redishub_bot',
+            description: 'See @redishub_bot on Telegram.org'
+         });
+      }
       hints.push({
          uri: ['help'],
          description: 'view sample keyspace commands'
