@@ -202,7 +202,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
          rquery.logger.debug('hint', uriLabel, hint);
          return He.div({
             style: styles.result.hint.container,
-            onClick: HtmlElements.onClick(hint.path)
+            onClick: HtmlElements.onClick({href: hint.path})
          }, [
             Hso.div(styles.result.hint.message, hint.message),
             Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, uriLabel)),

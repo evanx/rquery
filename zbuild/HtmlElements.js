@@ -162,11 +162,7 @@ function renderChildrenRepeat(name, attributes, attrs, children) {
    }
 }
 
-function renderChildren(name, attributes, attrs) {
-   for (var _len3 = arguments.length, children = Array(_len3 > 3 ? _len3 - 3 : 0), _key3 = 3; _key3 < _len3; _key3++) {
-      children[_key3 - 3] = arguments[_key3];
-   }
-
+function renderChildren(name, attributes, attrs, children) {
    var content = [];
    children = lodash.flatten(children);
    if (!attrs.length && !children.length) {
@@ -209,8 +205,8 @@ function isMeta(attributes, metaName) {
 }
 
 function joinContent(name, attributes) {
-   for (var _len4 = arguments.length, children = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
-      children[_key4 - 2] = arguments[_key4];
+   for (var _len3 = arguments.length, children = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
+      children[_key3 - 2] = arguments[_key3];
    }
 
    children = lodash.flatten(children);
@@ -224,8 +220,8 @@ function joinContent(name, attributes) {
 function renders(fn) {
    return ElementNames.reduce(function (result, name) {
       result[name] = function () {
-         for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-            args[_key5] = arguments[_key5];
+         for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+            args[_key4] = arguments[_key4];
          }
 
          return fn.apply(undefined, [name].concat(args));
@@ -236,22 +232,28 @@ function renders(fn) {
 
 // util
 
-function onClick(url) {
-   var parts = ['document.body.style.opacity=.4'];
-   if (!url) {
+function onClick(_ref3) {
+   var href = _ref3.href;
+   var target = _ref3.target;
+
+   var parts = [];
+   if (!target) {
+      parts.push('document.body.style.opacity=.4');
+   }
+   if (!href) {
       logger.debug('onClick empty');
-   } else if (/^https?:\/\//.test(url)) {
-      return renderScript.apply(undefined, parts.concat(['window.location=\'' + renderPath(url) + '\'']));
-   } else if (url[0] === '/') {
-      return renderScript.apply(undefined, parts.concat(['window.location.pathname=\'' + renderPath(url) + '\'']));
+   } else if (/^https?:\/\//.test(href)) {
+      return renderScript.apply(undefined, parts.concat(['window.location=\'' + renderPath(href) + '\'']));
+   } else if (href[0] === '/') {
+      return renderScript.apply(undefined, parts.concat(['window.location.pathname=\'' + renderPath(href) + '\'']));
    } else {
-      return renderScript.apply(undefined, parts.concat(['window.location.pathname=\'/' + renderPath(url) + '\'']));
+      return renderScript.apply(undefined, parts.concat(['window.location.pathname=\'/' + renderPath(href) + '\'']));
    }
 }
 
 function renderScript() {
-   for (var _len6 = arguments.length, lines = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-      lines[_key6] = arguments[_key6];
+   for (var _len5 = arguments.length, lines = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+      lines[_key5] = arguments[_key5];
    }
 
    return lodash.compact(lines).join(';');
@@ -316,8 +318,8 @@ function plain(name, attributes, content) {
 
 function assignElements($, delegate) {
    Object.assign($, renders(function (name) {
-      for (var _len7 = arguments.length, args = Array(_len7 > 1 ? _len7 - 1 : 0), _key7 = 1; _key7 < _len7; _key7++) {
-         args[_key7 - 1] = arguments[_key7];
+      for (var _len6 = arguments.length, args = Array(_len6 > 1 ? _len6 - 1 : 0), _key6 = 1; _key6 < _len6; _key6++) {
+         args[_key6 - 1] = arguments[_key6];
       }
 
       return delegate.apply(undefined, [name].concat(args));
@@ -329,8 +331,8 @@ function assignDeps(g) {
    g.He = assignElements({}, render);
    g.Hp = assignElements({}, plain);
    g.Hs = renders(function (name, style) {
-      for (var _len8 = arguments.length, children = Array(_len8 > 2 ? _len8 - 2 : 0), _key8 = 2; _key8 < _len8; _key8++) {
-         children[_key8 - 2] = arguments[_key8];
+      for (var _len7 = arguments.length, children = Array(_len7 > 2 ? _len7 - 2 : 0), _key7 = 2; _key7 < _len7; _key7++) {
+         children[_key7 - 2] = arguments[_key7];
       }
 
       logger.debug('_style', name, style, children);
@@ -341,43 +343,43 @@ function assignDeps(g) {
       }
    });
    g.Hm = renders(function (name, meta, attributes) {
-      for (var _len9 = arguments.length, args = Array(_len9 > 3 ? _len9 - 3 : 0), _key9 = 3; _key9 < _len9; _key9++) {
-         args[_key9 - 3] = arguments[_key9];
+      for (var _len8 = arguments.length, args = Array(_len8 > 3 ? _len8 - 3 : 0), _key8 = 3; _key8 < _len8; _key8++) {
+         args[_key8 - 3] = arguments[_key8];
       }
 
       return render(name, Object.assign({ meta: meta }, attributes), args);
    });
    g.Hso = renders(function (name, style) {
-      for (var _len10 = arguments.length, args = Array(_len10 > 2 ? _len10 - 2 : 0), _key10 = 2; _key10 < _len10; _key10++) {
-         args[_key10 - 2] = arguments[_key10];
+      for (var _len9 = arguments.length, args = Array(_len9 > 2 ? _len9 - 2 : 0), _key9 = 2; _key9 < _len9; _key9++) {
+         args[_key9 - 2] = arguments[_key9];
       }
 
       return render(name, Object.assign({ meta: 'optional', style: style }), args);
    });
    g.Hms = renders(function (name, meta, style) {
-      for (var _len11 = arguments.length, args = Array(_len11 > 3 ? _len11 - 3 : 0), _key11 = 3; _key11 < _len11; _key11++) {
-         args[_key11 - 3] = arguments[_key11];
+      for (var _len10 = arguments.length, args = Array(_len10 > 3 ? _len10 - 3 : 0), _key10 = 3; _key10 < _len10; _key10++) {
+         args[_key10 - 3] = arguments[_key10];
       }
 
       return render(name, Object.assign({ meta: meta, style: style }), args);
    });
    g.Hc = renders(function (name) {
-      for (var _len12 = arguments.length, args = Array(_len12 > 1 ? _len12 - 1 : 0), _key12 = 1; _key12 < _len12; _key12++) {
-         args[_key12 - 1] = arguments[_key12];
+      for (var _len11 = arguments.length, args = Array(_len11 > 1 ? _len11 - 1 : 0), _key11 = 1; _key11 < _len11; _key11++) {
+         args[_key11 - 1] = arguments[_key11];
       }
 
       return render(name, {}, args);
    });
    g.Hmc = renders(function (name, meta) {
-      for (var _len13 = arguments.length, args = Array(_len13 > 2 ? _len13 - 2 : 0), _key13 = 2; _key13 < _len13; _key13++) {
-         args[_key13 - 2] = arguments[_key13];
+      for (var _len12 = arguments.length, args = Array(_len12 > 2 ? _len12 - 2 : 0), _key12 = 2; _key12 < _len12; _key12++) {
+         args[_key12 - 2] = arguments[_key12];
       }
 
       return render(name, { meta: meta }, args);
    });
    g.Hco = renders(function (name) {
-      for (var _len14 = arguments.length, args = Array(_len14 > 1 ? _len14 - 1 : 0), _key14 = 1; _key14 < _len14; _key14++) {
-         args[_key14 - 1] = arguments[_key14];
+      for (var _len13 = arguments.length, args = Array(_len13 > 1 ? _len13 - 1 : 0), _key13 = 1; _key13 < _len13; _key13++) {
+         args[_key13 - 1] = arguments[_key13];
       }
 
       return render(name, { meta: 'optional' }, args);

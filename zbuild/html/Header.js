@@ -9,7 +9,6 @@ exports.default = function (props) {
    var reqx = props.reqx || {};
    var helpPath = props.helpPath || reqx.helpPath || '/routes';
    var backPath = props.backPath || reqx.backPath || helpPath;
-   var clickScript = If.elseFn(backPath, '', HtmlElements.onClick);
    var content = [];
    content.push(He.img({ style: _styles.header.icon,
       src: props.config.assetsUrl + '/icomoon/png20-38/' + (props.icon || 'database') + '.png' }));
@@ -25,7 +24,10 @@ exports.default = function (props) {
    } else {
       var _He2;
 
-      return (_He2 = He).header.apply(_He2, [{ style: _styles.header.container, onClick: clickScript }].concat(content));
+      return (_He2 = He).header.apply(_He2, [{
+         style: _styles.header.container,
+         onClick: HtmlElements.onClick({ href: backPath, target: '_blank' })
+      }].concat(content));
    }
 };
 

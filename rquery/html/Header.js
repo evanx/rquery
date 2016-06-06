@@ -8,7 +8,6 @@ export default function (props) {
    const reqx = props.reqx || {};
    const helpPath = props.helpPath || reqx.helpPath || '/routes';
    const backPath = props.backPath || reqx.backPath || helpPath;
-   const clickScript = If.elseFn(backPath, '', HtmlElements.onClick);
    const content = []
    content.push(He.img({style: styles.icon,
       src: `${props.config.assetsUrl}/icomoon/png20-38/${props.icon || 'database'}.png`})
@@ -21,6 +20,9 @@ export default function (props) {
    if (backPath[0] != '/') {
       return He.a({style: styles.container, href: backPath, target: '_blank'}, ...content);
    } else {
-      return He.header({style: styles.container, onClick: clickScript}, ...content);
+      return He.header({
+         style: styles.container,
+         onClick: HtmlElements.onClick({href: backPath, target: '_blank'})
+      }, ...content);
    }
 }

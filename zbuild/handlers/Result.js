@@ -321,7 +321,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
          rquery.logger.debug('hint', uriLabel, hint);
          return He.div({
             style: _styles2.default.result.hint.container,
-            onClick: HtmlElements.onClick(hint.path)
+            onClick: HtmlElements.onClick({ href: hint.path })
          }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, uriLabel)), Hso.div(_styles2.default.result.hint.description, lodash.capitalize(hint.description))]);
       });
       rquery.logger.debug('renderedPathHints', renderedPathHints);
