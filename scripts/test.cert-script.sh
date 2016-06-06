@@ -11,8 +11,8 @@ openUrl='http://localhost:8765'
 rhinfo $openUrl 
 
   curl -s "$openUrl/cert-script/evanxsummers" 
-  rhhead "curl -s '$openUrl/cert-script/evanxsummers' | head" 
-  curl -s "$openUrl/cert-script/evanxsummers" | head -30
+  rhhead "curl -s '$openUrl/cert-script/evanxsummers' | head -40" 
+  curl -s "$openUrl/cert-script/evanxsummers" | head -40
 
   if [ $# -eq 0 ] 
   then

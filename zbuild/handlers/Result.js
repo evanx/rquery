@@ -302,17 +302,23 @@ function sendHtmlResult(command, req, res, reqx, result) {
             rquery.logger.error('related', err, err.stack);
          }
       }
+      if (reqx.account !== 'hub') {
+         hints.push({
+            url: '/account-keyspaces/' + reqx.account,
+            description: 'view sample keyspace commands'
+         });
+      }
+      hints.push({
+         url: 'https://web.telegram.org/#/im?p=@redishub_bot',
+         description: 'See @redishub_bot on Telegram.org'
+      });
       hints.push({
          uri: ['help'],
          description: 'view sample keyspace commands'
       });
-      var otherHints = hints.filter(function (hint) {
-         return !hint.uri && hint.commandKey;
-      });
-      hints = hints.filter(function (hint) {
-         return hint.uri;
-      });
-      var renderedPathHints = hints.map(function (hint) {
+      var renderedPathHints = hints.filter(function (hint) {
+         return !hint.url;
+      }).map(function (hint) {
          var path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace].concat(_toConsumableArray(hint.uri)).join('/'));
          hint = Object.assign({ path: path }, hint);
          return hint;
@@ -324,8 +330,21 @@ function sendHtmlResult(command, req, res, reqx, result) {
             onClick: HtmlElements.onClick({ href: hint.path })
          }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, uriLabel)), Hso.div(_styles2.default.result.hint.description, lodash.capitalize(hint.description))]);
       });
+      renderedPathHints = renderedPathHints.concat(hints.filter(function (hint) {
+         return hint.url && !hint.uri;
+      }).map(function (hint) {
+         return hint;
+      }).map(function (hint) {
+         return He.div({
+            style: _styles2.default.result.hint.container,
+            onClick: HtmlElements.onClick({ href: hint.url })
+         }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.description, lodash.capitalize(hint.description))]);
+      }));
       rquery.logger.debug('renderedPathHints', renderedPathHints);
       content.push(renderedPathHints);
+      var otherHints = hints.filter(function (hint) {
+         return !hint.uri && hint.commandKey;
+      });
       var renderedOtherHints = otherHints.map(function (hint) {
          return He.div({
             style: _styles2.default.result.hint.container

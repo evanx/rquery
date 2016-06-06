@@ -479,7 +479,11 @@ export default class rquery {
                return `OK: ${user}@telegram.me`;
             }
          } else {
-            return `Telegram user not yet verified: ${user}. Please Telegram '@redishub_bot /verifyme' e.g. via https://web.telegram.org`;
+            return [
+               `Telegram user not yet verified: ${user}.`,
+               `Please Telegram '@redishub_bot /verifyme'`,
+               `e.g. via https://web.telegram.org`
+            ].join(' ');
          }
       });
       this.addPublicCommandHandler({
@@ -524,11 +528,12 @@ export default class rquery {
             hostUrl = `https://${req.hostname}`;
          }
          this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
-         const message = `Try sample endpoints below on this keyspace.`;
+         const message = `Welcome to your keyspace!`;
          const commandReferenceMessage = `Read the Redis.io docs for the following commands`;
          const customCommandHeading = `Custom commands`;
          let description = [
-            `You can set, add and view keys, sets, lists, zsets, hashes etc.`,
+            `You can set, get and add data to sets, lists, zsets, hashes etc.`,
+            `Try click the example URLs below.`,
             `Also edit the URL in the location bar to try other combinations.`
          ];
          if (this.isSecureDomain(req)) {
@@ -653,26 +658,19 @@ export default class rquery {
          return keys.map(key => key.substring(keyIndex));
       });
       this.addKeyspaceCommand({
-         key: 'show-keyspace-config',
-         access: 'debug'
+         key: 'show-keyspace-info',
+         access: 'debug',
+         description: 'show admin info for this keyspace'
       }, async (req, res, reqx) => {
-         reqx.hints = [
-         ];
          return await this.redis.hgetallAsync(reqx.accountKey);
       });
       this.addKeyspaceCommand({
          key: 'keys',
-         access: 'debug'
+         access: 'debug',
+         description: 'show keys in this keyspace',
+         relatedCommands: ['ttls', 'types']
       }, async (req, res, reqx) => {
          const {account, keyspace} = reqx;
-         reqx.hints = [
-            {
-               uri: ['ttls'],
-            },
-            {
-               uri: ['types'],
-            },
-         ];
          const keys = await this.redis.keysAsync(this.keyspaceKey(account, keyspace, '*'));
          const keyIndex = this.keyIndex(account, keyspace);
          return keys.map(key => key.substring(keyIndex));
@@ -680,13 +678,9 @@ export default class rquery {
       this.addKeyspaceCommand({
          key: 'types',
          access: 'debug',
-         description: 'view all key types in this keyspace'
+         description: 'view all key types in this keyspace',
+         relatedCommands: ['ttls']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['ttls'],
-            },
-         ];
          const {account, keyspace} = reqx;
          const keys = await this.redis.keysAsync(this.keyspaceKey(account, keyspace, '*'));
          this.logger.debug('ttl ak', account, keyspace, keys);
@@ -703,11 +697,6 @@ export default class rquery {
          access: 'debug',
          description: 'view all TTLs in this keyspace',
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['types'],
-            },
-         ];
          const {account, keyspace} = reqx;
          const keys = await this.redis.keysAsync(this.keyspaceKey(account, keyspace, '*'));
          this.logger.debug('ttl ak', account, keyspace, keys);
@@ -723,26 +712,18 @@ export default class rquery {
          key: 'ttl',
          params: ['key'],
          access: 'debug',
-         description: 'check the key TTL'
+         description: 'check the key TTL',
+         relatedCommands: ['type']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['type', reqx.key],
-            },
-         ];
          return await this.redis.ttlAsync(reqx.keyspaceKey);
       });
       this.addKeyspaceCommand({
          key: 'type',
          params: ['key'],
          access: 'debug',
-         description: 'check the type of a key'
+         description: 'check the type of a key',
+         relatedCommands: ['ttl']
       }, async (req, res, reqx) => {
-         reqx.hints = [
-            {
-               uri: ['ttl', reqx.key],
-            },
-         ];
          return await this.redis.typeAsync(reqx.keyspaceKey);
       });
       this.addKeyspaceCommand({

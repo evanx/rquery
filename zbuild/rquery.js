@@ -1283,7 +1283,7 @@ var rquery = function () {
                            break;
 
                         case 20:
-                           return _context23.abrupt('return', 'Telegram user not yet verified: ' + user + '. Please Telegram \'@redishub_bot /verifyme\' e.g. via https://web.telegram.org');
+                           return _context23.abrupt('return', ['Telegram user not yet verified: ' + user + '.', 'Please Telegram \'@redishub_bot /verifyme\'', 'e.g. via https://web.telegram.org'].join(' '));
 
                         case 21:
                         case 'end':
@@ -1387,10 +1387,10 @@ var rquery = function () {
                            _this6.logger.ndebug('help', req.params, _this6.commands.map(function (command) {
                               return command.key;
                            }).join('/'));
-                           message = 'Try sample endpoints below on this keyspace.';
+                           message = 'Welcome to your keyspace!';
                            commandReferenceMessage = 'Read the Redis.io docs for the following commands';
                            customCommandHeading = 'Custom commands';
-                           description = ['You can set, add and view keys, sets, lists, zsets, hashes etc.', 'Also edit the URL in the location bar to try other combinations.'];
+                           description = ['You can set, get and add data to sets, lists, zsets, hashes etc.', 'Try click the example URLs below.', 'Also edit the URL in the location bar to try other combinations.'];
 
                            if (_this6.isSecureDomain(req)) {
                               description.push('You can also try changing the domain to \'replica.redishub.com\' to read keys.');
@@ -1647,22 +1647,22 @@ var rquery = function () {
             };
          }());
          this.addKeyspaceCommand({
-            key: 'show-keyspace-config',
-            access: 'debug'
+            key: 'show-keyspace-info',
+            access: 'debug',
+            description: 'show admin info for this keyspace'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee30(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee30$(_context30) {
                   while (1) {
                      switch (_context30.prev = _context30.next) {
                         case 0:
-                           reqx.hints = [];
-                           _context30.next = 3;
+                           _context30.next = 2;
                            return _this6.redis.hgetallAsync(reqx.accountKey);
 
-                        case 3:
+                        case 2:
                            return _context30.abrupt('return', _context30.sent);
 
-                        case 4:
+                        case 3:
                         case 'end':
                            return _context30.stop();
                      }
@@ -1675,7 +1675,9 @@ var rquery = function () {
          }());
          this.addKeyspaceCommand({
             key: 'keys',
-            access: 'debug'
+            access: 'debug',
+            description: 'show keys in this keyspace',
+            relatedCommands: ['ttls', 'types']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee31(req, res, reqx) {
                var account, keyspace, keys, keyIndex;
@@ -1685,23 +1687,17 @@ var rquery = function () {
                         case 0:
                            account = reqx.account;
                            keyspace = reqx.keyspace;
-
-                           reqx.hints = [{
-                              uri: ['ttls']
-                           }, {
-                              uri: ['types']
-                           }];
-                           _context31.next = 5;
+                           _context31.next = 4;
                            return _this6.redis.keysAsync(_this6.keyspaceKey(account, keyspace, '*'));
 
-                        case 5:
+                        case 4:
                            keys = _context31.sent;
                            keyIndex = _this6.keyIndex(account, keyspace);
                            return _context31.abrupt('return', keys.map(function (key) {
                               return key.substring(keyIndex);
                            }));
 
-                        case 8:
+                        case 7:
                         case 'end':
                            return _context31.stop();
                      }
@@ -1715,7 +1711,8 @@ var rquery = function () {
          this.addKeyspaceCommand({
             key: 'types',
             access: 'debug',
-            description: 'view all key types in this keyspace'
+            description: 'view all key types in this keyspace',
+            relatedCommands: ['ttls']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee32(req, res, reqx) {
                var account, keyspace, keys, keyIndex, multi, results, result;
@@ -1723,15 +1720,12 @@ var rquery = function () {
                   while (1) {
                      switch (_context32.prev = _context32.next) {
                         case 0:
-                           reqx.hints = [{
-                              uri: ['ttls']
-                           }];
                            account = reqx.account;
                            keyspace = reqx.keyspace;
-                           _context32.next = 5;
+                           _context32.next = 4;
                            return _this6.redis.keysAsync(_this6.keyspaceKey(account, keyspace, '*'));
 
-                        case 5:
+                        case 4:
                            keys = _context32.sent;
 
                            _this6.logger.debug('ttl ak', account, keyspace, keys);
@@ -1741,10 +1735,10 @@ var rquery = function () {
                            keys.forEach(function (key) {
                               return multi.type(key);
                            });
-                           _context32.next = 12;
+                           _context32.next = 11;
                            return multi.execAsync();
 
-                        case 12:
+                        case 11:
                            results = _context32.sent;
                            result = {};
 
@@ -1753,7 +1747,7 @@ var rquery = function () {
                            });
                            return _context32.abrupt('return', result);
 
-                        case 16:
+                        case 15:
                         case 'end':
                            return _context32.stop();
                      }
@@ -1775,15 +1769,12 @@ var rquery = function () {
                   while (1) {
                      switch (_context33.prev = _context33.next) {
                         case 0:
-                           reqx.hints = [{
-                              uri: ['types']
-                           }];
                            account = reqx.account;
                            keyspace = reqx.keyspace;
-                           _context33.next = 5;
+                           _context33.next = 4;
                            return _this6.redis.keysAsync(_this6.keyspaceKey(account, keyspace, '*'));
 
-                        case 5:
+                        case 4:
                            keys = _context33.sent;
 
                            _this6.logger.debug('ttl ak', account, keyspace, keys);
@@ -1793,10 +1784,10 @@ var rquery = function () {
                            keys.forEach(function (key) {
                               return multi.ttl(key);
                            });
-                           _context33.next = 12;
+                           _context33.next = 11;
                            return multi.execAsync();
 
-                        case 12:
+                        case 11:
                            results = _context33.sent;
                            result = {};
 
@@ -1805,7 +1796,7 @@ var rquery = function () {
                            });
                            return _context33.abrupt('return', result);
 
-                        case 16:
+                        case 15:
                         case 'end':
                            return _context33.stop();
                      }
@@ -1820,23 +1811,21 @@ var rquery = function () {
             key: 'ttl',
             params: ['key'],
             access: 'debug',
-            description: 'check the key TTL'
+            description: 'check the key TTL',
+            relatedCommands: ['type']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee34(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee34$(_context34) {
                   while (1) {
                      switch (_context34.prev = _context34.next) {
                         case 0:
-                           reqx.hints = [{
-                              uri: ['type', reqx.key]
-                           }];
-                           _context34.next = 3;
+                           _context34.next = 2;
                            return _this6.redis.ttlAsync(reqx.keyspaceKey);
 
-                        case 3:
+                        case 2:
                            return _context34.abrupt('return', _context34.sent);
 
-                        case 4:
+                        case 3:
                         case 'end':
                            return _context34.stop();
                      }
@@ -1851,23 +1840,21 @@ var rquery = function () {
             key: 'type',
             params: ['key'],
             access: 'debug',
-            description: 'check the type of a key'
+            description: 'check the type of a key',
+            relatedCommands: ['ttl']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee35(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee35$(_context35) {
                   while (1) {
                      switch (_context35.prev = _context35.next) {
                         case 0:
-                           reqx.hints = [{
-                              uri: ['ttl', reqx.key]
-                           }];
-                           _context35.next = 3;
+                           _context35.next = 2;
                            return _this6.redis.typeAsync(reqx.keyspaceKey);
 
-                        case 3:
+                        case 2:
                            return _context35.abrupt('return', _context35.sent);
 
-                        case 4:
+                        case 3:
                         case 'end':
                            return _context35.stop();
                      }

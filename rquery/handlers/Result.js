@@ -184,14 +184,22 @@ function sendHtmlResult(command, req, res, reqx, result) {
             rquery.logger.error('related', err, err.stack);
          }
       }
+      if (reqx.account !== 'hub') {
+         hints.push({
+            url: `/account-keyspaces/${reqx.account}`,
+            description: 'view sample keyspace commands'
+         });
+      }
+      hints.push({
+         url: 'https://web.telegram.org/#/im?p=@redishub_bot',
+         description: 'See @redishub_bot on Telegram.org'
+      });
       hints.push({
          uri: ['help'],
          description: 'view sample keyspace commands'
       });
-      const otherHints = hints.filter(hint => !hint.uri && hint.commandKey);
-      hints = hints
-      .filter(hint => hint.uri);
-      const renderedPathHints = hints
+      let renderedPathHints = hints
+      .filter(hint => !hint.url)
       .map(hint => {
          const path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace, ...hint.uri].join('/'));
          hint = Object.assign({path}, hint);
@@ -209,8 +217,23 @@ function sendHtmlResult(command, req, res, reqx, result) {
             Hso.div(styles.result.hint.description, lodash.capitalize(hint.description))
          ]);
       });
+      renderedPathHints = renderedPathHints.concat(hints
+      .filter(hint => hint.url && !hint.uri)
+      .map(hint => {
+         return hint;
+      })
+      .map(hint => {
+         return He.div({
+            style: styles.result.hint.container,
+            onClick: HtmlElements.onClick({href: hint.url})
+         }, [
+            Hso.div(styles.result.hint.message, hint.message),
+            Hso.div(styles.result.hint.description, lodash.capitalize(hint.description))
+         ]);
+      }));
       rquery.logger.debug('renderedPathHints', renderedPathHints);
       content.push(renderedPathHints);
+      const otherHints = hints.filter(hint => !hint.uri && hint.commandKey);
       const renderedOtherHints = otherHints.map(hint => He.div({
          style: styles.result.hint.container
       }, [
