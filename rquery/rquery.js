@@ -218,7 +218,7 @@ export default class rquery {
          await this.sendTelegram(request.chatId, 'html', [
             `Thanks, ${request.greetName}.`,
             `Your identity as is now verified to <b>${this.config.serviceLabel}</b>`,
-            `as <code>telegram.me/${request.username}.</code>`
+            `as <tt>telegram.me/${request.username}.</tt>`
          ]);
       }
       const account = request.username;
@@ -274,8 +274,8 @@ export default class rquery {
       const match = request.text.match(/\/grantcert (\w+)$/);
       if (!match) {
          await this.sendTelegram(request.chatId, 'html', [
-            `Sorry, that appears to be invalid. Try <code>/grantcert &lt;DIGEST&gt;</code>,`,
-            `where <code>DIGEST</code> is returned by <code>${this.config.secureHostname}/register-cert</code>`,
+            `Sorry, that appears to be invalid. Try <code>/grantcert &lt;digest&gt;</code>,`,
+            `where the <code>digest</code> is returned by ${this.config.secureHostname}/register-cert`,
             `performed with the cert to be enrolled.`,
             ``
          ]);

@@ -545,7 +545,7 @@ var rquery = function () {
                         _ref6 = _slicedToArray(_ref5, 1);
                         hmset = _ref6[0];
                         _context6.next = 19;
-                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your identity as is now verified to <b>' + this.config.serviceLabel + '</b>', 'as <code>telegram.me/' + request.username + '.</code>']);
+                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your identity as is now verified to <b>' + this.config.serviceLabel + '</b>', 'as <tt>telegram.me/' + request.username + '.</tt>']);
 
                      case 19:
                         account = request.username;
@@ -667,7 +667,7 @@ var rquery = function () {
                         }
 
                         _context8.next = 6;
-                        return this.sendTelegram(request.chatId, 'html', ['Sorry, that appears to be invalid. Try <code>/grantcert &lt;DIGEST&gt;</code>,', 'where <code>DIGEST</code> is returned by <code>' + this.config.secureHostname + '/register-cert</code>', 'performed with the cert to be enrolled.', '']);
+                        return this.sendTelegram(request.chatId, 'html', ['Sorry, that appears to be invalid. Try <code>/grantcert &lt;digest&gt;</code>,', 'where the <code>digest</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', '']);
 
                      case 6:
                         return _context8.abrupt('return');
