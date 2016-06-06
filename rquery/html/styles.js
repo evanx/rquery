@@ -239,7 +239,7 @@ const styles = {
       },
       hint: {
          container: {
-            margin: [10, 0, 10, 0],
+            margin: [15, 0, 10, 0],
             fontSize: 16,
             cursor: 'pointer',
             color: theme.colors.link,
@@ -249,14 +249,14 @@ const styles = {
          },
          description: {
             paddingTop: 5,
-            fontSize: 16,
+            fontSize: 15,
             fontStyle: 'italic',
          },
          link: {
-            fontSize: 14,
+            fontSize: 15,
          },
          uri: {
-            fontSize: 12,
+            fontSize: 14,
             fontFamily: 'monospace'
          }
       }
