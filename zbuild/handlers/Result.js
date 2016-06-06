@@ -331,9 +331,9 @@ function sendHtmlResult(command, req, res, reqx, result) {
          } else if (hint.path && hint.path[0] === '/') {
             var parts = hint.path.split('/').slice(1);
             if (parts.length === 1) {
-               urlLabel = '<b>' + parts[0] + '</b>';
+               uriLabel = '<b>' + parts[0] + '</b>';
             } else {
-               urlLabel = '<b>' + parts[0] + '</b>/' + parts.slice(1).join('/');
+               uriLabel = '<b>' + parts[0] + '</b>/' + parts.slice(1).join('/');
             }
          }
          rquery.logger.debug('hint', uriLabel, hint);
