@@ -59,11 +59,5 @@ exports = (_exports = {
    (0, _assert3.default)(lodash.isArray(value), 'array: ' + name);
    (0, _assert3.default)(!lodash.isEmpty(value), 'empty: ' + name);
    return value;
-}), _defineProperty(_exports, 'hasOwnProperty', function hasOwnProperty(object, key) {
-   if (object.hasOwnProperty(key)) throw new ValidationError('missing: ' + key);
-}), _defineProperty(_exports, 'hasFunction', function hasFunction(object, key) {
-   if (object.hasOwnProperty(key)) throw new ValidationError('missing: ' + key);
-   var value = object[key];
-   if (!lodash.isFunction(value)) throw new ValidationError('missing function: ' + key);
 }), _exports);
 //# sourceMappingURL=Asserts.js.map

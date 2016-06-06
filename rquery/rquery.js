@@ -42,6 +42,10 @@ export default class rquery {
             message: `Try "@redishub_bot /grantcert certId" e.g. via https://web.telegram.org`,
             url: 'https://web.telegram.org/#/im?p=@redishub_bot'
          },
+         registerCert: {
+            message: `Try <tt>/register-cert</tt>`,
+            url: '/register-cert'
+         },
          routes: {
             message: 'See /routes to create a keyspace',
             url: '/routes'
@@ -595,6 +599,16 @@ export default class rquery {
          if (!sadd) {
             throw {message: 'Already exists'};
          }
+         const [keyspaceId] = await this.redis.multiExecAsync(multi => {
+            multi.incr(this.adminKey('keyspaces:seq'));
+         });
+         const ttl = Seconds.parseKeyDefault(req.query, 'ttl', 10);
+         const role = req.query.role || 'admin';
+         const [hmset] = await this.redis.multiExecAsync(multi => {
+            multi.hmset(this.adminKey('keyspace', keyspaceId), {
+               account, keyspace, ttl, role
+            });
+         });
          this.logger.debug('hsetnx', accountKey, time);
          const [hsetnx] = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', time);
@@ -1917,12 +1931,12 @@ export default class rquery {
          if (account === 'hub' || account === 'pub') {
             throw {message: 'Expired (or unregistered) keyspace', hint: {
                uri: 'create-ephemeral',
-               description: 'To register a new ephemeral keyspace'
+               description: 'Create a new ephemeral keyspace'
             }};
          } else {
             throw {message: 'Unregistered keyspace', hint: {
                uri: 'create-ephemeral',
-               description: 'To register a new ephemeral keyspace'
+               description: 'Create a new ephemeral keyspace'
             }};
          }
       }
@@ -1976,24 +1990,24 @@ export default class rquery {
       const names = this.parseDn(dn);
       if (names.o !== account) throw new ValidationError({
          message: 'Cert O name mismatches account',
-         hint: this.hints.grantCert
+         hint: this.hints.registerCert
       });
       const role = names.ou;
       if (!lodash.isEmpty(roles) && !roles.includes(role)) throw new ValidationError({
          message: 'No role access',
-         hint: this.hints.grantCert
+         hint: this.hints.registerCert
       });
       const certDigest = this.digestPem(cert);
       if (!certs.includes(certDigest)) {
          this.logger.info('validateCert', account, role, certDigest, certs);
          throw new ValidationError({
             message: 'Invalid cert',
-            hint: this.hints.grantCert
+            hint: this.hints.registerCert
          });
       }
       throw new ValidationError({
          message: 'Invalid cert',
-         hint: this.hints.grantCert
+         hint: this.hints.registerCert
       });
       return {certDigest, role};
    }

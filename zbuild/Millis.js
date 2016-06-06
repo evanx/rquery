@@ -110,11 +110,14 @@ var that = {
       if (/^[0-9]+$/.test(millis)) {
          return parseInt(millis);
       }
-      var match = millis.match(/^([0-9]+)([a-z]*)$/);
-      if (match.length === 3) {
-         assert(factors[match[2]], 'factor: ' + match[2]);
+      var match = string.match(/^([0-9]+)([a-z]?)$/);
+      if (match) {
+         var factor = 1;
+         if (match.length === 3) {
+            assert(factors[match[2]], 'factor: ' + match[2]);
+            factor = factors[match[2]];
+         }
          var value = parseInt(match[1]);
-         var factor = factors[match[2]];
          return value * factor;
       }
       return defaultValue;
