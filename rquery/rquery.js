@@ -2182,6 +2182,9 @@ export default class rquery {
          err = 'unexpected error type: ' + typeof err;
          messageLines.push(Object.keys(err).join(' '));
       }
+      if (!hints.length) {
+         hints.push(this.hints.routes);
+      }
       const heading = [Hc.b('Status'), Hc.tt(statusCode)].join(' ');
       if (this.isBrowser(req)) {
          this.logger.debug('hints', hints);

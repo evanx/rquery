@@ -5399,6 +5399,9 @@ var rquery = function () {
             err = 'unexpected error type: ' + (typeof err === 'undefined' ? 'undefined' : _typeof(err));
             messageLines.push(Object.keys(err).join(' '));
          }
+         if (!hints.length) {
+            hints.push(this.hints.routes);
+         }
          var heading = [Hc.b('Status'), Hc.tt(statusCode)].join(' ');
          if (this.isBrowser(req)) {
             this.logger.debug('hints', hints);
