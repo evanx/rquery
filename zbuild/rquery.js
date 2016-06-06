@@ -1537,7 +1537,7 @@ var rquery = function () {
             dangerousRelatedCommands: ['destroy-keyspace'],
             renderHtmlEach: function renderHtmlEach(req, res, reqx, keyspace) {
                _this6.logger.debug('renderHtmlEach', keyspace);
-               return '<a href="/ak/' + reqx.account + '/' + keyspace + '">' + keyspace + '</a>';
+               return '<a href="/ak/' + reqx.account + '/' + keyspace + '/help">' + keyspace + '</a>';
             },
             access: 'admin'
          }, function () {

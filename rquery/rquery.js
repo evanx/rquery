@@ -636,7 +636,7 @@ export default class rquery {
          dangerousRelatedCommands: ['destroy-keyspace'],
          renderHtmlEach: (req, res, reqx, keyspace) => {
             this.logger.debug('renderHtmlEach', keyspace);
-            return `<a href="/ak/${reqx.account}/${keyspace}">${keyspace}</a>`;
+            return `<a href="/ak/${reqx.account}/${keyspace}/help">${keyspace}</a>`;
          },
          access: 'admin'
       }, async (req, res, reqx) => {
