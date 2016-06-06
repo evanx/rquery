@@ -1460,7 +1460,10 @@ var rquery = function () {
                               break;
                            }
 
-                           throw { message: 'Already exists' };
+                           throw new ValidationError({
+                              status: 400,
+                              message: 'Already exists'
+                           });
 
                         case 13:
                            _context26.next = 15;
