@@ -129,7 +129,7 @@ var styles = {
       commandDescription: {
          fontFamily: 'sansserif',
          fontStyle: 'italic',
-         fontSize: 14
+         fontSize: 15
       }
    },
    routes: {

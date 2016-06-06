@@ -35,7 +35,7 @@ export async function sendResult(command, req, res, reqx, result) {
    let resultString = '';
    if (!Values.isDefined(result)) {
       rquery.logger.error('sendResult none');
-   } else if (Values.isDefined(req.query.json) || (command.format === 'json' && !mobile)) {
+   } else if (Values.isDefined(req.query.json) || (command.format === 'json' && !mobile) || rquery.isJsonDomain(req)) {
       res.json(result);
       return;
    } else if (Values.isDefined(req.query.quiet)) {

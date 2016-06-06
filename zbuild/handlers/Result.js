@@ -80,7 +80,7 @@ var sendResult = exports.sendResult = function () {
                   break;
 
                case 29:
-                  if (!(Values.isDefined(req.query.json) || command.format === 'json' && !mobile)) {
+                  if (!(Values.isDefined(req.query.json) || command.format === 'json' && !mobile || rquery.isJsonDomain(req))) {
                      _context.next = 34;
                      break;
                   }
