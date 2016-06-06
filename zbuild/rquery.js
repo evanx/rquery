@@ -159,6 +159,10 @@ var rquery = function () {
                            routes: {
                               message: 'See /routes to create a keyspace',
                               url: '/routes'
+                           },
+                           createEphemeral: {
+                              uri: 'create-ephemeral',
+                              description: 'Create a new ephemeral keyspace'
                            }
                         };
                         this.redis = redisLib.createClient(this.config.redisUrl);
@@ -5122,19 +5126,22 @@ var rquery = function () {
          }
          if (command.key === 'create-keyspace') {
             if (reqx.registered) {
-               throw { message: 'Already registered', hint: { uri: 'routes' } };
+               throw new ValidationError({
+                  message: 'Already registered',
+                  hint: this.hints.routes
+               });
             }
          } else if (!reqx.registered) {
             if (account === 'hub' || account === 'pub') {
-               throw { message: 'Expired (or unregistered) keyspace', hint: {
-                     uri: 'create-ephemeral',
-                     description: 'Create a new ephemeral keyspace'
-                  } };
+               throw new ValidationError({
+                  message: 'Expired (or unregistered) keyspace',
+                  hint: this.hints.createEphemeral
+               });
             } else {
-               throw { message: 'Unregistered keyspace', hint: {
-                     uri: 'create-ephemeral',
-                     description: 'Create a new ephemeral keyspace'
-                  } };
+               throw new ValidationError({
+                  message: 'Unregistered keyspace',
+                  hint: this.hints.createEphemeral
+               });
             }
          }
          if (command.access) {
@@ -5144,7 +5151,9 @@ var rquery = function () {
                } else {
                   var duration = time - reqx.admined;
                   if (duration < this.config.adminLimit) {
-                     throw { message: 'Admin command interval not elapsed: ' + this.config.adminLimit + 's' };
+                     throw new ValidationError({
+                        message: 'Admin command interval not elapsed: ' + this.config.adminLimit + 's'
+                     });
                   }
                }
             } else if (command.access === 'debug') {} else if (command.access === 'add') {
