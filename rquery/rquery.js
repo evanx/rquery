@@ -39,7 +39,7 @@ export default class rquery {
             url: 'https://web.telegram.org/#/im?p=@redishub_bot'
          },
          grantCert: {
-            message: `Try "@redishub_bot /grantcert EXTRACT" e.g. via https://web.telegram.org`,
+            message: `Try "@redishub_bot /grantcert certId" e.g. via https://web.telegram.org`,
             url: 'https://web.telegram.org/#/im?p=@redishub_bot'
          }
       };
@@ -1991,23 +1991,24 @@ export default class rquery {
       const names = this.parseDn(dn);
       if (names.o !== account) throw new ValidationError({
          message: 'Cert O name mismatches account',
-         hint: this.hints.signup
+         hint: this.hints.grantCert
       });
       const role = names.ou;
       if (!lodash.isEmpty(roles) && !roles.includes(role)) throw new ValidationError({
-         message: 'No role access'
+         message: 'No role access',
+         hint: this.hints.grantCert
       });
       const certDigest = this.digestPem(cert);
       if (!certs.includes(certDigest)) {
          this.logger.info('validateCert', account, role, certDigest, certs);
          throw new ValidationError({
             message: 'Invalid cert',
-            hints: [this.hints.signup, this.hints.grantCert]
+            hint: this.hints.grantCert
          });
       }
       throw new ValidationError({
          message: 'Invalid cert',
-         hints: [this.hints.signup, this.hints.grantCert]
+         hint: this.hints.grantCert
       });
       return {certDigest, role};
    }
