@@ -5178,7 +5178,7 @@ var rquery = function () {
          }
          var dn = req.get('ssl_client_s_dn');
          if (!dn) throw new ValidationError({
-            status: 422,
+            status: 400,
             message: 'No client cert DN',
             hint: this.hints.signup
          });
@@ -5460,7 +5460,7 @@ var rquery = function () {
          var digest = sha1.digest('hex');
          if (digest.length < 32) {
             throw new ValidationError({
-               status: 422,
+               status: 400,
                message: 'Invalid cert length'
             });
          }

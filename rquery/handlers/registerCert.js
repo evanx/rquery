@@ -11,7 +11,7 @@ export default async function registerCert(req, res, reqx) {
    });
    const dn = rquery.parseCertDn(req);
    if (!dn.ou) throw new ValidationError({
-      status: 422,
+      status: 400,
       message: 'No client cert OU name',
       hint: rquery.hints.signup
    });
@@ -19,21 +19,21 @@ export default async function registerCert(req, res, reqx) {
    logger.debug('CN', matching);
    if (!matching) {
       throw new ValidationError({
-         status: 422,
+         status: 400,
          message: 'Cert CN mismatch',
          hint: rquery.hints.signup
       });
    }
    if (dn.ou !== role) {
       throw new ValidationError({
-         status: 422,
+         status: 400,
          message: 'Cert OU/role mismatch',
          hint: rquery.hints.signup
       });
    }
    if (dn.o !== account) {
       throw new ValidationError({
-         status: 422,
+         status: 400,
          message: 'Cert O/account mismatch',
          hint: rquery.hints.signup
       });
@@ -72,7 +72,7 @@ export default async function registerCert(req, res, reqx) {
    certDigest.indexOf(granted) < 0 &&
    pemExtract != granted) {
       throw new ValidationError({
-         status: 422,
+         status: 400,
          message: 'Granted cert not matching: ' + shortDigest,
          hint: {
             message: `Try @redishub_bot "/grantcert ${shortDigest}`

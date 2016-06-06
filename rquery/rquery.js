@@ -597,7 +597,10 @@ export default class rquery {
             multi.sadd(this.accountKey(account, 'keyspaces'), keyspace);
          });
          if (!sadd) {
-            throw {message: 'Already exists'};
+            throw new ValidationError({
+               status: 400,
+               message: 'Already exists'
+            });
          }
          const [keyspaceId] = await this.redis.multiExecAsync(multi => {
             multi.incr(this.adminKey('keyspaces:seq'));
@@ -1990,7 +1993,7 @@ export default class rquery {
       }
       const dn = req.get('ssl_client_s_dn');
       if (!dn) throw new ValidationError({
-         status: 422,
+         status: 400,
          message: 'No client cert DN',
          hint: this.hints.signup
       });
@@ -2243,7 +2246,7 @@ export default class rquery {
       const digest = sha1.digest('hex');
       if (digest.length < 32) {
          throw new ValidationError({
-            status: 422,
+            status: 400,
             message: 'Invalid cert length'
          });
       }

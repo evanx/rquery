@@ -41,7 +41,7 @@ exports.default = function () {
                   }
 
                   throw new ValidationError({
-                     status: 422,
+                     status: 400,
                      message: 'No client cert OU name',
                      hint: rquery.hints.signup
                   });
@@ -62,7 +62,7 @@ exports.default = function () {
                   }
 
                   throw new ValidationError({
-                     status: 422,
+                     status: 400,
                      message: 'Cert CN mismatch',
                      hint: rquery.hints.signup
                   });
@@ -74,7 +74,7 @@ exports.default = function () {
                   }
 
                   throw new ValidationError({
-                     status: 422,
+                     status: 400,
                      message: 'Cert OU/role mismatch',
                      hint: rquery.hints.signup
                   });
@@ -86,7 +86,7 @@ exports.default = function () {
                   }
 
                   throw new ValidationError({
-                     status: 422,
+                     status: 400,
                      message: 'Cert O/account mismatch',
                      hint: rquery.hints.signup
                   });
@@ -144,7 +144,7 @@ exports.default = function () {
                   }
 
                   throw new ValidationError({
-                     status: 422,
+                     status: 400,
                      message: 'Granted cert not matching: ' + shortDigest,
                      hint: {
                         message: 'Try @redishub_bot "/grantcert ' + shortDigest + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
