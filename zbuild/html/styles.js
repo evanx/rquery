@@ -173,7 +173,7 @@ var styles = {
       },
       detail: {
          lineHeight: 2,
-         margin: [10, 0, 10, 0],
+         margin: [10, 0, 5, 0],
          padding: [0, 10, 0, 10],
          borderTop: 'solid 1px #777777'
       }

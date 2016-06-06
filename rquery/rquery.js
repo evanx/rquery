@@ -2184,8 +2184,11 @@ export default class rquery {
             req, reqx, title, heading,
             content: [
                //Hs.div(styles.error.status, `Status ${statusCode}`),
-               Hs.div(styles.error.message, title),
-               Hs.pre(styles.error.detail, lodash.flatten(messageLines).join('\n')),
+               He.div({style: styles.error.message}, title),
+               He.pre({
+                  style: styles.error.detail,
+                  meta: 'optional'
+               }, lodash.flatten(messageLines).join('\n')),
                hints.map(hint => {
                   this.logger.debug('hint', hint);
                   return He.div(styles.error.hint, lodash.flatten([

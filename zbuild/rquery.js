@@ -5384,7 +5384,10 @@ var rquery = function () {
                req: req, reqx: reqx, title: title, heading: heading,
                content: [
                //Hs.div(styles.error.status, `Status ${statusCode}`),
-               Hs.div(_styles2.default.error.message, title), Hs.pre(_styles2.default.error.detail, lodash.flatten(messageLines).join('\n')), hints.map(function (hint) {
+               He.div({ style: _styles2.default.error.message }, title), He.pre({
+                  style: _styles2.default.error.detail,
+                  meta: 'optional'
+               }, lodash.flatten(messageLines).join('\n')), hints.map(function (hint) {
                   _this16.logger.debug('hint', hint);
                   return He.div(_styles2.default.error.hint, lodash.flatten([If.thenElse(hint.message && hint.url, [He.a({
                      style: _styles2.default.error.hintMessage,
