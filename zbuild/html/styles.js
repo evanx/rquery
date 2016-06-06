@@ -237,7 +237,7 @@ var styles = {
       },
       hint: {
          container: {
-            paddingTop: 20,
+            paddingTop: 10,
             fontSize: 16,
             cursor: 'pointer',
             color: theme.colors.link

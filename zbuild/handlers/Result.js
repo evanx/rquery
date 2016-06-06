@@ -304,8 +304,8 @@ function sendHtmlResult(command, req, res, reqx, result) {
       }
       if (reqx.account !== 'hub') {
          hints.push({
-            url: '/account-keyspaces/' + reqx.account,
-            description: 'view sample keyspace commands'
+            path: '/account-keyspaces/' + reqx.account,
+            description: 'view account keyspaces'
          });
       }
       hints.push({
@@ -319,11 +319,23 @@ function sendHtmlResult(command, req, res, reqx, result) {
       var renderedPathHints = hints.filter(function (hint) {
          return !hint.url;
       }).map(function (hint) {
-         var path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace].concat(_toConsumableArray(hint.uri)).join('/'));
-         hint = Object.assign({ path: path }, hint);
+         if (!hint.path) {
+            var path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace].concat(_toConsumableArray(hint.uri)).join('/'));
+            hint = Object.assign({ path: path }, hint);
+         }
          return hint;
       }).map(function (hint) {
-         var uriLabel = [Hc.b(hint.uri[0])].concat(_toConsumableArray(hint.uri.slice(1))).join('/');
+         var uriLabel = void 0;
+         if (hint.uri) {
+            uriLabel = [Hc.b(hint.uri[0])].concat(_toConsumableArray(hint.uri.slice(1))).join('/');
+         } else if (hint.path && hint.path[0] === '/') {
+            var parts = hint.path.split('/').slice(1);
+            if (parts.length === 1) {
+               urlLabel = '<b>' + parts[0] + '</b>';
+            } else {
+               urlLabel = '<b>' + parts[0] + '</b>/' + parts.slice(1).join('/');
+            }
+         }
          rquery.logger.debug('hint', uriLabel, hint);
          return He.div({
             style: _styles2.default.result.hint.container,
@@ -335,10 +347,17 @@ function sendHtmlResult(command, req, res, reqx, result) {
       }).map(function (hint) {
          return hint;
       }).map(function (hint) {
+         var uriLabel = hint.path;
+         if (hint.uri) {
+            uriLabel = [Hc.b(hint.uri[0])].concat(_toConsumableArray(hint.uri.slice(1))).join('/');
+         }
          return He.div({
             style: _styles2.default.result.hint.container,
             onClick: HtmlElements.onClick({ href: hint.url })
-         }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.description, lodash.capitalize(hint.description))]);
+         }, [He.div({
+            style: _styles2.default.result.hint.message,
+            meta: 'optional'
+         }, hint.message), Hso.div(_styles2.default.result.hint.link), Hso.div(_styles2.default.result.hint.description, lodash.capitalize(hint.description))]);
       }));
       rquery.logger.debug('renderedPathHints', renderedPathHints);
       content.push(renderedPathHints);

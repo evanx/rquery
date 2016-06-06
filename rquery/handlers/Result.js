@@ -186,8 +186,8 @@ function sendHtmlResult(command, req, res, reqx, result) {
       }
       if (reqx.account !== 'hub') {
          hints.push({
-            url: `/account-keyspaces/${reqx.account}`,
-            description: 'view sample keyspace commands'
+            path: `/account-keyspaces/${reqx.account}`,
+            description: 'view account keyspaces'
          });
       }
       hints.push({
@@ -201,12 +201,24 @@ function sendHtmlResult(command, req, res, reqx, result) {
       let renderedPathHints = hints
       .filter(hint => !hint.url)
       .map(hint => {
-         const path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace, ...hint.uri].join('/'));
-         hint = Object.assign({path}, hint);
+         if (!hint.path) {
+            const path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace, ...hint.uri].join('/'));
+            hint = Object.assign({path}, hint);
+         }
          return hint;
       })
       .map(hint => {
-         const uriLabel = [Hc.b(hint.uri[0]), ...hint.uri.slice(1)].join('/');
+         let uriLabel;
+         if (hint.uri) {
+            uriLabel = [Hc.b(hint.uri[0]), ...hint.uri.slice(1)].join('/');
+         } else if (hint.path && hint.path[0] === '/') {
+            const parts = hint.path.split('/').slice(1);
+            if (parts.length === 1) {
+               urlLabel = `<b>${parts[0]}</b>`;
+            } else {
+               urlLabel = `<b>${parts[0]}</b>/${parts.slice(1).join('/')}`;
+            }
+         }
          rquery.logger.debug('hint', uriLabel, hint);
          return He.div({
             style: styles.result.hint.container,
@@ -223,11 +235,19 @@ function sendHtmlResult(command, req, res, reqx, result) {
          return hint;
       })
       .map(hint => {
+         let uriLabel = hint.path;
+         if (hint.uri) {
+            uriLabel = [Hc.b(hint.uri[0]), ...hint.uri.slice(1)].join('/');
+         }
          return He.div({
             style: styles.result.hint.container,
             onClick: HtmlElements.onClick({href: hint.url})
          }, [
-            Hso.div(styles.result.hint.message, hint.message),
+            He.div({
+               style: styles.result.hint.message,
+               meta: 'optional'
+            }, hint.message),
+            Hso.div(styles.result.hint.link),
             Hso.div(styles.result.hint.description, lodash.capitalize(hint.description))
          ]);
       }));

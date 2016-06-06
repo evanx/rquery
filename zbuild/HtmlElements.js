@@ -165,13 +165,16 @@ function renderChildrenRepeat(name, attributes, attrs, children) {
 function renderChildren(name, attributes, attrs, children) {
    var content = [];
    children = lodash.flatten(children);
+   if (!children.length) {
+      if (isMeta(attributes, 'optional')) {
+         return '';
+      }
+   }
    if (!attrs.length && !children.length) {
-      if (isMeta(attributes, 'optional')) {} else {
-         if (SelfClosingElementNames.includes(name)) {
-            return '<' + name + '/>';
-         } else {
-            return '<' + name + '></' + name + '>';
-         }
+      if (SelfClosingElementNames.includes(name)) {
+         return '<' + name + '/>';
+      } else {
+         return '<' + name + '></' + name + '>';
       }
    } else if (attrs.length && children.length) {
       content.push('<' + name + ' ' + attrs.join(' ') + '>');
