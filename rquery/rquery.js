@@ -47,7 +47,7 @@ export default class rquery {
             url: '/register-cert'
          },
          routes: {
-            message: 'See /routes to create a keyspace',
+            message: 'Home to /routes',
             url: '/routes'
          },
          createEphemeral: {
