@@ -26,7 +26,9 @@ exports.default = function () {
                      break;
                   }
 
-                  throw new ValidationError({ message: 'No client cert',
+                  throw new ValidationError({
+                     status: 403,
+                     message: 'No client cert',
                      hint: rquery.hints.signup
                   });
 
@@ -38,7 +40,9 @@ exports.default = function () {
                      break;
                   }
 
-                  throw new ValidationError({ message: 'No client cert OU name',
+                  throw new ValidationError({
+                     status: 422,
+                     message: 'No client cert OU name',
                      hint: rquery.hints.signup
                   });
 
@@ -57,7 +61,9 @@ exports.default = function () {
                      break;
                   }
 
-                  throw new ValidationError({ message: 'Cert CN mismatch',
+                  throw new ValidationError({
+                     status: 422,
+                     message: 'Cert CN mismatch',
                      hint: rquery.hints.signup
                   });
 
@@ -67,7 +73,9 @@ exports.default = function () {
                      break;
                   }
 
-                  throw new ValidationError({ message: 'Cert OU/role mismatch',
+                  throw new ValidationError({
+                     status: 422,
+                     message: 'Cert OU/role mismatch',
                      hint: rquery.hints.signup
                   });
 
@@ -77,7 +85,9 @@ exports.default = function () {
                      break;
                   }
 
-                  throw new ValidationError({ message: 'Cert O/account mismatch',
+                  throw new ValidationError({
+                     status: 422,
+                     message: 'Cert O/account mismatch',
                      hint: rquery.hints.signup
                   });
 

@@ -749,7 +749,11 @@ export default class rquery {
          const {key, value} = req.params;
          let cert = req.get('ssl_client_cert');
          if (!cert) {
-            throw new ValidationError({message: 'No client cert', hint: this.hints.signup});
+            throw new ValidationError({
+               status: 403,
+               message: 'No client cert',
+               hint: this.hints.signup
+            });
          }
          cert = cert.replace(/\t/g, '\n');
          const encrypted = crypto.publicEncrypt(cert, new Buffer(value)).toString('base64');
@@ -1971,6 +1975,7 @@ export default class rquery {
       }
       if (!certs) {
          throw new ValidationError({
+            status: 403,
             message: 'No enrolled certs',
             hint: this.hints.signup
          });
@@ -1978,22 +1983,26 @@ export default class rquery {
       const cert = req.get('ssl_client_cert');
       if (!cert) {
          throw new ValidationError({
+            status: 403,
             message: 'No client cert sent',
             hint: this.hints.signup
          });
       }
       const dn = req.get('ssl_client_s_dn');
       if (!dn) throw new ValidationError({
+         status: 422,
          message: 'No client cert DN',
          hint: this.hints.signup
       });
       const names = this.parseDn(dn);
       if (names.o !== account) throw new ValidationError({
+         status: 403,
          message: 'Cert O name mismatches account',
          hint: this.hints.registerCert
       });
       const role = names.ou;
       if (!lodash.isEmpty(roles) && !roles.includes(role)) throw new ValidationError({
+         status: 403,
          message: 'No role access',
          hint: this.hints.registerCert
       });
@@ -2001,11 +2010,13 @@ export default class rquery {
       if (!certs.includes(certDigest)) {
          this.logger.info('validateCert', account, role, certDigest, certs);
          throw new ValidationError({
+            status: 403,
             message: 'Invalid cert',
             hint: this.hints.registerCert
          });
       }
       throw new ValidationError({
+         status: 403,
          message: 'Invalid cert',
          hint: this.hints.registerCert
       });
@@ -2236,7 +2247,10 @@ export default class rquery {
       contentLines.forEach(line => sha1.update(new Buffer(line)));
       const digest = sha1.digest('hex');
       if (digest.length < 32) {
-         throw new ValidationError('Invalid cert length');
+         throw new ValidationError({
+            status: 422,
+            message: 'Invalid cert length'
+         });
       }
       return digest;
    }

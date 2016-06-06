@@ -1917,7 +1917,11 @@ var rquery = function () {
                               break;
                            }
 
-                           throw new ValidationError({ message: 'No client cert', hint: _this6.hints.signup });
+                           throw new ValidationError({
+                              status: 403,
+                              message: 'No client cert',
+                              hint: _this6.hints.signup
+                           });
 
                         case 6:
                            cert = cert.replace(/\t/g, '\n');
@@ -5159,6 +5163,7 @@ var rquery = function () {
          }
          if (!certs) {
             throw new ValidationError({
+               status: 403,
                message: 'No enrolled certs',
                hint: this.hints.signup
             });
@@ -5166,22 +5171,26 @@ var rquery = function () {
          var cert = req.get('ssl_client_cert');
          if (!cert) {
             throw new ValidationError({
+               status: 403,
                message: 'No client cert sent',
                hint: this.hints.signup
             });
          }
          var dn = req.get('ssl_client_s_dn');
          if (!dn) throw new ValidationError({
+            status: 422,
             message: 'No client cert DN',
             hint: this.hints.signup
          });
          var names = this.parseDn(dn);
          if (names.o !== account) throw new ValidationError({
+            status: 403,
             message: 'Cert O name mismatches account',
             hint: this.hints.registerCert
          });
          var role = names.ou;
          if (!lodash.isEmpty(roles) && !roles.includes(role)) throw new ValidationError({
+            status: 403,
             message: 'No role access',
             hint: this.hints.registerCert
          });
@@ -5189,11 +5198,13 @@ var rquery = function () {
          if (!certs.includes(certDigest)) {
             this.logger.info('validateCert', account, role, certDigest, certs);
             throw new ValidationError({
+               status: 403,
                message: 'Invalid cert',
                hint: this.hints.registerCert
             });
          }
          throw new ValidationError({
+            status: 403,
             message: 'Invalid cert',
             hint: this.hints.registerCert
          });
@@ -5453,7 +5464,10 @@ var rquery = function () {
          });
          var digest = sha1.digest('hex');
          if (digest.length < 32) {
-            throw new ValidationError('Invalid cert length');
+            throw new ValidationError({
+               status: 422,
+               message: 'Invalid cert length'
+            });
          }
          return digest;
       }

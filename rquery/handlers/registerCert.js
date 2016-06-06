@@ -4,27 +4,37 @@ const rquery = global.rquery;
 
 export default async function registerCert(req, res, reqx) {
    const cert = rquery.getClientCert(req);
-   if (!cert) throw new ValidationError({message: 'No client cert',
+   if (!cert) throw new ValidationError({
+      status: 403,
+      message: 'No client cert',
       hint: rquery.hints.signup
    });
    const dn = rquery.parseCertDn(req);
-   if (!dn.ou) throw new ValidationError({message: 'No client cert OU name',
+   if (!dn.ou) throw new ValidationError({
+      status: 422,
+      message: 'No client cert OU name',
       hint: rquery.hints.signup
    });
    const [matching, account, role, id] = dn.cn.split(':');
    logger.debug('CN', matching);
    if (!matching) {
-      throw new ValidationError({message: 'Cert CN mismatch',
+      throw new ValidationError({
+         status: 422,
+         message: 'Cert CN mismatch',
          hint: rquery.hints.signup
       });
    }
    if (dn.ou !== role) {
-      throw new ValidationError({message: 'Cert OU/role mismatch',
+      throw new ValidationError({
+         status: 422,
+         message: 'Cert OU/role mismatch',
          hint: rquery.hints.signup
       });
    }
    if (dn.o !== account) {
-      throw new ValidationError({message: 'Cert O/account mismatch',
+      throw new ValidationError({
+         status: 422,
+         message: 'Cert O/account mismatch',
          hint: rquery.hints.signup
       });
    }
