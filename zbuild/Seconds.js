@@ -47,12 +47,16 @@ var that = {
          return value;
       }
    },
-   parseKeyDefault: function parseKeyDefault(object, key, defaultValue) {
+   parsePropDefault: function parsePropDefault(object, key, defaultValue) {
       try {
          return that.parse(object[key], defaultValue);
       } catch (err) {
          throw new ValidationError(key + ': ' + err.message);
       }
+   },
+   parseOptionalKeyDefault: function parseOptionalKeyDefault(object, key, defaultValue) {
+      if (!object) return defaultValue;
+      return that.parsePropDefault(object, key, defaultValue);
    },
    fromMinutes: function fromMinutes(minutes) {
       return minutes * factors.m;

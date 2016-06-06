@@ -1472,7 +1472,7 @@ var rquery = function () {
                            _ref21 = _context26.sent;
                            _ref22 = _slicedToArray(_ref21, 1);
                            keyspaceId = _ref22[0];
-                           ttl = Seconds.parseKeyDefault(req.query, 'ttl', 10);
+                           ttl = Seconds.parseOptionalKeyDefault(req.query, 'ttl', 10);
                            role = req.query.role || 'admin';
                            _context26.next = 22;
                            return _this6.redis.multiExecAsync(function (multi) {

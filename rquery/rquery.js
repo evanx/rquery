@@ -602,7 +602,7 @@ export default class rquery {
          const [keyspaceId] = await this.redis.multiExecAsync(multi => {
             multi.incr(this.adminKey('keyspaces:seq'));
          });
-         const ttl = Seconds.parseKeyDefault(req.query, 'ttl', 10);
+         const ttl = Seconds.parseOptionalKeyDefault(req.query, 'ttl', 10);
          const role = req.query.role || 'admin';
          const [hmset] = await this.redis.multiExecAsync(multi => {
             multi.hmset(this.adminKey('keyspace', keyspaceId), {
