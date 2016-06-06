@@ -31,4 +31,3 @@ exports = {
       throw new ValidationError('integer ' + key);
    }
 };
-//# sourceMappingURL=AssertObject.js.map

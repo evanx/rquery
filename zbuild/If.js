@@ -23,4 +23,3 @@ function elseFn(truthy, elseValue, then) {
       return then(truthy);
    }
 }
-//# sourceMappingURL=If.js.map

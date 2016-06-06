@@ -12,4 +12,3 @@ function reduceAssign(keys, producer, initialValue) {
       return Objects.assignKey(object, key, producer(key));
    }, initialValue);
 }
-//# sourceMappingURL=KeyArrays.js.map

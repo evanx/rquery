@@ -87,4 +87,3 @@ function getMessage(seconds, message) {
 }
 
 module.exports = that;
-//# sourceMappingURL=Seconds.js.map

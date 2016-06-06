@@ -5164,7 +5164,7 @@ var rquery = function () {
          if (!certs) {
             throw new ValidationError({
                status: 403,
-               message: 'No enrolled certs',
+               message: 'No granted certs',
                hint: this.hints.signup
             });
          }
@@ -5196,18 +5196,13 @@ var rquery = function () {
          });
          var certDigest = this.digestPem(cert);
          if (!certs.includes(certDigest)) {
-            this.logger.info('validateCert', account, role, certDigest, certs);
+            this.logger.warn('validateCert', account, role, certDigest, certs);
             throw new ValidationError({
                status: 403,
                message: 'Invalid cert',
                hint: this.hints.registerCert
             });
          }
-         throw new ValidationError({
-            status: 403,
-            message: 'Invalid cert',
-            hint: this.hints.registerCert
-         });
          return { certDigest: certDigest, role: role };
       }
    }, {
@@ -5514,4 +5509,3 @@ var rquery = function () {
 }();
 
 exports.default = rquery;
-//# sourceMappingURL=rquery.js.map
