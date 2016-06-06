@@ -176,4 +176,3 @@ function keys(object, label) {
       return Object.keys(object).join(' ');
    }
 }
-//# sourceMappingURL=Loggers.js.map

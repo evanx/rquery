@@ -12,6 +12,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
 import {default as handleCertScript} from './handlers/certScript';
+import {default as registerCert} from './handlers/registerCert';
 import {default as renderPage} from './html/Page';
 import * as KeyspaceHelp from './html/KeyspaceHelp';
 
@@ -1408,87 +1409,10 @@ export default class rquery {
       });
       this.addPublicCommandHandler({
          key: 'register-cert'
-      }, this.registerCert.bind(this));
+      }, registerCert);
       this.addPublicCommandHandler({
          key: 'enroll-cert'
-      }, this.registerCert.bind(this));
-   }
-
-   async registerCert(req, res, reqx) {
-      const cert = this.getClientCert(req);
-      if (!cert) throw new ValidationError({message: 'No client cert',
-         hint: this.hints.signup
-      });
-      const dn = this.parseCertDn(req);
-      if (!dn.ou) throw new ValidationError({message: 'No client cert OU name',
-         hint: this.hints.signup
-      });
-      const [matching, account, role, id] = dn.cn.split(':');
-      this.logger.debug('CN', matching);
-      if (!matching) {
-         throw new ValidationError({message: 'Cert CN mismatch',
-            hint: this.hints.signup
-         });
-      }
-      if (dn.ou !== role) {
-         throw new ValidationError({message: 'Cert OU/role mismatch',
-            hint: this.hints.signup
-         });
-      }
-      if (dn.o !== account) {
-         throw new ValidationError({message: 'Cert O/account mismatch',
-            hint: this.hints.signup
-         });
-      }
-      const accountKey = this.adminKey('account', account);
-      const grantKey = this.adminKey('telegram', 'user', account, 'grantcert');
-      const certDigest = this.digestPem(cert);
-      const shortDigest = certDigest.slice(-12);
-      const pemExtract = this.extractPem(cert);
-      const [granted, sismember] = await this.redis.multiExecAsync(multi => {
-         multi.get(grantKey);
-         multi.sismember(this.adminKey('account', account, 'certs'), certDigest);
-      });
-      if (sismember) {
-         throw new ValidationError({message: 'Cert already granted', hint: {uri: 'routes'}});
-      }
-      if (!granted) {
-         throw new ValidationError({message: 'Cert must be granted via @redishub_bot',
-            hint: {
-               message: [
-                  `Try @redishub_bot "/grantcert ${shortDigest}"`,
-                  `e.g. via https://web.telegram.org,`,
-               ].join(' '),
-               clipboard: `@redishub_bot /grantcert ${shortDigest}`,
-               url: `https://web.telegram.org/#/im?p=@redishub_bot#grantcert-${shortDigest}`
-            }
-         });
-      }
-      if (granted.indexOf(shortDigest) < 0 &&
-      certDigest.indexOf(granted) < 0 &&
-      pemExtract != granted) {
-         throw new ValidationError({message: 'Granted cert not matching: ' + shortDigest,
-            hint: {
-               message: `Try @redishub_bot "/grantcert ${shortDigest}`
-               + ` from the authoritative Telegram account`
-               + ` e.g. via https://web.telegram.org`
-               ,
-               clipboard: `@redishub_bot /grantcert ${shortDigest}`,
-               url: `https://web.telegram.org/#/im?p=@redishub_bot#grantcert-${shortDigest}`
-            }
-         });
-      }
-      const [del, sadd] = await this.redis.multiExecAsync(multi => {
-         multi.del(grantKey);
-         multi.sadd(this.adminKey('account', account, 'certs'), certDigest);
-      });
-      if (!sadd) {
-         this.logger.debug('certs sadd');
-      }
-      if (!del) {
-         this.logger.warn('certs grant del');
-      }
-      return {account};
+      }, registerCert);
    }
 
    getClientCert(req) {
