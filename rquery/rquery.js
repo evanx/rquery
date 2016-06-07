@@ -673,7 +673,7 @@ export default class rquery {
          return 'OK';
       });
       this.addAccountCommand({
-         key: 'account-keyspaces',
+         key: 'keyspaces',
          params: ['account'],
          description: 'list account keyspaces',
          relatedCommands: ['create-keyspace'],

@@ -97,7 +97,7 @@ module.exports = {
                      $ = rquery.getContentType(req) === 'html' ? He : Hp;
                      return _context2.abrupt('return', {
                         message: account ? $.a({
-                           href: '/account-keyspaces/' + account
+                           href: '/keyspaces/' + account
                         }, 'List the keyspaces on your account') : $.a({
                            target: '_blank',
                            href: 'https://web.telegram.org/#/im?p=@redishub_bot'

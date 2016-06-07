@@ -51,7 +51,7 @@ module.exports = {
       return {
          message: account
             ? $.a({
-               href: '/account-keyspaces/' + account
+               href: '/keyspaces/' + account
             }, `List the keyspaces on your account`)
             : $.a({
                target: '_blank',

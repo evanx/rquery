@@ -304,7 +304,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
       }
       if (reqx.account !== 'hub') {
          hints.push({
-            path: '/account-keyspaces/' + reqx.account,
+            path: '/keyspaces/' + reqx.account,
             description: 'view account keyspaces'
          });
       }

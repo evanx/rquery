@@ -1601,7 +1601,7 @@ var rquery = function () {
             };
          }());
          this.addAccountCommand({
-            key: 'account-keyspaces',
+            key: 'keyspaces',
             params: ['account'],
             description: 'list account keyspaces',
             relatedCommands: ['create-keyspace'],
