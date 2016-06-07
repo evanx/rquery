@@ -688,6 +688,9 @@ export default class rquery {
          const [keyspaces] = await this.redis.multiExecAsync(multi => {
             multi.smembers(this.accountKey(reqx.account, 'keyspaces'));
          });
+         if (keyspaces) {
+            keyspaces.sort();
+         }
          return keyspaces;
       });
       this.addKeyspaceCommand({

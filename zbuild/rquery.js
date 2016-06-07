@@ -1629,9 +1629,13 @@ var rquery = function () {
                            _ref25 = _context27.sent;
                            _ref26 = _slicedToArray(_ref25, 1);
                            keyspaces = _ref26[0];
+
+                           if (keyspaces) {
+                              keyspaces.sort();
+                           }
                            return _context27.abrupt('return', keyspaces);
 
-                        case 7:
+                        case 8:
                         case 'end':
                            return _context27.stop();
                      }
