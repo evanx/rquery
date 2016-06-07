@@ -247,10 +247,10 @@ export default class rquery {
    }
 
    async handleTelegramVerify(request) {
-      const now = new Date().getTime();
+      const now = Seconds.now();
       this.logger.info('handleTelegramVerify', request);
       const userKey = this.adminKey('telegram', 'user', request.username);
-      let [sadd, verified, secret] = await this.redis.multiExecAsync(multi => {
+      let [sadd, verifiedString, secret] = await this.redis.multiExecAsync(multi => {
          multi.sadd(this.adminKey('telegram:verified:users'), request.username);
          multi.hget(userKey, 'verified');
          multi.hget(userKey, 'secret');
@@ -258,7 +258,7 @@ export default class rquery {
       if (!secret) {
          secret = this.generateTokenKey();
       }
-      if (sadd || !verified) {
+      if (sadd || !verifiedString) {
          const [hmset] = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(userKey, 'verified', now);
             multi.hsetnx(userKey, 'id', request.fromId);
@@ -270,7 +270,11 @@ export default class rquery {
             `as <code>telegram.me/${request.username}.</code>`
          ]);
       } else {
-         const duration = now - parseInt(verified);
+         let verifiedTime = parseInt(verifiedString);
+         if (verifiedTime > now) {
+            verifiedTime = Math.ceil(verifiedTime/1000);
+         }
+         const duration = now - verifiedTime;
          await this.sendTelegram(request.chatId, 'html', [
             `Hi ${request.greetName}.`,
             `Your identity as was already verified`,
@@ -281,7 +285,7 @@ export default class rquery {
    }
 
    async handleTelegramGrant(request) {
-      const now = new Date().getTime();
+      const now = Millis.now();
       this.logger.info('handleTelegramGrant', request);
       const match = request.text.match(/\/grantcert (\w+)$/);
       if (!match) {

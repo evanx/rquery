@@ -586,13 +586,13 @@ var rquery = function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee7(request) {
             var _this4 = this;
 
-            var now, userKey, _ref7, _ref8, sadd, verified, secret, _ref9, _ref10, hmset, duration;
+            var now, userKey, _ref7, _ref8, sadd, verifiedString, secret, _ref9, _ref10, hmset, verifiedTime, duration;
 
             return regeneratorRuntime.wrap(function _callee7$(_context7) {
                while (1) {
                   switch (_context7.prev = _context7.next) {
                      case 0:
-                        now = new Date().getTime();
+                        now = Seconds.now();
 
                         this.logger.info('handleTelegramVerify', request);
                         userKey = this.adminKey('telegram', 'user', request.username);
@@ -607,14 +607,14 @@ var rquery = function () {
                         _ref7 = _context7.sent;
                         _ref8 = _slicedToArray(_ref7, 3);
                         sadd = _ref8[0];
-                        verified = _ref8[1];
+                        verifiedString = _ref8[1];
                         secret = _ref8[2];
 
                         if (!secret) {
                            secret = this.generateTokenKey();
                         }
 
-                        if (!(sadd || !verified)) {
+                        if (!(sadd || !verifiedString)) {
                            _context7.next = 21;
                            break;
                         }
@@ -634,15 +634,20 @@ var rquery = function () {
                         return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your identity as is now verified to <b>' + this.config.serviceLabel + '</b>', 'as <code>telegram.me/' + request.username + '.</code>']);
 
                      case 19:
-                        _context7.next = 24;
+                        _context7.next = 26;
                         break;
 
                      case 21:
-                        duration = now - parseInt(verified);
-                        _context7.next = 24;
+                        verifiedTime = parseInt(verifiedString);
+
+                        if (verifiedTime > now) {
+                           verifiedTime = Math.ceil(verifiedTime / 1000);
+                        }
+                        duration = now - verifiedTime;
+                        _context7.next = 26;
                         return this.sendTelegram(request.chatId, 'html', ['Hi ' + request.greetName + '.', 'Your identity as was already verified', Millis.formatVerboseDuration(duration) + ' ago', 'as <code>@' + request.username + '</code>']);
 
-                     case 24:
+                     case 26:
                      case 'end':
                         return _context7.stop();
                   }
@@ -668,7 +673,7 @@ var rquery = function () {
                while (1) {
                   switch (_context8.prev = _context8.next) {
                      case 0:
-                        now = new Date().getTime();
+                        now = Millis.now();
 
                         this.logger.info('handleTelegramGrant', request);
                         match = request.text.match(/\/grantcert (\w+)$/);
