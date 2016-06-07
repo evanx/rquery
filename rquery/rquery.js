@@ -1976,24 +1976,26 @@ export default class rquery {
       if (account !== 'hub' && account !== 'pub') {
          Object.assign(reqx, this.validateCert(req, reqx, certs, account, []));
       }
-      if (command.key === 'create-keyspace') {
-         if (reqx.registered) {
-            throw new ValidationError({
-               message: 'Already registered',
-               hint: this.hints.routes
-            });
-         }
-      } else if (!reqx.registered) {
-         if (account === 'hub' || account === 'pub') {
-            throw new ValidationError({
-               message: 'Expired (or unregistered) keyspace',
-               hint: this.hints.createEphemeral
-            });
-         } else {
-            throw new ValidationError({
-               message: 'Unregistered keyspace',
-               hint: this.hints.createEphemeral
-            });
+      if (false) {
+         if (command.key === 'create-keyspace') {
+            if (reqx.registered) {
+               throw new ValidationError({
+                  message: 'Already registered',
+                  hint: this.hints.routes
+               });
+            }
+         } else if (!reqx.registered) {
+            if (account === 'hub' || account === 'pub') {
+               throw new ValidationError({
+                  message: 'Expired (or unregistered) keyspace',
+                  hint: this.hints.createEphemeral
+               });
+            } else {
+               throw new ValidationError({
+                  message: 'Unregistered keyspace',
+                  hint: this.hints.createEphemeral
+               });
+            }
          }
       }
       if (command.access) {
