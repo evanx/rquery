@@ -124,7 +124,7 @@ So visit https://web.telegram.org or install the mobile app, and message `@redis
 
 Then generate an admin client cert in bash:
 ```shell
-curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/generate-privcert.sh |
+curl -s https://open.redishub.com/ |
   bash /dev/stdin $telegramUser
 ```
 

@@ -352,7 +352,10 @@ export default class rquery {
          uri += `&text=${encodeURIComponent(text)}`;
          const url = [this.config.botUrl, uri].join('/');
          this.logger.info('sendTelegram url', url, chatId, format, text);
-         await Requests.head({url});
+         const response = await Requests.request({url});
+         if (response.statusCode !== 200) {
+            this.logger.warn('sendTelegram', chatId, url);
+         }
       } catch (err) {
          this.logger.error(err);
       }
@@ -460,7 +463,7 @@ export default class rquery {
                return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
             }
             this.logger.debug('gentoken', accountKey);
-            this.validateCert(req, reqx, certs, account, []);
+            const {certDigest, certRole} = this.validateCert(req, reqx, certs, account, []);
             const token = this.generateTokenKey(6);
             await this.redis.setexAsync([accountKey, token].join(':'), this.config.keyExpire, token);
             return token;
@@ -599,33 +602,57 @@ export default class rquery {
          key: 'create-keyspace',
          access: 'admin'
       }, async (req, res, reqx) => {
-         const {command, time, account, keyspace, accountKey} = reqx;
-         this.logger.debug('command', command.key, this.accountKey(account, 'keyspaces'));
-         const [sadd] = await this.redis.multiExecAsync(multi => {
+         const {command, time, account, keyspace, accountKey, keyspaceKey, certDigest, certRole} = reqx;
+         const role = req.query.role || 'admin';
+         if (role !== certRole) {
+            throw new ValidationError({
+               status: 400,
+               message: `Cert Role (OU=${certRole}) mismatch (${role})`
+            });
+         }
+         this.logger.debug('command', command.key, role);
+         const [sadd, hlen] = await this.redis.multiExecAsync(multi => {
             multi.sadd(this.accountKey(account, 'keyspaces'), keyspace);
+            multi.hlen(keyspaceKey);
          });
          if (!sadd) {
             throw new ValidationError({
                status: 400,
-               message: 'Already exists'
+               message: 'Already exists in set',
+               hint: this.hints.keys
+            });
+         }
+         if (!hlen) {
+            throw new ValidationError({
+               status: 400,
+               message: 'Already exists info',
+               hint: this.hints.keys
             });
          }
          const [keyspaceId] = await this.redis.multiExecAsync(multi => {
             multi.incr(this.adminKey('keyspaces:seq'));
          });
          const ttl = Seconds.parseOptionalKeyDefault(req.query, 'ttl', 10);
-         const role = req.query.role || 'admin';
+         if (ttl < 10)  {
+            throw new ValidationError(
+               `TTL must be greater than 10 seconds`
+            );
+         }
+         if (ttl > Seconds.fromDays(this.config.ttlLimit))  {
+            throw new ValidationError(
+               `TTL must be less than ${this.config.ttlLimit} days initially`
+            );
+         }
          const [hmset] = await this.redis.multiExecAsync(multi => {
-            multi.hmset(this.adminKey('keyspace', keyspaceId), {
-               account, keyspace, ttl, role
+            multi.hmset(keyspaceKey, {
+               account, keyspace, ttl, role,
+               registered: time
             });
          });
-         this.logger.debug('hsetnx', accountKey, time);
-         const [hsetnx] = await this.redis.multiExecAsync(multi => {
-            multi.hsetnx(accountKey, 'registered', time);
-         });
-         if (!hsetnx) {
-            throw {message: 'Failed to register keyspace', reqx};
+         if (hmset !== 'OK') {
+            throw ValidationError({
+               message: 'Failed to register keyspace',
+            });
          }
          await this.sendTelegramAlert(account, 'html', [
             `Registered new keyspace <code>${keyspace}</code>`,
@@ -1459,7 +1486,7 @@ export default class rquery {
                group: 'admin'
             },
             access: 'admin'
-         }, async (req, res, {account, accountKey, time, certDigest}) => {
+         }, async (req, res, {account, accountKey, time, certDigest, certRole}) => {
             const [cert] = await this.redis.multiExecAsync(multi => {
                multi.hgetall(this.adminKey('cert', certId));
             });
@@ -1548,8 +1575,8 @@ export default class rquery {
             if (duration < this.config.adminLimit) {
                return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
             }
-            const {certDigest, role} = this.validateCert(req, reqx, certs, account, []);
-            Object.assign(reqx, {account, accountKey, time, admined, certDigest});
+            const {certDigest, certRole} = this.validateCert(req, reqx, certs, account, []);
+            Object.assign(reqx, {account, accountKey, time, admined, certDigest, certRole});
             const result = await handleReq(req, res, reqx);
             if (result !== undefined) {
                await Result.sendResult(command, req, res, reqx, result);
@@ -1934,7 +1961,7 @@ export default class rquery {
          }
       }
       if (account !== 'hub' && account !== 'pub') {
-         this.validateCert(req, reqx, certs, account, []);
+         Object.assign(reqx, this.validateCert(req, reqx, certs, account, []));
       }
       if (command.key === 'create-keyspace') {
          if (reqx.registered) {
@@ -1985,7 +2012,7 @@ export default class rquery {
 
    validateCert(req, reqx, certs, account, roles) {
       if (this.config.disableValidateCert) {
-         return;
+         return {};
       }
       if (!certs) {
          throw new ValidationError({
@@ -2014,22 +2041,22 @@ export default class rquery {
          message: 'Cert O name mismatches account',
          hint: this.hints.registerCert
       });
-      const role = names.ou;
-      if (!lodash.isEmpty(roles) && !roles.includes(role)) throw new ValidationError({
+      const certRole = names.ou;
+      if (!lodash.isEmpty(roles) && !roles.includes(certRole)) throw new ValidationError({
          status: 403,
          message: 'No role access',
          hint: this.hints.registerCert
       });
       const certDigest = this.digestPem(cert);
       if (!certs.includes(certDigest)) {
-         this.logger.warn('validateCert', account, role, certDigest, certs);
+         this.logger.warn('validateCert', account, certRole, certDigest, certs);
          throw new ValidationError({
             status: 403,
             message: 'Invalid cert',
             hint: this.hints.registerCert
          });
       }
-      return {certDigest, role};
+      return {certDigest, certRole};
    }
 
    keyIndex(account, keyspace) {

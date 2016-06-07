@@ -8,6 +8,14 @@ exports.isInteger = isInteger;
 
 var logger = Loggers.create(__filename, 'info');
 
+function callable(value, ...args) {
+   if (lodash.isFunction(value)) {
+      return value(...args);
+   } else {
+      return value;
+   }
+}
+
 function ifElseFn(truthy, elseValue, then) {
    if (!truthy) {
       return value;

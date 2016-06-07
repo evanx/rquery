@@ -10,21 +10,9 @@ exports.on = on;
 
 var logger = Loggers.create(__filename, 'info');
 
-function invokable(value) {
-   if (lodash.isFunction(value)) {
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-         args[_key - 1] = arguments[_key];
-      }
-
-      return value.apply(undefined, args);
-   } else {
-      return value;
-   }
-}
-
 function on(defaultValue) {
-   for (var _len2 = arguments.length, clauses = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      clauses[_key2 - 1] = arguments[_key2];
+   for (var _len = arguments.length, clauses = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      clauses[_key - 1] = arguments[_key];
    }
 
    var _ref = clauses.find(function (clause) {
@@ -37,9 +25,9 @@ function on(defaultValue) {
    var result = _ref2[1];
 
    if (!match) {
-      return invokable(defaultValue, match);
+      return If.callable(defaultValue, match);
    } else {
-      return invokable(result, match);
+      return If.callable(result, match);
    }
 }
 //# sourceMappingURL=Switch.js.map

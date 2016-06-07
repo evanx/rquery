@@ -49,16 +49,15 @@ module.exports = {
       }
       const $ = rquery.getContentType(req) === 'html'? He : Hp;
       return {
-         message: If.thenElse(account,
-            $.a({
+         message: account
+            ? $.a({
                href: '/account-keyspaces/' + account
             }, `List the keyspaces on your account`)
-            ,
-            $.a({
+            : $.a({
                target: '_blank',
                href: 'https://web.telegram.org/#/im?p=@redishub_bot'
             }, `Try "@${rquery.config.adminBotName}_bot /signup"`)
-         ),
+         ,
          common: routes
          .filter(route => route)
          .filter(route => !route.includes(':'))

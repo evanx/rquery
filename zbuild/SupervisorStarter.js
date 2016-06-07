@@ -144,6 +144,7 @@ function assignErrors(g) {
       this.constructor.prototype.__proto__ = Error.prototype;
       Error.captureStackTrace(this, this.constructor);
       this.name = 'ValidationError';
+      this.status = 400;
       var args = [].slice.call(arguments);
       if (args.length === 1) {
          if (args[0].message) {

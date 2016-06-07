@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
    value: true
 });
-exports.head = exports.content = undefined;
+exports.request = exports.content = undefined;
 
 var _bluebird = require('bluebird');
 
@@ -71,7 +71,7 @@ var contentOptions = function () {
    };
 }();
 
-var head = exports.head = function () {
+var request = exports.request = function () {
    var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee3(options) {
       var _ref3, _ref4, response;
 
@@ -95,7 +95,7 @@ var head = exports.head = function () {
          }
       }, _callee3, this);
    }));
-   return function head(_x3) {
+   return function request(_x3) {
       return ref.apply(this, arguments);
    };
 }();

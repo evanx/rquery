@@ -68,6 +68,12 @@ module.exports = {
          unit: 'seconds',
          max: 999
       },
+      ttlLimit: {
+         type: 'duration',
+         unit: 'seconds',
+         min: 10,
+         max: 1000,
+      },
       keyExpire: {
          type: 'duration',
          unit: 'seconds',
