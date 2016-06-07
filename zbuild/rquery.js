@@ -4202,7 +4202,7 @@ var rquery = function () {
                                        accountKey = _this12.adminKey('account', account);
                                        _context100.next = 18;
                                        return _this12.redis.multiExecAsync(function (multi) {
-                                          multi.hsetnx(accountKey, 'registered', new Date().getTime());
+                                          multi.hsetnx(accountKey, 'registered', Seconds.now());
                                           multi.hsetnx(accountKey, 'expire', _this12.config.keyExpire);
                                           multi.sadd(_this12.adminKey('accounts'), account);
                                           multi.sadd(_this12.adminKey('account', account, 'topt'), otpSecret);
@@ -4575,7 +4575,7 @@ var rquery = function () {
                         }
                         _context106.prev = 14;
                         return _context106.delegateYield(regeneratorRuntime.mark(function _callee105() {
-                           var errorMessage, clientIp, accountKey, replies, replyPath;
+                           var errorMessage, clientIp, replies, replyPath;
                            return regeneratorRuntime.wrap(function _callee105$(_context105) {
                               while (1) {
                                  switch (_context105.prev = _context105.next) {
@@ -4595,14 +4595,13 @@ var rquery = function () {
 
                                     case 5:
                                        clientIp = req.get('x-forwarded-for');
-                                       accountKey = _this14.accountKeyspace(account, keyspace);
 
-                                       _this14.logger.debug('createEphemeral clientIp', clientIp, account, keyspace, accountKey);
-                                       _context105.next = 10;
+                                       _this14.logger.debug('createEphemeral clientIp', clientIp, account, keyspace, _this14.accountKeyspace(account, keyspace));
+                                       _context105.next = 9;
                                        return _this14.redis.multiExecAsync(function (multi) {
-                                          multi.hsetnx(accountKey, 'registered', new Date().getTime());
+                                          multi.hsetnx(_this14.accountKeyspace(account, keyspace), 'registered', Seconds.now());
                                           if (clientIp) {
-                                             multi.hsetnx(accountKey, 'clientIp', clientIp);
+                                             multi.hsetnx(_this14.accountKeyspace(account, keyspace), 'clientIp', clientIp);
                                              if (_this14.config.addClientIp) {
                                                 multi.sadd(_this14.adminKey('keyspaces:ephemeral:ips'), clientIp);
                                              }
@@ -4610,18 +4609,18 @@ var rquery = function () {
                                           //this.count(multi, 'keyspaces:ephemeral'); // TODO del old keyspaces:expire
                                        });
 
-                                    case 10:
+                                    case 9:
                                        replies = _context105.sent;
 
                                        if (replies[0]) {
-                                          _context105.next = 16;
+                                          _context105.next = 15;
                                           break;
                                        }
 
                                        _this14.logger.error('keyspace clash', account, keyspace);
 
                                        if (previousError) {
-                                          _context105.next = 15;
+                                          _context105.next = 14;
                                           break;
                                        }
 
@@ -4629,29 +4628,29 @@ var rquery = function () {
                                           v: _this14.createEphemeral(req, res, { message: 'keyspace clash' })
                                        });
 
-                                    case 15:
+                                    case 14:
                                        throw { message: 'Keyspace already exists' };
 
-                                    case 16:
+                                    case 15:
                                        replyPath = ['ak', account, keyspace].join('/');
 
                                        _this14.logger.debug('createEphemeral replyPath', replyPath);
 
                                        if (!_this14.isBrowser(req)) {
-                                          _context105.next = 22;
+                                          _context105.next = 21;
                                           break;
                                        }
 
                                        res.redirect(302, ['', replyPath, 'help'].join('/'));
-                                       _context105.next = 23;
+                                       _context105.next = 22;
                                        break;
 
-                                    case 22:
+                                    case 21:
                                        return _context105.abrupt('return', {
                                           v: replyPath
                                        });
 
-                                    case 23:
+                                    case 22:
                                     case 'end':
                                        return _context105.stop();
                                  }
@@ -4768,7 +4767,7 @@ var rquery = function () {
                         case 0:
                            _context108.prev = 0;
                            return _context108.delegateYield(regeneratorRuntime.mark(function _callee107() {
-                              var _req$params11, account, keyspace, key, timeout, accountKey, helpPath, reqx, v, isSecureAccount, _ref48, _ref49, _ref49$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref50, _ref51, expire;
+                              var _req$params11, account, keyspace, key, timeout, accountKey, accountKeyspace, helpPath, reqx, v, isSecureAccount, _ref48, _ref49, _ref49$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref50, _ref51, expire;
 
                               return regeneratorRuntime.wrap(function _callee107$(_context107) {
                                  while (1) {
@@ -4782,7 +4781,8 @@ var rquery = function () {
 
                                           assert(account, 'account');
                                           assert(keyspace, 'keyspace');
-                                          accountKey = _this15.accountKeyspace(account, keyspace);
+                                          accountKey = _this15.accountKey(account);
+                                          accountKeyspace = _this15.accountKeyspace(account, keyspace);
                                           helpPath = '/ak/' + account + '/' + keyspace + '/help';
                                           reqx = { account: account, keyspace: keyspace, accountKey: accountKey, key: key, helpPath: helpPath, command: command };
 
@@ -4796,7 +4796,7 @@ var rquery = function () {
                                           v = _this15.validateAccount(account);
 
                                           if (!v) {
-                                             _context107.next = 17;
+                                             _context107.next = 18;
                                              break;
                                           }
 
@@ -4805,11 +4805,11 @@ var rquery = function () {
                                              v: void 0
                                           });
 
-                                       case 17:
+                                       case 18:
                                           v = _this15.validateKeyspace(keyspace);
 
                                           if (!v) {
-                                             _context107.next = 21;
+                                             _context107.next = 22;
                                              break;
                                           }
 
@@ -4818,11 +4818,11 @@ var rquery = function () {
                                              v: void 0
                                           });
 
-                                       case 21:
+                                       case 22:
                                           v = _this15.validateKey(key);
 
                                           if (!v) {
-                                             _context107.next = 25;
+                                             _context107.next = 26;
                                              break;
                                           }
 
@@ -4831,14 +4831,14 @@ var rquery = function () {
                                              v: void 0
                                           });
 
-                                       case 25:
+                                       case 26:
                                           if (!timeout) {
-                                             _context107.next = 29;
+                                             _context107.next = 30;
                                              break;
                                           }
 
                                           if (/^[0-9]$/.test(timeout)) {
-                                             _context107.next = 29;
+                                             _context107.next = 30;
                                              break;
                                           }
 
@@ -4847,9 +4847,9 @@ var rquery = function () {
                                              v: void 0
                                           });
 
-                                       case 29:
+                                       case 30:
                                           isSecureAccount = !/^(pub|hub)$/.test(account);
-                                          _context107.next = 32;
+                                          _context107.next = 33;
                                           return _this15.redis.multiExecAsync(function (multi) {
                                              multi.time();
                                              multi.hget(accountKey, 'registered');
@@ -4860,7 +4860,7 @@ var rquery = function () {
                                              }
                                           });
 
-                                       case 32:
+                                       case 33:
                                           _ref48 = _context107.sent;
                                           _ref49 = _slicedToArray(_ref48, 5);
                                           _ref49$ = _slicedToArray(_ref49[0], 1);
@@ -4877,73 +4877,73 @@ var rquery = function () {
                                           hostname = void 0;
 
                                           if (!(req.hostname === _this15.config.hostDomain)) {
-                                             _context107.next = 46;
+                                             _context107.next = 47;
                                              break;
                                           }
 
-                                          _context107.next = 58;
+                                          _context107.next = 59;
                                           break;
 
-                                       case 46:
+                                       case 47:
                                           if (!lodash.endsWith(req.hostname, _this15.config.keyspaceHostname)) {
-                                             _context107.next = 58;
+                                             _context107.next = 59;
                                              break;
                                           }
 
                                           hostname = req.hostname.replace(/\..*$/, '');
-                                          _context107.next = 50;
+                                          _context107.next = 51;
                                           return _this15.redis.hgetallAsync(_this15.adminKey('host', hostname));
 
-                                       case 50:
+                                       case 51:
                                           hostHashes = _context107.sent;
 
                                           if (hostHashes) {
-                                             _context107.next = 53;
+                                             _context107.next = 54;
                                              break;
                                           }
 
                                           throw new ValidationError('Invalid host: ' + hostname);
 
-                                       case 53:
+                                       case 54:
                                           _this15.logger.debug('hostHashes', hostHashes);
 
                                           if (hostHashes.keyspaces) {
-                                             _context107.next = 56;
+                                             _context107.next = 57;
                                              break;
                                           }
 
                                           throw new ValidationError('Invalid host: ' + hostname);
 
-                                       case 56:
+                                       case 57:
                                           if (lodash.includes(hostHashes.keyspaces, keyspace)) {
-                                             _context107.next = 58;
+                                             _context107.next = 59;
                                              break;
                                           }
 
                                           throw new ValidationError('Invalid keyspace: ' + keyspace);
 
-                                       case 58:
+                                       case 59:
                                           if (keyspace) {
-                                             _context107.next = 60;
+                                             _context107.next = 61;
                                              break;
                                           }
 
                                           throw new ValidationError('Missing keyspace: ' + req.path);
 
-                                       case 60:
+                                       case 61:
                                           if (!timeout) {
-                                             _context107.next = 63;
+                                             _context107.next = 64;
                                              break;
                                           }
 
                                           if (!(timeout < 1 || timeout > 10)) {
-                                             _context107.next = 63;
+                                             _context107.next = 64;
                                              break;
                                           }
 
                                           throw new ValidationError('Timeout must range from 1 to 10 seconds: ' + timeout);
 
-                                       case 63:
+                                       case 64:
                                           multi = _this15.redis.multi();
 
                                           multi.sadd(_this15.adminKey('keyspaces'), keyspace);
@@ -4951,21 +4951,21 @@ var rquery = function () {
                                           if (command && command.access === 'admin') {
                                              multi.hset(accountKey, 'admined', time);
                                           }
-                                          _context107.next = 69;
+                                          _context107.next = 70;
                                           return command.handleReq(req, res, reqx, multi);
 
-                                       case 69:
+                                       case 70:
                                           result = _context107.sent;
 
                                           if (!(result !== undefined)) {
-                                             _context107.next = 73;
+                                             _context107.next = 74;
                                              break;
                                           }
 
-                                          _context107.next = 73;
+                                          _context107.next = 74;
                                           return Result.sendResult(command, req, res, reqx, result);
 
-                                       case 73:
+                                       case 74:
                                           if (key) {
                                              assert(reqx.keyspaceKey);
                                              _expire = _this15.getKeyExpire(account);
@@ -4973,22 +4973,22 @@ var rquery = function () {
                                              multi.expire(reqx.keyspaceKey, _expire);
                                              _this15.logger.debug('expire', reqx.keyspaceKey, _expire);
                                           }
-                                          _context107.next = 76;
+                                          _context107.next = 77;
                                           return multi.execAsync();
 
-                                       case 76:
+                                       case 77:
                                           _ref50 = _context107.sent;
                                           _ref51 = _toArray(_ref50);
                                           expire = _ref51;
 
                                           if (expire) {
-                                             _context107.next = 81;
+                                             _context107.next = 82;
                                              break;
                                           }
 
                                           throw new ApplicationError('expire: ' + reqx.keyspaceKey);
 
-                                       case 81:
+                                       case 82:
                                        case 'end':
                                           return _context107.stop();
                                     }

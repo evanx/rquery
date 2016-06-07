@@ -16,6 +16,9 @@ var factors = {
 
 var that = {
    factors: factors,
+   now: function now() {
+      return Math.ceil(new Date().getTime() / 1000);
+   },
    format: function format(seconds) {
       if (seconds < factors.m) {
          return '' + seconds + 's';

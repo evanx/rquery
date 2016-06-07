@@ -20,6 +20,9 @@ var factors = {
 };
 
 var that = {
+   now: function now() {
+      return new Date().getTime();
+   },
    format: function format(millis) {
       // TODO deprecate
       return that.formatDuration(millis);

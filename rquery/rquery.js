@@ -1528,7 +1528,7 @@ export default class rquery {
          const otpSecret = this.generateTokenKey();
          const accountKey = this.adminKey('account', account);
          const [hsetnx, saddAccount, saddCert] = await this.redis.multiExecAsync(multi => {
-            multi.hsetnx(accountKey, 'registered', new Date().getTime());
+            multi.hsetnx(accountKey, 'registered', Seconds.now());
             multi.hsetnx(accountKey, 'expire', this.config.keyExpire);
             multi.sadd(this.adminKey('accounts'), account);
             multi.sadd(this.adminKey('account', account, 'topt'), otpSecret);
@@ -1694,12 +1694,12 @@ export default class rquery {
             return;
          }
          let clientIp = req.get('x-forwarded-for');
-         const accountKey = this.accountKeyspace(account, keyspace);
-         this.logger.debug('createEphemeral clientIp', clientIp, account, keyspace, accountKey);
+         this.logger.debug('createEphemeral clientIp', clientIp, account, keyspace
+         , this.accountKeyspace(account, keyspace));
          const replies = await this.redis.multiExecAsync(multi => {
-            multi.hsetnx(accountKey, 'registered', new Date().getTime());
+            multi.hsetnx(this.accountKeyspace(account, keyspace), 'registered', Seconds.now());
             if (clientIp) {
-               multi.hsetnx(accountKey, 'clientIp', clientIp);
+               multi.hsetnx(this.accountKeyspace(account, keyspace), 'clientIp', clientIp);
                if (this.config.addClientIp) {
                   multi.sadd(this.adminKey('keyspaces:ephemeral:ips'), clientIp);
                }
@@ -1785,7 +1785,8 @@ export default class rquery {
             const {account, keyspace, key, timeout} = req.params;
             assert(account, 'account');
             assert(keyspace, 'keyspace');
-            const accountKey = this.accountKeyspace(account, keyspace);
+            const accountKey = this.accountKey(account);
+            const accountKeyspace = this.accountKeyspace(account, keyspace);
             const helpPath = `/ak/${account}/${keyspace}/help`;
             const reqx = {account, keyspace, accountKey, key, helpPath, command};
             if (key) {
