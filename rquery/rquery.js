@@ -655,7 +655,7 @@ export default class rquery {
          }
          const [hmset] = await this.redis.multiExecAsync(multi => {
             multi.hmset(this.accountKey(account, keyspace), {
-               ttl, role, registered: time
+               expire, role, registered: time
             });
          });
          if (hmset !== 'OK') {

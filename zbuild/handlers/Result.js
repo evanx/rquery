@@ -315,8 +315,8 @@ function sendHtmlResult(command, req, res, reqx, result) {
          });
       }
       hints.push({
-         uri: ['help'],
-         description: 'view sample keyspace commands'
+         path: '/ak/' + reqx.account + '/' + reqx.keyspace + '/help',
+         description: 'account keyspace home'
       });
       var renderedPathHints = hints.filter(function (hint) {
          return !hint.url;
