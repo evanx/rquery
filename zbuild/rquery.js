@@ -1447,7 +1447,7 @@ var rquery = function () {
             access: 'admin'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee26(req, res, reqx) {
-               var command, time, account, keyspace, accountKey, keyspaceKey, certDigest, certRole, role, _ref19, _ref20, sadd, hlen, _ref21, _ref22, keyspaceId, ttl, _ref23, _ref24, hmset;
+               var command, time, account, keyspace, certDigest, certRole, role, _ref19, _ref20, sadd, hlen, _ref21, _ref22, keyspaceId, ttl, _ref23, _ref24, hmset;
 
                return regeneratorRuntime.wrap(function _callee26$(_context26) {
                   while (1) {
@@ -1457,14 +1457,12 @@ var rquery = function () {
                            time = reqx.time;
                            account = reqx.account;
                            keyspace = reqx.keyspace;
-                           accountKey = reqx.accountKey;
-                           keyspaceKey = reqx.keyspaceKey;
                            certDigest = reqx.certDigest;
                            certRole = reqx.certRole;
                            role = req.query.role || 'admin';
 
                            if (!(role !== certRole)) {
-                              _context26.next = 11;
+                              _context26.next = 9;
                               break;
                            }
 
@@ -1473,22 +1471,22 @@ var rquery = function () {
                               message: 'Cert Role (OU=' + certRole + ') mismatch (' + role + ')'
                            });
 
-                        case 11:
-                           _this6.logger.debug('command', command.key, role);
-                           _context26.next = 14;
+                        case 9:
+                           _this6.logger.debug('command', command.key, accountKey, role);
+                           _context26.next = 12;
                            return _this6.redis.multiExecAsync(function (multi) {
                               multi.sadd(_this6.accountKey(account, 'keyspaces'), keyspace);
-                              multi.hlen(keyspaceKey);
+                              multi.hlen(_this6.accountKey(account));
                            });
 
-                        case 14:
+                        case 12:
                            _ref19 = _context26.sent;
                            _ref20 = _slicedToArray(_ref19, 2);
                            sadd = _ref20[0];
                            hlen = _ref20[1];
 
                            if (sadd) {
-                              _context26.next = 20;
+                              _context26.next = 18;
                               break;
                            }
 
@@ -1498,9 +1496,9 @@ var rquery = function () {
                               hint: _this6.hints.keys
                            });
 
-                        case 20:
+                        case 18:
                            if (hlen) {
-                              _context26.next = 22;
+                              _context26.next = 20;
                               break;
                            }
 
@@ -1510,35 +1508,35 @@ var rquery = function () {
                               hint: _this6.hints.keys
                            });
 
-                        case 22:
-                           _context26.next = 24;
+                        case 20:
+                           _context26.next = 22;
                            return _this6.redis.multiExecAsync(function (multi) {
                               multi.incr(_this6.adminKey('keyspaces:seq'));
                            });
 
-                        case 24:
+                        case 22:
                            _ref21 = _context26.sent;
                            _ref22 = _slicedToArray(_ref21, 1);
                            keyspaceId = _ref22[0];
                            ttl = Seconds.parseOptionalKeyDefault(req.query, 'ttl', 10);
 
                            if (!(ttl < 10)) {
-                              _context26.next = 30;
+                              _context26.next = 28;
                               break;
                            }
 
                            throw new ValidationError('TTL must be greater than 10 seconds');
 
-                        case 30:
+                        case 28:
                            if (!(ttl > Seconds.fromDays(_this6.config.ttlLimit))) {
-                              _context26.next = 32;
+                              _context26.next = 30;
                               break;
                            }
 
                            throw new ValidationError('TTL must be less than ' + _this6.config.ttlLimit + ' days initially');
 
-                        case 32:
-                           _context26.next = 34;
+                        case 30:
+                           _context26.next = 32;
                            return _this6.redis.multiExecAsync(function (multi) {
                               multi.hmset(keyspaceKey, {
                                  account: account, keyspace: keyspace, ttl: ttl, role: role,
@@ -1546,13 +1544,13 @@ var rquery = function () {
                               });
                            });
 
-                        case 34:
+                        case 32:
                            _ref23 = _context26.sent;
                            _ref24 = _slicedToArray(_ref23, 1);
                            hmset = _ref24[0];
 
                            if (!(hmset !== 'OK')) {
-                              _context26.next = 39;
+                              _context26.next = 37;
                               break;
                            }
 
@@ -1560,14 +1558,14 @@ var rquery = function () {
                               message: 'Failed to register keyspace'
                            });
 
-                        case 39:
-                           _context26.next = 41;
+                        case 37:
+                           _context26.next = 39;
                            return _this6.sendTelegramAlert(account, 'html', ['Registered new keyspace <code>' + keyspace + '</code>']);
 
-                        case 41:
+                        case 39:
                            return _context26.abrupt('return', 'OK');
 
-                        case 42:
+                        case 40:
                         case 'end':
                            return _context26.stop();
                      }

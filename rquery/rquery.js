@@ -602,7 +602,7 @@ export default class rquery {
          key: 'create-keyspace',
          access: 'admin'
       }, async (req, res, reqx) => {
-         const {command, time, account, keyspace, accountKey, keyspaceKey, certDigest, certRole} = reqx;
+         const {command, time, account, keyspace, certDigest, certRole} = reqx;
          const role = req.query.role || 'admin';
          if (role !== certRole) {
             throw new ValidationError({
@@ -610,10 +610,10 @@ export default class rquery {
                message: `Cert Role (OU=${certRole}) mismatch (${role})`
             });
          }
-         this.logger.debug('command', command.key, role);
+         this.logger.debug('command', command.key, accountKey, role);
          const [sadd, hlen] = await this.redis.multiExecAsync(multi => {
             multi.sadd(this.accountKey(account, 'keyspaces'), keyspace);
-            multi.hlen(keyspaceKey);
+            multi.hlen(this.accountKey(account));
          });
          if (!sadd) {
             throw new ValidationError({
