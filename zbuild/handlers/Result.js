@@ -315,7 +315,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
          });
       }
       hints.push({
-         path: '/ak/' + reqx.account + '/' + reqx.keyspace + '/help',
+         url: '/ak/' + reqx.account + '/' + reqx.keyspace + '/help',
          description: 'account keyspace home'
       });
       var renderedPathHints = hints.filter(function (hint) {
