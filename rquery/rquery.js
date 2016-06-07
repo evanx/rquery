@@ -633,8 +633,8 @@ export default class rquery {
          const [keyspaceId] = await this.redis.multiExecAsync(multi => {
             multi.incr(this.adminKey('keyspaces:seq'));
          });
+         const expire = Seconds.parse(req.query.expire) || this.config.keyspaceExpire;
          if (req.query && req.query.expire) {
-            const expire = Seconds.parse(req.query.expire);
             if (expire < 10)  {
                throw new ValidationError(
                   `Keyspace expiry must be greater than 10 seconds`
@@ -643,7 +643,7 @@ export default class rquery {
             if (expire > this.config.keyspaceExpire)  {
                if (certRole !== 'admin') {
                   throw new ValidationError(
-                     `TTL must be less than ${Seconds.toDays(this.config.keyspaceExpire)} days for cert role ${certRole}`
+                     `Keyspace expiry must be less than ${Seconds.toDays(this.config.keyspaceExpire)} days for cert role ${certRole}`
                   );
                }
             }

@@ -1447,7 +1447,7 @@ var rquery = function () {
             access: 'admin'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee26(req, res, reqx) {
-               var command, time, account, keyspace, certDigest, certRole, role, _ref19, _ref20, sadd, accountExpire, hlen, _ref21, _ref22, keyspaceId, _expire, _ref23, _ref24, hmset;
+               var command, time, account, keyspace, certDigest, certRole, role, _ref19, _ref20, sadd, accountExpire, hlen, _ref21, _ref22, keyspaceId, expire, _ref23, _ref24, hmset;
 
                return regeneratorRuntime.wrap(function _callee26$(_context26) {
                   while (1) {
@@ -1520,15 +1520,14 @@ var rquery = function () {
                            _ref21 = _context26.sent;
                            _ref22 = _slicedToArray(_ref21, 1);
                            keyspaceId = _ref22[0];
+                           expire = Seconds.parse(req.query.expire) || _this6.config.keyspaceExpire;
 
                            if (!(req.query && req.query.expire)) {
                               _context26.next = 35;
                               break;
                            }
 
-                           _expire = Seconds.parse(req.query.expire);
-
-                           if (!(_expire < 10)) {
+                           if (!(expire < 10)) {
                               _context26.next = 30;
                               break;
                            }
@@ -1536,7 +1535,7 @@ var rquery = function () {
                            throw new ValidationError('Keyspace expiry must be greater than 10 seconds');
 
                         case 30:
-                           if (!(_expire > _this6.config.keyspaceExpire)) {
+                           if (!(expire > _this6.config.keyspaceExpire)) {
                               _context26.next = 33;
                               break;
                            }
@@ -1546,10 +1545,10 @@ var rquery = function () {
                               break;
                            }
 
-                           throw new ValidationError('TTL must be less than ' + Seconds.toDays(_this6.config.keyspaceExpire) + ' days for cert role ' + certRole);
+                           throw new ValidationError('Keyspace expiry must be less than ' + Seconds.toDays(_this6.config.keyspaceExpire) + ' days for cert role ' + certRole);
 
                         case 33:
-                           if (!(_expire > accountExpire)) {
+                           if (!(expire > accountExpire)) {
                               _context26.next = 35;
                               break;
                            }
@@ -4769,7 +4768,7 @@ var rquery = function () {
                         case 0:
                            _context108.prev = 0;
                            return _context108.delegateYield(regeneratorRuntime.mark(function _callee107() {
-                              var _req$params11, account, keyspace, key, timeout, accountKey, helpPath, reqx, v, isSecureAccount, _ref48, _ref49, _ref49$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire2, _ref50, _ref51, expire;
+                              var _req$params11, account, keyspace, key, timeout, accountKey, helpPath, reqx, v, isSecureAccount, _ref48, _ref49, _ref49$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref50, _ref51, expire;
 
                               return regeneratorRuntime.wrap(function _callee107$(_context107) {
                                  while (1) {
@@ -4969,10 +4968,10 @@ var rquery = function () {
                                        case 73:
                                           if (key) {
                                              assert(reqx.keyspaceKey);
-                                             _expire2 = _this15.getKeyExpire(account);
+                                             _expire = _this15.getKeyExpire(account);
 
-                                             multi.expire(reqx.keyspaceKey, _expire2);
-                                             _this15.logger.debug('expire', reqx.keyspaceKey, _expire2);
+                                             multi.expire(reqx.keyspaceKey, _expire);
+                                             _this15.logger.debug('expire', reqx.keyspaceKey, _expire);
                                           }
                                           _context107.next = 76;
                                           return multi.execAsync();

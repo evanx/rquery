@@ -74,4 +74,3 @@ function renderPaths(paths) {
       return Hs.span(_styles2.default.routes.path, path);
    });
 }
-//# sourceMappingURL=Help.js.map
