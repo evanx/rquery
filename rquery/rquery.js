@@ -610,7 +610,7 @@ export default class rquery {
                message: `Cert Role (OU=${certRole}) mismatch (${role})`
             });
          }
-         this.logger.debug('command', command.key, accountKey, role);
+         this.logger.debug('command', command.key, account, role);
          const [sadd, hlen] = await this.redis.multiExecAsync(multi => {
             multi.sadd(this.accountKey(account, 'keyspaces'), keyspace);
             multi.hlen(this.accountKey(account));

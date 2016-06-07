@@ -1472,7 +1472,7 @@ var rquery = function () {
                            });
 
                         case 9:
-                           _this6.logger.debug('command', command.key, accountKey, role);
+                           _this6.logger.debug('command', command.key, account, role);
                            _context26.next = 12;
                            return _this6.redis.multiExecAsync(function (multi) {
                               multi.sadd(_this6.accountKey(account, 'keyspaces'), keyspace);
