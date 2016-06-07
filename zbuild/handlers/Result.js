@@ -314,10 +314,12 @@ function sendHtmlResult(command, req, res, reqx, result) {
             description: 'See @redishub_bot on Telegram.org'
          });
       }
-      hints.push({
-         url: '/ak/' + reqx.account + '/' + reqx.keyspace + '/help',
-         description: 'account keyspace home'
-      });
+      if (false) {
+         hints.push({
+            url: '/ak/' + reqx.account + '/' + reqx.keyspace + '/help',
+            description: 'account keyspace home'
+         });
+      }
       var renderedPathHints = hints.filter(function (hint) {
          return !hint.url;
       }).map(function (hint) {

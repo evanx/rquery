@@ -196,10 +196,12 @@ function sendHtmlResult(command, req, res, reqx, result) {
             description: 'See @redishub_bot on Telegram.org'
          });
       }
-      hints.push({
-         url: `/ak/${reqx.account}/${reqx.keyspace}/help`,
-         description: 'account keyspace home'
-      });
+      if (false) {
+         hints.push({
+            url: `/ak/${reqx.account}/${reqx.keyspace}/help`,
+            description: 'account keyspace home'
+         });
+      }
       let renderedPathHints = hints
       .filter(hint => !hint.url)
       .map(hint => {
