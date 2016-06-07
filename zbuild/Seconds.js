@@ -28,6 +28,11 @@ var that = {
       }
    },
    parse: function parse(string, defaultValue) {
+      if (!string) {
+         logger.warn('parse empty', defaultValue, string);
+         return defaultValue;
+      }
+
       var _ref = string.match(/^([0-9]+)([a-z]?)$/) || [];
 
       var _ref2 = _slicedToArray(_ref, 2);
@@ -95,3 +100,4 @@ function getMessage(seconds, message) {
 }
 
 module.exports = that;
+//# sourceMappingURL=Seconds.js.map
