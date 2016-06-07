@@ -4042,10 +4042,12 @@ var rquery = function () {
             };
          }());
          this.addPublicCommand({
-            key: 'register-cert'
+            key: 'register-cert',
+            relatedCommands: ['create-keyspace', 'keyspaces']
          }, require('./handlers/registerCert').default);
          this.addPublicCommand({
-            key: 'enroll-cert'
+            key: 'enroll-cert',
+            relatedCommands: ['create-keyspace', 'keyspaces']
          }, require('./handlers/registerCert').default);
       }
    }, {

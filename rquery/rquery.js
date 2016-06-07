@@ -1451,10 +1451,12 @@ export default class rquery {
          throw {message: 'Not implemented'};
       });
       this.addPublicCommand({
-         key: 'register-cert'
+         key: 'register-cert',
+         relatedCommands: ['create-keyspace', 'keyspaces']
       }, require('./handlers/registerCert').default);
       this.addPublicCommand({
-         key: 'enroll-cert'
+         key: 'enroll-cert',
+         relatedCommands: ['create-keyspace', 'keyspaces']
       }, require('./handlers/registerCert').default);
    }
 
