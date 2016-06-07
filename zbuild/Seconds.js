@@ -56,6 +56,7 @@ var that = {
    },
    parseOptionalKeyDefault: function parseOptionalKeyDefault(object, key, defaultValue) {
       if (!object) return defaultValue;
+      if (!Values.isDefined(object[key])) return defaultValue;
       return that.parsePropDefault(object, key, defaultValue);
    },
    fromMinutes: function fromMinutes(minutes) {
