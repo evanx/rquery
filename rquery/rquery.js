@@ -611,42 +611,51 @@ export default class rquery {
             });
          }
          this.logger.debug('command', command.key, account, role);
-         const [sadd, hlen] = await this.redis.multiExecAsync(multi => {
+         const [sadd, accountExpire, hlen] = await this.redis.multiExecAsync(multi => {
             multi.sadd(this.accountKey(account, 'keyspaces'), keyspace);
-            multi.hlen(this.accountKey(account));
+            multi.hget(this.accountKey(account), 'expire');
+            multi.hlen(this.accountKeyspace(account, keyspace));
          });
          if (!sadd) {
             throw new ValidationError({
                status: 400,
                message: 'Already exists in set',
-               hint: this.hints.keys
+               hint: this.hints.routes
             });
          }
-         if (!hlen) {
+         if (hlen) {
             throw new ValidationError({
                status: 400,
-               message: 'Already exists info',
-               hint: this.hints.keys
+               message: 'Already exists',
+               hint: this.hints.routes
             });
          }
          const [keyspaceId] = await this.redis.multiExecAsync(multi => {
             multi.incr(this.adminKey('keyspaces:seq'));
          });
-         const ttl = Seconds.parseOptionalKeyDefault(req.query, 'ttl', 10);
-         if (ttl < 10)  {
-            throw new ValidationError(
-               `TTL must be greater than 10 seconds`
-            );
-         }
-         if (ttl > Seconds.fromDays(this.config.ttlLimit))  {
-            throw new ValidationError(
-               `TTL must be less than ${this.config.ttlLimit} days initially`
-            );
+         if (req.query && req.query.expire) {
+            const expire = Seconds.parse(req.query.expire);
+            if (expire < 10)  {
+               throw new ValidationError(
+                  `Keyspace expiry must be greater than 10 seconds`
+               );
+            }
+            if (expire > this.config.keyspaceExpire)  {
+               if (certRole !== 'admin') {
+                  throw new ValidationError(
+                     `TTL must be less than ${Seconds.toDays(this.config.keyspaceExpire)} days for cert role ${certRole}`
+                  );
+               }
+            }
+            if (expire > accountExpire)  {
+               throw new ValidationError(
+                  `Keyspace expiry must be less than ${Seconds.toDays(accountExpire)} days for this account`
+               );
+            }
          }
          const [hmset] = await this.redis.multiExecAsync(multi => {
-            multi.hmset(keyspaceKey, {
-               account, keyspace, ttl, role,
-               registered: time
+            multi.hmset(this.accountKey(account, keyspace), {
+               ttl, role, registered: time
             });
          });
          if (hmset !== 'OK') {
@@ -1518,6 +1527,7 @@ export default class rquery {
          const accountKey = this.adminKey('account', account);
          const [hsetnx, saddAccount, saddCert] = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', new Date().getTime());
+            multi.hsetnx(accountKey, 'expire', this.config.keyExpire);
             multi.sadd(this.adminKey('accounts'), account);
             multi.sadd(this.adminKey('account', account, 'topt'), otpSecret);
             multi.sadd(this.adminKey('account', account, 'certs'), certDigest);

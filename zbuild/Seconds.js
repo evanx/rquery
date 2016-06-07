@@ -68,6 +68,9 @@ var that = {
    fromDays: function fromDays(days) {
       return days * factors.d;
    },
+   toDays: function toDays(seconds) {
+      return Math.ceil(seconds / factors.d);
+   },
    assert: function (_assert) {
       function assert(_x, _x2) {
          return _assert.apply(this, arguments);

@@ -68,7 +68,7 @@ module.exports = {
          unit: 'seconds',
          max: 999
       },
-      ttlLimit: {
+      keyspaceExpire: {
          type: 'duration',
          unit: 'seconds',
          min: 10,

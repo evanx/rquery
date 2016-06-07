@@ -1447,7 +1447,7 @@ var rquery = function () {
             access: 'admin'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee26(req, res, reqx) {
-               var command, time, account, keyspace, certDigest, certRole, role, _ref19, _ref20, sadd, hlen, _ref21, _ref22, keyspaceId, ttl, _ref23, _ref24, hmset;
+               var command, time, account, keyspace, certDigest, certRole, role, _ref19, _ref20, sadd, accountExpire, hlen, _ref21, _ref22, keyspaceId, expire, _ref23, _ref24, hmset;
 
                return regeneratorRuntime.wrap(function _callee26$(_context26) {
                   while (1) {
@@ -1476,81 +1476,101 @@ var rquery = function () {
                            _context26.next = 12;
                            return _this6.redis.multiExecAsync(function (multi) {
                               multi.sadd(_this6.accountKey(account, 'keyspaces'), keyspace);
-                              multi.hlen(_this6.accountKey(account));
+                              multi.hget(_this6.accountKey(account), 'expire');
+                              multi.hlen(_this6.accountKeyspace(account, keyspace));
                            });
 
                         case 12:
                            _ref19 = _context26.sent;
-                           _ref20 = _slicedToArray(_ref19, 2);
+                           _ref20 = _slicedToArray(_ref19, 3);
                            sadd = _ref20[0];
-                           hlen = _ref20[1];
+                           accountExpire = _ref20[1];
+                           hlen = _ref20[2];
 
                            if (sadd) {
-                              _context26.next = 18;
+                              _context26.next = 19;
                               break;
                            }
 
                            throw new ValidationError({
                               status: 400,
                               message: 'Already exists in set',
-                              hint: _this6.hints.keys
+                              hint: _this6.hints.routes
                            });
 
-                        case 18:
-                           if (hlen) {
-                              _context26.next = 20;
+                        case 19:
+                           if (!hlen) {
+                              _context26.next = 21;
                               break;
                            }
 
                            throw new ValidationError({
                               status: 400,
-                              message: 'Already exists info',
-                              hint: _this6.hints.keys
+                              message: 'Already exists',
+                              hint: _this6.hints.routes
                            });
 
-                        case 20:
-                           _context26.next = 22;
+                        case 21:
+                           _context26.next = 23;
                            return _this6.redis.multiExecAsync(function (multi) {
                               multi.incr(_this6.adminKey('keyspaces:seq'));
                            });
 
-                        case 22:
+                        case 23:
                            _ref21 = _context26.sent;
                            _ref22 = _slicedToArray(_ref21, 1);
                            keyspaceId = _ref22[0];
-                           ttl = Seconds.parseOptionalKeyDefault(req.query, 'ttl', 10);
 
-                           if (!(ttl < 10)) {
-                              _context26.next = 28;
+                           if (!(req.query && req.query.expire)) {
+                              _context26.next = 35;
                               break;
                            }
 
-                           throw new ValidationError('TTL must be greater than 10 seconds');
+                           expire = Seconds.parse(req.query.expire);
 
-                        case 28:
-                           if (!(ttl > Seconds.fromDays(_this6.config.ttlLimit))) {
+                           if (!(expire < 10)) {
                               _context26.next = 30;
                               break;
                            }
 
-                           throw new ValidationError('TTL must be less than ' + _this6.config.ttlLimit + ' days initially');
+                           throw new ValidationError('Keyspace expiry must be greater than 10 seconds');
 
                         case 30:
-                           _context26.next = 32;
+                           if (!(expire > _this6.config.keyspaceExpire)) {
+                              _context26.next = 33;
+                              break;
+                           }
+
+                           if (!(certRole !== 'admin')) {
+                              _context26.next = 33;
+                              break;
+                           }
+
+                           throw new ValidationError('TTL must be less than ' + Seconds.toDays(_this6.config.keyspaceExpire) + ' days for cert role ' + certRole);
+
+                        case 33:
+                           if (!(expire > accountExpire)) {
+                              _context26.next = 35;
+                              break;
+                           }
+
+                           throw new ValidationError('Keyspace expiry must be less than ' + Seconds.toDays(accountExpire) + ' days for this account');
+
+                        case 35:
+                           _context26.next = 37;
                            return _this6.redis.multiExecAsync(function (multi) {
-                              multi.hmset(keyspaceKey, {
-                                 account: account, keyspace: keyspace, ttl: ttl, role: role,
-                                 registered: time
+                              multi.hmset(_this6.accountKey(account, keyspace), {
+                                 ttl: ttl, role: role, registered: time
                               });
                            });
 
-                        case 32:
+                        case 37:
                            _ref23 = _context26.sent;
                            _ref24 = _slicedToArray(_ref23, 1);
                            hmset = _ref24[0];
 
                            if (!(hmset !== 'OK')) {
-                              _context26.next = 37;
+                              _context26.next = 42;
                               break;
                            }
 
@@ -1558,14 +1578,14 @@ var rquery = function () {
                               message: 'Failed to register keyspace'
                            });
 
-                        case 37:
-                           _context26.next = 39;
+                        case 42:
+                           _context26.next = 44;
                            return _this6.sendTelegramAlert(account, 'html', ['Registered new keyspace <code>' + keyspace + '</code>']);
 
-                        case 39:
+                        case 44:
                            return _context26.abrupt('return', 'OK');
 
-                        case 40:
+                        case 45:
                         case 'end':
                            return _context26.stop();
                      }
@@ -4182,6 +4202,7 @@ var rquery = function () {
                                        _context100.next = 18;
                                        return _this12.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', new Date().getTime());
+                                          multi.hsetnx(accountKey, 'expire', _this12.config.keyExpire);
                                           multi.sadd(_this12.adminKey('accounts'), account);
                                           multi.sadd(_this12.adminKey('account', account, 'topt'), otpSecret);
                                           multi.sadd(_this12.adminKey('account', account, 'certs'), certDigest);

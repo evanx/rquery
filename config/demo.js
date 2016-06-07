@@ -18,7 +18,7 @@ module.exports = {
          helpUrl: 'https://github.com/evanx/redishub/blob/master/README.md',
          indexCommand: 'show-keyspace-config',
          enrollExpire: 300,
-         ttlLimit: 604800, // 7 days
+         keyspaceExpire: 604800, // 7 days
          keyExpire: 600,
          ephemeralKeyExpire: 600,
          ephemeralAccountExpire: 1200,
