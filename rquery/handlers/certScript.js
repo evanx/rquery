@@ -14,8 +14,10 @@ export default async function handleCertScript(req, res, reqx, {config}) {
    const commandKey = reqx.command.key;
    const serviceUrl = config.hostUrl;
    const account = req.params.account;
+   const serviceKey = 'rh';
    const role = req.params.role || req.query.role || 'admin';
-   const CN = ['rh', account, role, req.params.clientId || req.query.clientId || 'none'].join(':');
+   const id = req.params.id || req.query.id || 'none';
+   const CN = ['rh', account, role, req.params.clientId || req.query.clientId || id].join(':');
    const OU = role;
    const O = account;
    const curlAccount = `curl -s -E \${dir}/privcert.pem \${serviceUrl}/ak/\${account}`;
@@ -51,8 +53,12 @@ export default async function handleCertScript(req, res, reqx, {config}) {
    result.push('');
    result.push('(');
    result = result.concat([
+      `  serviceKey='${serviceKey}'`,
+      `  role='${role}'`,
       `  account='${account}'`,
-      `  CN='${CN}' # unique client ID (service, account, role, id)`,
+      `  certId='${id}'`,
+      ``,
+      `  CN='${CN}' # unique client ID (serviceKey, account, role, certId)`,
       `  OU='${OU}' # role for this cert`,
       `  O='${O}' # account name`,
       ``,

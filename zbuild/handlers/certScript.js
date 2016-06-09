@@ -9,7 +9,7 @@ var _bluebird = require('bluebird');
 exports.default = function () {
    var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee(req, res, reqx, _ref) {
       var config = _ref.config;
-      var dir, archive, isArchive, commandKey, serviceUrl, account, role, CN, OU, O, curlAccount, help, result;
+      var dir, archive, isArchive, commandKey, serviceUrl, account, serviceKey, role, id, CN, OU, O, curlAccount, help, result;
       return regeneratorRuntime.wrap(function _callee$(_context) {
          while (1) {
             switch (_context.prev = _context.next) {
@@ -42,8 +42,10 @@ exports.default = function () {
                   commandKey = reqx.command.key;
                   serviceUrl = config.hostUrl;
                   account = req.params.account;
+                  serviceKey = 'rh';
                   role = req.params.role || req.query.role || 'admin';
-                  CN = ['rh', account, role, req.params.clientId || req.query.clientId || 'none'].join(':');
+                  id = req.params.id || req.query.id || 'none';
+                  CN = ['rh', account, role, req.params.clientId || req.query.clientId || id].join(':');
                   OU = role;
                   O = account;
                   curlAccount = 'curl -s -E ${dir}/privcert.pem ${serviceUrl}/ak/${account}';
@@ -54,7 +56,7 @@ exports.default = function () {
 
                   result.push('');
                   result.push('(');
-                  result = result.concat(['  account=\'' + account + '\'', '  CN=\'' + CN + '\' # unique client ID (service, account, role, id)', '  OU=\'' + OU + '\' # role for this cert', '  O=\'' + O + '\' # account name', '', '  dir=' + dir + ' # must not exist, or be archived', '  # Note that the following files are created in this dir:', '  # account privkey.pem cert.pem privcert.pem privcert.p12 x509.txt cert.extract.txt', '  commandKey=\'' + commandKey + '\'', '  serviceUrl=\'' + serviceUrl + '\'', '  archive=' + archive, '  certWebhook="${serviceUrl}/create-account-telegram/${account}"', '']);
+                  result = result.concat(['  serviceKey=\'' + serviceKey + '\'', '  role=\'' + role + '\'', '  account=\'' + account + '\'', '  certId=\'' + id + '\'', '', '  CN=\'' + CN + '\' # unique client ID (serviceKey, account, role, certId)', '  OU=\'' + OU + '\' # role for this cert', '  O=\'' + O + '\' # account name', '', '  dir=' + dir + ' # must not exist, or be archived', '  # Note that the following files are created in this dir:', '  # account privkey.pem cert.pem privcert.pem privcert.p12 x509.txt cert.extract.txt', '  commandKey=\'' + commandKey + '\'', '  serviceUrl=\'' + serviceUrl + '\'', '  archive=' + archive, '  certWebhook="${serviceUrl}/create-account-telegram/${account}"', '']);
                   if (Values.isDefined(req.query.archive)) {
                      result = result.concat(['  mkdir -p ${archive} # ensure dir exists', '  mv -n ${dir} ${archive}/`date +\'%Y-%m-%dT%Hh%Mm%Ss%s\'`']);
                   } else if (!lodash.isEmpty(req.query.dir)) {} else {
@@ -68,7 +70,7 @@ exports.default = function () {
                   result.push('');
                   return _context.abrupt('return', lodash.flatten(result));
 
-               case 27:
+               case 29:
                case 'end':
                   return _context.stop();
             }
