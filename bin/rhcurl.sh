@@ -2,7 +2,7 @@
 
 echo 'Use ~/redishub/bin/rhcurl.sh'
 echo 'Try:'
-echo 'cd && git clone https://github.com/evanx/redishub.git'
+echo 'cd && git clone https://github.com/webserva/home.git'
 exit 3
 
   set -u -e

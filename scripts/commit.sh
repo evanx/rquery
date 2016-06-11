@@ -6,9 +6,6 @@ c2notify() {
 }
 
 startTimestamp=`date +%s`
-timestamp=`date +%s`
-duration=`echo "$timestamp - $startTimestamp" | bc`
-echo NOTIFY $duration "$*"
 
 npm run build 
 
@@ -34,3 +31,6 @@ else
   echo "usage: message"
 fi 
 
+timestamp=`date +%s`
+duration=`echo "$timestamp - $startTimestamp" | bc`
+echo NOTIFY $duration "$*"

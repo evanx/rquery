@@ -40,7 +40,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       `   \${serviceUrl}/ak/\${account}/tmp10days/help`,
       ``,
       `For CLI convenience, install rhcurl bash script, as per instructions:`,
-      `  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
+      `  curl -s -L https://raw.githubusercontent.com/webserva/home/master/docs/install.rhcurl.txt`,
       ``,
    ];
    let result = [
@@ -84,7 +84,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
    }
    result = result.concat([
       ``,
-      `  # TODO curl following from static stable versioned script from https://raw.githubusercontent.com/evanx/redishub`,
+      `  # TODO curl following from static stable versioned script from https://raw.githubusercontent.com/webserva/home`,
       `  if mkdir \${dir} && cd $_`,
       `  then # mkdir ok so directory did not exist`,
       `    echo "\${account}" > account`,
@@ -112,7 +112,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       result = result.concat(help.map(line => `        echo "${line}"`));
       result = result.concat([
       `        echo; pwd; ls -l`,
-      `        curl -s https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
+      `        curl -s https://raw.githubusercontent.com/webserva/home/master/docs/install.rhcurl.txt`,
       `      fi`,
       `    fi`,
       `  fi`,

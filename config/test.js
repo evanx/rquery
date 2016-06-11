@@ -9,13 +9,13 @@ module.exports = {
          hostDomain: 'test.redishub.com',
          hostUrl: 'https://test.redishub.com',
          serviceKey: 'test',
-         serviceLabel: 'RH Test',
+         serviceLabel: 'WS Test',
          adminBotName: 'rhtest',
          port: 4567,
          location: '',
          assetsUrl: '/assets',
-         aboutUrl: 'https://github.com/evanx/redishub/blob/master/README.md',
-         helpUrl: 'https://github.com/evanx/redishub/blob/master/README.md',
+         aboutUrl: 'https://github.com/webserva/home/blob/master/README.md',
+         helpUrl: 'https://github.com/webserva/home/blob/master/README.md',
          indexCommand: 'show-keyspace-config',
          //keyExpire: 2764800, // 31 days
          keyspaceExpire: 2592000, // 30 days
