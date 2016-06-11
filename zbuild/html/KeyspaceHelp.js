@@ -117,9 +117,10 @@ function renderUpperCaseCommandString(command) {
 
 function renderCommandString(command) {
    if (!command.params) {
-      return command.key;
+      return Hc.b(command.key);
+   } else {
+      return [Hc.b(command.key)].concat(_toConsumableArray(command.params)).join(' ');
    }
-   return [Hc.b(command.key)].concat(_toConsumableArray(command.params)).join(' ');
 }
 
 function renderCustomCommands(commands) {
