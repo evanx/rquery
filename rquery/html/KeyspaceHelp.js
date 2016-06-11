@@ -91,9 +91,10 @@ function getCommandLink(command) {
 
 function renderUpperCaseCommandString(command) {
    if (!command.params) {
-      return command.key;
+      return Hc.b(command.key.toUpperCase());
+   } else {
+      return [Hc.b(command.key.toUpperCase()), ...command.params].join(' ');
    }
-   return [Hc.b(command.key.toUpperCase()), ...command.params].join(' ');
 }
 
 function renderCommandString(command) {

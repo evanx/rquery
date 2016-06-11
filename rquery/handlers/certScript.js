@@ -54,11 +54,11 @@ export default async function handleCertScript(req, res, reqx, {config}) {
    result.push('(');
    result = result.concat([
       `  serviceKey='${serviceKey}'`,
-      `  role='${role}'`,
       `  account='${account}'`,
+      `  role='${role}'`,
       `  certId='${id}'`,
       ``,
-      `  CN='${CN}' # unique client ID (serviceKey, account, role, certId)`,
+      `  CN='${CN}' # unique cert name (serviceKey, account, role, certId)`,
       `  OU='${OU}' # role for this cert`,
       `  O='${O}' # account name`,
       ``,
