@@ -266,3 +266,4 @@ function getComponentsConfig() {
    });
    return config;
 }
+//# sourceMappingURL=SupervisorStarter.js.map

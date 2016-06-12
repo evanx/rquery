@@ -30,3 +30,4 @@ function on(defaultValue) {
       return If.callable(result, match);
    }
 }
+//# sourceMappingURL=Switch.js.map

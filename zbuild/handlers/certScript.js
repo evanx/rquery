@@ -84,3 +84,4 @@ exports.default = function () {
 
    return handleCertScript;
 }();
+//# sourceMappingURL=certScript.js.map

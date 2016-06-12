@@ -25,3 +25,4 @@ exports.default = function () {
     return ref.apply(this, arguments);
   };
 }();
+//# sourceMappingURL=1.js.map
