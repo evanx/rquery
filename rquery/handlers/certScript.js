@@ -22,6 +22,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
    const O = account;
    const curlAccount = `curl -s -E \${dir}/privcert.pem \${serviceUrl}/ak/\${account}`;
    const help = [
+      ``,
       `To force archiving an existing \${dir}, add '?archive' to the URL:`,
       `  curl -s \${serviceUrl}/\${commandKey}/\${account}?archive | bash`,
       `This will first move \${dir} to \${archive}/TIMESTAMP`,

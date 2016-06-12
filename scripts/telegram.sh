@@ -17,7 +17,7 @@ echo bot [$bot]
 
 [ -n "$bot" ]
 
-cd ~/.bot.$bot
+cd ~/.bot.$bot || cd ~/.${bot}_bot
 
 pwd
 ls -l 
