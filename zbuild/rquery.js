@@ -5602,4 +5602,3 @@ var rquery = function () {
 }();
 
 exports.default = rquery;
-//# sourceMappingURL=rquery.js.map

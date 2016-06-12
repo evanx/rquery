@@ -41,4 +41,3 @@ function then(truthy, then) {
       return [false, truthy];
    }
 }
-//# sourceMappingURL=If.js.map

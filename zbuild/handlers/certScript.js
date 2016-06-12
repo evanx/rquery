@@ -62,11 +62,11 @@ exports.default = function () {
                   } else if (!lodash.isEmpty(req.query.dir)) {} else {
                      result = result.concat(['  mkdir -p ~/.redishub # ensure dir exists']);
                   }
-                  result = result.concat(['', '  # TODO curl following from static stable versioned script from https://raw.githubusercontent.com/webserva/home', '  if mkdir ${dir} && cd $_', '  then # mkdir ok so directory did not exist', '    echo "${account}" > account', '    if openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\', '      -subj "/CN=${CN}/OU=${OU}/O=${O}" \\', '      -keyout privkey.pem -out cert.pem', '    then', '      openssl x509 -text -in cert.pem > x509.txt', '      grep \'CN=\' x509.txt', '      cat cert.pem | head -3 | tail -1 | tail -c-12 > cert.extract.pem', '      certExtract=`cat cert.extract.pem`', '      echo "Try https://web.telegram.org/#/im?p=@redishub_bot \'/grantcert $certExtract\'"', '      cat privkey.pem cert.pem > privcert.pem', '      openssl x509 -text -in privcert.pem | grep \'CN=\'', '      curl -s -E privcert.pem "$certWebhook" ||', '        echo "Registered account ${account} ERROR $?"', '      if ! openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem', '      then', '        echo; pwd; ls -l', '        echo "ERROR $?: openssl pkcs12 ($PWD)"', '        false # error code 1', '      else', '        echo "Exported $PWD/privcert.p12 OK"']);
+                  result = result.concat(['', '  # TODO curl following from static stable versioned script from https://raw.githubusercontent.com/webserva/home', '  if mkdir ${dir} && cd $_', '  then # mkdir ok so directory did not exist', '    echo "${account}" > account', '    if openssl req -x509 -nodes -days 365 -newkey rsa:2048 \\', '      -subj "/CN=${CN}/OU=${OU}/O=${O}" \\', '      -keyout privkey.pem -out cert.pem', '    then', '      openssl x509 -text -in cert.pem > x509.txt', '      grep \'CN=\' x509.txt', '      cat cert.pem | head -3 | tail -1 | tail -c-12 > cert.extract.pem', '      cat privkey.pem cert.pem > privcert.pem', '      openssl x509 -text -in privcert.pem | grep \'CN=\'', '      curl -s -E privcert.pem "$certWebhook" ||', '        echo "Registered account ${account} ERROR $?"', '      if ! openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem', '      then', '        echo; pwd; ls -l', '        echo "ERROR $?: openssl pkcs12 ($PWD)"', '        false # error code 1', '      else', '        echo "Exported $PWD/privcert.p12 OK"', '        sleep 2']);
                   result = result.concat(help.map(function (line) {
                      return '        echo "' + line + '"';
                   }));
-                  result = result.concat(['        echo; pwd; ls -l', '        curl -s https://raw.githubusercontent.com/webserva/home/master/docs/install.rhcurl.txt', '      fi', '    fi', '  fi', ')']);
+                  result = result.concat(['        echo; pwd; ls -l', '        curl -s https://raw.githubusercontent.com/webserva/home/master/docs/install.rhcurl.txt', '        certExtract=`cat cert.extract.pem`', '        echo "Try https://web.telegram.org/#/im?p=@redishub_bot \'/grantcert $certExtract\'"', '      fi', '    fi', '  fi', ')']);
                   result.push('');
                   return _context.abrupt('return', lodash.flatten(result));
 
@@ -84,4 +84,3 @@ exports.default = function () {
 
    return handleCertScript;
 }();
-//# sourceMappingURL=certScript.js.map

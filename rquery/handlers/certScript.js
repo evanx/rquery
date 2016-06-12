@@ -96,8 +96,6 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       `      openssl x509 -text -in cert.pem > x509.txt`,
       `      grep 'CN=' x509.txt`,
       `      cat cert.pem | head -3 | tail -1 | tail -c-12 > cert.extract.pem`,
-      `      certExtract=\`cat cert.extract.pem\``,
-      `      echo "Try https://web.telegram.org/#/im?p=@redishub_bot '/grantcert \$certExtract'"`,
       `      cat privkey.pem cert.pem > privcert.pem`,
       `      openssl x509 -text -in privcert.pem | grep 'CN='`,
       `      curl -s -E privcert.pem "$certWebhook" ||`,
@@ -109,11 +107,14 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       `        false # error code 1`,
       `      else`,
       `        echo "Exported $PWD/privcert.p12 OK"`,
+      `        sleep 2`,
       ]);
       result = result.concat(help.map(line => `        echo "${line}"`));
       result = result.concat([
       `        echo; pwd; ls -l`,
       `        curl -s https://raw.githubusercontent.com/webserva/home/master/docs/install.rhcurl.txt`,
+      `        certExtract=\`cat cert.extract.pem\``,
+      `        echo "Try https://web.telegram.org/#/im?p=@redishub_bot '/grantcert \$certExtract'"`,
       `      fi`,
       `    fi`,
       `  fi`,
