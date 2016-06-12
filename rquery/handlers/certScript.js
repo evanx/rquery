@@ -107,11 +107,11 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       `        false # error code 1`,
       `      else`,
       `        echo "Exported $PWD/privcert.p12 OK"`,
+      `        pwd; ls -l`,
       `        sleep 2`,
       ]);
       result = result.concat(help.map(line => `        echo "${line}"`));
       result = result.concat([
-      `        echo; pwd; ls -l`,
       `        curl -s https://raw.githubusercontent.com/webserva/home/master/docs/install.rhcurl.txt`,
       `        certExtract=\`cat cert.extract.pem\``,
       `        echo "Try https://web.telegram.org/#/im?p=@redishub_bot '/grantcert \$certExtract'"`,
