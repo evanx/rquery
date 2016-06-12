@@ -1,7 +1,11 @@
 
 set -u -e
 
-git status
+echo; echo '# git status'
+git status | sed '/^$/d'
+echo; echo '# git reset --hard'
+git reset --hard 
+git status | sed '/^$/d'
 
 waitCommitted() {
   notifyFile=$1
