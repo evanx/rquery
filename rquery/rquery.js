@@ -544,8 +544,12 @@ export default class rquery {
             }
             this.logger.ndebug('help', req.params, this.commands.map(command => command.key).join('/'));
             const message = Switch.on(`Welcome to this keyspace`,
-               [reqx.account === 'hub', `Welcome to this ephemeral keyspace`],
-               [reqx.account, `Welcome to your account keyspace`]
+               [reqx.account === 'hub', [
+                  `Welcome to this ephemeral keyspace.`
+               ].join(' ')],
+               [reqx.account, [
+                  `Welcome to your account keyspace`
+               ].join(' ')],
             );
             const commandReferenceMessage = `Read the Redis.io docs for the following commands`;
             const customCommandHeading = `Custom commands`;
@@ -556,7 +560,7 @@ export default class rquery {
             ];
             if (this.isSecureDomain(req)) {
                description.push(
-                  `You can also try changing the domain to 'replica.redishub.com' to read keys.`
+                  `When reading keys, you can also try changing the domain to 'replica.redishub.com.'.`
                );
             }
             description.push(
@@ -1271,7 +1275,7 @@ export default class rquery {
          description: 'get all the values in a hash',
          relatedCommands: ['hkeys', 'hgetall']
       }, async (req, res, reqx) => {
-         return await this.redis.hkeysAsync(reqx.keyspaceKey);
+         return await this.redis.hvalsAsync(reqx.keyspaceKey);
       });
       this.addKeyspaceCommand({
          key: 'hgetall',

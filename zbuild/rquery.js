@@ -1407,13 +1407,13 @@ var rquery = function () {
                               _this6.logger.ndebug('help', req.params, _this6.commands.map(function (command) {
                                  return command.key;
                               }).join('/'));
-                              message = Switch.on('Welcome to this keyspace', [reqx.account === 'hub', 'Welcome to this ephemeral keyspace'], [reqx.account, 'Welcome to your account keyspace']);
+                              message = Switch.on('Welcome to this keyspace', [reqx.account === 'hub', ['Welcome to this ephemeral keyspace.'].join(' ')], [reqx.account, ['Welcome to your account keyspace'].join(' ')]);
                               commandReferenceMessage = 'Read the Redis.io docs for the following commands';
                               customCommandHeading = 'Custom commands';
                               description = ['You can set, get and add data to sets, lists, zsets, hashes etc.', 'Try click the example URLs below.', 'Also edit the URL in the location bar to try other combinations.'];
 
                               if (_this6.isSecureDomain(req)) {
-                                 description.push('You can also try changing the domain to \'replica.redishub.com\' to read keys.');
+                                 description.push('When reading keys, you can also try changing the domain to \'replica.redishub.com.\'.');
                               }
                               description.push('<i>(A client-side command completion tool will come later, after access control.)</i>');
                               description = description.join(' ');
@@ -3462,7 +3462,7 @@ var rquery = function () {
                      switch (_context81.prev = _context81.next) {
                         case 0:
                            _context81.next = 2;
-                           return _this6.redis.hkeysAsync(reqx.keyspaceKey);
+                           return _this6.redis.hvalsAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context81.abrupt('return', _context81.sent);
