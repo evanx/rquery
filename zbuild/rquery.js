@@ -198,7 +198,9 @@ var rquery = function () {
                            if (_this.config.serviceKey === 'development') {
                               next();
                            } else if (scheme !== 'https') {
-                              res.redirect(302, 'https://' + _this.config.hostDomain + req.url);
+                              var redirectUrl = 'https://' + _this.config.hostDomain + req.url;
+                              _this.logger.debug('redirect', scheme, redirectUrl);
+                              res.redirect(302, redirectUrl);
                            } else {
                               next();
                            }
