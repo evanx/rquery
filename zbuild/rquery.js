@@ -199,7 +199,7 @@ var rquery = function () {
                               next();
                            } else if (scheme !== 'https') {
                               var redirectUrl = 'https://' + _this.config.hostDomain + req.url;
-                              _this.logger.debug('redirect scheme', scheme, schema != 'https', redirectUrl);
+                              _this.logger.debug('redirect scheme', '[' + scheme + ']', scheme != 'https', scheme !== 'https', redirectUrl);
                               res.redirect(302, redirectUrl);
                            } else {
                               next();
