@@ -10,7 +10,7 @@ module.exports = {
          hostUrl: 'https://secure.webserva.com',
          serviceKey: 'secure',
          serviceLabel: 'WebServa',
-         adminBotName: 'webserva',
+         adminBotName: 'redishub',
          port: 4567,
          location: '',
          assetsUrl: '/assets',
