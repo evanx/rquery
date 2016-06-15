@@ -16,7 +16,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
    const account = req.params.account;
    const certPrefix = config.certPrefix;
    const role = req.params.role || req.query.role || 'admin';
-   const id = req.params.id || req.query.id || 'none';
+   const id = req.params.id || req.query.id || 'admin';
    const CN = ['rh', account, role, req.params.clientId || req.query.clientId || id].join(':');
    const OU = role;
    const O = account;
