@@ -146,11 +146,11 @@ var rquery = function () {
                         this.hints = {
                            signup: {
                               message: 'Try "@redishub_bot /signup" on https://web.telegram.org',
-                              url: 'https://web.telegram.org/#/im?p=@redishub_bot'
+                              url: 'https://telegram.me/redishub_bot'
                            },
                            grantCert: {
                               message: 'Try "@redishub_bot /grantcert certId" e.g. via https://web.telegram.org',
-                              url: 'https://web.telegram.org/#/im?p=@redishub_bot'
+                              url: 'https://telegram.me/redishub_bot'
                            },
                            registerCert: {
                               message: 'Try <tt>/register-cert</tt>',
@@ -437,7 +437,7 @@ var rquery = function () {
                         }
 
                         _context5.next = 31;
-                        return this.sendTelegram(message.chatId, 'html', ['You must set your Telegram username under Settings.', 'We use this for your ' + this.config.serviceLabel + ' account name.']);
+                        return this.sendTelegram(message.chatId, 'html', ['You must set your Telegram username under Settings via the top hamburger menu.', 'We use this for your ' + this.config.serviceLabel + ' account name.']);
 
                      case 31:
                         if (!/\/verify/.test(content.text)) {

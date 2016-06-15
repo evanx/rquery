@@ -36,11 +36,11 @@ export default class rquery {
       this.hints = {
          signup: {
             message: 'Try "@redishub_bot /signup" on https://web.telegram.org',
-            url: 'https://web.telegram.org/#/im?p=@redishub_bot'
+            url: 'https://telegram.me/redishub_bot'
          },
          grantCert: {
             message: `Try "@redishub_bot /grantcert certId" e.g. via https://web.telegram.org`,
-            url: 'https://web.telegram.org/#/im?p=@redishub_bot'
+            url: 'https://telegram.me/redishub_bot'
          },
          registerCert: {
             message: `Try <tt>/register-cert</tt>`,
@@ -196,7 +196,7 @@ export default class rquery {
          }
          if (!message.username) {
             await this.sendTelegram(message.chatId, 'html', [
-               `You must set your Telegram username under Settings.`,
+               `You must set your Telegram username under Settings via the top hamburger menu.`,
                `We use this for your ${this.config.serviceLabel} account name.`,
             ]);
          }

@@ -66,7 +66,7 @@ exports.default = function () {
                   result = result.concat(help.map(function (line) {
                      return '        echo "' + line + '"';
                   }));
-                  result = result.concat(['        curl -s https://raw.githubusercontent.com/webserva/home/master/docs/install.rhcurl.txt', '        certExtract=`cat cert.extract.pem`', '        echo "Try https://web.telegram.org/#/im?p=@redishub_bot \'/grantcert $certExtract\'"', '      fi', '    fi', '  fi', ')']);
+                  result = result.concat(['        curl -s https://raw.githubusercontent.com/webserva/home/master/docs/install.rhcurl.txt', '        certExtract=`cat cert.extract.pem`', '        echo "Try https://telegram.me/redishub_bot \'/grantcert $certExtract\'"', '      fi', '    fi', '  fi', ')']);
                   result.push('');
                   return _context.abrupt('return', lodash.flatten(result));
 

@@ -192,7 +192,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
       }
       if (false) {
          hints.push({
-            url: 'https://web.telegram.org/#/im?p=@redishub_bot',
+            url: 'https://telegram.me/redishub_bot',
             description: 'See @redishub_bot on Telegram.org'
          });
       }

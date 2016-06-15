@@ -100,7 +100,7 @@ module.exports = {
                            href: '/keyspaces/' + account
                         }, 'List the keyspaces on your account') : $.a({
                            target: '_blank',
-                           href: 'https://web.telegram.org/#/im?p=@redishub_bot'
+                           href: 'https://telegram.me/redishub_bot'
                         }, 'Try "@' + rquery.config.adminBotName + '_bot /signup"'),
 
                         common: routes.filter(function (route) {

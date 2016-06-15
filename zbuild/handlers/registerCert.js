@@ -133,7 +133,7 @@ exports.default = function () {
                      hint: {
                         message: ['Try @redishub_bot "/grantcert ' + shortDigest + '"', 'e.g. via https://web.telegram.org,'].join(' '),
                         clipboard: '@redishub_bot /grantcert ' + shortDigest,
-                        url: 'https://web.telegram.org/#/im?p=@redishub_bot#grantcert-' + shortDigest
+                        url: 'https://telegram.me/redishub_bot#grantcert-' + shortDigest
                      }
                   });
 
@@ -150,7 +150,7 @@ exports.default = function () {
                         message: 'Try @redishub_bot "/grantcert ' + shortDigest + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
 
                         clipboard: '@redishub_bot /grantcert ' + shortDigest,
-                        url: 'https://web.telegram.org/#/im?p=@redishub_bot#grantcert-' + shortDigest
+                        url: 'https://telegram.me/redishub_bot#grantcert-' + shortDigest
                      }
                   });
 

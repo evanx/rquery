@@ -55,7 +55,7 @@ module.exports = {
             }, `List the keyspaces on your account`)
             : $.a({
                target: '_blank',
-               href: 'https://web.telegram.org/#/im?p=@redishub_bot'
+               href: 'https://telegram.me/redishub_bot'
             }, `Try "@${rquery.config.adminBotName}_bot /signup"`)
          ,
          common: routes

@@ -216,7 +216,7 @@ Testing the same URL with a different `privcert` installed:
 
 ##### Browser access via Telegram.org
 
-Alternatively, we can authorise via Telegram, via a provided token which should be sent to `@redishub_bot` e.g. via https://web.telegram.org/#/im?p=@redishub_bot.
+Alternatively, we can authorise via Telegram, via a provided token which should be sent to `@redishub_bot` e.g. via https://telegram.me/redishub_bot.
 
 TODO
 

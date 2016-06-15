@@ -114,7 +114,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       result = result.concat([
       `        curl -s https://raw.githubusercontent.com/webserva/home/master/docs/install.rhcurl.txt`,
       `        certExtract=\`cat cert.extract.pem\``,
-      `        echo "Try https://web.telegram.org/#/im?p=@redishub_bot '/grantcert \$certExtract'"`,
+      `        echo "Try https://telegram.me/redishub_bot '/grantcert \$certExtract'"`,
       `      fi`,
       `    fi`,
       `  fi`,

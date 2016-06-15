@@ -9,7 +9,7 @@ module.exports = {
          hostDomain: 'secure.redishub.com',
          hostUrl: 'https://secure.redishub.com',
          serviceKey: 'secure',
-         serviceLabel: 'WebServa',
+         serviceLabel: 'RedisHub',
          adminBotName: 'redishub',
          port: 4567,
          location: '',
