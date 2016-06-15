@@ -410,74 +410,85 @@ var rquery = function () {
                         }
                         this.logger.debug('telegram tcm', JSON.stringify({ telegram: telegram, content: content, message: message }, null, 2));
 
-                        if (!(!content.from || !message.chatId)) {
+                        if (content.from) {
                            _context5.next = 24;
                            break;
                         }
 
                         this.logger.warn('telegram tcm', { telegram: telegram, content: content, message: message });
-                        _context5.next = 48;
+                        _context5.next = 51;
                         break;
 
                      case 24:
                         message.fromId = content.from.id;
+                        if (content.from.username) {
+                           message.username = content.from.username;
+                        }
                         message.greetName = content.from.username;
                         if (content.from.first_name) {
                            message.greetName = content.from.first_name;
                         } else if (content.from.first_name && content.from.last_name) {
                            message.greetName = [content.from.first_name, content.from.last_name].join(' ');
                         }
-                        message.username = content.from.username;
 
+                        if (message.username) {
+                           _context5.next = 31;
+                           break;
+                        }
+
+                        _context5.next = 31;
+                        return this.sendTelegram(message.chatId, 'html', ['You must set your Telegram username under Settings.', 'We use this for your ' + serviceLabel + ' account name.']);
+
+                     case 31:
                         if (!/\/verify/.test(content.text)) {
-                           _context5.next = 34;
+                           _context5.next = 37;
                            break;
                         }
 
                         message.action = 'verify';
-                        _context5.next = 32;
+                        _context5.next = 35;
                         return this.handleTelegramVerify(message);
 
-                     case 32:
-                        _context5.next = 48;
+                     case 35:
+                        _context5.next = 51;
                         break;
 
-                     case 34:
+                     case 37:
                         if (!/\/grant/.test(content.text)) {
-                           _context5.next = 40;
+                           _context5.next = 43;
                            break;
                         }
 
                         message.action = 'grant';
-                        _context5.next = 38;
+                        _context5.next = 41;
                         return this.handleTelegramGrant(message);
 
-                     case 38:
-                        _context5.next = 48;
+                     case 41:
+                        _context5.next = 51;
                         break;
 
-                     case 40:
+                     case 43:
                         if (!/\/signup/.test(content.text)) {
-                           _context5.next = 46;
+                           _context5.next = 49;
                            break;
                         }
 
                         message.action = 'signup';
-                        _context5.next = 44;
+                        _context5.next = 47;
                         return this.handleTelegramSignup(message);
 
-                     case 44:
-                        _context5.next = 48;
+                     case 47:
+                        _context5.next = 51;
                         break;
 
-                     case 46:
-                        _context5.next = 48;
+                     case 49:
+                        _context5.next = 51;
                         return this.sendTelegram(message.chatId, 'html', ['Commands: <code>/signup /verifyme /grantcert</code>']);
 
-                     case 48:
+                     case 51:
                         this.logger.info('telegram message', message, telegram);
 
-                     case 49:
+                     case 52:
                      case 'end':
                         return _context5.stop();
                   }

@@ -181,17 +181,25 @@ export default class rquery {
          message.chatId = content.chat.id;
       }
       this.logger.debug('telegram tcm', JSON.stringify({telegram, content, message}, null, 2));
-      if (!content.from || !message.chatId) {
+      if (!content.from) {
          this.logger.warn('telegram tcm', {telegram, content, message});
       } else {
          message.fromId = content.from.id;
+         if (content.from.username) {
+            message.username = content.from.username;
+         }
          message.greetName = content.from.username;
          if (content.from.first_name) {
             message.greetName = content.from.first_name;
          } else if (content.from.first_name && content.from.last_name) {
             message.greetName = [content.from.first_name, content.from.last_name].join(' ');
          }
-         message.username = content.from.username;
+         if (!message.username) {
+            await this.sendTelegram(message.chatId, 'html', [
+               `You must set your Telegram username under Settings.`,
+               `We use this for your ${serviceLabel} account name.`,
+            ]);
+         }
          if (/\/verify/.test(content.text)) {
             message.action = 'verify';
             await this.handleTelegramVerify(message);
