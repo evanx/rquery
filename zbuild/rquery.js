@@ -408,7 +408,7 @@ var rquery = function () {
                         if (!content.chat) {} else if (!content.chat.id) {} else {
                            message.chatId = content.chat.id;
                         }
-                        this.logger.debug('telegram tcm', { telegram: telegram, content: content, message: message });
+                        this.logger.debug('telegram tcm', JSON.stringify({ telegram: telegram, content: content, message: message }, null, 2));
 
                         if (!(!content.from || !message.chatId)) {
                            _context5.next = 24;
@@ -5587,3 +5587,4 @@ var rquery = function () {
 }();
 
 exports.default = rquery;
+//# sourceMappingURL=rquery.js.map

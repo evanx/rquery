@@ -19,3 +19,4 @@ var _styles2 = _interopRequireDefault(_styles);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var logger = Loggers.create(module.filename);
+//# sourceMappingURL=ResultPage.js.map
