@@ -437,7 +437,7 @@ var rquery = function () {
                         }
 
                         _context5.next = 31;
-                        return this.sendTelegram(message.chatId, 'html', ['You must set your Telegram username under Settings.', 'We use this for your ' + serviceLabel + ' account name.']);
+                        return this.sendTelegram(message.chatId, 'html', ['You must set your Telegram username under Settings.', 'We use this for your ' + this.config.serviceLabel + ' account name.']);
 
                      case 31:
                         if (!/\/verify/.test(content.text)) {

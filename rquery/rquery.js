@@ -197,7 +197,7 @@ export default class rquery {
          if (!message.username) {
             await this.sendTelegram(message.chatId, 'html', [
                `You must set your Telegram username under Settings.`,
-               `We use this for your ${serviceLabel} account name.`,
+               `We use this for your ${this.config.serviceLabel} account name.`,
             ]);
          }
          if (/\/verify/.test(content.text)) {
