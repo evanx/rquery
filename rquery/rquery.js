@@ -180,7 +180,7 @@ export default class rquery {
       } else {
          message.chatId = content.chat.id;
       }
-      this.logger.debug('telegram tcm', {telegram, content, message});
+      this.logger.debug('telegram tcm', JSON.stringify({telegram, content, message}, null, 2));
       if (!content.from || !message.chatId) {
          this.logger.warn('telegram tcm', {telegram, content, message});
       } else {
