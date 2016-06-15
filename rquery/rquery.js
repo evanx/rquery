@@ -246,7 +246,7 @@ export default class rquery {
       const OU = `admin%${account}@redishub.com`;
       await this.sendTelegram(request.chatId, 'html', [
          `Thanks, ${request.greetName}.`,
-         `Your RedisHub account name is <b>${account}</b>, as per your Telegram user.`,
+         `Your ${this.config.serviceLabel} account name is <b>${account}</b>, as per your Telegram user.`,
          `Use the following link to create a client cert:`,
          `${this.config.openHostname}/cert-script/${account}.`,
          `Add <code>?archive</code> to the URL to archive if <code>~/.redishub/live</code> exists,`,
@@ -298,10 +298,11 @@ export default class rquery {
       const match = request.text.match(/\/grantcert (\w+)$/);
       if (!match) {
          await this.sendTelegram(request.chatId, 'html', [
-            `Sorry, that appears to be invalid. Try <code>/grantcert &lt;digest&gt;</code>,`,
+            `Try <code>/grantcert &lt;digest&gt;</code>`,
             `where the <code>digest</code> is returned by ${this.config.secureHostname}/register-cert`,
             `performed with the cert to be enrolled.`,
-            ``
+            `Use the following link to create a client cert:`,
+            `${this.config.openHostname}/cert-script/${account}.`
          ]);
          return;
       }

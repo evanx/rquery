@@ -261,14 +261,14 @@ var rquery = function () {
             var _ref2 = _slicedToArray(_ref, 3);
 
             var matching = _ref2[0];
-            var account = _ref2[1];
+            var _account = _ref2[1];
             var keyspace = _ref2[2];
 
-            this.logger.debug('sendErrorRoute', req.path, account, keyspace, this.isBrowser(req));
+            this.logger.debug('sendErrorRoute', req.path, _account, keyspace, this.isBrowser(req));
             if (this.isBrowser(req)) {
                var redirectPath = '/routes';
-               if (account && keyspace) {
-                  redirectPath = ['/ak', account, keyspace, 'help'].join('/');
+               if (_account && keyspace) {
+                  redirectPath = ['/ak', _account, keyspace, 'help'].join('/');
                }
                res.redirect(302, redirectPath);
             } else {
@@ -564,7 +564,7 @@ var rquery = function () {
                         CN = account + '@redishub.com';
                         OU = 'admin%' + account + '@redishub.com';
                         _context6.next = 24;
-                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your RedisHub account name is <b>' + account + '</b>, as per your Telegram user.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + account + '.', 'Add <code>?archive</code> to the URL to archive if <code>~/.redishub/live</code> exists,', 'because the script will refuse to overwrite an existing cert.']);
+                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your ' + this.config.serviceLabel + ' account name is <b>' + account + '</b>, as per your Telegram user.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + account + '.', 'Add <code>?archive</code> to the URL to archive if <code>~/.redishub/live</code> exists,', 'because the script will refuse to overwrite an existing cert.']);
 
                      case 24:
                      case 'end':
@@ -684,7 +684,7 @@ var rquery = function () {
                         }
 
                         _context8.next = 6;
-                        return this.sendTelegram(request.chatId, 'html', ['Sorry, that appears to be invalid. Try <code>/grantcert &lt;digest&gt;</code>,', 'where the <code>digest</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', '']);
+                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/grantcert &lt;digest&gt;</code>', 'where the <code>digest</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + account + '.']);
 
                      case 6:
                         return _context8.abrupt('return');
@@ -5419,15 +5419,15 @@ var rquery = function () {
             this.logger.debug('sendStatusMessage', err, req.params);
             if (err.code === 'WRONGTYPE') {
                var _req$params12 = req.params;
-               var account = _req$params12.account;
+               var _account2 = _req$params12.account;
                var keyspace = _req$params12.keyspace;
                var key = _req$params12.key;
 
                title = 'Wrong type for key';
-               if (account && keyspace && key) {
+               if (_account2 && keyspace && key) {
                   hints.push({
                      message: 'Check the key type',
-                     uri: ['ak', account, keyspace, 'type', key].join('/')
+                     uri: ['ak', _account2, keyspace, 'type', key].join('/')
                   });
                }
             } else if (err.message) {
