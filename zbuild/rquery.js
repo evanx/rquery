@@ -684,7 +684,7 @@ var rquery = function () {
                         }
 
                         _context8.next = 6;
-                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/grantcert &lt;digest&gt;</code>', 'where the <code>digest</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + request.username + '.']);
+                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/grantcert &lt;digest&gt;</code>', 'where the <code>digest</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + request.username + '?id=' + request.username + '@telegram.org']);
 
                      case 6:
                         return _context8.abrupt('return');

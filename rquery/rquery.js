@@ -302,7 +302,8 @@ export default class rquery {
             `where the <code>digest</code> is returned by ${this.config.secureHostname}/register-cert`,
             `performed with the cert to be enrolled.`,
             `Use the following link to create a client cert:`,
-            `${this.config.openHostname}/cert-script/${request.username}.`
+            `${this.config.openHostname}/cert-script/${request.username}?id=${request.username}@telegram.org`,
+            //`Incidently, you can enter <code>/signup</code> again to get the cert script.`,
          ]);
          return;
       }

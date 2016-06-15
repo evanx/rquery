@@ -3,8 +3,8 @@ export default async function handleCertScript(req, res, reqx, {config}) {
    if (req.query.dir && ['', '.', '..'].includes(req.query.dir)) {
       throw new ValidationError('Empty or invalid "dir"');
    }
-   const dir = req.query.dir || '~/.redishub/live';
-   const archive = req.query.archive || '~/.redishub/archive';
+   const dir = req.query.dir || config.clientCertHomeDir + '/live';
+   const archive = req.query.archive || config.clientCertHomeDir + '/archive';
    const isArchive = Values.isDefined(req.query.archive);
    if (isArchive && req.query.dir) {
       if (!req.query.dir.match(/^[~\/a-z0-9\.]+(live|cert)$/i)) {
@@ -14,7 +14,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
    const commandKey = reqx.command.key;
    const serviceUrl = config.hostUrl;
    const account = req.params.account;
-   const serviceKey = 'rh';
+   const certPrefix = config.certPrefix;
    const role = req.params.role || req.query.role || 'admin';
    const id = req.params.id || req.query.id || 'none';
    const CN = ['rh', account, role, req.params.clientId || req.query.clientId || id].join(':');
@@ -48,18 +48,18 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       ``,
       `Curl this script and pipe into bash as follows to create key dir ~/.redishub/live:`,
       ``,
-      `curl -s '${serviceUrl}/${commandKey}/${account}?dir=~/.redishub/live&noarchive' | bash`,
+      `curl -s '${serviceUrl}/${commandKey}/${account}?dir=~/.redishub/live&noarchive?id=${id}' | bash`,
       ``,
    ].map(line => `# ${line}`);
    result.push('');
    result.push('(');
    result = result.concat([
-      `  serviceKey='${serviceKey}'`,
+      `  certPrefix='${certPrefix}'`,
       `  account='${account}'`,
       `  role='${role}'`,
-      `  certId='${id}'`,
+      `  id='${id}'`,
       ``,
-      `  CN='${CN}' # unique cert name (serviceKey, account, role, certId)`,
+      `  CN='${CN}' # unique cert name (certPrefix, account, role, id)`,
       `  OU='${OU}' # role for this cert`,
       `  O='${O}' # account name`,
       ``,

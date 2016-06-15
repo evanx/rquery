@@ -17,6 +17,12 @@ module.exports = {
       //pick: ['config']
    },
    config: {
+      clientCertHomeDir: {
+         defaultValue: '~/.webserva'
+      },
+      certPrefix: {
+         defaultValue: 'rh'
+      },      
       adminBotName: {
          type: 'string'
       },
