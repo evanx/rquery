@@ -77,7 +77,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
          `  mkdir -p \${archive} # ensure dir exists`,
          `  mv -n \${dir} \${archive}/\`date +'%Y-%m-%dT%Hh%Mm%Ss%s'\``,
       ]);
-   } else if (!lodash.isEmpty(req.query.dir)) {
+   } else if (!lodash.isEmpty(req.query.dir) && !req.query.dir.match(/\.redishub/)) {
    } else {
       result = result.concat([
          `  mkdir -p ~/.redishub # ensure dir exists`,
