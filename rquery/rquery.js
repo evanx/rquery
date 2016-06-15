@@ -199,8 +199,7 @@ export default class rquery {
                `You must set your Telegram username under Settings via the top hamburger menu.`,
                `We use this for your ${this.config.serviceLabel} account name.`,
             ]);
-         }
-         if (/\/verify/.test(content.text)) {
+         } else if (/\/verify/.test(content.text)) {
             message.action = 'verify';
             await this.handleTelegramVerify(message);
          } else if (/\/grant/.test(content.text)) {

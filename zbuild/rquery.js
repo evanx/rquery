@@ -416,7 +416,7 @@ var rquery = function () {
                         }
 
                         this.logger.warn('telegram tcm', { telegram: telegram, content: content, message: message });
-                        _context5.next = 51;
+                        _context5.next = 53;
                         break;
 
                      case 24:
@@ -432,7 +432,7 @@ var rquery = function () {
                         }
 
                         if (message.username) {
-                           _context5.next = 31;
+                           _context5.next = 33;
                            break;
                         }
 
@@ -440,55 +440,59 @@ var rquery = function () {
                         return this.sendTelegram(message.chatId, 'html', ['You must set your Telegram username under Settings via the top hamburger menu.', 'We use this for your ' + this.config.serviceLabel + ' account name.']);
 
                      case 31:
+                        _context5.next = 53;
+                        break;
+
+                     case 33:
                         if (!/\/verify/.test(content.text)) {
-                           _context5.next = 37;
+                           _context5.next = 39;
                            break;
                         }
 
                         message.action = 'verify';
-                        _context5.next = 35;
+                        _context5.next = 37;
                         return this.handleTelegramVerify(message);
 
-                     case 35:
-                        _context5.next = 51;
+                     case 37:
+                        _context5.next = 53;
                         break;
 
-                     case 37:
+                     case 39:
                         if (!/\/grant/.test(content.text)) {
-                           _context5.next = 43;
+                           _context5.next = 45;
                            break;
                         }
 
                         message.action = 'grant';
-                        _context5.next = 41;
+                        _context5.next = 43;
                         return this.handleTelegramGrant(message);
 
-                     case 41:
-                        _context5.next = 51;
+                     case 43:
+                        _context5.next = 53;
                         break;
 
-                     case 43:
+                     case 45:
                         if (!/\/signup/.test(content.text)) {
-                           _context5.next = 49;
+                           _context5.next = 51;
                            break;
                         }
 
                         message.action = 'signup';
-                        _context5.next = 47;
+                        _context5.next = 49;
                         return this.handleTelegramSignup(message);
 
-                     case 47:
-                        _context5.next = 51;
+                     case 49:
+                        _context5.next = 53;
                         break;
 
-                     case 49:
-                        _context5.next = 51;
+                     case 51:
+                        _context5.next = 53;
                         return this.sendTelegram(message.chatId, 'html', ['Commands: <code>/signup /verifyme /grantcert</code>']);
 
-                     case 51:
+                     case 53:
                         this.logger.info('telegram message', message, telegram);
 
-                     case 52:
+                     case 54:
                      case 'end':
                         return _context5.stop();
                   }
