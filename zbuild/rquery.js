@@ -408,38 +408,21 @@ var rquery = function () {
                         if (!content.chat) {} else if (!content.chat.id) {} else {
                            message.chatId = content.chat.id;
                         }
-                        this.logger.debug('tcm', { telegram: telegram, content: content, message: message });
+                        this.logger.debug('telegram tcm', { telegram: telegram, content: content, message: message });
 
-                        if (content.from) {
-                           _context5.next = 23;
+                        if (!(!content.from || !message.chatId)) {
+                           _context5.next = 24;
                            break;
                         }
 
-                        _context5.next = 53;
+                        this.logger.warn('telegram tcm', { telegram: telegram, content: content, message: message });
+                        _context5.next = 48;
                         break;
 
-                     case 23:
-                        if (content.from.username) {
-                           _context5.next = 26;
-                           break;
-                        }
-
-                        _context5.next = 53;
-                        break;
-
-                     case 26:
-                        if (content.from.id) {
-                           _context5.next = 29;
-                           break;
-                        }
-
-                        _context5.next = 53;
-                        break;
-
-                     case 29:
+                     case 24:
                         message.fromId = content.from.id;
                         message.greetName = content.from.username;
-                        if (true && content.from.first_name) {
+                        if (content.from.first_name) {
                            message.greetName = content.from.first_name;
                         } else if (content.from.first_name && content.from.last_name) {
                            message.greetName = [content.from.first_name, content.from.last_name].join(' ');
@@ -447,54 +430,54 @@ var rquery = function () {
                         message.username = content.from.username;
 
                         if (!/\/verify/.test(content.text)) {
-                           _context5.next = 39;
+                           _context5.next = 34;
                            break;
                         }
 
                         message.action = 'verify';
-                        _context5.next = 37;
+                        _context5.next = 32;
                         return this.handleTelegramVerify(message);
 
-                     case 37:
-                        _context5.next = 53;
+                     case 32:
+                        _context5.next = 48;
                         break;
 
-                     case 39:
+                     case 34:
                         if (!/\/grant/.test(content.text)) {
-                           _context5.next = 45;
+                           _context5.next = 40;
                            break;
                         }
 
                         message.action = 'grant';
-                        _context5.next = 43;
+                        _context5.next = 38;
                         return this.handleTelegramGrant(message);
 
-                     case 43:
-                        _context5.next = 53;
+                     case 38:
+                        _context5.next = 48;
                         break;
 
-                     case 45:
+                     case 40:
                         if (!/\/signup/.test(content.text)) {
-                           _context5.next = 51;
+                           _context5.next = 46;
                            break;
                         }
 
                         message.action = 'signup';
-                        _context5.next = 49;
+                        _context5.next = 44;
                         return this.handleTelegramSignup(message);
 
-                     case 49:
-                        _context5.next = 53;
+                     case 44:
+                        _context5.next = 48;
                         break;
 
-                     case 51:
-                        _context5.next = 53;
+                     case 46:
+                        _context5.next = 48;
                         return this.sendTelegram(message.chatId, 'html', ['Commands: <code>/signup /verifyme /grantcert</code>']);
 
-                     case 53:
+                     case 48:
                         this.logger.info('telegram message', message, telegram);
 
-                     case 54:
+                     case 49:
                      case 'end':
                         return _context5.stop();
                   }
@@ -1415,7 +1398,7 @@ var rquery = function () {
                               description = ['You can set, get and add data to sets, lists, zsets, hashes etc.', 'Try click the example URLs below.', 'Also edit the URL in the location bar to try other combinations.'];
 
                               if (_this6.isSecureDomain(req)) {
-                                 description.push('When reading keys, you can also try changing the domain to \'replica.redishub.com.\'.');
+                                 description.push('When reading keys, you can also try changing the subdomain to \'replica.\'');
                               }
                               description.push('<i>(A client-side command completion tool will come later, after access control.)</i>');
                               description = description.join(' ');
@@ -5604,4 +5587,3 @@ var rquery = function () {
 }();
 
 exports.default = rquery;
-//# sourceMappingURL=rquery.js.map

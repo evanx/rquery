@@ -180,14 +180,13 @@ export default class rquery {
       } else {
          message.chatId = content.chat.id;
       }
-      this.logger.debug('tcm', {telegram, content, message});
-      if (!content.from) {
-      } else if (!content.from.username) {
-      } else if (!content.from.id) {
+      this.logger.debug('telegram tcm', {telegram, content, message});
+      if (!content.from || !message.chatId) {
+         this.logger.warn('telegram tcm', {telegram, content, message});
       } else {
          message.fromId = content.from.id;
          message.greetName = content.from.username;
-         if (true && content.from.first_name) {
+         if (content.from.first_name) {
             message.greetName = content.from.first_name;
          } else if (content.from.first_name && content.from.last_name) {
             message.greetName = [content.from.first_name, content.from.last_name].join(' ');
@@ -562,7 +561,7 @@ export default class rquery {
             ];
             if (this.isSecureDomain(req)) {
                description.push(
-                  `When reading keys, you can also try changing the domain to 'replica.redishub.com.'.`
+                  `When reading keys, you can also try changing the subdomain to 'replica.'`
                );
             }
             description.push(
