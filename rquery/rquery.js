@@ -242,15 +242,11 @@ export default class rquery {
          ]);
       }
       const account = request.username;
-      const CN = `${account}@redishub.com`;
-      const OU = `admin%${account}@redishub.com`;
       await this.sendTelegram(request.chatId, 'html', [
          `Thanks, ${request.greetName}.`,
          `Your ${this.config.serviceLabel} account name is <b>${account}</b>, as per your Telegram user.`,
          `Use the following link to create a client cert:`,
          `${this.config.openHostname}/cert-script/${account}.`,
-         `Add <code>?archive</code> to the URL to archive if <code>~/.redishub/live</code> exists,`,
-         `because the script will refuse to overwrite an existing cert.`,
       ]);
    }
 
@@ -302,8 +298,8 @@ export default class rquery {
             `where the <code>digest</code> is returned by ${this.config.secureHostname}/register-cert`,
             `performed with the cert to be enrolled.`,
             `Use the following link to create a client cert:`,
-            `${this.config.openHostname}/cert-script/${request.username}?id=${request.username}@telegram.org`,
-            //`Incidently, you can enter <code>/signup</code> again to get the cert script.`,
+            `${this.config.openHostname}/cert-script/${request.username}?id=${request.username}`,
+            `See ${openHostname}/docs/register-cert.md for further info.`,
          ]);
          return;
       }
@@ -326,7 +322,7 @@ export default class rquery {
             `You have approved enrollment of the cert <b>${cert}</b>.`,
             `That identity can now enroll via ${this.config.secureHostname}/register-cert.`,
             `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.enrollExpire)}`,
-            `otherwise you need to repeat this request. See redishub.com/docs/register-cert.md`,
+            `otherwise you need to repeat this request. See ${this.config.openHostname}/docs/register-cert.md`,
             ``
          ]);
       } else {

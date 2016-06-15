@@ -512,7 +512,7 @@ var rquery = function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee6(request) {
             var _this3 = this;
 
-            var now, userKey, _ref3, _ref4, sadd, verified, secret, _ref5, _ref6, hmset, account, CN, OU;
+            var now, userKey, _ref3, _ref4, sadd, verified, secret, _ref5, _ref6, hmset, account;
 
             return regeneratorRuntime.wrap(function _callee6$(_context6) {
                while (1) {
@@ -561,12 +561,10 @@ var rquery = function () {
 
                      case 19:
                         account = request.username;
-                        CN = account + '@redishub.com';
-                        OU = 'admin%' + account + '@redishub.com';
-                        _context6.next = 24;
-                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your ' + this.config.serviceLabel + ' account name is <b>' + account + '</b>, as per your Telegram user.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + account + '.', 'Add <code>?archive</code> to the URL to archive if <code>~/.redishub/live</code> exists,', 'because the script will refuse to overwrite an existing cert.']);
+                        _context6.next = 22;
+                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your ' + this.config.serviceLabel + ' account name is <b>' + account + '</b>, as per your Telegram user.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + account + '.']);
 
-                     case 24:
+                     case 22:
                      case 'end':
                         return _context6.stop();
                   }
@@ -684,7 +682,7 @@ var rquery = function () {
                         }
 
                         _context8.next = 6;
-                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/grantcert &lt;digest&gt;</code>', 'where the <code>digest</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + request.username + '?id=' + request.username + '@telegram.org']);
+                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/grantcert &lt;digest&gt;</code>', 'where the <code>digest</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + request.username + '?id=' + request.username, 'See ' + openHostname + '/docs/register-cert.md for further info.']);
 
                      case 6:
                         return _context8.abrupt('return');
@@ -727,7 +725,7 @@ var rquery = function () {
                         }
 
                         _context8.next = 27;
-                        return this.sendTelegramReply(request, 'html', ['You have approved enrollment of the cert <b>' + cert + '</b>.', 'That identity can now enroll via ' + this.config.secureHostname + '/register-cert.', 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request. See redishub.com/docs/register-cert.md', '']);
+                        return this.sendTelegramReply(request, 'html', ['You have approved enrollment of the cert <b>' + cert + '</b>.', 'That identity can now enroll via ' + this.config.secureHostname + '/register-cert.', 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request. See ' + this.config.openHostname + '/docs/register-cert.md', '']);
 
                      case 27:
                         _context8.next = 31;

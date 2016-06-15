@@ -8,7 +8,7 @@ mv -f ~/.pm2/logs/${name}* tmp/. || echo 'no pm2 logs'
 # domain 
 
 port=4
-config=secure
+config=${config-secure}
 if echo $name | grep -q 'demo'
 then
   port=8
@@ -17,6 +17,9 @@ elif echo $name | grep -q 'replica'
 then
   port=6
   config=replica
+elif [ $USER = 'webserva' ]
+then
+  config=webserva
 fi
 
 # env 

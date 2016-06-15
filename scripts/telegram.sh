@@ -17,7 +17,7 @@ echo bot [$bot]
 
 [ -n "$bot" ]
 
-cd ~/.bot.$bot || cd ~/.${bot}_bot
+cd ~/.bot.$bot || cd ~/.${bot}_bot || cd ~/.${bot}
 
 pwd
 ls -l 
@@ -90,7 +90,7 @@ c1setWebhook() {
 }
 
 c0setWebhook() {
-  webhookUrl=`cat ~/.bot.redishub/webhook.url`
+  webhookUrl=`cat webhook.url`
   c1setWebhook $webhookUrl
 }
 
