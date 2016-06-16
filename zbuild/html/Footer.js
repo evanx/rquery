@@ -17,3 +17,4 @@ exports.default = function (props) {
 var _styles = require('./styles');
 
 var logger = Loggers.create(module.filename);
+//# sourceMappingURL=Footer.js.map
