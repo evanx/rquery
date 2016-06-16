@@ -47,7 +47,7 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       ``,
       `Curl this script and pipe into bash as follows to create key dir ~/.redishub/live:`,
       ``,
-      `curl -s '${serviceUrl}/${commandKey}/${account} | bash`,
+      `curl -s '${serviceUrl}/${commandKey}/${account}' | bash`,
       ``,
    ].map(line => `# ${line}`);
    result.push('');
