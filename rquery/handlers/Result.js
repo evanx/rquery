@@ -203,8 +203,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
       }
       let renderedPathHints = this.isCliDomain(req)
       ? []
-      : hints
-      .filter(hint => !hint.url && !cliDomain)
+      : hints.filter(hint => !hint.url)
       .map(hint => {
          if (!hint.path) {
             const path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace, ...hint.uri].join('/'));

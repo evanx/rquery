@@ -321,7 +321,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
          });
       }
       var renderedPathHints = this.isCliDomain(req) ? [] : hints.filter(function (hint) {
-         return !hint.url && !cliDomain;
+         return !hint.url;
       }).map(function (hint) {
          if (!hint.path) {
             var path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace].concat(_toConsumableArray(hint.uri)).join('/'));
