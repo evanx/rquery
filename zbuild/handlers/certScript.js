@@ -114,7 +114,7 @@ var handleCertScript = exports.handleCertScript = function () {
                   } else if (!lodash.isEmpty(req.query.dir) && !req.query.dir.match(/\.redishub/)) {} else {
                      result = result.concat(['  mkdir -p ~/.redishub # ensure dir exists']);
                   }
-                  result = result.concat(['  curl -s -O https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh', '  cat cert-script.sh', '  echo \'Press Ctrl-C to abort, Enter to execute\'', '  read _continue', '  cat cert-script.sh | .', ')']);
+                  result = result.concat(['  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh -O', '  cat cert-script.sh', '  echo \'Press Ctrl-C to abort, Enter to execute\'', '  read _continue', '  cat cert-script.sh | .', ')']);
                   result.push('');
                   return _context2.abrupt('return', lodash.flatten(result));
 
