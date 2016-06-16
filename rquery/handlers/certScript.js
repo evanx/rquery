@@ -107,7 +107,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
       ]);
    }
    result = result.concat([
-      `  mkdir ${dir}`,
+      `  mkdir ${config.clientCertHomeDir}`,
       `  cd \$_`,
       `  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh -O`,
       `  cat cert-script.sh`,
