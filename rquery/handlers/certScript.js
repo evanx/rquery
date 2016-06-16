@@ -74,7 +74,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
       ``,
    ].map(line => `# ${line}`);
    result = result.concat([
-      ``,
+      `(`,
       `  set -u -e`,
       ``,
       `  account='${account}'`,
