@@ -107,9 +107,9 @@ export async function handleCertScript(req, res, reqx, {config}) {
    result = result.concat([
       `  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh -O`,
       `  cat cert-script.sh`,
-      `  curl -s https://redishub.com/assets/cert-script.sh.sha1sum`,
       `  sha1sum cert-script.sh`,
-      `  echo 'Press Ctrl-C in the next 4 seconds if the above hashes do not match'`,
+      `  curl -s https://redishub.com/assets/cert-script.sh.sha1sum`,
+      `  echo 'Press Ctrl-C in the next 8 seconds if the above hashes do not match'`,
       `  sleep 4`,
       `  source <(cat cert-script.sh)`,
       `)`,
