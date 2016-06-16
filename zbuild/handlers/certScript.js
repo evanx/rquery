@@ -107,7 +107,7 @@ var handleCertScript = exports.handleCertScript = function () {
 
                   result = result.concat(['(', '  set -u -e', '', '  account=\'' + account + '\'', '  role=\'' + role + '\'', '  id=\'' + id + '\'', '', '  CN=\'' + CN + '\' # unique cert name (certPrefix, account, role, id)', '  OU=\'' + OU + '\' # role for this cert', '  O=\'' + O + '\' # account name', '', '  dir=' + dir + ' # must not exist, or be archived', '  # Note that the following files are created in this dir:', '  # account privkey.pem cert.pem privcert.pem privcert.p12 x509.txt cert.extract.txt', '  commandKey=\'' + commandKey + '\'', '  serviceUrl=\'' + serviceUrl + '\'', '  archive=' + archive, '  certWebhook="${serviceUrl}/create-account-telegram/${account}"', '']);
                   if (Values.isDefined(req.query.archive)) {
-                     result = result.concat(['  mkdir -p ' + archive + ' # ensure dir exists', '  mv -n ' + dir + ' ' + archive + '/`date +\'%Y-%m-%dT%Hh%Mm%Ss%s\'`']);
+                     result = result.concat(['  if [ -d ' + dir + ' ]', '  then', '    mkdir -p ' + archive + ' # ensure dir exists', '    mv -n ' + dir + ' ' + archive + '/`date +\'%Y-%m-%dT%Hh%Mm%Ss%s\'`', '  fi']);
                   } else if (!lodash.isEmpty(req.query.dir) && !req.query.dir.includes(config.clientCertHomeDir)) {
                      logger.info('certScript dir', req.query.dir, config.clientCertHomeDir);
                   } else {
