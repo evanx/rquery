@@ -82,10 +82,10 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       ]);
    }
    result = result.concat([
-      `  curl -s https://raw.githubusercontent.com/evanx/redishub/bin/cert-script.sh`,
+      `  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh`,
       `  echo 'Press Ctrl-C to abort, Enter to execute'`,
       `  read _continue`,
-      `  curl -s https://raw.githubusercontent.com/evanx/redishub/bin/cert-script.sh | bash`,
+      `  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh | bash`,
       `)`,
    ]);
    result.push('');
