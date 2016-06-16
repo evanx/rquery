@@ -175,7 +175,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
    }
    content.push(Hs.pre(styles.result.resultArray, lodash.compact(resultArray).join('\n')));
    let hints = [];
-   if (command && reqx.account && reqx.keyspace) {
+   if (command && reqx.account && reqx.keyspace && rquery.isBrowser(req)) {
       if (command.relatedCommands) {
          try {
             hints = getRelatedCommandHints(req, reqx, command.relatedCommands);
@@ -201,8 +201,10 @@ function sendHtmlResult(command, req, res, reqx, result) {
             description: 'account keyspace home'
          });
       }
-      let renderedPathHints = hints
-      .filter(hint => !hint.url)
+      let renderedPathHints = this.isCliDomain(req)
+      ? []
+      : hints
+      .filter(hint => !hint.url && !cliDomain)
       .map(hint => {
          if (!hint.path) {
             const path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace, ...hint.uri].join('/'));
