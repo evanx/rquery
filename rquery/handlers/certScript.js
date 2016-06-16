@@ -16,30 +16,32 @@ export async function handleCertScriptHelp(req, res, reqx, {config}) {
    const serviceUrl = config.hostUrl;
    const account = req.params.account;
    const curlAccount = `curl -s -E ${dir}/privcert.pem ${serviceUrl}/ak/${account}`;
-   const help = [
+   const helpResult = [
       ``,
-      `To force archiving an existing ${dir}, add '?archive' to the URL:`,
-      `  curl -s ${serviceUrl}/${commandKey}/${account}?archive | bash`,
-      `This will first move ${dir} to ${archive}/TIMESTAMP`,
+      `  To force archiving an existing ${dir}, add '?archive' to the URL:`,
       ``,
-      `Use: ${dir}/privcert.pem (curl) and/or privcert.p12 (browser)`,
+      `    curl -s ${serviceUrl}/${commandKey}/${account}?archive | bash`,
       ``,
-      `For example, create a keyspace called 'tmp10days' as follows:`,
-      `  ${curlAccount}/tmp10days/create-keyspace`,
+      `  This will first move ${dir} to ${archive}/TIMESTAMP first.`,
       ``,
-      `Then try Redis commands on this keyspace for example:`,
-      `  ${curlAccount}/tmp10days/help`,
-      `  ${curlAccount}/tmp10days/set/mykey/myvalue`,
-      `  ${curlAccount}/tmp10days/get/mykey`,
+      `  See your privcerts: ${dir}/privcert.pem (curl) and/or privcert.p12 (browser)`,
       ``,
-      `Then in your browser, load 'privcert.p12' and try:`,
-      `   ${serviceUrl}/ak/${account}/tmp10days/help`,
+      `  For example, create a keyspace called 'tmp10days' as follows:`,
+      `    ${curlAccount}/tmp10days/create-keyspace`,
       ``,
-      `For CLI convenience, install rhcurl bash script, as per instructions:`,
-      `  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
+      `  Then try Redis commands on this keyspace for example:`,
+      `    ${curlAccount}/tmp10days/help`,
+      `    ${curlAccount}/tmp10days/set/mykey/myvalue`,
+      `    ${curlAccount}/tmp10days/get/mykey`,
+      ``,
+      `  Then in your browser, load 'privcert.p12' and try:`,
+      `    ${serviceUrl}/ak/${account}/tmp10days/help`,
+      ``,
+      `  For CLI convenience, install rhcurl bash script, as per instructions:`,
+      `    curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
       ``,
    ];
-   return lodash.flatten(result);
+   return lodash.flatten(helpResult);
 }
 
 export async function handleCertScript(req, res, reqx, {config}) {
