@@ -67,24 +67,19 @@ export async function handleCertScript(req, res, reqx, {config}) {
    const O = account;
    const curlAccount = `curl -s -E \${dir}/privcert.pem \${serviceUrl}/ak/\${account}`;
    let result = [
-      ``,
       `Curl this script and pipe into bash as follows to create key dir ~/.redishub/live:`,
-      ``,
       `curl -s '${serviceUrl}/${commandKey}/${account}' | bash`,
       ``,
    ].map(line => `# ${line}`);
    result = result.concat([
       `(`,
       `  set -u -e`,
-      ``,
       `  account='${account}'`,
       `  role='${role}'`,
       `  id='${id}'`,
-      ``,
       `  CN='${CN}' # unique cert name (certPrefix, account, role, id)`,
       `  OU='${OU}' # role for this cert`,
       `  O='${O}' # account name`,
-      ``,
       `  dir=${dir} # must not exist, or be archived`,
       `  # Note that the following files are created in this dir:`,
       `  # account privkey.pem cert.pem privcert.pem privcert.p12 x509.txt cert.extract.txt`,
@@ -92,7 +87,6 @@ export async function handleCertScript(req, res, reqx, {config}) {
       `  serviceUrl='${serviceUrl}'`,
       `  archive=${archive}`,
       `  certWebhook="\${serviceUrl}/create-account-telegram/\${account}"`,
-      ``,
    ]);
    if (Values.isDefined(req.query.archive)) {
       result = result.concat([
