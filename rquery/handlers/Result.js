@@ -1,5 +1,4 @@
 
-
 import styles from '../html/styles';
 import * as KeyspaceHelp from '../html/KeyspaceHelp';
 import {default as renderPage} from '../html/Page';
@@ -8,7 +7,7 @@ const logger = Loggers.create(module.filename);
 
 export async function sendResult(command, req, res, reqx, result) {
    const {rquery} = global;
-   logger.info(Loggers.keys(rquery.config, 'config'));
+   logger.ndebug(Loggers.keys(rquery.config, 'config'));
    assert(rquery, 'rquery');
    const userAgent = req.get('User-Agent');
    const uaMatch = userAgent.match(/\s([A-Z][a-z]*\/[\.0-9]+)\s/);

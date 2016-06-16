@@ -20,7 +20,7 @@ var sendResult = exports.sendResult = function () {
                   _global = global;
                   rquery = _global.rquery;
 
-                  logger.info(Loggers.keys(rquery.config, 'config'));
+                  logger.ndebug(Loggers.keys(rquery.config, 'config'));
                   assert(rquery, 'rquery');
                   userAgent = req.get('User-Agent');
                   uaMatch = userAgent.match(/\s([A-Z][a-z]*\/[\.0-9]+)\s/);
