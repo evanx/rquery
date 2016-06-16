@@ -12,7 +12,7 @@ module.exports = {
          certPrefix: 'ws',
          serviceLabel: 'RedisHub',
          adminBotName: 'redishub',
-         clientCertHomeDir: '~/.redishub',
+         clientCertHomeDir: '~/.webserva',
          port: 4567,
          location: '',
          assetsUrl: '/assets',

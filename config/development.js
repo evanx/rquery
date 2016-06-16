@@ -12,6 +12,7 @@ module.exports = {
          serviceKey: 'development',
          serviceLabel: 'RH Dev',
          adminBotName: 'rhdev',
+         certPrefix: 'wstest',
          port: 8765,
          location: '',
          assetsUrl: 'https://test.redishub.com/assets',
