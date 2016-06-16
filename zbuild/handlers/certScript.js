@@ -113,7 +113,7 @@ var handleCertScript = exports.handleCertScript = function () {
                   } else {
                      result = result.concat(['  mkdir -p ' + config.clientCertHomeDir + ' # ensure default dir exists']);
                   }
-                  result = result.concat(['  mkdir ' + config.clientCertHomeDir, '  cd $_', '  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh -O', '  cat cert-script.sh', '  sha1sum cert-script.sh', '  curl -s https://redishub.com/assets/cert-script.sh.sha1sum', '  echo \'Press Ctrl-C in the next 8 seconds if the above hashes do not match\'', '  sleep 8', '  source <(cat cert-script.sh)', ')']);
+                  result = result.concat(['  mkdir -p ' + config.clientCertHomeDir, '  cd $_', '  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh -O', '  cat cert-script.sh', '  sha1sum cert-script.sh', '  curl -s https://redishub.com/assets/cert-script.sh.sha1sum', '  echo \'Press Ctrl-C in the next 8 seconds if the above hashes do not match\'', '  sleep 8', '  source <(cat cert-script.sh)', ')']);
                   result.push('');
                   return _context2.abrupt('return', lodash.flatten(result));
 
