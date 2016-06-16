@@ -1,5 +1,48 @@
 
-export default async function handleCertScript(req, res, reqx, {config}) {
+
+export async function handleCertScriptHelp(req, res, reqx, {config}) {
+   if (req.query.dir && ['', '.', '..'].includes(req.query.dir)) {
+      throw new ValidationError('Empty or invalid "dir"');
+   }
+   const dir = req.query.dir || config.clientCertHomeDir + '/live';
+   const archive = req.query.archive || config.clientCertHomeDir + '/archive';
+   const isArchive = Values.isDefined(req.query.archive);
+   if (isArchive && req.query.dir) {
+      if (!req.query.dir.match(/^[~\/a-z0-9\.]+(live|cert)$/i)) {
+         throw new ValidationError('Invalid "dir" for archive');
+      }
+   }
+   const commandKey = reqx.command.key;
+   const serviceUrl = config.hostUrl;
+   const account = req.params.account;
+   const curlAccount = `curl -s -E ${dir}/privcert.pem ${serviceUrl}/ak/${account}`;
+   const help = [
+      ``,
+      `To force archiving an existing ${dir}, add '?archive' to the URL:`,
+      `  curl -s ${serviceUrl}/${commandKey}/${account}?archive | bash`,
+      `This will first move ${dir} to ${archive}/TIMESTAMP`,
+      ``,
+      `Use: ${dir}/privcert.pem (curl) and/or privcert.p12 (browser)`,
+      ``,
+      `For example, create a keyspace called 'tmp10days' as follows:`,
+      `  ${curlAccount}/tmp10days/create-keyspace`,
+      ``,
+      `Then try Redis commands on this keyspace for example:`,
+      `  ${curlAccount}/tmp10days/help`,
+      `  ${curlAccount}/tmp10days/set/mykey/myvalue`,
+      `  ${curlAccount}/tmp10days/get/mykey`,
+      ``,
+      `Then in your browser, load 'privcert.p12' and try:`,
+      `   ${serviceUrl}/ak/${account}/tmp10days/help`,
+      ``,
+      `For CLI convenience, install rhcurl bash script, as per instructions:`,
+      `  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
+      ``,
+   ];
+   return lodash.flatten(result);
+}
+
+export async function handleCertScript(req, res, reqx, {config}) {
    if (req.query.dir && ['', '.', '..'].includes(req.query.dir)) {
       throw new ValidationError('Empty or invalid "dir"');
    }
@@ -82,10 +125,11 @@ export default async function handleCertScript(req, res, reqx, {config}) {
       ]);
    }
    result = result.concat([
-      `  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh`,
+      `  curl -s -O https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh`,
+      `  cat cert-script.sh`,
       `  echo 'Press Ctrl-C to abort, Enter to execute'`,
       `  read _continue`,
-      `  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh | bash`,
+      `  cat cert-script.sh | .`,
       `)`,
    ]);
    result.push('');

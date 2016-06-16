@@ -3,13 +3,14 @@
 Object.defineProperty(exports, "__esModule", {
    value: true
 });
+exports.handleCertScript = exports.handleCertScriptHelp = undefined;
 
 var _bluebird = require('bluebird');
 
-exports.default = function () {
+var handleCertScriptHelp = exports.handleCertScriptHelp = function () {
    var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee(req, res, reqx, _ref) {
       var config = _ref.config;
-      var dir, archive, isArchive, commandKey, serviceUrl, account, role, id, CN, OU, O, curlAccount, help, result;
+      var dir, archive, isArchive, commandKey, serviceUrl, account, curlAccount, help;
       return regeneratorRuntime.wrap(function _callee$(_context) {
          while (1) {
             switch (_context.prev = _context.next) {
@@ -42,6 +43,58 @@ exports.default = function () {
                   commandKey = reqx.command.key;
                   serviceUrl = config.hostUrl;
                   account = req.params.account;
+                  curlAccount = 'curl -s -E ' + dir + '/privcert.pem ' + serviceUrl + '/ak/' + account;
+                  help = ['', 'To force archiving an existing ' + dir + ', add \'?archive\' to the URL:', '  curl -s ' + serviceUrl + '/' + commandKey + '/' + account + '?archive | bash', 'This will first move ' + dir + ' to ' + archive + '/TIMESTAMP', '', 'Use: ' + dir + '/privcert.pem (curl) and/or privcert.p12 (browser)', '', 'For example, create a keyspace called \'tmp10days\' as follows:', '  ' + curlAccount + '/tmp10days/create-keyspace', '', 'Then try Redis commands on this keyspace for example:', '  ' + curlAccount + '/tmp10days/help', '  ' + curlAccount + '/tmp10days/set/mykey/myvalue', '  ' + curlAccount + '/tmp10days/get/mykey', '', 'Then in your browser, load \'privcert.p12\' and try:', '   ' + serviceUrl + '/ak/' + account + '/tmp10days/help', '', 'For CLI convenience, install rhcurl bash script, as per instructions:', '  curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt', ''];
+                  return _context.abrupt('return', lodash.flatten(result));
+
+               case 14:
+               case 'end':
+                  return _context.stop();
+            }
+         }
+      }, _callee, this);
+   }));
+   return function handleCertScriptHelp(_x, _x2, _x3, _x4) {
+      return ref.apply(this, arguments);
+   };
+}();
+
+var handleCertScript = exports.handleCertScript = function () {
+   var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee2(req, res, reqx, _ref2) {
+      var config = _ref2.config;
+      var dir, archive, isArchive, commandKey, serviceUrl, account, role, id, CN, OU, O, curlAccount, help, result;
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+         while (1) {
+            switch (_context2.prev = _context2.next) {
+               case 0:
+                  if (!(req.query.dir && ['', '.', '..'].includes(req.query.dir))) {
+                     _context2.next = 2;
+                     break;
+                  }
+
+                  throw new ValidationError('Empty or invalid "dir"');
+
+               case 2:
+                  dir = req.query.dir || config.clientCertHomeDir + '/live';
+                  archive = req.query.archive || config.clientCertHomeDir + '/archive';
+                  isArchive = Values.isDefined(req.query.archive);
+
+                  if (!(isArchive && req.query.dir)) {
+                     _context2.next = 8;
+                     break;
+                  }
+
+                  if (req.query.dir.match(/^[~\/a-z0-9\.]+(live|cert)$/i)) {
+                     _context2.next = 8;
+                     break;
+                  }
+
+                  throw new ValidationError('Invalid "dir" for archive');
+
+               case 8:
+                  commandKey = reqx.command.key;
+                  serviceUrl = config.hostUrl;
+                  account = req.params.account;
                   role = req.params.role || req.query.role || 'admin';
                   id = req.params.id || req.query.id || 'admin';
                   CN = [config.certPrefix, account, role, req.params.clientId || req.query.clientId || id].join(':');
@@ -61,22 +114,19 @@ exports.default = function () {
                   } else if (!lodash.isEmpty(req.query.dir) && !req.query.dir.match(/\.redishub/)) {} else {
                      result = result.concat(['  mkdir -p ~/.redishub # ensure dir exists']);
                   }
-                  result = result.concat(['  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh', '  echo \'Press Ctrl-C to abort, Enter to execute\'', '  read _continue', '  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh | bash', ')']);
+                  result = result.concat(['  curl -s -O https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh', '  cat cert-script.sh', '  echo \'Press Ctrl-C to abort, Enter to execute\'', '  read _continue', '  cat cert-script.sh | .', ')']);
                   result.push('');
-                  return _context.abrupt('return', lodash.flatten(result));
+                  return _context2.abrupt('return', lodash.flatten(result));
 
                case 26:
                case 'end':
-                  return _context.stop();
+                  return _context2.stop();
             }
          }
-      }, _callee, this);
+      }, _callee2, this);
    }));
-
-   function handleCertScript(_x, _x2, _x3, _x4) {
+   return function handleCertScript(_x5, _x6, _x7, _x8) {
       return ref.apply(this, arguments);
-   }
-
-   return handleCertScript;
+   };
 }();
 //# sourceMappingURL=certScript.js.map

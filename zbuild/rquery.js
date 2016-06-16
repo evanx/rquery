@@ -58,8 +58,6 @@ var _server2 = _interopRequireDefault(_server);
 
 var _certScript = require('./handlers/certScript');
 
-var _certScript2 = _interopRequireDefault(_certScript);
-
 var _Page = require('./html/Page');
 
 var _Page2 = _interopRequireDefault(_Page);
@@ -1319,7 +1317,14 @@ var rquery = function () {
             params: ['account'],
             format: 'cli'
          }, function (req, res, reqx) {
-            return (0, _certScript2.default)(req, res, reqx, { config: _this6.config });
+            return (0, _certScript.handleCertScript)(req, res, reqx, { config: _this6.config });
+         });
+         this.addPublicCommand({
+            key: 'cert-script-help',
+            params: ['account'],
+            format: 'cli'
+         }, function (req, res, reqx) {
+            return (0, _certScript.handleCertScriptHelp)(req, res, reqx, { config: _this6.config });
          });
          this.addRegisterRoutes();
          this.addAccountRoutes();

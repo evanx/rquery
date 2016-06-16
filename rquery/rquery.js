@@ -11,7 +11,7 @@ import concatStream from 'concat-stream';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
-import {default as handleCertScript} from './handlers/certScript';
+import {handleCertScript, handleCertScriptHelp} from './handlers/certScript';
 import {default as renderPage} from './html/Page';
 import * as KeyspaceHelp from './html/KeyspaceHelp';
 
@@ -512,6 +512,11 @@ export default class rquery {
          params: ['account'],
          format: 'cli'
       }, (req, res, reqx) => handleCertScript(req, res, reqx, {config: this.config}));
+      this.addPublicCommand({
+         key: 'cert-script-help',
+         params: ['account'],
+         format: 'cli'
+      }, (req, res, reqx) => handleCertScriptHelp(req, res, reqx, {config: this.config}));
       this.addRegisterRoutes();
       this.addAccountRoutes();
       this.addKeyspaceCommand({
