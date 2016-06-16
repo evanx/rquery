@@ -320,7 +320,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
             description: 'account keyspace home'
          });
       }
-      var renderedPathHints = this.isCliDomain(req) ? [] : hints.filter(function (hint) {
+      var renderedPathHints = rquery.isCliDomain(req) ? [] : hints.filter(function (hint) {
          return !hint.url;
       }).map(function (hint) {
          if (!hint.path) {

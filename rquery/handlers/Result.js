@@ -201,7 +201,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
             description: 'account keyspace home'
          });
       }
-      let renderedPathHints = this.isCliDomain(req)
+      let renderedPathHints = rquery.isCliDomain(req)
       ? []
       : hints.filter(hint => !hint.url)
       .map(hint => {
