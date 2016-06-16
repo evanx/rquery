@@ -17,4 +17,3 @@ function matches(string, regex) {
       return match.slice(1);
    }
 }
-//# sourceMappingURL=Strings.js.map

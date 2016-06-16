@@ -130,4 +130,3 @@ var handleCertScript = exports.handleCertScript = function () {
 }();
 
 var logger = Loggers.create(module.filename);
-//# sourceMappingURL=certScript.js.map
