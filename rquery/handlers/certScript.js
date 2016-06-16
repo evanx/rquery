@@ -99,6 +99,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
          `  mv -n \${dir} \${archive}/\`date +'%Y-%m-%dT%Hh%Mm%Ss%s'\``,
       ]);
    } else if (!lodash.isEmpty(req.query.dir) && !req.query.dir.includes(this.config.clientCertHomeDir)) {
+      logger.debug('certScript dir', req.query.dir, this.config.clientCertHomeDir);
    } else {
       result = result.concat([
          `  mkdir -p ${this.config.clientCertHomeDir} # ensure default dir exists`,
