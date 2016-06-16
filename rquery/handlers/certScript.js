@@ -127,9 +127,11 @@ export async function handleCertScript(req, res, reqx, {config}) {
    result = result.concat([
       `  curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh -O`,
       `  cat cert-script.sh`,
+      `  curl -s https://redishub.com/assets/cert-script.sh.sha1sum`,
+      `  sha1sum cert-script.sh`,
       `  echo 'Press Ctrl-C to abort, Enter to execute'`,
       `  read _continue`,
-      `  cat cert-script.sh | .`,
+      `  source <(cat cert-script.sh)`,
       `)`,
    ]);
    result.push('');
