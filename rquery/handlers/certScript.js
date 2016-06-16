@@ -1,4 +1,5 @@
 
+const logger = Loggers.create(module.filename);
 
 export async function handleCertScriptHelp(req, res, reqx, {config}) {
    if (req.query.dir && ['', '.', '..'].includes(req.query.dir)) {
@@ -95,11 +96,11 @@ export async function handleCertScript(req, res, reqx, {config}) {
    ]);
    if (Values.isDefined(req.query.archive)) {
       result = result.concat([
-         `  mkdir -p \${archive} # ensure dir exists`,
-         `  mv -n \${dir} \${archive}/\`date +'%Y-%m-%dT%Hh%Mm%Ss%s'\``,
+         `  mkdir -p ${archive} # ensure dir exists`,
+         `  mv -n ${dir} ${archive}/\`date +'%Y-%m-%dT%Hh%Mm%Ss%s'\``,
       ]);
    } else if (!lodash.isEmpty(req.query.dir) && !req.query.dir.includes(config.clientCertHomeDir)) {
-      logger.debug('certScript dir', req.query.dir, config.clientCertHomeDir);
+      logger.info('certScript dir', req.query.dir, config.clientCertHomeDir);
    } else {
       result = result.concat([
          `  mkdir -p ${config.clientCertHomeDir} # ensure default dir exists`,
@@ -111,7 +112,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
       `  sha1sum cert-script.sh`,
       `  curl -s https://redishub.com/assets/cert-script.sh.sha1sum`,
       `  echo 'Press Ctrl-C in the next 8 seconds if the above hashes do not match'`,
-      `  sleep 4`,
+      `  sleep 8`,
       `  source <(cat cert-script.sh)`,
       `)`,
    ]);
