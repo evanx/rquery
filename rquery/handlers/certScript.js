@@ -131,8 +131,8 @@ export async function handleCertScript(req, res, reqx, {config}) {
       `  cat cert-script.sh`,
       `  curl -s https://redishub.com/assets/cert-script.sh.sha1sum`,
       `  sha1sum cert-script.sh`,
-      `  echo 'Press Ctrl-C to abort, Enter to execute'`,
-      `  read _continue`,
+      `  echo 'Press Ctrl-C in the next 4 seconds if the above hashes do not match'`,
+      `  sleep 4`,
       `  source <(cat cert-script.sh)`,
       `)`,
    ]);
