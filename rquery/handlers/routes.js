@@ -53,7 +53,7 @@ module.exports = {
          $.a({href: '/keyspaces/' + account}, `List the keyspaces on your account`)
       )
       : [
-         $.a({href: '/about'}, `About ${rquery.serviceLabel}`),
+         $.a({href: '/about'}, `About ${rquery.config.serviceLabel}`),
          $.a({href: '/create-ephemeral'}, `Create a ephemeral keyspace via /create-ephemeral`),
          $.a({
             target: '_blank',
