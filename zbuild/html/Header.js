@@ -11,7 +11,8 @@ exports.default = function (props) {
    var backPath = props.backPath || reqx.backPath || helpPath;
    var content = [];
    content.push(He.img({ style: _styles.header.icon,
-      src: props.config.assetsUrl + '/icomoon/png20-38/' + (props.icon || 'database') + '.png' }));
+      src: props.config.assetsUrl + '/icomoon/png20-38/database.png' }) // TODO props.icon
+   );
    if (props.heading) {
       content.push(Hs.span(_styles.header.heading, props.heading));
    } else if (props.title) {

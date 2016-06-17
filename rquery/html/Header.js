@@ -10,7 +10,7 @@ export default function (props) {
    const backPath = props.backPath || reqx.backPath || helpPath;
    const content = []
    content.push(He.img({style: styles.icon,
-      src: `${props.config.assetsUrl}/icomoon/png20-38/${props.icon || 'database'}.png`})
+      src: `${props.config.assetsUrl}/icomoon/png20-38/database.png`}) // TODO props.icon
    );
    if (props.heading) {
       content.push(Hs.span(styles.heading, props.heading));
