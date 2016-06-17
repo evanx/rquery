@@ -1058,7 +1058,7 @@ export default class rquery {
          params: ['key', 'timeout'],
          access: 'set',
          description: 'get and remove the first element of the list (blocking)',
-         relatedCommands: ['lpush'],
+         relatedCommands: ['llen'],
       }, async (req, res, reqx) => {
          const reply = await this.redis.blpopAsync(reqx.keyspaceKey, req.params.timeout);
          if (!reply) {
@@ -1072,7 +1072,7 @@ export default class rquery {
          params: ['key'],
          access: 'set',
          description: 'get and remove the last element of the list',
-         relatedCommands: ['lpush'],
+         relatedCommands: ['llen'],
       }, async (req, res, reqx) => {
          return await this.redis.rpopAsync(reqx.keyspaceKey);
       });
@@ -1081,7 +1081,7 @@ export default class rquery {
          params: ['key', 'timeout'],
          access: 'set',
          description: 'get and remove the last element of the list (blocking)',
-         relatedCommands: ['lpush'],
+         relatedCommands: ['llen'],
       }, async (req, res, reqx) => {
          const reply = await this.redis.brpopAsync(reqx.keyspaceKey, req.params.timeout);
          if (!reply) {
@@ -1095,7 +1095,7 @@ export default class rquery {
          params: ['key', 'dest', 'timeout'],
          access: 'set',
          description: 'get and remove the last element of the list and prepend to another',
-         relatedCommands: ['lpush'],
+         relatedCommands: ['llen'],
       }, async (req, res, {account, keyspace, keyspaceKey}, multi) => {
          const {dest, timeout} = req.params;
          const destKey = this.keyspaceKey(account, keyspace, dest);

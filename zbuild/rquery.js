@@ -2766,7 +2766,7 @@ var rquery = function () {
             params: ['key', 'timeout'],
             access: 'set',
             description: 'get and remove the first element of the list (blocking)',
-            relatedCommands: ['lpush']
+            relatedCommands: ['llen']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee60(req, res, reqx) {
                var reply;
@@ -2806,7 +2806,7 @@ var rquery = function () {
             params: ['key'],
             access: 'set',
             description: 'get and remove the last element of the list',
-            relatedCommands: ['lpush']
+            relatedCommands: ['llen']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee61(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee61$(_context61) {
@@ -2835,7 +2835,7 @@ var rquery = function () {
             params: ['key', 'timeout'],
             access: 'set',
             description: 'get and remove the last element of the list (blocking)',
-            relatedCommands: ['lpush']
+            relatedCommands: ['llen']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee62(req, res, reqx) {
                var reply;
@@ -2875,7 +2875,7 @@ var rquery = function () {
             params: ['key', 'dest', 'timeout'],
             access: 'set',
             description: 'get and remove the last element of the list and prepend to another',
-            relatedCommands: ['lpush']
+            relatedCommands: ['llen']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee63(req, res, _ref40, multi) {
                var account = _ref40.account;
