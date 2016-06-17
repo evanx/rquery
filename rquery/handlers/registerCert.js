@@ -56,15 +56,15 @@ export default async function registerCert(req, res, reqx) {
       });
    }
    if (!granted) {
-      throw new ValidationError({message: 'Cert must be granted via @redishub_bot',
+      throw new ValidationError({message: `Cert must be granted via @${rquery.config.adminBotName}`,
          status: 403,
          hint: {
             message: [
-               `Try @redishub_bot "/grantcert ${shortDigest}"`,
+               `Try @${rquery.config.adminBotName} "/grantcert ${shortDigest}"`,
                `e.g. via https://web.telegram.org,`,
             ].join(' '),
-            clipboard: `@redishub_bot /grantcert ${shortDigest}`,
-            url: `https://telegram.me/redishub_bot#grantcert-${shortDigest}`
+            clipboard: `@${rquery.config.adminBotName} /grantcert ${shortDigest}`,
+            url: `https://telegram.me/${rquery.config.adminBotName}`
          }
       });
    }
@@ -75,12 +75,12 @@ export default async function registerCert(req, res, reqx) {
          status: 400,
          message: 'Granted cert not matching: ' + shortDigest,
          hint: {
-            message: `Try @redishub_bot "/grantcert ${shortDigest}`
+            message: `Try @${rquery.config.adminBotName} "/grantcert ${shortDigest}`
             + ` from the authoritative Telegram account`
             + ` e.g. via https://web.telegram.org`
             ,
-            clipboard: `@redishub_bot /grantcert ${shortDigest}`,
-            url: `https://telegram.me/redishub_bot#grantcert-${shortDigest}`
+            clipboard: `@${rquery.config.adminBotName} /grantcert ${shortDigest}`,
+            url: `https://telegram.me/${rquery.config.adminBotName}`
          }
       });
    }

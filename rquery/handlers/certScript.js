@@ -59,6 +59,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
    }
    const commandKey = reqx.command.key;
    const serviceUrl = config.hostUrl;
+   const telegramBot = config.adminBotName;
    const account = req.params.account;
    const role = req.params.role || req.query.role || 'admin';
    const id = req.params.id || req.query.id || 'admin';
@@ -85,6 +86,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
       `  # account privkey.pem cert.pem privcert.pem privcert.p12 x509.txt cert.extract.txt`,
       `  commandKey='${commandKey}'`,
       `  serviceUrl='${serviceUrl}'`,
+      `  telegramBot='${telegramBot}'`,
       `  archive=${archive}`,
       `  certWebhook="\${serviceUrl}/create-account-telegram/\${account}"`,
    ]);
@@ -109,10 +111,10 @@ export async function handleCertScript(req, res, reqx, {config}) {
       `    echo "Directory ${dir} already exists. Try add '?archive' query to the URL."`,
       `  else`,
       `    mkdir ${dir} && cd $_ # error exit if dir exists`,
-      `    curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh -O`,
+      `    curl -s https://raw.githubusercontent.com/evanx/webserva/master/bin/cert-script.sh -O`,
       `    cat cert-script.sh`,
       `    sha1sum cert-script.sh`,
-      `    curl -s https://redishub.com/assets/cert-script.sh.sha1sum`,
+      `    curl -s https://webserva.com/assets/cert-script.sh.sha1sum`,
       `    echo 'Press Ctrl-C in the next 8 seconds if the above hashes do not match'`,
       `    sleep 8`,
       `    source <(cat cert-script.sh)`,

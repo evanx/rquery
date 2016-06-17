@@ -11,7 +11,7 @@ module.exports = {
          serviceKey: 'secure',
          certPrefix: 'ws',
          serviceLabel: 'RedisHub',
-         adminBotName: 'redishub',
+         adminBotName: 'redishub_bot',
          clientCertHomeDir: '~/.webserva',
          port: 4567,
          location: '',

@@ -62,7 +62,7 @@ var handleCertScriptHelp = exports.handleCertScriptHelp = function () {
 var handleCertScript = exports.handleCertScript = function () {
    var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee2(req, res, reqx, _ref2) {
       var config = _ref2.config;
-      var dir, archive, isArchive, commandKey, serviceUrl, account, role, id, CN, OU, O, curlAccount, result;
+      var dir, archive, isArchive, commandKey, serviceUrl, telegramBot, account, role, id, CN, OU, O, curlAccount, result;
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
          while (1) {
             switch (_context2.prev = _context2.next) {
@@ -94,6 +94,7 @@ var handleCertScript = exports.handleCertScript = function () {
                case 8:
                   commandKey = reqx.command.key;
                   serviceUrl = config.hostUrl;
+                  telegramBot = config.adminBotName;
                   account = req.params.account;
                   role = req.params.role || req.query.role || 'admin';
                   id = req.params.id || req.query.id || 'admin';
@@ -105,7 +106,7 @@ var handleCertScript = exports.handleCertScript = function () {
                      return '# ' + line;
                   });
 
-                  result = result.concat(['(', '  set -u -e', '  account=\'' + account + '\'', '  role=\'' + role + '\'', '  id=\'' + id + '\'', '  CN=\'' + CN + '\' # unique cert name (certPrefix, account, role, id)', '  OU=\'' + OU + '\' # role for this cert', '  O=\'' + O + '\' # account name', '  dir=' + dir + ' # must not exist, or be archived', '  # Note that the following files are created in this dir:', '  # account privkey.pem cert.pem privcert.pem privcert.p12 x509.txt cert.extract.txt', '  commandKey=\'' + commandKey + '\'', '  serviceUrl=\'' + serviceUrl + '\'', '  archive=' + archive, '  certWebhook="${serviceUrl}/create-account-telegram/${account}"']);
+                  result = result.concat(['(', '  set -u -e', '  account=\'' + account + '\'', '  role=\'' + role + '\'', '  id=\'' + id + '\'', '  CN=\'' + CN + '\' # unique cert name (certPrefix, account, role, id)', '  OU=\'' + OU + '\' # role for this cert', '  O=\'' + O + '\' # account name', '  dir=' + dir + ' # must not exist, or be archived', '  # Note that the following files are created in this dir:', '  # account privkey.pem cert.pem privcert.pem privcert.p12 x509.txt cert.extract.txt', '  commandKey=\'' + commandKey + '\'', '  serviceUrl=\'' + serviceUrl + '\'', '  telegramBot=\'' + telegramBot + '\'', '  archive=' + archive, '  certWebhook="${serviceUrl}/create-account-telegram/${account}"']);
                   if (Values.isDefined(req.query.archive)) {
                      result = result.concat(['  if [ -d ' + dir + ' ]', '  then', '    mkdir -p ' + archive + ' # ensure dir exists', '    mv -n ' + dir + ' ' + archive + '/`date +\'%Y-%m-%dT%Hh%Mm%Ss%s\'`', '  fi']);
                   } else if (!lodash.isEmpty(req.query.dir) && !req.query.dir.includes(config.clientCertHomeDir)) {
@@ -113,11 +114,11 @@ var handleCertScript = exports.handleCertScript = function () {
                   } else {
                      result = result.concat(['  mkdir -p ' + config.clientCertHomeDir + ' # ensure default dir exists']);
                   }
-                  result = result.concat(['  if [ -d ' + dir + ' ]', '  then', '    echo "Directory ' + dir + ' already exists. Try add \'?archive\' query to the URL."', '  else', '    mkdir ' + dir + ' && cd $_ # error exit if dir exists', '    curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh -O', '    cat cert-script.sh', '    sha1sum cert-script.sh', '    curl -s https://redishub.com/assets/cert-script.sh.sha1sum', '    echo \'Press Ctrl-C in the next 8 seconds if the above hashes do not match\'', '    sleep 8', '    source <(cat cert-script.sh)', '  fi', ')']);
+                  result = result.concat(['  if [ -d ' + dir + ' ]', '  then', '    echo "Directory ' + dir + ' already exists. Try add \'?archive\' query to the URL."', '  else', '    mkdir ' + dir + ' && cd $_ # error exit if dir exists', '    curl -s https://raw.githubusercontent.com/evanx/webserva/master/bin/cert-script.sh -O', '    cat cert-script.sh', '    sha1sum cert-script.sh', '    curl -s https://webserva.com/assets/cert-script.sh.sha1sum', '    echo \'Press Ctrl-C in the next 8 seconds if the above hashes do not match\'', '    sleep 8', '    source <(cat cert-script.sh)', '  fi', ')']);
                   result.push('');
                   return _context2.abrupt('return', lodash.flatten(result));
 
-               case 23:
+               case 24:
                case 'end':
                   return _context2.stop();
             }

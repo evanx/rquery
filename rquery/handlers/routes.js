@@ -54,11 +54,11 @@ module.exports = {
       )
       : [
          $.a({href: '/about'}, `About ${rquery.config.serviceLabel}`),
-         $.a({href: '/create-ephemeral'}, `Create a ephemeral keyspace via /create-ephemeral`),
+         $.a({href: '/create-ephemeral'}, `Create an ephemeral keyspace via /create-ephemeral`),
          $.a({
             target: '_blank',
             href: 'https://telegram.me/redishub_bot'
-         }, `Try "@${rquery.config.adminBotName}_bot /signup"`)
+         }, `Try "@${rquery.config.adminBotName} /signup"`)
       ];
       return {
          messages

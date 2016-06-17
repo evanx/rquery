@@ -25,11 +25,10 @@
         echo "Exported $PWD/privcert.p12 OK"
         pwd; ls -l
         sleep 2
-        curl -s https://redishub.com/cert-script-help/${account}
-        curl -s https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt
+        curl -s https://webserva.com/cert-script-help/${account}
+        curl -s https://raw.githubusercontent.com/webserva/about/master/docs/install.rhcurl.txt
         certExtract=`cat cert.extract.pem`
-        echo "Try https://telegram.me/redishub_bot '/grantcert $certExtract'"
+        echo "Try https://telegram.me/$telegramBot '/grantcert $certExtract'"
       fi
     fi
   fi
-
