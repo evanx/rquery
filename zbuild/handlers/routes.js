@@ -56,7 +56,7 @@ module.exports = {
    }(),
    handleReq: function () {
       var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee2(req, res, reqx) {
-         var hostUrl, routes, accountOnlyRoutes, account, dn, names, $;
+         var hostUrl, routes, accountOnlyRoutes, account, dn, names, $, messages;
          return regeneratorRuntime.wrap(function _callee2$(_context2) {
             while (1) {
                switch (_context2.prev = _context2.next) {
@@ -95,13 +95,19 @@ module.exports = {
                         logger.error('cert', err);
                      }
                      $ = rquery.getContentType(req) === 'html' ? He : Hp;
-                     return _context2.abrupt('return', {
-                        message: account ? $.a({
-                           href: '/keyspaces/' + account
-                        }, 'List the keyspaces on your account') : $.a({
+                     messages = [];
+
+                     if (account) {
+                        messages.push($.a({ href: '/keyspaces/' + account }, 'List the keyspaces on your account'));
+                     } else {
+                        messages.push($.a({
                            target: '_blank',
                            href: 'https://telegram.me/redishub_bot'
-                        }, 'Try "@' + rquery.config.adminBotName + '_bot /signup"'),
+                        }, 'Try "@' + rquery.config.adminBotName + '_bot /signup"'));
+                        messages.push($.a({ href: '/create-ephemeral' }, 'Or create a ephemeral keyspace via /create-ephemeral'));
+                     }
+                     return _context2.abrupt('return', {
+                        messages: messages,
 
                         common: routes.filter(function (route) {
                            return route;
@@ -146,7 +152,7 @@ module.exports = {
                         })
                      });
 
-                  case 12:
+                  case 14:
                   case 'end':
                      return _context2.stop();
                }

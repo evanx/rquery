@@ -15,7 +15,7 @@ export default function (props) {
       backPath: 'https://github.com/webserva/home/blob/master/README.md',
       title: props.config.serviceLabel,
       content: lodash.flatten([
-         He.p({}, props.result.message),
+         He.p({meta: 'repeat'}, props.result.messages),
          `<h3>Basic</h3>`,
          renderUrls(props.result.common),
          `<h3>Ephemeral</h3>`,
