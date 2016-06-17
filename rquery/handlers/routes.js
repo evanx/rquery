@@ -49,7 +49,7 @@ module.exports = {
       }
       const $ = rquery.getContentType(req) === 'html'? He : Hp;
       const messages = account
-      ? messages.push(
+      ? (
          $.a({href: '/keyspaces/' + account}, `List the keyspaces on your account`)
       )
       : [
