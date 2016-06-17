@@ -111,7 +111,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
       `    echo "Directory ${dir} already exists. Try add '?archive' query to the URL."`,
       `  else`,
       `    mkdir ${dir} && cd $_ # error exit if dir exists`,
-      `    curl -s https://raw.githubusercontent.com/evanx/webserva/master/bin/cert-script.sh -O`,
+      `    curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh -O`,
       `    cat cert-script.sh`,
       `    sha1sum cert-script.sh`,
       `    curl -s https://webserva.com/assets/cert-script.sh.sha1sum`,
