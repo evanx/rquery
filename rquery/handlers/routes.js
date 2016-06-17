@@ -55,13 +55,13 @@ module.exports = {
          );
       } else {
          messages.push(
+            $.a({href: '/create-ephemeral'}, `Create a ephemeral keyspace via /create-ephemeral`)
+         );
+         messages.push(
             $.a({
                target: '_blank',
                href: 'https://telegram.me/redishub_bot'
             }, `Try "@${rquery.config.adminBotName}_bot /signup"`)
-         );
-         messages.push(
-            $.a({href: '/create-ephemeral'}, `Or create a ephemeral keyspace via /create-ephemeral`)
          );
       }
       return {
