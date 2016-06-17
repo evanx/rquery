@@ -57,7 +57,7 @@ module.exports = {
          $.a({href: '/create-ephemeral'}, `Create an ephemeral keyspace via /create-ephemeral`),
          $.a({
             target: '_blank',
-            href: 'https://telegram.me/redishub_bot'
+            href: `https://telegram.me/${this.config.adminBotName}`
          }, `Try "@${rquery.config.adminBotName} /signup"`)
       ];
       return {

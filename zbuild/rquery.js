@@ -143,12 +143,12 @@ var rquery = function () {
                      case 6:
                         this.hints = {
                            signup: {
-                              message: 'Try "@redishub_bot /signup" on https://web.telegram.org',
-                              url: 'https://telegram.me/redishub_bot'
+                              message: 'Try "@' + this.config.adminBotName + ' /signup" on https://web.telegram.org',
+                              url: 'https://telegram.me/' + this.config.adminBotName
                            },
                            grantCert: {
-                              message: 'Try "@redishub_bot /grantcert certId" e.g. via https://web.telegram.org',
-                              url: 'https://telegram.me/redishub_bot'
+                              message: 'Try "@' + this.config.adminBotName + ' /grantcert certId" e.g. via https://web.telegram.org',
+                              url: 'https://telegram.me/' + this.config.adminBotName
                            },
                            registerCert: {
                               message: 'Try <tt>/register-cert</tt>',
@@ -1299,7 +1299,7 @@ var rquery = function () {
                            break;
 
                         case 20:
-                           return _context23.abrupt('return', ['Telegram user not yet verified: ' + user + '.', 'Please Telegram \'@redishub_bot /verifyme\'', 'e.g. via https://web.telegram.org'].join(' '));
+                           return _context23.abrupt('return', ['Telegram user not yet verified: ' + user + '.', 'Please Telegram \'@' + _this6.config.adminBotName + ' /verifyme\'', 'e.g. via https://web.telegram.org'].join(' '));
 
                         case 21:
                         case 'end':
@@ -1415,7 +1415,7 @@ var rquery = function () {
                               customCommandHeading = 'Custom commands';
                               description = ['You can set, get and add data to sets, lists, zsets, hashes etc.', 'Try click the example URLs below.', 'Also edit the URL in the location bar to try other combinations.'];
 
-                              if (_this6.isSecureDomain(req)) {
+                              if (false && _this6.isSecureDomain(req)) {
                                  description.push('When reading keys, you can also try changing the subdomain to \'replica.\'');
                               }
                               description.push('<i>(A client-side command completion tool will come later, after access control.)</i>');

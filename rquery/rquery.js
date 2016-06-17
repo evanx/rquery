@@ -35,12 +35,12 @@ export default class rquery {
       if (await this.testExit()) process.exit(1);
       this.hints = {
          signup: {
-            message: 'Try "@redishub_bot /signup" on https://web.telegram.org',
-            url: 'https://telegram.me/redishub_bot'
+            message: `Try "@${this.config.adminBotName} /signup" on https://web.telegram.org`,
+            url: `https://telegram.me/${this.config.adminBotName}`
          },
          grantCert: {
-            message: `Try "@redishub_bot /grantcert certId" e.g. via https://web.telegram.org`,
-            url: 'https://telegram.me/redishub_bot'
+            message: `Try "@${this.config.adminBotName} /grantcert certId" e.g. via https://web.telegram.org`,
+            url: `https://telegram.me/${this.config.adminBotName}`
          },
          registerCert: {
             message: `Try <tt>/register-cert</tt>`,
@@ -502,7 +502,7 @@ export default class rquery {
          } else {
             return [
                `Telegram user not yet verified: ${user}.`,
-               `Please Telegram '@redishub_bot /verifyme'`,
+               `Please Telegram '@${this.config.adminBotName} /verifyme'`,
                `e.g. via https://web.telegram.org`
             ].join(' ');
          }
@@ -569,7 +569,7 @@ export default class rquery {
                `Try click the example URLs below.`,
                `Also edit the URL in the location bar to try other combinations.`
             ];
-            if (this.isSecureDomain(req)) {
+            if (false && this.isSecureDomain(req)) {
                description.push(
                   `When reading keys, you can also try changing the subdomain to 'replica.'`
                );
