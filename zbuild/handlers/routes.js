@@ -95,17 +95,10 @@ module.exports = {
                         logger.error('cert', err);
                      }
                      $ = rquery.getContentType(req) === 'html' ? He : Hp;
-                     messages = [];
-
-                     if (account) {
-                        messages.push($.a({ href: '/keyspaces/' + account }, 'List the keyspaces on your account'));
-                     } else {
-                        messages.push($.a({ href: '/create-ephemeral' }, 'Create a ephemeral keyspace via /create-ephemeral'));
-                        messages.push($.a({
-                           target: '_blank',
-                           href: 'https://telegram.me/redishub_bot'
-                        }, 'Try "@' + rquery.config.adminBotName + '_bot /signup"'));
-                     }
+                     messages = account ? messages.push($.a({ href: '/keyspaces/' + account }, 'List the keyspaces on your account')) : [$.a({ href: '/about' }, 'About ' + rquery.serviceLabel), $.a({ href: '/create-ephemeral' }, 'Create a ephemeral keyspace via /create-ephemeral'), $.a({
+                        target: '_blank',
+                        href: 'https://telegram.me/redishub_bot'
+                     }, 'Try "@' + rquery.config.adminBotName + '_bot /signup"')];
                      return _context2.abrupt('return', {
                         messages: messages,
 
@@ -152,7 +145,7 @@ module.exports = {
                         })
                      });
 
-                  case 14:
+                  case 13:
                   case 'end':
                      return _context2.stop();
                }
