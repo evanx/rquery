@@ -75,7 +75,7 @@ export default async function registerCert(req, res, reqx) {
          status: 400,
          message: 'Granted cert not matching: ' + shortDigest,
          hint: {
-            message: `Try @${rquery.config.adminBotName} "/grantcert ${shortDigest}`
+            message: `Try @${rquery.config.adminBotName} "/grantcert ${shortDigest}"`
             + ` from the authoritative Telegram account`
             + ` e.g. via https://web.telegram.org`
             ,

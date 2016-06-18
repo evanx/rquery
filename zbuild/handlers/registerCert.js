@@ -147,7 +147,7 @@ exports.default = function () {
                      status: 400,
                      message: 'Granted cert not matching: ' + shortDigest,
                      hint: {
-                        message: 'Try @' + rquery.config.adminBotName + ' "/grantcert ' + shortDigest + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
+                        message: 'Try @' + rquery.config.adminBotName + ' "/grantcert ' + shortDigest + '"' + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
 
                         clipboard: '@' + rquery.config.adminBotName + ' /grantcert ' + shortDigest,
                         url: 'https://telegram.me/' + rquery.config.adminBotName

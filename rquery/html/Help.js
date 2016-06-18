@@ -12,7 +12,7 @@ export default function (props) {
    }
    logger.debug('props', Object.keys(props), props.result.message, He.p({}, props.result.message));
    return Object.assign(props, {
-      backPath: 'https://github.com/webserva/about/blob/master/README.md',
+      backPath: 'https://github.com/webserva/webserva/blob/master/README.md',
       title: props.config.serviceLabel,
       content: lodash.flatten([
          He.p({meta: 'repeat'}, props.result.messages),

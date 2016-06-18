@@ -16,8 +16,8 @@ module.exports = {
          port: 8765,
          location: '',
          assetsUrl: 'https://test.redishub.com/assets',
-         aboutUrl: 'https://github.com/webserva/about/blob/master/README.md',
-         helpUrl: 'https://github.com/webserva/about/blob/master/README.md',
+         aboutUrl: 'https://github.com/webserva/webserva/blob/master/README.md',
+         helpUrl: 'https://github.com/webserva/webserva/blob/master/README.md',
          indexCommand: 'show-keyspace-config',
          enrollExpire: 300,
          keyspaceExpire: 2592000, // 30 days
