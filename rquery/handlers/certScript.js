@@ -31,7 +31,7 @@ export async function handleCertScriptHelp(req, res, reqx, {config}) {
       `    ${serviceUrl}/ak/${account}/tmp10days/help`,
       ``,
       `  For CLI convenience, install wscurl bash script, as per instructions:`,
-      `    curl -s -L ${docUrl}/install.wscurl.txt`,
+      `    curl -s -L ${config.docUrl}/install.wscurl.txt`,
       ``,
    ];
    return lodash.flatten(helpResult);
