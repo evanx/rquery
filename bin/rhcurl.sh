@@ -1,8 +1,10 @@
 #!/bin/bash
 
-echo 'Use ~/webserva/bin/wscurl.sh'
+echo 'Replaced by: ~/webserva/bin/wscurl.sh'
 echo 'Try:'
 echo 'cd && git clone https://github.com/webserva/webserva.git'
+echo 'alias ws=~/webserva/bin/wscurl.sh'
+echo 'ws'
 exit 3
 
   set -u -e

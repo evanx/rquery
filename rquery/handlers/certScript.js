@@ -113,7 +113,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
       `    sleep 8`,
       `    source <(cat cert-script.sh)`,
       `  fi`,
-      `)`,
+      `)`
    ]);
    result.push('');
    return lodash.flatten(result);
