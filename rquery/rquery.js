@@ -66,7 +66,7 @@ export default class rquery {
          if (this.config.serviceKey === 'development') {
             next();
          } else if (scheme !== 'https') {
-            const redirectUrl = `https://${this.config.hostDomain}${req.url}`;
+            const redirectUrl = `https://${req.hostname}${req.url}`;
             this.logger.debug('redirect scheme', scheme, redirectUrl);
             res.redirect(302, redirectUrl);
          } else {
