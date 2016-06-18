@@ -60,21 +60,31 @@ fi
 echo $instance | grep -q '^[0-9]$'
 port="${port}${instance}"
 
-# bot 
-
-bot=redishub
-if [ $config = test ] 
+botName=redishub
+if [ $config = test ]
 then
-  bot=rhtest
-elif [ $config = demo ] 
+  botName=rhtest
+elif [ $config = demo ]
 then
-  bot=rhdemo
+  botName=rhdemo
+elif [ $config = webserva ]
+then
+  botName=webservabot
 fi
 
-botSecret=`cat ~/.bot.$bot/secret`
+botDir=~/.bot.$botName
+if [ -d $botDir ] 
+then
+  botName=${botName}_bot 
+else
+  botDir=~/.$botName
+fi
+echo "botDir $botDir"
+
+botSecret=`cat $botDir/secret`
 echo botSecret $botSecret
 
-botUrl=`cat ~/.bot.$bot/url`
+botUrl=`cat $botDir/url`
 echo botUrl $botUrl
 
 # ok 
