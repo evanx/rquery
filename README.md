@@ -125,7 +125,19 @@ See the following instructions for creating a client cert:
 
 https://github.com/webserva/webserva/blob/master/docs/register-cert.md
 
-This utilitises a script generator endpoint: https://open.webserva.com/cert-script/ACCOUNT
+This utilitises a script generator endpoint for your account e.g. see: https://open.webserva.com/cert-script/ACCOUNT
+
+This curls a versioned script: https://raw.githubusercontent.com/webserva/webserva/master/bin/cert-script.sh
+
+It's SHA is compared to an alternative source, to give confidence in its integrity, i.e. multiple sites would have been hacked to ensure that a tampered version of this script is not detectable.
+
+```shell
+curl -s https://github.com/webserva/webserva/blob/master/bin/cert-script.sh | sha1sum
+
+```
+
+
+
 
 First we create a keyspace:
 ```shell
