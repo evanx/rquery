@@ -31,7 +31,7 @@ However be sure to have a JSON Viewer extension installed in your browser.
 
 It should report the available "routes" defined for the ExpressJS webserver:
 
-<img src="https://evanx.github.io/images/rquery/rquery030-help.png">
+![WebServa.com routes](https://evanx.github.io/images/rquery/ws040-routes.png)
 <hr>
 
 where besides this README, the following "help" is available:
@@ -185,13 +185,7 @@ ws ks1 smembers myset
 
 ###### PKCS12 cert for browser
 
-We prepare a `privcert.p12` using `openssl` as follows:
-```shell
-cd ~/.webserva
-openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem
-```
-
-We can then import this cert into our browser.
+The cert generation script creates `~/.webserva/live/privcert.p12.` We should import this cert into our browser.
 
 <img src="https://evanx.github.io/images/rquery/rquery030-evanxsummers.png"/>
 <hr>
