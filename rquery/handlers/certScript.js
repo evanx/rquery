@@ -39,7 +39,7 @@ export async function handleCertScriptHelp(req, res, reqx, {config}) {
       `    ${serviceUrl}/ak/${account}/tmp10days/help`,
       ``,
       `  For CLI convenience, install rhcurl bash script, as per instructions:`,
-      `    curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt`,
+      `    curl -s -L ${docUrl}/install.wscurl.txt`,
       ``,
    ];
    return lodash.flatten(helpResult);
@@ -68,7 +68,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
    const O = account;
    const curlAccount = `curl -s -E \${dir}/privcert.pem \${serviceUrl}/ak/\${account}`;
    let result = [
-      `Curl this script and pipe into bash as follows to create key dir ~/.redishub/live:`,
+      `Curl this script and pipe into bash as follows to create key dir ~/.webserva/live:`,
       `curl -s 'https://${config.openHostname}/${commandKey}/${account}' | bash`,
       ``,
    ].map(line => `# ${line}`);
@@ -111,11 +111,11 @@ export async function handleCertScript(req, res, reqx, {config}) {
       `    echo "Directory ${dir} already exists. Try add '?archive' query to the URL."`,
       `  else`,
       `    mkdir ${dir} && cd $_ # error exit if dir exists`,
-      `    curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh -O`,
+      `    curl -s https://raw.githubusercontent.com/webserva/webserva/master/bin/cert-script.sh -O`,
       `    cat cert-script.sh`,
       `    sha1sum cert-script.sh`,
       `    curl -s https://webserva.com/assets/cert-script.sh.sha1sum`,
-      `    echo 'Press Ctrl-C in the next 8 seconds if the above hashes do not match'`,
+      `    echo 'Press Ctrl-C in the next 8 seconds if any of the above hashes differ'`,
       `    sleep 8`,
       `    source <(cat cert-script.sh)`,
       `  fi`,
