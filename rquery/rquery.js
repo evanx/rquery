@@ -575,7 +575,7 @@ export default class rquery {
                );
             }
             description.push(
-               `<i>(A client-side command completion tool will come later, after access control.)</i>`
+               `<i>(A client-side command completion tool will come later. This is an MVP without any such bells and whistles yet.)</i>`
             );
             description = description.join(' ');
             const exampleParams = [

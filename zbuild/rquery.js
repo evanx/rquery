@@ -1418,7 +1418,7 @@ var rquery = function () {
                               if (false && _this6.isSecureDomain(req)) {
                                  description.push('When reading keys, you can also try changing the subdomain to \'replica.\'');
                               }
-                              description.push('<i>(A client-side command completion tool will come later, after access control.)</i>');
+                              description.push('<i>(A client-side command completion tool will come later. This is an MVP without any such bells and whistles yet.)</i>');
                               description = description.join(' ');
                               exampleParams = [['ttls'], ['types'], ['set', 'mykey1/myvalue'], ['get', 'mykey1'], ['sadd', 'myset1/myvalue'], ['smembers', 'myset1'], ['lpush', 'mylist1/myvalue1'], ['lpushx', 'mylist1/myvalue2'], ['rpop', 'mylist1'], ['lrange', 'mylist1/0/10'], ['lrevrange', 'mylist1/0/10'], ['lrange', 'mylist1/-10/-1'], ['hset', 'myhashes1/field1/value1'], ['hsetnx', 'myhashes1/field2/value2'], ['hgetall', 'myhashes1'], ['zadd', 'myzset1/10/member10'], ['zadd', 'myzset1/20/member20'], ['zrange', 'myzset1/0/-1'], ['zrevrange', 'myzset1/0/-1']];
                               customExampleParams = [['set-json-query', 'myobject1?name=myname&id=12346'], ['get-json', 'myobject1']];
