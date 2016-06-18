@@ -31,7 +31,7 @@ However be sure to have a JSON Viewer extension installed in your browser.
 
 It should report the available "routes" defined for the ExpressJS webserver:
 
-![WebServa.com routes](https://evanx.github.io/images/rquery/ws040-routes-UPDATED.png)
+![WebServa.com routes](https://evanx.github.io/images/rquery/ws040-routes.png)
 
 where besides this README, the following "help" is available:
 - https://demo.webserva.com/routes - shows all the routes/endpoints
@@ -177,9 +177,7 @@ ws ks1 sadd myset item2
 ws ks1 smembers myset
 ```
 
-<hr>
-<img src="https://evanx.github.io/images/rquery/rquery030-kshelp.png"/>
-<hr>
+<img src="https://evanx.github.io/images/rquery/ws040-ephemeral.png"/>
 
 ###### PKCS12 cert for browser
 
