@@ -44,7 +44,7 @@ var handleCertScriptHelp = exports.handleCertScriptHelp = function () {
                   serviceUrl = config.hostUrl;
                   account = req.params.account;
                   curlAccount = 'curl -s -E ' + dir + '/privcert.pem ' + serviceUrl + '/ak/' + account;
-                  helpResult = ['', '  To force archiving an existing ' + dir + ', add \'?archive\' to the URL:', '', '    curl -s ' + serviceUrl + '/' + commandKey + '/' + account + '?archive | bash', '', '  This will first move ' + dir + ' to ' + archive + '/TIMESTAMP first.', '', '  See your privcerts: ' + dir + '/privcert.pem (curl) and/or privcert.p12 (browser)', '', '  For example, create a keyspace called \'tmp10days\' as follows:', '    ' + curlAccount + '/tmp10days/create-keyspace', '', '  Then try Redis commands on this keyspace for example:', '    ' + curlAccount + '/tmp10days/help', '    ' + curlAccount + '/tmp10days/set/mykey/myvalue', '    ' + curlAccount + '/tmp10days/get/mykey', '', '  Then in your browser, load \'privcert.p12\' and try:', '    ' + serviceUrl + '/ak/' + account + '/tmp10days/help', '', '  For CLI convenience, install rhcurl bash script, as per instructions:', '    curl -s -L https://raw.githubusercontent.com/evanx/redishub/master/docs/install.rhcurl.txt', ''];
+                  helpResult = ['', '  To force archiving an existing ' + dir + ', add \'?archive\' to the URL:', '', '    curl -s \'https://' + config.openHostname + '/' + commandKey + '/' + account + '?archive\' | bash', '', '  This will first move ' + dir + ' to ' + archive + '/TIMESTAMP first.', '', '  See your privcerts: ' + dir + '/privcert.pem (curl) and/or privcert.p12 (browser)', '', '  For example, create a keyspace called \'tmp10days\' as follows:', '    ' + curlAccount + '/tmp10days/create-keyspace', '', '  Then try Redis commands on this keyspace for example:', '    ' + curlAccount + '/tmp10days/help', '    ' + curlAccount + '/tmp10days/set/mykey/myvalue', '    ' + curlAccount + '/tmp10days/get/mykey', '', '  Then in your browser, load \'privcert.p12\' and try:', '    ' + serviceUrl + '/ak/' + account + '/tmp10days/help', '', '  For CLI convenience, install wscurl bash script, as per instructions:', '    curl -s -L ' + docUrl + '/install.wscurl.txt', ''];
                   return _context.abrupt('return', lodash.flatten(helpResult));
 
                case 14:
@@ -62,7 +62,7 @@ var handleCertScriptHelp = exports.handleCertScriptHelp = function () {
 var handleCertScript = exports.handleCertScript = function () {
    var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee2(req, res, reqx, _ref2) {
       var config = _ref2.config;
-      var dir, archive, isArchive, commandKey, serviceUrl, telegramBot, account, role, id, CN, OU, O, curlAccount, result;
+      var defaultDir, dir, archive, isArchive, commandKey, serviceUrl, telegramBot, account, role, id, CN, OU, O, curlAccount, result;
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
          while (1) {
             switch (_context2.prev = _context2.next) {
@@ -75,23 +75,24 @@ var handleCertScript = exports.handleCertScript = function () {
                   throw new ValidationError('Empty or invalid "dir"');
 
                case 2:
-                  dir = req.query.dir || config.clientCertHomeDir + '/live';
+                  defaultDir = config.clientCertHomeDir + '/live';
+                  dir = req.query.dir || defaultDir;
                   archive = req.query.archive || config.clientCertHomeDir + '/archive';
                   isArchive = Values.isDefined(req.query.archive);
 
                   if (!(isArchive && req.query.dir)) {
-                     _context2.next = 8;
+                     _context2.next = 9;
                      break;
                   }
 
                   if (req.query.dir.match(/^[~\/a-z0-9\.]+(live|cert)$/i)) {
-                     _context2.next = 8;
+                     _context2.next = 9;
                      break;
                   }
 
                   throw new ValidationError('Invalid "dir" for archive');
 
-               case 8:
+               case 9:
                   commandKey = reqx.command.key;
                   serviceUrl = config.hostUrl;
                   telegramBot = config.adminBotName;
@@ -102,7 +103,7 @@ var handleCertScript = exports.handleCertScript = function () {
                   OU = role;
                   O = account;
                   curlAccount = 'curl -s -E ${dir}/privcert.pem ${serviceUrl}/ak/${account}';
-                  result = ['Curl this script and pipe into bash as follows to create key dir ~/.redishub/live:', 'curl -s \'https://' + config.openHostname + '/' + commandKey + '/' + account + '\' | bash', ''].map(function (line) {
+                  result = ['Curl this script and pipe into bash as follows to create key dir ' + defaultDir + ':', 'curl -s \'https://' + config.openHostname + '/' + commandKey + '/' + account + '\' | bash', ''].map(function (line) {
                      return '# ' + line;
                   });
 
@@ -114,11 +115,11 @@ var handleCertScript = exports.handleCertScript = function () {
                   } else {
                      result = result.concat(['  mkdir -p ' + config.clientCertHomeDir + ' # ensure default dir exists']);
                   }
-                  result = result.concat(['  if [ -d ' + dir + ' ]', '  then', '    echo "Directory ' + dir + ' already exists. Try add \'?archive\' query to the URL."', '  else', '    mkdir ' + dir + ' && cd $_ # error exit if dir exists', '    curl -s https://raw.githubusercontent.com/evanx/redishub/master/bin/cert-script.sh -O', '    cat cert-script.sh', '    sha1sum cert-script.sh', '    curl -s https://webserva.com/assets/cert-script.sh.sha1sum', '    echo \'Press Ctrl-C in the next 8 seconds if the above hashes do not match\'', '    sleep 8', '    source <(cat cert-script.sh)', '  fi', ')']);
+                  result = result.concat(['  if [ -d ' + dir + ' ]', '  then', '    echo "Directory ' + dir + ' already exists. Try add \'?archive\' query to the URL."', '  else', '    mkdir ' + dir + ' && cd $_ # error exit if dir exists', '    curl -s https://raw.githubusercontent.com/webserva/webserva/master/bin/cert-script.sh -O', '    cat cert-script.sh', '    sha1sum cert-script.sh', '    curl -s https://webserva.com/assets/cert-script.sh.sha1sum', '    echo \'Press Ctrl-C in the next 8 seconds if any of the above hashes differ\'', '    sleep 8', '    source <(cat cert-script.sh)', '  fi', ')']);
                   result.push('');
                   return _context2.abrupt('return', lodash.flatten(result));
 
-               case 24:
+               case 25:
                case 'end':
                   return _context2.stop();
             }

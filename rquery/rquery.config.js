@@ -22,7 +22,7 @@ module.exports = {
       },
       docUrl: {
          defaultValue: 'https://raw.githubusercontent.com/webserva/webserva/master/docs'
-      }
+      },
       certPrefix: {
          defaultValue: 'ws'
       },

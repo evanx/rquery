@@ -25,8 +25,11 @@ module.exports = {
       clientCertHomeDir: {
          defaultValue: '~/.webserva'
       },
+      docUrl: {
+         defaultValue: 'https://raw.githubusercontent.com/webserva/webserva/master/docs'
+      },
       certPrefix: {
-         defaultValue: 'rh'
+         defaultValue: 'ws'
       },
       adminBotName: {
          type: 'string'
