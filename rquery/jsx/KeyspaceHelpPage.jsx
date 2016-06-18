@@ -33,7 +33,7 @@ export default class extends React.Component {
 
    renderUrls(urls) {
       return urls.map((url, index) => {
-         const match = url.match(/^https:\/\/[a-z]+\.redishub\.com(\/\S+)$/);
+         const match = url.match(/^https:\/\/[a-z]+\.[a-z]+\.com(\/\S+)$/);
          if (match) {
             return (
                <p key={index}>

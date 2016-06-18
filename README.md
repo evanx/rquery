@@ -7,7 +7,7 @@ It is basically a Node SSL authentication and authorisation microservice for Red
 
 Notable features (June 2016):
 - Create adhoc ephemeral keyspaces
-- Identity verification via Telegram.org chat bot `@redishub_bot`
+- Identity verification via Telegram.org chat bot
 - Access secured via client-authenticated SSL
 - Certs granted access by admins via chat bot
 - Generate tokens for Google Authenticator
@@ -25,7 +25,7 @@ UNSTABLE, INCOMPLETE
 
 ### Live demo
 
-Try: https://demo.redishub.com
+Try: https://demo.webserva.com
 
 However be sure to have a JSON Viewer extension installed in your browser.
 
@@ -34,9 +34,8 @@ It should report the available "routes" defined for the ExpressJS webserver:
 <img src="https://evanx.github.io/images/rquery/rquery030-help.png">
 <hr>
 
-where the following "help" is available:
-- https://demo.redishub.com/routes - shows all the "routes"
-- https://demo.redishub.com/help - currently redirects to this `README.md`
+where besides this README, the following "help" is available:
+- https://demo.webserva.com/routes - shows all the routes/endpoints
 
 Notes about this demo:
 - automatically expires keys after an idle duration of 3 minutes.
@@ -62,7 +61,7 @@ See Redis commands: https://redis.io/commands
 Let's try get the Redis `time.`
 
 ```shell
-curl -s https://demo.redishub.com/time
+curl -s https://demo.webserva.com/time
 ```
 ```shell
 1460808868
@@ -72,13 +71,13 @@ where `time` returns the seconds and nanos since the Epoch.
 
 For convenience, we sometimes support additional variants of the standard Redis commands:
 ```shell
-$ curl -s https://demo.redishub.com/time/seconds
+$ curl -s https://demo.webserva.com/time/seconds
 1462241590
 
-$ curl -s https://demo.redishub.com/time/milliseconds
+$ curl -s https://demo.webserva.com/time/milliseconds
 1462241598375
 
-$ curl -s https://demo.redishub.com/time/nanoseconds
+$ curl -s https://demo.webserva.com/time/nanoseconds
 1462241604365091
 ```
 where we can get the Epoch time in seconds, milliseconds or nanoseconds.
@@ -88,22 +87,22 @@ where we can get the Epoch time in seconds, milliseconds or nanoseconds.
 
 We can request an temporary keyspace that will expire after an idle period of 180s:
 ```shell
-rdemo=`curl -s https://demo.redishub.com/create-ephemeral | grep ^ak`
-rdemo="https://demo.redishub.com/$rdemo"
-echo $rdemo
+wsdemo=`curl -s https://demo.webserva.com/create-ephemeral | grep ^ak`
+wsdemo="https://demo.webserva.com/$wsdemo"
+echo $wsdemo
 ```
-where we set `rdemo` environment variable with the keyspace URL:
+where we set `wsdemo` environment variable with the keyspace URL:
 ```
-https://demo.redishub.com/ak/hub/63carsebfmrf
+https://demo.webserva.com/ak/hub/63carsebfmrf
 ```
 where the keyspace name has been randomly generated, and `hub` is a publically shared account.
 
-Then we can use `curl $rdemo` as follows:
+Then we can use `curl $wsdemo` as follows:
 ```shell
-curl -s $rdemo/set/mykey/myvalue
-curl -s $rdemo/exists/mykey
-curl -s $rdemo/get/mykey
-curl -s $rdemo/ttl/mykey
+curl -s $wsdemo/set/mykey/myvalue
+curl -s $wsdemo/exists/mykey
+curl -s $wsdemo/get/mykey
+curl -s $wsdemo/ttl/mykey
 ```
 where `ttl/mykey` returns the TTL decreasing from 600 seconds:
 ```json
@@ -112,78 +111,25 @@ where `ttl/mykey` returns the TTL decreasing from 600 seconds:
 
 #### Client cert
 
-For secure access to permanent keyspaces, let's try SSL client cert authentication on `cli.redishub.com.` Incidently, this is the same server as `secure.redishub.com` but with different a default format, in particular plain text rather than JSON.
+For secure access to permanent keyspaces, let's try SSL client cert authentication on `cli.webserva.com.` Incidently, this is the same server as `secure.webserva.com` but with different a default format, in particular plain text rather than JSON.
 
 Note that we will register an account using our Telegram.org username. (I like Telegram.org, have an Ubuntu phone, and want to build a Telegram Bot to win one of those prizes, woohoo!)
 
-So visit https://web.telegram.org or install the mobile app, and message `@redishub_bot /verifyme.` That will verify your Telegram username to Redishub.
+So visit https://web.telegram.org or install the mobile app, and message `@WebServaBot /verifyme.` That will verify your Telegram username to Redishub.
 
 <hr>
 <img src="https://evanx.github.io/images/rquery/rquery030-telegram.png"/>
 <hr>
 
-Then generate an admin client cert in bash:
-```shell
-curl -s https://open.redishub.com/ |
-  bash /dev/stdin $telegramUser
-```
-
-We can register an account using this privcert as the initial `admin` authorized cert:
-```shell
-(
-  account=`cat ~/.redishub/live/account`
-  alias wscurl="curl -s -E ~/.redishub/live/privcert.pem"
-  rhcurl https://cli.redishub.com/create-account-telegram/$account
-)
-```
-
-We can create a bash function and alias for keyspace commands in `~/.bashrc:`
-```shell
-rhdebug() {
-   [ -t 1 -a "${RHLEVEL-info}" = 'debug' ] && >&2 echo -e "\e[33m${*}\e[39m"
-}
-
-_rhcurl() {
-  local account=`cat ~/.redishub/live/account`
-  if [ $# -eq 0 ]
-  then
-    rhdebug "curl -s -E ~/.redishub/live/privcert.pem https://cli.redishub.com/ak/$account/:keyspace/create-keyspace"
-    return 1
-  elif [ $# -eq 1 ]
-  then
-    rhdebug "curl -s -E ~/.redishub/live/privcert.pem https://cli.redishub.com/ak/$account/$1"
-    return 1
-  fi
-  local cmd=''
-  while [ $# -gt 0 ]
-  do
-    cmd="$cmd/$1"
-    shift
-  done
-  OU=`openssl x509 -text -in ~/.redishub/live/privcert.pem |
-    grep 'OU=' | sed -e 's/^.*\(OU=\S*\)$/\1/' | head -1`
-  if ! echo $OU | grep -q "\W${account}@redishub.com"
-  then
-    echo "ERROR $OU does not match you account $account"
-    return 3
-  else
-    rhdebug "$cn https://cli.redishub.com/ak/$account$cmd"
-    curl -s -E ~/.redishub/live/privcert.pem "https://cli.redishub.com/ak/$account$cmd"
-  fi
-}
-
-alias rh=_rhcurl
-```
-
 First we create a keyspace:
 ```shell
-rh ks1 create-keyspace
+ws ks1 create-keyspace
 ```
 In a given keyspace e.g. `ks1` we can invoke Redis commands:
 ```shell
-rh ks1 sadd myset item1
-rh ks1 sadd myset item2
-rh ks1 smembers myset
+ws ks1 sadd myset item1
+ws ks1 sadd myset item2
+ws ks1 smembers myset
 ```
 
 <hr>
@@ -194,7 +140,7 @@ rh ks1 smembers myset
 
 We prepare a `privcert.p12` using `openssl` as follows:
 ```shell
-cd ~/.redishub
+cd ~/.webserva
 openssl pkcs12 -export -out privcert.p12 -inkey privkey.pem -in cert.pem
 ```
 
@@ -216,7 +162,7 @@ Testing the same URL with a different `privcert` installed:
 
 ##### Browser access via Telegram.org
 
-Alternatively, we can authorise via Telegram, via a provided token which should be sent to `@redishub_bot` e.g. via https://telegram.me/redishub_bot.
+Alternatively, we can authorise via Telegram, via a provided token which should be sent to `@WebServaBot` e.g. via https://telegram.me/WebServaBot.
 
 TODO
 
@@ -224,17 +170,17 @@ TODO
 
 Let's try a few more set commands:
 ```shell
-curl -s $rdemo/sadd/myset/item1
-curl -s $rdemo/sadd/myset/item2
-curl -s $rdemo/sadd/myset/item3
-curl -s $rdemo/sadd/myset/item4
-curl -s $rdemo/sismember/myset/item1
-curl -s $rdemo/smembers/myset
-curl -s $rdemo/srem/myset/item1
-curl -s $rdemo/scard/myset
-curl -s $rdemo/smove/myset/myotherset/item4
-curl -s $rdemo/smembers/myotherset
-curl -s $rdemo/spop/myset
+curl -s $wsdemo/sadd/myset/item1
+curl -s $wsdemo/sadd/myset/item2
+curl -s $wsdemo/sadd/myset/item3
+curl -s $wsdemo/sadd/myset/item4
+curl -s $wsdemo/sismember/myset/item1
+curl -s $wsdemo/smembers/myset
+curl -s $wsdemo/srem/myset/item1
+curl -s $wsdemo/scard/myset
+curl -s $wsdemo/smove/myset/myotherset/item4
+curl -s $wsdemo/smembers/myotherset
+curl -s $wsdemo/spop/myset
 ```
 where `smembers/myset` returns:
 ```json
@@ -247,12 +193,12 @@ where `smembers/myset` returns:
 ##### Sorted sets
 
 ```shell
-curl -s $rdemo/zadd/mysortedset/10/value10
-curl -s $rdemo/zadd/mysortedset/20/value20
-curl -s $rdemo/zcard/mysortedset
-curl -s $rdemo/zrange/mysortedset/0/-1
-curl -s $rdemo/zrem/mysortedset/value10
-curl -s $rdemo/zrevrange/mysortedset/0/-1
+curl -s $wsdemo/zadd/mysortedset/10/value10
+curl -s $wsdemo/zadd/mysortedset/20/value20
+curl -s $wsdemo/zcard/mysortedset
+curl -s $wsdemo/zrange/mysortedset/0/-1
+curl -s $wsdemo/zrem/mysortedset/value10
+curl -s $wsdemo/zrevrange/mysortedset/0/-1
 ```
 
 where `zrange/mysortedset` returns:
@@ -267,16 +213,16 @@ where `zrange/mysortedset` returns:
 ##### Hashes
 
 ```shell
-curl -s $rdemo/hset/myhashes/myfield1/myfield1value
-curl -s $rdemo/hget/myhashes/myfield1
-curl -s $rdemo/hset/myhashes/myfield2/myfield2value
-curl -s $rdemo/hget/myhashes/myfield2
-curl -s $rdemo/hexists/myhashes/myfield1
-curl -s $rdemo/hexists/myhashes/myfield3
-curl -s $rdemo/hlen/myhashes
-curl -s $rdemo/hkeys/myhashes
-curl -s $rdemo/hgetall/myhashes
-curl -s $rdemo/hdel/myhashes/myfield2
+curl -s $wsdemo/hset/myhashes/myfield1/myfield1value
+curl -s $wsdemo/hget/myhashes/myfield1
+curl -s $wsdemo/hset/myhashes/myfield2/myfield2value
+curl -s $wsdemo/hget/myhashes/myfield2
+curl -s $wsdemo/hexists/myhashes/myfield1
+curl -s $wsdemo/hexists/myhashes/myfield3
+curl -s $wsdemo/hlen/myhashes
+curl -s $wsdemo/hkeys/myhashes
+curl -s $wsdemo/hgetall/myhashes
+curl -s $wsdemo/hdel/myhashes/myfield2
 ```
 
 where `hkeys/myhashes` returns:
@@ -298,19 +244,19 @@ and `hgetall/myhashes` returns:
 ##### Lists
 
 ```shell
-curl -s $rdemo/lpush/mylist/item1
-curl -s $rdemo/lpush/mylist/item2
-curl -s $rdemo/lpush/mylist/item3
-curl -s $rdemo/lpush/mylist/item4
-curl -s $rdemo/lrange/mylist/0/-1
-curl -s $rdemo/lrem/mylist/-1/item4
-curl -s $rdemo/lindex/mylist/0
-curl -s $rdemo/lrange/mylist/0/-1
-curl -s $rdemo/lpop/mylist
-curl -s $rdemo/brpop/mylist/1
-curl -s $rdemo/brpoplpush/mylist/mypoppedlist/1
-curl -s $rdemo/llen/mylist
-curl -s $rdemo/ltrim/mylist/0/2
+curl -s $wsdemo/lpush/mylist/item1
+curl -s $wsdemo/lpush/mylist/item2
+curl -s $wsdemo/lpush/mylist/item3
+curl -s $wsdemo/lpush/mylist/item4
+curl -s $wsdemo/lrange/mylist/0/-1
+curl -s $wsdemo/lrem/mylist/-1/item4
+curl -s $wsdemo/lindex/mylist/0
+curl -s $wsdemo/lrange/mylist/0/-1
+curl -s $wsdemo/lpop/mylist
+curl -s $wsdemo/brpop/mylist/1
+curl -s $wsdemo/brpoplpush/mylist/mypoppedlist/1
+curl -s $wsdemo/llen/mylist
+curl -s $wsdemo/ltrim/mylist/0/2
 ```
 
 where `lrange/mylist/0/-1` returns:
@@ -326,8 +272,8 @@ where `lrange/mylist/0/-1` returns:
 
 We can check the keys and their TTL in the specified `keyspace` as follows:
 ```shell
-curl -s $rdemo/keys
-curl -s $rdemo/ttl
+curl -s $wsdemo/keys
+curl -s $wsdemo/ttl
 ```
 
 where `keys` returns:

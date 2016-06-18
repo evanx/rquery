@@ -1,2 +1,2 @@
 
-  rurl=https://demo.redishub.com scripts/test.sh
+  rurl=https://demo.webserva.com scripts/test.sh
