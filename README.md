@@ -31,7 +31,7 @@ However be sure to have a JSON Viewer extension installed in your browser.
 
 It should report the available "routes" defined for the ExpressJS webserver:
 
-![WebServa.com routes](https://evanx.github.io/images/rquery/ws040-routes.png)
+![WebServa.com routes](https://evanx.github.io/images/rquery/ws040-routes-UPDATED.png)
 <hr>
 
 where besides this README, the following "help" is available:
