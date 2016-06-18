@@ -80,15 +80,15 @@ export async function handleCertScript(req, res, reqx, {config}) {
       `  commandKey='${commandKey}'`,
       `  serviceUrl='${serviceUrl}'`,
       `  telegramBot='${telegramBot}'`,
-      `  archive=${archive}`,
-      `  certWebhook="\${serviceUrl}/create-account-telegram/\${account}"`,
+      `  archive='${archive}'`,
+      `  certWebhook='${serviceUrl}/create-account-telegram/${account}'`,
    ]);
    if (Values.isDefined(req.query.archive)) {
       result = result.concat([
          `  if [ -d ${dir} ]`,
          `  then`,
          `    mkdir -p ${archive} # ensure dir exists`,
-         `    mv -n ${dir} ${archive}/\`date +'%Y-%m-%dT%Hh%Mm%Ss%s'\``,
+         `    mv -ni ${dir} ${archive}/\`date +'%Y-%m-%dT%Hh%Mm%Ss%s'\``,
          `  fi`,
       ]);
    } else if (!lodash.isEmpty(req.query.dir) && !req.query.dir.includes(config.clientCertHomeDir)) {
