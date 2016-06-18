@@ -75,7 +75,7 @@ var _class = function (_React$Component) {
       key: 'renderUrls',
       value: function renderUrls(urls) {
          return urls.map(function (url, index) {
-            var match = url.match(/^https:\/\/[a-z]+\.redishub\.com(\/\S+)$/);
+            var match = url.match(/^https:\/\/[a-z]+\.[a-z]+\.com(\/\S+)$/);
             if (match) {
                return _react2.default.createElement(
                   'p',
