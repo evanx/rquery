@@ -5,7 +5,7 @@ echo $name
 mkdir -p tmp
 mv -f ~/.pm2/logs/${name}* tmp/. || echo 'no pm2 logs'
 
-# domain 
+# domain
 
 port=4
 config=${config-secure}
@@ -22,7 +22,7 @@ then
   config=webserva
 fi
 
-# env 
+# env
 
 if echo $name | grep -q 'test'
 then
@@ -73,9 +73,9 @@ then
 fi
 
 botDir=~/.bot.$botName
-if [ -d $botDir ] 
+if [ -d $botDir ]
 then
-  botName=${botName}_bot 
+  botName=${botName}_bot
 else
   botDir=~/.$botName
 fi
@@ -87,8 +87,6 @@ echo botSecret $botSecret
 botUrl=`cat $botDir/url`
 echo botUrl $botUrl
 
-# ok 
+# ok
 
 >&2 echo "$0 $name $config $instance $port"
-
-

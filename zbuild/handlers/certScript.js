@@ -102,7 +102,7 @@ var handleCertScript = exports.handleCertScript = function () {
                   OU = role;
                   O = account;
                   curlAccount = 'curl -s -E ${dir}/privcert.pem ${serviceUrl}/ak/${account}';
-                  result = ['Curl this script and pipe into bash as follows to create key dir ~/.redishub/live:', 'curl -s \'' + serviceUrl + '/' + commandKey + '/' + account + '\' | bash', ''].map(function (line) {
+                  result = ['Curl this script and pipe into bash as follows to create key dir ~/.redishub/live:', 'curl -s \'https://' + config.openHostname + '/' + commandKey + '/' + account + '\' | bash', ''].map(function (line) {
                      return '# ' + line;
                   });
 
