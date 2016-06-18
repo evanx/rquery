@@ -32,14 +32,12 @@ However be sure to have a JSON Viewer extension installed in your browser.
 It should report the available "routes" defined for the ExpressJS webserver:
 
 ![WebServa.com routes](https://evanx.github.io/images/rquery/ws040-routes-UPDATED.png)
-<hr>
 
 where besides this README, the following "help" is available:
 - https://demo.webserva.com/routes - shows all the routes/endpoints
 
 Notes about this demo:
 - automatically expires keys after an idle duration of 3 minutes.
-
 
 #### Commands
 
