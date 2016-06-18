@@ -21,7 +21,7 @@ export async function handleCertScriptHelp(req, res, reqx, {config}) {
       ``,
       `  To force archiving an existing ${dir}, add '?archive' to the URL:`,
       ``,
-      `    curl -s ${serviceUrl}/${commandKey}/${account}?archive | bash`,
+      `    curl -s 'https://${config.openHostname}/${commandKey}/${account}?archive' | bash`,
       ``,
       `  This will first move ${dir} to ${archive}/TIMESTAMP first.`,
       ``,
@@ -49,7 +49,8 @@ export async function handleCertScript(req, res, reqx, {config}) {
    if (req.query.dir && ['', '.', '..'].includes(req.query.dir)) {
       throw new ValidationError('Empty or invalid "dir"');
    }
-   const dir = req.query.dir || config.clientCertHomeDir + '/live';
+   const defaultDir = config.clientCertHomeDir + '/live';
+   const dir = req.query.dir || defaultDir;
    const archive = req.query.archive || config.clientCertHomeDir + '/archive';
    const isArchive = Values.isDefined(req.query.archive);
    if (isArchive && req.query.dir) {
@@ -68,7 +69,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
    const O = account;
    const curlAccount = `curl -s -E \${dir}/privcert.pem \${serviceUrl}/ak/\${account}`;
    let result = [
-      `Curl this script and pipe into bash as follows to create key dir ~/.webserva/live:`,
+      `Curl this script and pipe into bash as follows to create key dir ${defaultDir}:`,
       `curl -s 'https://${config.openHostname}/${commandKey}/${account}' | bash`,
       ``,
    ].map(line => `# ${line}`);
