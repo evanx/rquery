@@ -154,6 +154,18 @@ Try the following:
 
 #### Using wscurl
 
+We install `wscurl` via the following Github `webserva` repo:
+```
+git clone https://github.com/webserva/webserva.git
+alias ws='~/webserva/bin/wscurl.sh
+ws help
+```
+where we create a bash alias for convenience, perhaps even in `~/.bashrc` for all sessions. In this case you should first ensure your system does not have a binary or alias `ws`
+```
+which ws
+alias ws
+```
+
 ![wscurl](https://evanx.github.io/images/rquery/ws040-wscurl.png)
 
 First we create a keyspace:
