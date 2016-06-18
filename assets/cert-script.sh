@@ -26,7 +26,7 @@
         pwd; ls -l
         sleep 2
         curl -s https://webserva.com/cert-script-help/${account}
-        curl -s https://raw.githubusercontent.com/webserva/webserva/master/docs/install.rhcurl.txt
+        curl -s https://raw.githubusercontent.com/webserva/webserva/master/docs/install.wscurl.txt
         certExtract=`cat cert.extract.pem`
         echo "Try https://telegram.me/$telegramBot '/grantcert $certExtract'"
       fi

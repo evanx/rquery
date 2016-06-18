@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo 'Use ~/redishub/bin/rhcurl.sh'
+echo 'Use ~/webserva/bin/wscurl.sh'
 echo 'Try:'
 echo 'cd && git clone https://github.com/webserva/webserva.git'
 exit 3

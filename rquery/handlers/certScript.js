@@ -38,7 +38,7 @@ export async function handleCertScriptHelp(req, res, reqx, {config}) {
       `  Then in your browser, load 'privcert.p12' and try:`,
       `    ${serviceUrl}/ak/${account}/tmp10days/help`,
       ``,
-      `  For CLI convenience, install rhcurl bash script, as per instructions:`,
+      `  For CLI convenience, install wscurl bash script, as per instructions:`,
       `    curl -s -L ${docUrl}/install.wscurl.txt`,
       ``,
    ];
