@@ -113,6 +113,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
       `  else`,
       `    mkdir ${dir} && cd $_ # error exit if dir exists`,
       `    curl -s https://raw.githubusercontent.com/webserva/webserva/master/bin/cert-script.sh -O`,
+      `    echo '1c04b96bde8f4f1f1b4c05c9c368204bd8b46e54'`,
       `    cat cert-script.sh`,
       `    sha1sum cert-script.sh`,
       `    curl -s https://webserva.com/assets/cert-script.sh.sha1sum`,
