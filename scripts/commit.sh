@@ -15,9 +15,12 @@ c1commit() {
   message="$1"
   c2notify joy committing &
   c2notify stallman committing
-  git add -A
-  git commit -m "$message" 
-  git push
+  if git add -A && git commit -m "$message" && git push 
+  then
+    echo "committed"
+  else 
+    echo "no commit"
+  fi
   c2notify joy committed &
   c2notify stallman committed &
   echo; echo "done"
