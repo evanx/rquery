@@ -121,6 +121,12 @@ So visit https://web.telegram.org or install the mobile app, and message `@WebSe
 <img src="https://evanx.github.io/images/rquery/rquery030-telegram.png"/>
 <hr>
 
+See the following instructions for creating a client cert:
+
+https://github.com/webserva/webserva/blob/master/docs/register-cert.md
+
+This utilitises a script generator endpoint: https://open.webserva.com/cert-script/ACCOUNT
+
 First we create a keyspace:
 ```shell
 ws ks1 create-keyspace
