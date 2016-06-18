@@ -132,7 +132,7 @@ We can register an account using this privcert as the initial `admin` authorized
 ```shell
 (
   account=`cat ~/.redishub/live/account`
-  alias rhcurl="curl -s -E ~/.redishub/live/privcert.pem"
+  alias wscurl="curl -s -E ~/.redishub/live/privcert.pem"
   rhcurl https://cli.redishub.com/create-account-telegram/$account
 )
 ```
