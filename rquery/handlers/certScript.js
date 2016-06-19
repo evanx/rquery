@@ -61,7 +61,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
    const O = account;
    const curlAccount = `curl -s -E \${dir}/privcert.pem \${serviceUrl}/ak/\${account}`;
    let result = [
-      `Curl this script and pipe into bash as follows to create key dir ${defaultDir}:`,
+      `Cut and paste the following line, to curl this script and pipe into bash:`,
       `curl -s 'https://${config.openHostname}/${commandKey}/${account}' | bash`,
       ``,
    ].map(line => `# ${line}`);
