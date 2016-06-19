@@ -148,11 +148,11 @@ var rquery = function () {
                         this.hints = {
                            signup: {
                               message: 'Try "@' + this.config.adminBotName + ' /signup" on https://web.telegram.org',
-                              url: 'https://telegram.me/' + this.config.adminBotName
+                              url: 'https://telegram.me/' + this.config.adminBotName + '?start'
                            },
                            grantCert: {
                               message: 'Try "@' + this.config.adminBotName + ' /grantcert certId" e.g. via https://web.telegram.org',
-                              url: 'https://telegram.me/' + this.config.adminBotName
+                              url: 'https://telegram.me/' + this.config.adminBotName + '?start'
                            },
                            registerCert: {
                               message: 'Try <tt>/register-cert</tt>',

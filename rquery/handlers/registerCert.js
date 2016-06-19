@@ -64,7 +64,7 @@ export default async function registerCert(req, res, reqx) {
                `e.g. via https://web.telegram.org,`,
             ].join(' '),
             clipboard: `@${rquery.config.adminBotName} /grantcert ${shortDigest}`,
-            url: `https://telegram.me/${rquery.config.adminBotName}`
+            url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });
    }
@@ -80,7 +80,7 @@ export default async function registerCert(req, res, reqx) {
             + ` e.g. via https://web.telegram.org`
             ,
             clipboard: `@${rquery.config.adminBotName} /grantcert ${shortDigest}`,
-            url: `https://telegram.me/${rquery.config.adminBotName}`
+            url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });
    }

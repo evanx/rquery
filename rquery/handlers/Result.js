@@ -191,7 +191,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
       }
       if (false) {
          hints.push({
-            url: `https://telegram.me/${rquery.config.adminBotName}`,
+            url: `https://telegram.me/${rquery.config.adminBotName}?start`,
             description: `See @${rquery.config.adminBotName} on Telegram.org`
          });
       }
