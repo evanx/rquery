@@ -67,7 +67,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
    ].map(line => `# ${line}`);
    result = result.concat([
       `(`,
-      `  set -u -e # error exit if ${dir} exists and no ?archive`,
+      `  set -u -e # error exit if any undeclared vars or unhandled errors`,
       `  account='${account}'`,
       `  role='${role}'`,
       `  id='${id}'`,

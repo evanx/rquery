@@ -13,8 +13,8 @@ cat zbuild/rquery.js | grep '^\s*logger\|zz\|ZZ' && exit 1
 
 c1commit() {
   message="$1"
-  c2notify joy committing &
-  c2notify stallman committing
+  c2notify stallman committing &
+  c2notify joy committing
   if git add -A && git commit -m "$message" && git push 
   then
     echo "committed"
