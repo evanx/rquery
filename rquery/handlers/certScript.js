@@ -66,7 +66,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
       ``,
    ].map(line => `# ${line}`);
    result = result.concat([
-      `( # create subshell to enable set -u -e`,
+      `( # create subshell for local vars and to enable set -u -e`,
       `  set -u -e # error exit if any undeclared vars or unhandled errors`,
       `  account='${account}' # same as Telegram.org username`,
       `  role='${role}' # role for the cert e.g. admin`,
