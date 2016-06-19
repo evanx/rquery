@@ -568,6 +568,7 @@ export default class rquery {
                `You can set, get and add data to sets, lists, zsets, hashes etc.`,
                `Try click the example URLs below.`,
                `Also edit the URL in the location bar to try other combinations.`
+               `Click anywhere on the iconized header bar to navigate back.`
             ];
             if (false && this.isSecureDomain(req)) {
                description.push(
