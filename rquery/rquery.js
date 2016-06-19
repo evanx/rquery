@@ -47,7 +47,7 @@ export default class rquery {
             url: '/register-cert'
          },
          routes: {
-            message: 'Home to /routes',
+            message: 'Try <tt>/routes</tt>',
             url: '/routes'
          },
          createEphemeral: {
