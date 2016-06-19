@@ -66,11 +66,11 @@ export async function handleCertScript(req, res, reqx, {config}) {
       ``,
    ].map(line => `# ${line}`);
    result = result.concat([
-      `(`,
+      `( # create subshell to enable set -u -e`,
       `  set -u -e # error exit if any undeclared vars or unhandled errors`,
-      `  account='${account}'`,
-      `  role='${role}'`,
-      `  id='${id}'`,
+      `  account='${account}' # same as Telegram.org username`,
+      `  role='${role}' # role for the cert e.g. admin`,
+      `  id='${id}' # user/device id for the cert`,
       `  CN='${CN}' # unique cert name (certPrefix, account, role, id)`,
       `  OU='${OU}' # role for this cert`,
       `  O='${O}' # account name`,
@@ -78,9 +78,9 @@ export async function handleCertScript(req, res, reqx, {config}) {
       `  # Note that the following files are created in this dir:`,
       `  # account privkey.pem cert.pem privcert.pem privcert.p12 x509.txt cert.extract.txt`,
       `  commandKey='${commandKey}'`,
-      `  serviceUrl='${serviceUrl}'`,
-      `  telegramBot='${telegramBot}'`,
-      `  archive='${archive}'`,
+      `  serviceUrl='${serviceUrl}' # for cert access control`,
+      `  telegramBot='${telegramBot}' # bot for granting cert access`,
+      `  archive='${archive}' # directory to archive existing live dir when ?archive`,
       `  certWebhook='${serviceUrl}/create-account-telegram/${account}'`,
    ]);
    if (Values.isDefined(req.query.archive)) {
