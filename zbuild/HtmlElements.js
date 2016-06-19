@@ -28,6 +28,8 @@ var SelfClosingElementNames = Strings.splitSpace('\n   area base basefont br hr 
 
 var ElementNames = Strings.splitSpace('\n   html head meta link script body\n   header footer nav section article aside\n   h1 h2 h3 h4 h5 h6\n   table thead tbody th tr td\n   div span pre p a hr br img i b tt\n   ');
 
+var MessageTagRegex = exports.MessageTagRegex = /<\/?(b|tt|i|code|pre)>/g;
+
 // experimental
 
 var Element = function Element(_ref) {

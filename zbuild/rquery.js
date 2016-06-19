@@ -5505,20 +5505,22 @@ var rquery = function () {
                      style: _styles2.default.error.hintContainer,
                      href: hint.url
                   };
-                  if (_this16.isBrowser(req)) {
-                     if (hint.url[0] !== '/') {
-                        attributes.target = '_blank';
-                     }
-                     if (hint.clipboard) {
-                        attributes.onClick = 'window.prompt(\'Copy to clipboard via Ctrl-C\', \'' + hint.clipboard + '\')';
-                     }
+                  if (hint.url[0] !== '/') {
+                     attributes.target = '_blank';
+                  }
+                  if (hint.clipboard) {
+                     attributes.onClick = 'window.prompt(\'Copy to clipboard via Ctrl-C\', \'' + hint.clipboard + '\')';
                   }
                   return He.a(attributes, lodash.flatten([Hso.div(_styles2.default.error.hintMessage, hint.message), Hso.div(_styles2.default.error.hintDescription, hint.description)]));
                })]
             }));
          } else {
             messageLines = messageLines.concat(hints.map(function (hint) {
-               return lodash.compact([hint.message, hint.url]);
+               if (true) {
+                  return lodash.compact([hint.message]);
+               } else {
+                  return lodash.compact([hint.message, hint.url]);
+               }
             }));
             this.logger.warn('status lines', req.path, statusCode, messageLines);
             this.logger.debug('messageLines', messageLines, lodash.flatten(messageLines), hints);

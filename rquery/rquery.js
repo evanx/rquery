@@ -2271,13 +2271,11 @@ export default class rquery {
                      style: styles.error.hintContainer,
                      href: hint.url
                   };
-                  if (this.isBrowser(req)) {
-                     if (hint.url[0] !== '/') {
-                        attributes.target = '_blank';
-                     }
-                     if (hint.clipboard) {
-                        attributes.onClick = `window.prompt('Copy to clipboard via Ctrl-C', '${hint.clipboard}')`;
-                     }
+                  if (hint.url[0] !== '/') {
+                     attributes.target = '_blank';
+                  }
+                  if (hint.clipboard) {
+                     attributes.onClick = `window.prompt('Copy to clipboard via Ctrl-C', '${hint.clipboard}')`;
                   }
                   return He.a(attributes, lodash.flatten([
                      Hso.div(styles.error.hintMessage, hint.message),
@@ -2288,7 +2286,11 @@ export default class rquery {
          }));
       } else {
          messageLines = messageLines.concat(hints.map(hint => {
-            return lodash.compact([hint.message, hint.url]);
+            if (true) {
+               return lodash.compact([hint.message]);
+            } else {
+               return lodash.compact([hint.message, hint.url]);
+            }
          }));
          this.logger.warn('status lines', req.path, statusCode, messageLines);
          this.logger.debug('messageLines', messageLines, lodash.flatten(messageLines), hints);
