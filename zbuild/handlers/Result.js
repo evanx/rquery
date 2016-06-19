@@ -11,7 +11,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var sendResult = exports.sendResult = function () {
    var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee(command, req, res, reqx, result) {
-      var _global, rquery, userAgent, uaMatch, mobile, otherResult, resultString;
+      var _global, rquery, userAgent, uaMatch, mobile, otherResult, resultString, lines;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
          while (1) {
@@ -110,7 +110,7 @@ var sendResult = exports.sendResult = function () {
                      }
                   } else if (lodash.isObject(result)) {
                      if (command.resultObjectType === 'KeyedArrays') {
-                        resultString = lodash.flatten(['message: ' + result.message].concat(Object.keys(result).filter(function (key) {
+                        lines = Object.keys(result).filter(function (key) {
                            return !['message'].includes(key);
                         }).map(function (key) {
                            var value = result[key];
@@ -128,7 +128,12 @@ var sendResult = exports.sendResult = function () {
                            } else {
                               return ['', key + ': type ' + (typeof value === 'undefined' ? 'undefined' : _typeof(value))];
                            }
-                        }))).join('\n');
+                        });
+
+                        if (result.message) {
+                           lines.splice(0, 0, 'message: ' + result.message);
+                        }
+                        resultString = lodash.flatten(lines).join('\n');
                      } else {
                         resultString = Object.keys(result).map(function (key) {
                            var value = result[key];

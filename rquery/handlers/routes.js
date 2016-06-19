@@ -13,6 +13,7 @@ module.exports = {
    resultObjectType: 'KeyedArrays',
    sendResult: async (req, res, reqx, result) => {
       if (rquery.isCliDomain(req)) {
+         //logger.debug('routes result', Object.keys(result));
          return result;
       } else {
          res.set('Content-Type', 'text/html');
