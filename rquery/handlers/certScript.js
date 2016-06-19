@@ -111,7 +111,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
       `    echo '1c04b96bde8f4f1f1b4c05c9c368204bd8b46e54' # hardcoded SHA of stable version`,
       `    echo 'Press Ctrl-C in the next 8 seconds if any of the above hashes differ'`,
       `    sleep 8 # give time to abort if SHAs not consistent`,
-      `    source <(cat cert-script.sh) # import openssl script into this subshell`,
+      `    source <(cat cert-script.sh) # execute fetched script, hence the above security`,
       `  fi`,
       `)`
    ]);
