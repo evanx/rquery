@@ -106,7 +106,9 @@ var sendResult = exports.sendResult = function () {
                   res.set('Content-Type', 'text/plain');
                   if (lodash.isArray(result)) {
                      if (mobile) {} else {
-                        resultString = result.join('\n');
+                        resultString = result.map(function (line) {
+                           return line.replace(HtmlElements.MessageTagRegex, '');
+                        }).join('\n');
                      }
                   } else if (lodash.isObject(result)) {
                      if (command.resultObjectType === 'KeyedArrays') {

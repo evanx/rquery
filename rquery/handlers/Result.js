@@ -44,7 +44,9 @@ export async function sendResult(command, req, res, reqx, result) {
       if (lodash.isArray(result)) {
          if (mobile) {
          } else {
-            resultString = result.join('\n');
+            resultString = result
+            .map(line => line.replace(HtmlElements.MessageTagRegex, ''))
+            .join('\n');
          }
       } else if (lodash.isObject(result)) {
          if (command.resultObjectType === 'KeyedArrays') {
