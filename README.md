@@ -1,7 +1,7 @@
 
 ## rquery
 
-- HTTP API for Redis commands
+Node server for Redis multi-tenancy and access control, used for https://webserva.com.
 
 It is basically a Node SSL authentication and authorisation microservice for Redis access.
 
