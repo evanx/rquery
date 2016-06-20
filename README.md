@@ -138,6 +138,7 @@ It's SHA is compared to an alternative source, to give confidence in its integri
 curl -s https://raw.githubusercontent.com/webserva/webserva/master/bin/cert-script.sh | sha1sum
 curl -s https://open.webserva.com/assets/cert-script.sh.sha1sum
 ```
+where the script currently has the following hash:
 ```
 10216de965424a28bd710eb4ced993857ee895ce  -
 ```

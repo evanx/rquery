@@ -680,7 +680,7 @@ var rquery = function () {
                         }
 
                         _context8.next = 6;
-                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/grantcert &lt;digest&gt;</code>', 'where the <code>digest</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + request.username + '?id=' + request.username, 'See ' + openHostname + '/docs/register-cert.md for further info.']);
+                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/grantcert &lt;digest&gt;</code>', 'where the <code>digest</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + request.username + '?id=' + request.username, 'See ' + this.config.openHostname + '/docs/register-cert.md for further info.']);
 
                      case 6:
                         return _context8.abrupt('return');
@@ -723,7 +723,7 @@ var rquery = function () {
                         }
 
                         _context8.next = 27;
-                        return this.sendTelegramReply(request, 'html', ['You have approved enrollment of the cert <b>' + cert + '</b>.', 'That identity can now enroll via ' + this.config.secureHostname + '/register-cert.', 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request, after it expires.', 'See ' + openHostname + '/docs/register-cert.md for further info.']);
+                        return this.sendTelegramReply(request, 'html', ['You have approved enrollment of the cert <b>' + cert + '</b>.', 'That identity can now enroll via ' + this.config.secureHostname + '/register-cert.', 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request, after it expires.', 'See ' + this.config.openHostname + '/docs/register-cert.md for further info.']);
 
                      case 27:
                         _context8.next = 31;

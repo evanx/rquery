@@ -299,7 +299,7 @@ export default class rquery {
             `performed with the cert to be enrolled.`,
             `Use the following link to create a client cert:`,
             `${this.config.openHostname}/cert-script/${request.username}?id=${request.username}`,
-            `See ${openHostname}/docs/register-cert.md for further info.`,
+            `See ${this.config.openHostname}/docs/register-cert.md for further info.`,
          ]);
          return;
       }
@@ -323,7 +323,7 @@ export default class rquery {
             `That identity can now enroll via ${this.config.secureHostname}/register-cert.`,
             `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.enrollExpire)}`,
             `otherwise you need to repeat this request, after it expires.`,
-            `See ${openHostname}/docs/register-cert.md for further info.`,
+            `See ${this.config.openHostname}/docs/register-cert.md for further info.`,
          ]);
       } else {
          await this.sendTelegramReply(request, 'html', [
