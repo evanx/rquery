@@ -245,7 +245,8 @@ export default class rquery {
       await this.sendTelegram(request.chatId, 'html', [
          `Thanks, ${request.greetName}.`,
          `Your ${this.config.serviceLabel} account name is <b>${account}</b>, as per your Telegram user.`,
-         `Use the following link to create a client cert:`,
+         `Read ${this.config.openHostname}/docs/register-cert.md, and then`,
+         `use the following link to create a client cert:`,
          `${this.config.openHostname}/cert-script/${account}.`,
       ]);
    }
@@ -297,9 +298,9 @@ export default class rquery {
             `Try <code>/grantcert &lt;digest&gt;</code>`,
             `where the <code>digest</code> is returned by ${this.config.secureHostname}/register-cert`,
             `performed with the cert to be enrolled.`,
+            `Read ${this.config.openHostname}/docs/register-cert.md for further info.`,
             `Use the following link to create a client cert:`,
             `${this.config.openHostname}/cert-script/${request.username}?id=${request.username}`,
-            `See ${this.config.openHostname}/docs/register-cert.md for further info.`,
          ]);
          return;
       }

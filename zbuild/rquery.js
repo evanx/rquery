@@ -560,7 +560,7 @@ var rquery = function () {
                      case 19:
                         account = request.username;
                         _context6.next = 22;
-                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your ' + this.config.serviceLabel + ' account name is <b>' + account + '</b>, as per your Telegram user.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + account + '.']);
+                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your ' + this.config.serviceLabel + ' account name is <b>' + account + '</b>, as per your Telegram user.', 'Read ' + this.config.openHostname + '/docs/register-cert.md, and then', 'use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + account + '.']);
 
                      case 22:
                      case 'end':
@@ -680,7 +680,7 @@ var rquery = function () {
                         }
 
                         _context8.next = 6;
-                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/grantcert &lt;digest&gt;</code>', 'where the <code>digest</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + request.username + '?id=' + request.username, 'See ' + this.config.openHostname + '/docs/register-cert.md for further info.']);
+                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/grantcert &lt;digest&gt;</code>', 'where the <code>digest</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', 'Read ' + this.config.openHostname + '/docs/register-cert.md for further info.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + request.username + '?id=' + request.username]);
 
                      case 6:
                         return _context8.abrupt('return');
