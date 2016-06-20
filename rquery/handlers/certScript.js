@@ -99,10 +99,10 @@ export async function handleCertScript(req, res, reqx, {config}) {
       ]);
    }
    result = result.concat([
-      `  if [ -d ${dir} ]`,
-      `  then`,
+      `  if [ -d ${dir} ] # directory already exists`,
+      `  then # must be archived first`,
       `    echo "Directory ${dir} already exists. Try add '?archive' query to the URL."`,
-      `  else`,
+      `  else # fetch, review and check SHA of static cert-script.sh for execution`,
       `    mkdir ${dir} && cd $_ # error exit if dir exists`,
       `    curl -s https://raw.githubusercontent.com/webserva/webserva/master/bin/cert-script.sh -O`,
       `    echo 'Please review and press Ctrl-C to abort within 8 seconds:'`,
