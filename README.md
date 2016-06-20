@@ -5,6 +5,8 @@
 
 It is basically a Node SSL authentication and authorisation microservice for Redis access.
 
+It is deployed as https://webserva.com. For info about this service and its deployment, see: https://github.com/webserva/webserva
+
 Notable features (June 2016):
 - Create adhoc ephemeral keyspaces
 - Identity verification via Telegram.org chat bot
