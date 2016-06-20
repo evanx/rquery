@@ -10,4 +10,3 @@ var CSON = require('season');
 function readFileSync(file) {
    return CSON.readFileSync(file);
 }
-//# sourceMappingURL=CsonFiles.js.map

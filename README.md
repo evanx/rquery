@@ -5,7 +5,7 @@ Node server for Redis multi-tenancy and access control, used for https://webserv
 
 It is basically a Node SSL authentication and authorisation microservice for Redis access.
 
-It is deployed as https://webserva.com. For info about this service and its deployment, see: https://github.com/webserva/webserva
+For more info, see: https://github.com/webserva/webserva/blob/master/README.md.
 
 Notable features (June 2016):
 - Create adhoc ephemeral keyspaces
@@ -21,7 +21,6 @@ Notable features (June 2016):
 TODO (June 2016):
 - revoke cert account access
 - keyspace role-based access control
-
 
 ### Status
 
