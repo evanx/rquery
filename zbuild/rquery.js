@@ -5555,10 +5555,10 @@ var rquery = function () {
       value: function digestPem(pem) {
          var contentLines = this.splitPem(pem);
          var content = contentLines.join('');
-         this.logger.debug('digestPem', pem, content);
          var sha1 = _crypto2.default.createHash('sha1');
          sha1.update(new Buffer(content));
          var digest = sha1.digest('hex');
+         this.logger.debug('digestPem', pem, content, digest);
          if (digest.length < 32) {
             throw new ValidationError({
                status: 400,

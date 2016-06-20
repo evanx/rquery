@@ -2324,10 +2324,10 @@ export default class rquery {
    digestPem(pem) {
       const contentLines = this.splitPem(pem);
       const content = contentLines.join('');
-      this.logger.debug('digestPem', pem, content);
       const sha1 = crypto.createHash('sha1');
       sha1.update(new Buffer(content));
       const digest = sha1.digest('hex');
+      this.logger.debug('digestPem', pem, content, digest);
       if (digest.length < 32) {
          throw new ValidationError({
             status: 400,
