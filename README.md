@@ -128,7 +128,7 @@ https://github.com/webserva/webserva/blob/master/docs/register-cert.md
 
 This utilitises a script generator endpoint for your account e.g. see: https://open.webserva.com/cert-script/ACCOUNT
 
-![Cert script piped to bash](https://evanx.github.io/images/rquery/ws040-cert-script.png)
+![Cert script piped to bash](https://evanx.github.io/images/rquery/ws040-cert-script-ee895ce.png)
 
 This curls a versioned script: https://raw.githubusercontent.com/webserva/webserva/master/bin/cert-script.sh
 
@@ -137,6 +137,9 @@ It's SHA is compared to an alternative source, to give confidence in its integri
 ```shell
 curl -s https://raw.githubusercontent.com/webserva/webserva/master/bin/cert-script.sh | sha1sum
 curl -s https://open.webserva.com/assets/cert-script.sh.sha1sum
+```
+```
+10216de965424a28bd710eb4ced993857ee895ce  -
 ```
 
 It curls the following help endpoint: https://webserva.com/cert-script-help/ACCOUNT
