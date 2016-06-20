@@ -13,6 +13,8 @@ Notable features (June 2016):
 - Generate tokens for Google Authenticator
 - Excrypt keys using client cert via `set-encrypt`
 
+![WebServaBot](http://evanx.github.io/images/rquery/ws040-webservabot.png)
+
 TODO (June 2016):
 - revoke cert account access
 - keyspace role-based access control
