@@ -143,7 +143,7 @@ where the script currently has the following hash:
 10216de965424a28bd710eb4ced993857ee895ce  -
 ```
 
-It curls the following help endpoint: https://webserva.com/cert-script-help/ACCOUNT
+It curls the following help endpoint: https://open.webserva.com/cert-script-help/ACCOUNT
 
 Finally it curls the following static help:
 ```
