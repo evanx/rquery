@@ -374,3 +374,7 @@ We use a supervisor implementation for such components via the `lib` submodule:
 ### Further reading
 
 Related projects and further plans: https://github.com/evanx/mpush-redis/blob/master/related.md
+
+Webserva deployment: https://github.com/webserva/webserva
+
+https://twitter.com/evanxsummers
