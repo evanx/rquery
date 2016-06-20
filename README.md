@@ -14,6 +14,7 @@ Notable features (June 2016):
 - Excrypt keys using client cert via `set-encrypt`
 
 ![WebServaBot](http://evanx.github.io/images/rquery/ws040-webservabot.png)
+<hr>
 
 TODO (June 2016):
 - revoke cert account access
