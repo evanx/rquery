@@ -98,7 +98,7 @@ exports.default = function () {
                   shortDigest = certDigest.slice(-12);
                   pemExtract = rquery.extractPem(cert);
 
-                  logger.debug('cert', { certDigest: certDigest, shortDigest: shortDigest, pemExtract: pemExtract });
+                  logger.debug('cert', certDigest);
                   _context.next = 27;
                   return rquery.redis.multiExecAsync(function (multi) {
                      multi.get(grantKey);

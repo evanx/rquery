@@ -43,7 +43,7 @@ export default async function registerCert(req, res, reqx) {
    const certDigest = rquery.digestPem(cert);
    const shortDigest = certDigest.slice(-12);
    const pemExtract = rquery.extractPem(cert);
-   logger.debug('cert', {certDigest, shortDigest, pemExtract});
+   logger.debug('cert', certDigest);
    const [granted, sismember] = await rquery.redis.multiExecAsync(multi => {
       multi.get(grantKey);
       multi.sismember(rquery.adminKey('account', account, 'certs'), certDigest);
