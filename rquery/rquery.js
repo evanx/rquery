@@ -639,14 +639,14 @@ export default class rquery {
          if (!sadd) {
             throw new ValidationError({
                status: 400,
-               message: 'Already exists in set',
+               message: 'Keyspace already exists',
                hint: this.hints.routes
             });
          }
          if (hlen) {
             throw new ValidationError({
                status: 400,
-               message: 'Already exists',
+               message: 'Keyspace already exists (hlen)',
                hint: this.hints.routes
             });
          }

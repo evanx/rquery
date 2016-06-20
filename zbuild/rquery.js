@@ -1502,7 +1502,7 @@ var rquery = function () {
 
                            throw new ValidationError({
                               status: 400,
-                              message: 'Already exists in set',
+                              message: 'Keyspace already exists',
                               hint: _this6.hints.routes
                            });
 
@@ -1514,7 +1514,7 @@ var rquery = function () {
 
                            throw new ValidationError({
                               status: 400,
-                              message: 'Already exists',
+                              message: 'Keyspace already exists (hlen)',
                               hint: _this6.hints.routes
                            });
 
