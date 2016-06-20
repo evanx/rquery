@@ -560,7 +560,7 @@ var rquery = function () {
                      case 19:
                         account = request.username;
                         _context6.next = 22;
-                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your ' + this.config.serviceLabel + ' account name is <b>' + account + '</b>, as per your Telegram user.', 'Read ' + this.config.openHostname + '/docs/register-cert.md, and then', 'use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + account + '.']);
+                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your ' + this.config.serviceLabel + ' account name is <b>' + account + '</b>, as per your Telegram user.', 'Use the following script create a client cert:', this.config.openHostname + '/cert-script/' + account + '.', 'We recommend you review, and read ' + this.config.openHostname + '/docs/register-cert.md.']);
 
                      case 22:
                      case 'end':
@@ -4013,6 +4013,7 @@ var rquery = function () {
          this.addPublicCommand({
             key: 'destroy-account',
             params: ['account'],
+            dangerous: true, // TODO
             description: 'destroy an account'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee98(req, res, reqx) {
@@ -4039,9 +4040,10 @@ var rquery = function () {
                            throw { message: 'All keyspaces must be destroyed individually first' };
 
                         case 7:
-                           throw { message: 'Not implemented' };
+                           _this9.logger.error('not implemented', reqx);
+                           throw { message: 'Not implemented. Bug @evanxsummers after 24 June' };
 
-                        case 8:
+                        case 9:
                         case 'end':
                            return _context98.stop();
                      }
@@ -4052,6 +4054,7 @@ var rquery = function () {
                return ref.apply(this, arguments);
             };
          }());
+         // TODO
          this.addPublicCommand({
             key: 'register-cert',
             relatedCommands: ['create-keyspace', 'keyspaces']
@@ -5534,7 +5537,7 @@ var rquery = function () {
             throw new ValidationError('Invalid first line');
          }
          var contentLines = lines.filter(function (line) {
-            return line.length > 16 && /^[\w\/\+]+$/.test(line);
+            return line.length > 16 && !/^--/.test(line);
          });
          if (contentLines.length < 8) {
             throw new ValidationError('Invalid lines');
@@ -5551,10 +5554,10 @@ var rquery = function () {
       key: 'digestPem',
       value: function digestPem(pem) {
          var contentLines = this.splitPem(pem);
+         var content = contentLines.join('');
+         this.logger.debug('digestPem', pem, content);
          var sha1 = _crypto2.default.createHash('sha1');
-         contentLines.forEach(function (line) {
-            return sha1.update(new Buffer(line));
-         });
+         sha1.update(new Buffer(content));
          var digest = sha1.digest('hex');
          if (digest.length < 32) {
             throw new ValidationError({

@@ -140,7 +140,7 @@ curl -s https://open.webserva.com/assets/cert-script.sh.sha1sum
 ```
 where the script currently has the following hash:
 ```
-10216de965424a28bd710eb4ced993857ee895ce  -
+f6edc446466e228965e51bee120425b497605949
 ```
 
 It curls the following help endpoint: https://open.webserva.com/cert-script-help/ACCOUNT

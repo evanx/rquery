@@ -98,7 +98,7 @@ exports.default = function () {
                   shortDigest = certDigest.slice(-12);
                   pemExtract = rquery.extractPem(cert);
 
-                  logger.debug(Loggers.values({ certDigest: certDigest, shortDigest: shortDigest, pemExtract: pemExtract }, 'cert'));
+                  logger.debug('cert', { certDigest: certDigest, shortDigest: shortDigest, pemExtract: pemExtract });
                   _context.next = 27;
                   return rquery.redis.multiExecAsync(function (multi) {
                      multi.get(grantKey);
@@ -131,8 +131,8 @@ exports.default = function () {
                   throw new ValidationError({ message: 'Cert must be granted via @' + rquery.config.adminBotName,
                      status: 403,
                      hint: {
-                        message: ['Try @' + rquery.config.adminBotName + ' "/grantcert ' + shortDigest + '"', 'e.g. via https://web.telegram.org,'].join(' '),
-                        clipboard: '@' + rquery.config.adminBotName + ' /grantcert ' + shortDigest,
+                        message: ['Try @' + rquery.config.adminBotName + ' "/grantcert ' + certDigest + '"', 'e.g. via https://web.telegram.org,'].join(' '),
+                        clipboard: '@' + rquery.config.adminBotName + ' /grantcert ' + certDigest,
                         url: 'https://telegram.me/' + rquery.config.adminBotName + '?start'
                      }
                   });
@@ -145,11 +145,11 @@ exports.default = function () {
 
                   throw new ValidationError({
                      status: 400,
-                     message: 'Granted cert not matching: ' + shortDigest,
+                     message: 'Granted cert not matching: ' + certDigest,
                      hint: {
-                        message: 'Try @' + rquery.config.adminBotName + ' "/grantcert ' + shortDigest + '"' + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
+                        message: 'Try @' + rquery.config.adminBotName + ' "/grantcert ' + certDigest + '"' + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
 
-                        clipboard: '@' + rquery.config.adminBotName + ' /grantcert ' + shortDigest,
+                        clipboard: '@' + rquery.config.adminBotName + ' /grantcert ' + certDigest,
                         url: 'https://telegram.me/' + rquery.config.adminBotName + '?start'
                      }
                   });

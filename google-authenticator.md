@@ -11,7 +11,7 @@ https://demo.webserva.com/genkey-ga/evanx@myserver.com/My%20service
 
 <hr>
 
-Alternatively, if you don't have a JSON viewer extension installed in your browser, or are using `curl` then try the `clidemo` domain:
+Alternatively, if you don't have a JSON viewer extension installed in your browser, or are using `curl` then try the `demo` domain:
 
 https://demo.webserva.com/genkey-ga/evanx@myserver.com/My%20service
 

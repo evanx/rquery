@@ -245,9 +245,9 @@ export default class rquery {
       await this.sendTelegram(request.chatId, 'html', [
          `Thanks, ${request.greetName}.`,
          `Your ${this.config.serviceLabel} account name is <b>${account}</b>, as per your Telegram user.`,
-         `Read ${this.config.openHostname}/docs/register-cert.md, and then`,
-         `use the following link to create a client cert:`,
+         `Use the following script create a client cert:`,
          `${this.config.openHostname}/cert-script/${account}.`,
+         `We recommend you review, and read ${this.config.openHostname}/docs/register-cert.md.`,
       ]);
    }
 
@@ -1463,6 +1463,7 @@ export default class rquery {
       this.addPublicCommand({
          key: 'destroy-account',
          params: ['account'],
+         dangerous: true, // TODO
          description: 'destroy an account'
       }, async (req, res, reqx) => {
          let {account, accountKey} = reqx;
@@ -1472,7 +1473,8 @@ export default class rquery {
          if (scard > 0) {
             throw {message: 'All keyspaces must be destroyed individually first'};
          }
-         throw {message: 'Not implemented'};
+         this.logger.error('not implemented', reqx);
+         throw {message: 'Not implemented. Bug @evanxsummers after 24 June'}; // TODO
       });
       this.addPublicCommand({
          key: 'register-cert',
@@ -2307,9 +2309,7 @@ export default class rquery {
       if (!/^-+BEGIN CERTIFICATE/.test(lines[0])) {
          throw new ValidationError('Invalid first line');
       }
-      const contentLines = lines.filter(line => {
-         return line.length > 16 && /^[\w\/\+]+$/.test(line);
-      });
+      const contentLines = lines.filter(line => line.length > 16 && !/^--/.test(line));
       if (contentLines.length < 8) {
          throw new ValidationError('Invalid lines');
       }
@@ -2323,8 +2323,10 @@ export default class rquery {
 
    digestPem(pem) {
       const contentLines = this.splitPem(pem);
+      const content = contentLines.join('');
+      this.logger.debug('digestPem', pem, content);
       const sha1 = crypto.createHash('sha1');
-      contentLines.forEach(line => sha1.update(new Buffer(line)));
+      sha1.update(new Buffer(content));
       const digest = sha1.digest('hex');
       if (digest.length < 32) {
          throw new ValidationError({

@@ -43,7 +43,7 @@ export default async function registerCert(req, res, reqx) {
    const certDigest = rquery.digestPem(cert);
    const shortDigest = certDigest.slice(-12);
    const pemExtract = rquery.extractPem(cert);
-   logger.debug(Loggers.values({certDigest, shortDigest, pemExtract}, 'cert'));
+   logger.debug('cert', {certDigest, shortDigest, pemExtract});
    const [granted, sismember] = await rquery.redis.multiExecAsync(multi => {
       multi.get(grantKey);
       multi.sismember(rquery.adminKey('account', account, 'certs'), certDigest);
@@ -60,10 +60,10 @@ export default async function registerCert(req, res, reqx) {
          status: 403,
          hint: {
             message: [
-               `Try @${rquery.config.adminBotName} "/grantcert ${shortDigest}"`,
+               `Try @${rquery.config.adminBotName} "/grantcert ${certDigest}"`,
                `e.g. via https://web.telegram.org,`,
             ].join(' '),
-            clipboard: `@${rquery.config.adminBotName} /grantcert ${shortDigest}`,
+            clipboard: `@${rquery.config.adminBotName} /grantcert ${certDigest}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });
@@ -73,13 +73,13 @@ export default async function registerCert(req, res, reqx) {
    pemExtract != granted) {
       throw new ValidationError({
          status: 400,
-         message: 'Granted cert not matching: ' + shortDigest,
+         message: 'Granted cert not matching: ' + certDigest,
          hint: {
-            message: `Try @${rquery.config.adminBotName} "/grantcert ${shortDigest}"`
+            message: `Try @${rquery.config.adminBotName} "/grantcert ${certDigest}"`
             + ` from the authoritative Telegram account`
             + ` e.g. via https://web.telegram.org`
             ,
-            clipboard: `@${rquery.config.adminBotName} /grantcert ${shortDigest}`,
+            clipboard: `@${rquery.config.adminBotName} /grantcert ${certDigest}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });
