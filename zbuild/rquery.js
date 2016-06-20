@@ -4169,7 +4169,7 @@ var rquery = function () {
                      case 0:
                         _context101.prev = 0;
                         return _context101.delegateYield(regeneratorRuntime.mark(function _callee100() {
-                           var errorMessage, account, v, dn, cert, certDigest, otpSecret, accountKey, _ref44, _ref45, hsetnx, saddAccount, saddCert, result;
+                           var errorMessage, account, v, dn, cert, certDigest, otpSecret, accountKey, _ref44, _ref45, hsetnx, saddAccount, _ref46, _ref47, saddCert, result;
 
                            return regeneratorRuntime.wrap(function _callee100$(_context100) {
                               while (1) {
@@ -4218,43 +4218,61 @@ var rquery = function () {
                                        _context100.next = 18;
                                        return _this12.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', Seconds.now());
-                                          multi.hsetnx(accountKey, 'expire', _this12.config.keyExpire);
                                           multi.sadd(_this12.adminKey('accounts'), account);
+                                          multi.hsetnx(accountKey, 'expire', _this12.config.keyExpire);
                                           multi.sadd(_this12.adminKey('account', account, 'topt'), otpSecret);
-                                          multi.sadd(_this12.adminKey('account', account, 'certs'), certDigest);
                                        });
 
                                     case 18:
                                        _ref44 = _context100.sent;
-                                       _ref45 = _slicedToArray(_ref44, 3);
+                                       _ref45 = _slicedToArray(_ref44, 2);
                                        hsetnx = _ref45[0];
                                        saddAccount = _ref45[1];
-                                       saddCert = _ref45[2];
 
                                        if (hsetnx) {
-                                          _context100.next = 25;
+                                          _context100.next = 24;
                                           break;
                                        }
 
-                                       throw { message: 'Account exists' };
+                                       throw { message: 'Account already exists (hashes)' };
 
-                                    case 25:
-                                       if (!saddAccount) {
-                                          _this12.logger.error('sadd account');
+                                    case 24:
+                                       if (saddAccount) {
+                                          _context100.next = 26;
+                                          break;
                                        }
-                                       if (!saddCert) {
-                                          _this12.logger.error('sadd cert');
+
+                                       throw { message: 'Account already exists (set)' };
+
+                                    case 26:
+                                       _context100.next = 28;
+                                       return _this12.redis.multiExecAsync(function (multi) {
+                                          multi.sadd(_this12.adminKey('account', account, 'certs'), certDigest);
+                                       });
+
+                                    case 28:
+                                       _ref46 = _context100.sent;
+                                       _ref47 = _slicedToArray(_ref46, 1);
+                                       saddCert = _ref47[0];
+
+                                       if (saddCert) {
+                                          _context100.next = 33;
+                                          break;
                                        }
+
+                                       throw { message: 'Cert already exists' };
+
+                                    case 33:
                                        result = _this12.buildQrReply({
                                           otpSecret: otpSecret,
                                           user: account,
                                           host: _this12.config.hostDomain,
                                           label: _this12.config.serviceLabel
                                        });
-                                       _context100.next = 30;
+                                       _context100.next = 36;
                                        return Result.sendResult({}, req, res, { account: account }, result);
 
-                                    case 30:
+                                    case 36:
                                     case 'end':
                                        return _context100.stop();
                                  }
@@ -4329,7 +4347,7 @@ var rquery = function () {
                                           reqx = { command: command };
                                           _context103.prev = 1;
                                           return _context103.delegateYield(regeneratorRuntime.mark(function _callee102() {
-                                             var message, account, accountKey, _ref46, _ref47, _ref47$, time, admined, certs, duration, _validateCert2, certDigest, certRole, result;
+                                             var message, account, accountKey, _ref48, _ref49, _ref49$, time, admined, certs, duration, _validateCert2, certDigest, certRole, result;
 
                                              return regeneratorRuntime.wrap(function _callee102$(_context102) {
                                                 while (1) {
@@ -4355,12 +4373,12 @@ var rquery = function () {
                                                          });
 
                                                       case 7:
-                                                         _ref46 = _context102.sent;
-                                                         _ref47 = _slicedToArray(_ref46, 3);
-                                                         _ref47$ = _slicedToArray(_ref47[0], 1);
-                                                         time = _ref47$[0];
-                                                         admined = _ref47[1];
-                                                         certs = _ref47[2];
+                                                         _ref48 = _context102.sent;
+                                                         _ref49 = _slicedToArray(_ref48, 3);
+                                                         _ref49$ = _slicedToArray(_ref49[0], 1);
+                                                         time = _ref49$[0];
+                                                         admined = _ref49[1];
+                                                         certs = _ref49[2];
 
                                                          _this13.logger.debug('admin command', { account: account, accountKey: accountKey, time: time, admined: admined, certs: certs });
                                                          if (!admined) {
@@ -4782,7 +4800,7 @@ var rquery = function () {
                         case 0:
                            _context108.prev = 0;
                            return _context108.delegateYield(regeneratorRuntime.mark(function _callee107() {
-                              var _req$params11, account, keyspace, key, timeout, accountKey, accountKeyspace, helpPath, reqx, v, isSecureAccount, _ref48, _ref49, _ref49$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref50, _ref51, expire;
+                              var _req$params11, account, keyspace, key, timeout, accountKey, accountKeyspace, helpPath, reqx, v, isSecureAccount, _ref50, _ref51, _ref51$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref52, _ref53, expire;
 
                               return regeneratorRuntime.wrap(function _callee107$(_context107) {
                                  while (1) {
@@ -4876,14 +4894,14 @@ var rquery = function () {
                                           });
 
                                        case 33:
-                                          _ref48 = _context107.sent;
-                                          _ref49 = _slicedToArray(_ref48, 5);
-                                          _ref49$ = _slicedToArray(_ref49[0], 1);
-                                          time = _ref49$[0];
-                                          registered = _ref49[1];
-                                          admined = _ref49[2];
-                                          accessed = _ref49[3];
-                                          certs = _ref49[4];
+                                          _ref50 = _context107.sent;
+                                          _ref51 = _slicedToArray(_ref50, 5);
+                                          _ref51$ = _slicedToArray(_ref51[0], 1);
+                                          time = _ref51$[0];
+                                          registered = _ref51[1];
+                                          admined = _ref51[2];
+                                          accessed = _ref51[3];
+                                          certs = _ref51[4];
 
                                           Objects.kvs({ time: time, registered: registered, admined: admined, accessed: accessed }).forEach(function (kv) {
                                              reqx[kv.key] = parseInt(kv.value);
@@ -4992,9 +5010,9 @@ var rquery = function () {
                                           return multi.execAsync();
 
                                        case 77:
-                                          _ref50 = _context107.sent;
-                                          _ref51 = _toArray(_ref50);
-                                          expire = _ref51;
+                                          _ref52 = _context107.sent;
+                                          _ref53 = _toArray(_ref52);
+                                          expire = _ref53;
 
                                           if (expire) {
                                              _context107.next = 82;
@@ -5055,11 +5073,11 @@ var rquery = function () {
    }, {
       key: 'migrateKeyspace',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee109(_ref52) {
-            var account = _ref52.account;
-            var keyspace = _ref52.keyspace;
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee109(_ref54) {
+            var account = _ref54.account;
+            var keyspace = _ref54.keyspace;
 
-            var accountKey, _ref53, _ref54, accessToken, token, _ref55, _ref56, hsetnx, hdel;
+            var accountKey, _ref55, _ref56, accessToken, token, _ref57, _ref58, hsetnx, hdel;
 
             return regeneratorRuntime.wrap(function _callee109$(_context109) {
                while (1) {
@@ -5073,10 +5091,10 @@ var rquery = function () {
                         });
 
                      case 3:
-                        _ref53 = _context109.sent;
-                        _ref54 = _slicedToArray(_ref53, 2);
-                        accessToken = _ref54[0];
-                        token = _ref54[1];
+                        _ref55 = _context109.sent;
+                        _ref56 = _slicedToArray(_ref55, 2);
+                        accessToken = _ref56[0];
+                        token = _ref56[1];
 
                         if (!(!token && accessToken)) {
                            _context109.next = 20;
@@ -5090,10 +5108,10 @@ var rquery = function () {
                         });
 
                      case 10:
-                        _ref55 = _context109.sent;
-                        _ref56 = _slicedToArray(_ref55, 2);
-                        hsetnx = _ref56[0];
-                        hdel = _ref56[1];
+                        _ref57 = _context109.sent;
+                        _ref58 = _slicedToArray(_ref57, 2);
+                        hsetnx = _ref58[0];
+                        hdel = _ref58[1];
 
                         if (hsetnx) {
                            _context109.next = 18;
@@ -5189,8 +5207,8 @@ var rquery = function () {
       }
    }, {
       key: 'validateAccess',
-      value: function validateAccess(req, reqx, _ref57) {
-         var certs = _ref57.certs;
+      value: function validateAccess(req, reqx, _ref59) {
+         var certs = _ref59.certs;
          var command = reqx.command;
          var account = reqx.account;
          var keyspace = reqx.keyspace;

@@ -1553,21 +1553,23 @@ export default class rquery {
          const certDigest = this.digestPem(cert);
          const otpSecret = this.generateTokenKey();
          const accountKey = this.adminKey('account', account);
-         const [hsetnx, saddAccount, saddCert] = await this.redis.multiExecAsync(multi => {
+         const [hsetnx, saddAccount] = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(accountKey, 'registered', Seconds.now());
-            multi.hsetnx(accountKey, 'expire', this.config.keyExpire);
             multi.sadd(this.adminKey('accounts'), account);
+            multi.hsetnx(accountKey, 'expire', this.config.keyExpire);
             multi.sadd(this.adminKey('account', account, 'topt'), otpSecret);
-            multi.sadd(this.adminKey('account', account, 'certs'), certDigest);
          });
          if (!hsetnx) {
-            throw {message: 'Account exists'};
+            throw {message: 'Account already exists (hashes)'};
          }
          if (!saddAccount) {
-            this.logger.error('sadd account');
+            throw {message: 'Account already exists (set)'};
          }
+         const [saddCert] = await this.redis.multiExecAsync(multi => {
+            multi.sadd(this.adminKey('account', account, 'certs'), certDigest);
+         });
          if (!saddCert) {
-            this.logger.error('sadd cert');
+            throw {message: 'Cert already exists'};
          }
          const result = this.buildQrReply({
             otpSecret,
