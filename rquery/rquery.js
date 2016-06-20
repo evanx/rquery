@@ -322,8 +322,8 @@ export default class rquery {
             `You have approved enrollment of the cert <b>${cert}</b>.`,
             `That identity can now enroll via ${this.config.secureHostname}/register-cert.`,
             `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.enrollExpire)}`,
-            `otherwise you need to repeat this request. See ${this.config.openHostname}/docs/register-cert.md`,
-            ``
+            `otherwise you need to repeat this request, after it expires.`,
+            `See ${openHostname}/docs/register-cert.md for further info.`,
          ]);
       } else {
          await this.sendTelegramReply(request, 'html', [

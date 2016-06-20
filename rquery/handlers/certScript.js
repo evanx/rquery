@@ -110,7 +110,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
       `    echo 'Double checking script integrity hashes:'`,
       `    sha1sum cert-script.sh # double check its SHA against another source below`,
       `    curl -s https://open.webserva.com/assets/cert-script.sh.sha1sum`,
-      `    echo '1c04b96bde8f4f1f1b4c05c9c368204bd8b46e54' # hardcoded SHA of stable version`,
+      `    echo '10216de965424a28bd710eb4ced993857ee895ce' # hardcoded SHA of stable version`,
       `    echo 'Press Ctrl-C in the next 8 seconds to abort, and if any of the above hashes differ'`,
       `    sleep 8 # give time to abort if SHAs not consistent, or script review incomplete`,
       `    source <(cat cert-script.sh) # execute fetched script, hence the above review and SHA`,
