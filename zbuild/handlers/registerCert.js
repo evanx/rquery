@@ -13,7 +13,7 @@ var rquery = global.rquery;
 
 exports.default = function () {
    var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee(req, res, reqx) {
-      var cert, dn, _dn$cn$split, _dn$cn$split2, matching, account, role, id, accountKey, grantKey, certDigest, shortDigest, pemExtract, _ref, _ref2, granted, sismember, _ref3, _ref4, del, sadd;
+      var cert, dn, _dn$cn$split, _dn$cn$split2, matching, account, role, id, accountKey, grantKey, certDigest, shortDigest, _ref, _ref2, granted, sismember, _ref3, _ref4, del, sadd;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
          while (1) {
@@ -96,35 +96,34 @@ exports.default = function () {
                   grantKey = rquery.adminKey('telegram', 'user', account, 'grantcert');
                   certDigest = rquery.digestPem(cert);
                   shortDigest = certDigest.slice(-12);
-                  pemExtract = rquery.extractPem(cert);
 
                   logger.debug('cert', certDigest);
-                  _context.next = 27;
+                  _context.next = 26;
                   return rquery.redis.multiExecAsync(function (multi) {
                      multi.get(grantKey);
                      multi.sismember(rquery.adminKey('account', account, 'certs'), certDigest);
                   });
 
-               case 27:
+               case 26:
                   _ref = _context.sent;
                   _ref2 = _slicedToArray(_ref, 2);
                   granted = _ref2[0];
                   sismember = _ref2[1];
 
                   if (!sismember) {
-                     _context.next = 33;
+                     _context.next = 32;
                      break;
                   }
 
                   throw new ValidationError({
                      status: 200,
-                     message: 'Cert granted',
+                     message: 'Cert already granted',
                      hint: rquery.hints.routes
                   });
 
-               case 33:
+               case 32:
                   if (granted) {
-                     _context.next = 35;
+                     _context.next = 34;
                      break;
                   }
 
@@ -137,9 +136,9 @@ exports.default = function () {
                      }
                   });
 
-               case 35:
-                  if (!(granted.indexOf(shortDigest) < 0 && certDigest.indexOf(granted) < 0 && pemExtract != granted)) {
-                     _context.next = 37;
+               case 34:
+                  if (!(granted.indexOf(shortDigest) < 0 && certDigest.indexOf(granted) < 0)) {
+                     _context.next = 36;
                      break;
                   }
 
@@ -154,14 +153,14 @@ exports.default = function () {
                      }
                   });
 
-               case 37:
-                  _context.next = 39;
+               case 36:
+                  _context.next = 38;
                   return rquery.redis.multiExecAsync(function (multi) {
                      multi.del(grantKey);
                      multi.sadd(rquery.adminKey('account', account, 'certs'), certDigest);
                   });
 
-               case 39:
+               case 38:
                   _ref3 = _context.sent;
                   _ref4 = _slicedToArray(_ref3, 2);
                   del = _ref4[0];
@@ -175,7 +174,7 @@ exports.default = function () {
                   }
                   return _context.abrupt('return', { account: account });
 
-               case 46:
+               case 45:
                case 'end':
                   return _context.stop();
             }

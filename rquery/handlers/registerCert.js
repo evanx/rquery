@@ -42,7 +42,6 @@ export default async function registerCert(req, res, reqx) {
    const grantKey = rquery.adminKey('telegram', 'user', account, 'grantcert');
    const certDigest = rquery.digestPem(cert);
    const shortDigest = certDigest.slice(-12);
-   const pemExtract = rquery.extractPem(cert);
    logger.debug('cert', certDigest);
    const [granted, sismember] = await rquery.redis.multiExecAsync(multi => {
       multi.get(grantKey);
@@ -51,7 +50,7 @@ export default async function registerCert(req, res, reqx) {
    if (sismember) {
       throw new ValidationError({
          status: 200,
-         message: 'Cert granted',
+         message: 'Cert already granted',
          hint: rquery.hints.routes
       });
    }
@@ -69,8 +68,7 @@ export default async function registerCert(req, res, reqx) {
       });
    }
    if (granted.indexOf(shortDigest) < 0 &&
-   certDigest.indexOf(granted) < 0 &&
-   pemExtract != granted) {
+   certDigest.indexOf(granted) < 0) {
       throw new ValidationError({
          status: 400,
          message: 'Granted cert not matching: ' + certDigest,
