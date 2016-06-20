@@ -4059,10 +4059,6 @@ var rquery = function () {
             key: 'register-cert',
             relatedCommands: ['create-keyspace', 'keyspaces']
          }, require('./handlers/registerCert').default);
-         this.addPublicCommand({
-            key: 'enroll-cert',
-            relatedCommands: ['create-keyspace', 'keyspaces']
-         }, require('./handlers/registerCert').default);
       }
    }, {
       key: 'getClientCert',

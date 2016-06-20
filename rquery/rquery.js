@@ -1480,10 +1480,6 @@ export default class rquery {
          key: 'register-cert',
          relatedCommands: ['create-keyspace', 'keyspaces']
       }, require('./handlers/registerCert').default);
-      this.addPublicCommand({
-         key: 'enroll-cert',
-         relatedCommands: ['create-keyspace', 'keyspaces']
-      }, require('./handlers/registerCert').default);
    }
 
    getClientCert(req) {
