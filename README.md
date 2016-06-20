@@ -119,8 +119,7 @@ Note that we will register an account using our Telegram.org username. (I like T
 
 So visit https://web.telegram.org or install the mobile app, and message `@WebServaBot /verifyme.` That will verify your Telegram username to Redishub.
 
-<hr>
-<img src="https://evanx.github.io/images/rquery/rquery030-telegram.png"/>
+![WebServaBot](http://evanx.github.io/images/rquery/ws040-webservabot.png)
 <hr>
 
 See the following instructions for creating a client cert:
