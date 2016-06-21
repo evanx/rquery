@@ -3,8 +3,6 @@
 
 Node server for Redis multi-tenancy and access control, used for https://webserva.com.
 
-It is basically a Node SSL authentication and authorisation microservice for Redis access.
-
 For more info, see: https://github.com/webserva/webserva/blob/master/README.md.
 
 Notable features (June 2016):
