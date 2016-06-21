@@ -22,7 +22,7 @@ export async function handleCertScriptHelp(req, res, reqx, {config}) {
       `  Find your privcerts: ${dir}/privcert.pem (curl) and/or privcert.p12 (browser)`,
       `  For example, create a keyspace called 'tmp10days' as follows:`,
       `    ${curlAccount}/tmp10days/create-keyspace`,
-      `  Then try Redis commands on this keyspace for example:`,
+      `  Then try Redis commands on this keyspace, for example:`,
       `    ${curlAccount}/tmp10days/help`,
       `    ${curlAccount}/tmp10days/set/mykey/myvalue`,
       `    ${curlAccount}/tmp10days/get/mykey`,
