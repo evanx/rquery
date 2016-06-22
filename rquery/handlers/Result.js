@@ -178,7 +178,9 @@ function sendHtmlResult(command, req, res, reqx, result) {
       resultArray.push(resultString);
    }
    content.push(Hs.pre(styles.result.resultArray, lodash.compact(resultArray).join('\n')));
-   content.push(renderHints(rquery, command, req, reqx));
+   if (!reqx.published) {
+      content.push(renderHints(rquery, command, req, reqx));
+   }
    res.status(statusCode).send(renderPage({
       config: rquery.config, req, reqx, title, heading, icon, content
    }));

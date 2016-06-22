@@ -132,6 +132,7 @@ export default class rquery {
             this.logger.debug('access', access, type, typeof result);
             throw new ValidationError({status: 403, message: 'Access Prohibited e.g. unpublished keyspace'});
          }
+         reqx.published = true;
          await Result.sendResult(command, req, res, reqx, result);
       } else {
          next();

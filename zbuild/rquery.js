@@ -350,10 +350,11 @@ var rquery = function () {
                                        throw new ValidationError({ status: 403, message: 'Access Prohibited e.g. unpublished keyspace' });
 
                                     case 16:
-                                       _context5.next = 18;
+                                       reqx.published = true;
+                                       _context5.next = 19;
                                        return Result.sendResult(command, req, res, reqx, result);
 
-                                    case 18:
+                                    case 19:
                                     case 'end':
                                        return _context5.stop();
                                  }

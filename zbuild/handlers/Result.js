@@ -300,7 +300,9 @@ function sendHtmlResult(command, req, res, reqx, result) {
       resultArray.push(resultString);
    }
    content.push(Hs.pre(_styles2.default.result.resultArray, lodash.compact(resultArray).join('\n')));
-   content.push(renderHints(rquery, command, req, reqx));
+   if (!reqx.published) {
+      content.push(renderHints(rquery, command, req, reqx));
+   }
    res.status(statusCode).send((0, _Page2.default)({
       config: rquery.config, req: req, reqx: reqx, title: title, heading: heading, icon: icon, content: content
    }));
