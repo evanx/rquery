@@ -285,7 +285,7 @@ var rquery = function () {
       key: 'handlePublish',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee5(req, res, next) {
-            var parts, reqx, _parts, account, keyspace, commandKey, key, _parts2, _account, _keyspace, _key, accountKeyspace, keyspaceKey, accountKey, _ref, _ref2, access, type, result;
+            var parts, reqx, _parts, account, keyspace, commandKey, key, _parts2, _account, _keyspace, _key, accountKeyspace, keyspaceKey, accountKey, _ref, _ref2, access, type, result, command;
 
             return regeneratorRuntime.wrap(function _callee5$(_context5) {
                while (1) {
@@ -363,7 +363,7 @@ var rquery = function () {
                         result = _ref2[2];
 
                         if (reqx.commandKey) {
-                           _context5.next = 52;
+                           _context5.next = 57;
                            break;
                         }
 
@@ -376,52 +376,58 @@ var rquery = function () {
 
                      case 39:
                         if (!(type === 'set')) {
-                           _context5.next = 43;
+                           _context5.next = 44;
                            break;
                         }
 
+                        reqx.commandKey = 'smembers';
                         result = this.redis.smembersAsync(keyspaceKey);
-                        _context5.next = 52;
+                        _context5.next = 57;
                         break;
 
-                     case 43:
+                     case 44:
                         if (!(type === 'string')) {
-                           _context5.next = 47;
+                           _context5.next = 49;
                            break;
                         }
 
+                        reqx.commandKey = 'get';
                         result = this.redis.getAsync(keyspaceKey);
-                        _context5.next = 52;
+                        _context5.next = 57;
                         break;
 
-                     case 47:
+                     case 49:
                         if (!(type === 'list')) {
-                           _context5.next = 51;
+                           _context5.next = 56;
                            break;
                         }
 
-                        result = this.redis.lrangeAsync(keyspaceKey, 0, this.config.lrangeStop); // TODO
-                        _context5.next = 52;
+                        reqx.commandKey = 'lrange';
+                        req.params.start = 0;
+                        req.params.stop = this.config.lrangeStop;
+                        result = this.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop); // TODO
+                        _context5.next = 57;
                         break;
 
-                     case 51:
+                     case 56:
                         throw new ValidationError('Unsupported publish key type: ' + type);
 
-                     case 52:
+                     case 57:
                         if (!(access !== 'open')) {
-                           _context5.next = 55;
+                           _context5.next = 60;
                            break;
                         }
 
                         this.logger.debug('access', access, type, typeof result === 'undefined' ? 'undefined' : _typeof(result));
                         throw new ValidationError({ status: 403, message: 'Access Prohibited e.g. unpublished keyspace' });
 
-                     case 55:
+                     case 60:
                         reqx.published = true;
-                        _context5.next = 58;
+                        command = this.commandMap.get(reqx.commandKey);
+                        _context5.next = 64;
                         return Result.sendResult(command, req, res, reqx, result);
 
-                     case 58:
+                     case 64:
                      case 'end':
                         return _context5.stop();
                   }

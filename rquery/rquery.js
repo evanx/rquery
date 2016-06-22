@@ -143,11 +143,16 @@ export default class rquery {
          if (type === 'none') {
             throw new ValidationError({message: 'Unpublished', status: 404});
          } else if (type === 'set') {
+            reqx.commandKey = 'smembers';
             result = this.redis.smembersAsync(keyspaceKey);
          } else if (type === 'string') {
+            reqx.commandKey = 'get';
             result = this.redis.getAsync(keyspaceKey);
          } else if (type === 'list') {
-            result = this.redis.lrangeAsync(keyspaceKey, 0, this.config.lrangeStop); // TODO
+            reqx.commandKey = 'lrange';
+            req.params.start = 0;
+            req.params.stop = this.config.lrangeStop;
+            result = this.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop); // TODO
          } else {
             throw new ValidationError('Unsupported publish key type: ' + type);
          }
@@ -157,6 +162,7 @@ export default class rquery {
          throw new ValidationError({status: 403, message: 'Access Prohibited e.g. unpublished keyspace'});
       }
       reqx.published = true;
+      let command = this.commandMap.get(reqx.commandKey);
       await Result.sendResult(command, req, res, reqx, result);
    }
 
