@@ -62,7 +62,7 @@ export default async function registerCert(req, res, reqx) {
                `Try @${rquery.config.adminBotName} "/grantcert ${certDigest}"`,
                `e.g. via https://web.telegram.org,`,
             ].join(' '),
-            clipboard: `@${rquery.config.adminBotName} /grantcert ${certDigest}`,
+            clipboard: `/grantcert ${certDigest}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });
@@ -77,7 +77,7 @@ export default async function registerCert(req, res, reqx) {
             + ` from the authoritative Telegram account`
             + ` e.g. via https://web.telegram.org`
             ,
-            clipboard: `@${rquery.config.adminBotName} /grantcert ${certDigest}`,
+            clipboard: `/grantcert ${certDigest}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });
