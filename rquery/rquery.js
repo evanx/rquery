@@ -130,7 +130,8 @@ export default class rquery {
       let [access, type, result] = await this.redis.multiExecAsync(multi => {
          multi.hget(accountKeyspace, 'access');
          multi.type(keyspaceKey);
-         if (reqx.commandKey === 'get') {
+         if (!reqx.commandKey) {
+         } else if (reqx.commandKey === 'get') {
             multi.get(keyspaceKey);
          } else if (reqx.commandKey === 'smembers') {
             multi.smembers(keyspaceKey);
@@ -139,7 +140,7 @@ export default class rquery {
          }
       });
       if (!reqx.commandKey) {
-         if (!type) {
+         if (type === 'none') {
             throw new ValidationError({message: 'Unpublished', status: 404});
          } else if (type === 'set') {
             result = this.redis.smembersAsync(keyspaceKey);

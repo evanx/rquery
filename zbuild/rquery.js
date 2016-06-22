@@ -346,7 +346,7 @@ var rquery = function () {
                         return this.redis.multiExecAsync(function (multi) {
                            multi.hget(accountKeyspace, 'access');
                            multi.type(keyspaceKey);
-                           if (reqx.commandKey === 'get') {
+                           if (!reqx.commandKey) {} else if (reqx.commandKey === 'get') {
                               multi.get(keyspaceKey);
                            } else if (reqx.commandKey === 'smembers') {
                               multi.smembers(keyspaceKey);
@@ -367,7 +367,7 @@ var rquery = function () {
                            break;
                         }
 
-                        if (type) {
+                        if (!(type === 'none')) {
                            _context5.next = 39;
                            break;
                         }
