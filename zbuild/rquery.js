@@ -1971,7 +1971,8 @@ var rquery = function () {
          this.addAccountCommand({
             key: 'get-account-info',
             access: 'debug',
-            description: 'show admin info for this keyspace'
+            description: 'show admin info for this keyspace',
+            relatedCommands: ['keyspaces']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee35(req, res, reqx) {
                return regeneratorRuntime.wrap(function _callee35$(_context35) {
@@ -2120,11 +2121,11 @@ var rquery = function () {
                               if (type === 'string') {
                                  multiValues.get(key);
                               } else if (type === 'hash') {
-                                 multiValues.hlen(key);
+                                 multiValues.hkeys(key);
                               } else if (type === 'set') {
-                                 multiValues.scard(key);
+                                 multiValues.smembers(key);
                               } else if (type === 'zset') {
-                                 multiValues.zcard(key);
+                                 multiValues.type(key);
                               } else {
                                  multiValues.type(key);
                               }
@@ -2135,12 +2136,20 @@ var rquery = function () {
                         case 17:
                            values = _context38.sent;
 
+                           values = values.map(function (value, index) {
+                              var type = types[index];
+                              if (type !== 'string' && typeof value !== 'string' && lodash.isArray(value)) {
+                                 return value.join(', ');
+                              } else {
+                                 return value;
+                              }
+                           });
                            keys.forEach(function (key, index) {
                               return result[key.substring(keyIndex)] = values[index];
                            });
                            return _context38.abrupt('return', result);
 
-                        case 20:
+                        case 21:
                         case 'end':
                            return _context38.stop();
                      }
@@ -2154,7 +2163,8 @@ var rquery = function () {
          this.addKeyspaceCommand({
             key: 'ttls',
             access: 'debug',
-            description: 'view all TTLs in this keyspace'
+            description: 'view all TTLs in this keyspace',
+            relatedCommands: ['keyspaces', 'keys', 'values', 'types']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee39(req, res, reqx) {
                var account, keyspace, keys, keyIndex, multi, results, result;

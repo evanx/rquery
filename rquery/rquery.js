@@ -812,7 +812,8 @@ export default class rquery {
       this.addAccountCommand({
          key: 'get-account-info',
          access: 'debug',
-         description: 'show admin info for this keyspace'
+         description: 'show admin info for this keyspace',
+         relatedCommands: ['keyspaces']
       }, async (req, res, reqx) => {
          return await this.redis.hgetallAsync(reqx.accountKey);
       });
@@ -864,16 +865,24 @@ export default class rquery {
             if (type === 'string') {
                multiValues.get(key);
             } else if (type === 'hash') {
-               multiValues.hlen(key);
+               multiValues.hkeys(key);
             } else if (type === 'set') {
-               multiValues.scard(key);
+               multiValues.smembers(key);
             } else if (type === 'zset') {
-               multiValues.zcard(key);
+               multiValues.type(key);
             } else {
                multiValues.type(key);
             }
          });
-         const values = await multiValues.execAsync();
+         let values = await multiValues.execAsync();
+         values = values.map((value, index) => {
+            const type = types[index];
+            if (type !== 'string' && typeof value !== 'string' && lodash.isArray(value)) {
+               return value.join(', ');
+            } else {
+               return value;
+            }
+         });
          keys.forEach((key, index) => result[key.substring(keyIndex)] = values[index]);
          return result;
       });
@@ -881,6 +890,7 @@ export default class rquery {
          key: 'ttls',
          access: 'debug',
          description: 'view all TTLs in this keyspace',
+         relatedCommands: ['keyspaces', 'keys', 'values', 'types']
       }, async (req, res, reqx) => {
          const {account, keyspace} = reqx;
          const keys = await this.redis.keysAsync(this.keyspaceKey(account, keyspace, '*'));

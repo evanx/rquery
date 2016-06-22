@@ -300,91 +300,93 @@ function sendHtmlResult(command, req, res, reqx, result) {
       resultArray.push(resultString);
    }
    content.push(Hs.pre(_styles2.default.result.resultArray, lodash.compact(resultArray).join('\n')));
-   var hints = [];
-   if (command && reqx.account && reqx.keyspace && rquery.isBrowser(req)) {
-      if (command.relatedCommands) {
-         try {
-            hints = getRelatedCommandHints(req, reqx, command.relatedCommands);
-         } catch (err) {
-            rquery.logger.error('related', err, err.stack);
-         }
-      }
-      if (reqx.account !== 'hub') {
-         hints.push({
-            path: '/keyspaces/' + reqx.account,
-            description: 'view account keyspaces'
-         });
-      }
-      if (false) {
-         hints.push({
-            url: 'https://telegram.me/' + rquery.config.adminBotName + '?start',
-            description: 'See @' + rquery.config.adminBotName + ' on Telegram.org'
-         });
-      }
-      if (false) {
-         hints.push({
-            url: '/ak/' + reqx.account + '/' + reqx.keyspace + '/help',
-            description: 'account keyspace home'
-         });
-      }
-      var renderedPathHints = rquery.isCliDomain(req) ? [] : hints.filter(function (hint) {
-         return !hint.url;
-      }).map(function (hint) {
-         if (!hint.path) {
-            var path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace].concat(_toConsumableArray(hint.uri)).join('/'));
-            hint = Object.assign({ path: path }, hint);
-         }
-         return hint;
-      }).map(function (hint) {
-         var uriLabel = void 0;
-         if (hint.uri) {
-            uriLabel = [Hc.b(hint.uri[0])].concat(_toConsumableArray(hint.uri.slice(1))).join('/');
-         } else if (hint.path && hint.path[0] === '/') {
-            var parts = hint.path.split('/').slice(1);
-            if (parts.length === 1) {
-               uriLabel = '<b>' + parts[0] + '</b>';
-            } else {
-               uriLabel = '<b>' + parts[0] + '</b>/' + parts.slice(1).join('/');
-            }
-         }
-         rquery.logger.debug('hint', uriLabel, hint);
-         return He.div({
-            style: _styles2.default.result.hint.container,
-            onClick: HtmlElements.onClick({ href: hint.path })
-         }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, uriLabel)), Hso.div(_styles2.default.result.hint.description, lodash.capitalize(hint.description))]);
-      });
-      renderedPathHints = renderedPathHints.concat(hints.filter(function (hint) {
-         return hint.url && !hint.uri;
-      }).map(function (hint) {
-         return hint;
-      }).map(function (hint) {
-         var uriLabel = hint.path;
-         if (hint.uri) {
-            uriLabel = [Hc.b(hint.uri[0])].concat(_toConsumableArray(hint.uri.slice(1))).join('/');
-         }
-         return He.div({
-            style: _styles2.default.result.hint.container,
-            onClick: HtmlElements.onClick({ href: hint.url })
-         }, [He.div({
-            style: _styles2.default.result.hint.message,
-            meta: 'optional'
-         }, hint.message), Hso.div(_styles2.default.result.hint.link), Hso.div(_styles2.default.result.hint.description, lodash.capitalize(hint.description))]);
-      }));
-      rquery.logger.debug('renderedPathHints', renderedPathHints);
-      content.push(renderedPathHints);
-      var otherHints = hints.filter(function (hint) {
-         return !hint.uri && hint.commandKey;
-      });
-      var renderedOtherHints = otherHints.map(function (hint) {
-         return He.div({
-            style: _styles2.default.result.hint.container
-         }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, Hc.b(hint.commandKey))), Hso.div(_styles2.default.result.hint.description, hint.description)]);
-      });
-      content.push(renderedOtherHints);
-   }
+   content.push(renderHints(rquery, command, req, reqx));
    res.status(statusCode).send((0, _Page2.default)({
       config: rquery.config, req: req, reqx: reqx, title: title, heading: heading, icon: icon, content: content
    }));
+}
+
+function renderHints(rquery, command, req, reqx) {
+   if (command && reqx.account && reqx.keyspace && rquery.isBrowser(req)) {} else {
+      return [];
+   }
+   var hints = [];
+   if (command.relatedCommands) {
+      try {
+         hints = getRelatedCommandHints(req, reqx, command.relatedCommands);
+      } catch (err) {
+         rquery.logger.error('related', err, err.stack);
+      }
+   }
+   if (reqx.account !== 'hub') {
+      hints.push({
+         path: '/keyspaces/' + reqx.account,
+         description: 'view account keyspaces'
+      });
+   }
+   if (false) {
+      hints.push({
+         url: 'https://telegram.me/' + rquery.config.adminBotName + '?start',
+         description: 'See @' + rquery.config.adminBotName + ' on Telegram.org'
+      });
+   }
+   if (false) {
+      hints.push({
+         url: '/ak/' + reqx.account + '/' + reqx.keyspace + '/help',
+         description: 'account keyspace home'
+      });
+   }
+   var renderedPathHints = rquery.isCliDomain(req) ? [] : hints.filter(function (hint) {
+      return !hint.url;
+   }).map(function (hint) {
+      if (!hint.path) {
+         var path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace].concat(_toConsumableArray(hint.uri)).join('/'));
+         hint = Object.assign({ path: path }, hint);
+      }
+      return hint;
+   }).map(function (hint) {
+      var uriLabel = void 0;
+      if (hint.uri) {
+         uriLabel = [Hc.b(hint.uri[0])].concat(_toConsumableArray(hint.uri.slice(1))).join('/');
+      } else if (hint.path && hint.path[0] === '/') {
+         var parts = hint.path.split('/').slice(1);
+         if (parts.length === 1) {
+            uriLabel = '<b>' + parts[0] + '</b>';
+         } else {
+            uriLabel = '<b>' + parts[0] + '</b>/' + parts.slice(1).join('/');
+         }
+      }
+      rquery.logger.debug('hint', uriLabel, hint);
+      return He.div({
+         style: _styles2.default.result.hint.container,
+         onClick: HtmlElements.onClick({ href: hint.path })
+      }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, uriLabel)), Hso.div(_styles2.default.result.hint.description, lodash.capitalize(hint.description))]);
+   });
+   renderedPathHints = renderedPathHints.concat(hints.filter(function (hint) {
+      return hint.url && !hint.uri;
+   }).map(function (hint) {
+      var uriLabel = hint.path;
+      if (hint.uri) {
+         uriLabel = [Hc.b(hint.uri[0])].concat(_toConsumableArray(hint.uri.slice(1))).join('/');
+      }
+      return He.div({
+         style: _styles2.default.result.hint.container,
+         onClick: HtmlElements.onClick({ href: hint.url })
+      }, [He.div({
+         style: _styles2.default.result.hint.message,
+         meta: 'optional'
+      }, hint.message), Hso.div(_styles2.default.result.hint.link), Hso.div(_styles2.default.result.hint.description, lodash.capitalize(hint.description))]);
+   }));
+   rquery.logger.debug('renderedPathHints', renderedPathHints);
+   var otherHints = hints.filter(function (hint) {
+      return !hint.uri && hint.commandKey;
+   });
+   var renderedOtherHints = otherHints.map(function (hint) {
+      return He.div({
+         style: _styles2.default.result.hint.container
+      }, [Hso.div(_styles2.default.result.hint.message, hint.message), Hso.div(_styles2.default.result.hint.link, 'Try: ' + Hs.tt(_styles2.default.result.hint.uri, Hc.b(hint.commandKey))), Hso.div(_styles2.default.result.hint.description, hint.description)]);
+   });
+   return renderedPathHints.concat(renderedOtherHints);
 }
 
 function getRelatedCommandHints(req, reqx, relatedCommands) {

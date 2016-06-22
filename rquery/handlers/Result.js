@@ -178,134 +178,135 @@ function sendHtmlResult(command, req, res, reqx, result) {
       resultArray.push(resultString);
    }
    content.push(Hs.pre(styles.result.resultArray, lodash.compact(resultArray).join('\n')));
-   let hints = [];
-   if (command && reqx.account && reqx.keyspace && rquery.isBrowser(req)) {
-      if (command.relatedCommands) {
-         try {
-            hints = getRelatedCommandHints(req, reqx, command.relatedCommands);
-         } catch (err) {
-            rquery.logger.error('related', err, err.stack);
-         }
-      }
-      if (reqx.account !== 'hub') {
-         hints.push({
-            path: `/keyspaces/${reqx.account}`,
-            description: 'view account keyspaces'
-         });
-      }
-      if (false) {
-         hints.push({
-            url: `https://telegram.me/${rquery.config.adminBotName}?start`,
-            description: `See @${rquery.config.adminBotName} on Telegram.org`
-         });
-      }
-      if (false) {
-         hints.push({
-            url: `/ak/${reqx.account}/${reqx.keyspace}/help`,
-            description: 'account keyspace home'
-         });
-      }
-      let renderedPathHints = rquery.isCliDomain(req)
-      ? []
-      : hints.filter(hint => !hint.url)
-      .map(hint => {
-         if (!hint.path) {
-            const path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace, ...hint.uri].join('/'));
-            hint = Object.assign({path}, hint);
-         }
-         return hint;
-      })
-      .map(hint => {
-         let uriLabel;
-         if (hint.uri) {
-            uriLabel = [Hc.b(hint.uri[0]), ...hint.uri.slice(1)].join('/');
-         } else if (hint.path && hint.path[0] === '/') {
-            const parts = hint.path.split('/').slice(1);
-            if (parts.length === 1) {
-               uriLabel = `<b>${parts[0]}</b>`;
-            } else {
-               uriLabel = `<b>${parts[0]}</b>/${parts.slice(1).join('/')}`;
-            }
-         }
-         rquery.logger.debug('hint', uriLabel, hint);
-         return He.div({
-            style: styles.result.hint.container,
-            onClick: HtmlElements.onClick({href: hint.path})
-         }, [
-            Hso.div(styles.result.hint.message, hint.message),
-            Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, uriLabel)),
-            Hso.div(styles.result.hint.description, lodash.capitalize(hint.description))
-         ]);
-      });
-      renderedPathHints = renderedPathHints.concat(hints
-         .filter(hint => hint.url && !hint.uri)
-         .map(hint => {
-            return hint;
-         })
-         .map(hint => {
-            let uriLabel = hint.path;
-            if (hint.uri) {
-               uriLabel = [Hc.b(hint.uri[0]), ...hint.uri.slice(1)].join('/');
-            }
-            return He.div({
-               style: styles.result.hint.container,
-               onClick: HtmlElements.onClick({href: hint.url})
-            }, [
-               He.div({
-                  style: styles.result.hint.message,
-                  meta: 'optional'
-               }, hint.message),
-               Hso.div(styles.result.hint.link),
-               Hso.div(styles.result.hint.description, lodash.capitalize(hint.description))
-            ]);
-         }));
-         rquery.logger.debug('renderedPathHints', renderedPathHints);
-         content.push(renderedPathHints);
-         const otherHints = hints.filter(hint => !hint.uri && hint.commandKey);
-         const renderedOtherHints = otherHints.map(hint => He.div({
-            style: styles.result.hint.container
-         }, [
-            Hso.div(styles.result.hint.message, hint.message),
-            Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, Hc.b(hint.commandKey))),
-            Hso.div(styles.result.hint.description, hint.description)
-         ]));
-         content.push(renderedOtherHints);
-      }
-      res.status(statusCode).send(renderPage({
-         config: rquery.config, req, reqx, title, heading, icon, content
-      }));
-   }
+   content.push(renderHints(rquery, command, req, reqx));
+   res.status(statusCode).send(renderPage({
+      config: rquery.config, req, reqx, title, heading, icon, content
+   }));
+}
 
-   function getRelatedCommandHints(req, reqx, relatedCommands) {
-      const {rquery} = global;
-      return lodash.compact(relatedCommands
-         .map(commandKey => rquery.commandMap.get(commandKey))
-         .filter(command => command && command.key && command.params)
-         .filter(command => !rquery.isSecureDomain(req)
-         || !command.access || lodash.includes(['get', 'debug']
-         , command.access))
-         .map(command => {
-            let uri = [command.key];
-            const params = command.params
-            .map(key => {
-               let value = req.params[key] || [];
-               if (command && command.exampleKeyParams && command.exampleKeyParams.hasOwnProperty(key)) {
-                  value = command.exampleKeyParams[key]
-               }
-               rquery.logger.info('related', key, value);
-               return value;
-            });
-            rquery.logger.info('related params', params);
-            if (params.length !== command.params.length) {
-               rquery.logger.warn('params length', command);
-               return null;
-            } else {
-               uri = uri.concat(...params);
-            }
-            return {
-               uri,
-               description: command.description
-            };
-         })
-      );
+function renderHints(rquery, command, req, reqx) {
+   if (command && reqx.account && reqx.keyspace && rquery.isBrowser(req)) {
+   } else {
+      return [];
    }
+   let hints = [];
+   if (command.relatedCommands) {
+      try {
+         hints = getRelatedCommandHints(req, reqx, command.relatedCommands);
+      } catch (err) {
+         rquery.logger.error('related', err, err.stack);
+      }
+   }
+   if (reqx.account !== 'hub') {
+      hints.push({
+         path: `/keyspaces/${reqx.account}`,
+         description: 'view account keyspaces'
+      });
+   }
+   if (false) {
+      hints.push({
+         url: `https://telegram.me/${rquery.config.adminBotName}?start`,
+         description: `See @${rquery.config.adminBotName} on Telegram.org`
+      });
+   }
+   if (false) {
+      hints.push({
+         url: `/ak/${reqx.account}/${reqx.keyspace}/help`,
+         description: 'account keyspace home'
+      });
+   }
+   let renderedPathHints = rquery.isCliDomain(req)
+   ? []
+   : hints.filter(hint => !hint.url)
+   .map(hint => {
+      if (!hint.path) {
+         const path = HtmlElements.renderPath(['ak', reqx.account, reqx.keyspace, ...hint.uri].join('/'));
+         hint = Object.assign({path}, hint);
+      }
+      return hint;
+   })
+   .map(hint => {
+      let uriLabel;
+      if (hint.uri) {
+         uriLabel = [Hc.b(hint.uri[0]), ...hint.uri.slice(1)].join('/');
+      } else if (hint.path && hint.path[0] === '/') {
+         const parts = hint.path.split('/').slice(1);
+         if (parts.length === 1) {
+            uriLabel = `<b>${parts[0]}</b>`;
+         } else {
+            uriLabel = `<b>${parts[0]}</b>/${parts.slice(1).join('/')}`;
+         }
+      }
+      rquery.logger.debug('hint', uriLabel, hint);
+      return He.div({
+         style: styles.result.hint.container,
+         onClick: HtmlElements.onClick({href: hint.path})
+      }, [
+         Hso.div(styles.result.hint.message, hint.message),
+         Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, uriLabel)),
+         Hso.div(styles.result.hint.description, lodash.capitalize(hint.description))
+      ]);
+   });
+   renderedPathHints = renderedPathHints.concat(hints.filter(hint => hint.url && !hint.uri)
+   .map(hint => {
+      let uriLabel = hint.path;
+      if (hint.uri) {
+         uriLabel = [Hc.b(hint.uri[0]), ...hint.uri.slice(1)].join('/');
+      }
+      return He.div({
+         style: styles.result.hint.container,
+         onClick: HtmlElements.onClick({href: hint.url})
+      }, [
+         He.div({
+            style: styles.result.hint.message,
+            meta: 'optional'
+         }, hint.message),
+         Hso.div(styles.result.hint.link),
+         Hso.div(styles.result.hint.description, lodash.capitalize(hint.description))
+      ]);
+   }));
+   rquery.logger.debug('renderedPathHints', renderedPathHints);
+   const otherHints = hints.filter(hint => !hint.uri && hint.commandKey);
+   const renderedOtherHints = otherHints.map(hint => He.div({
+      style: styles.result.hint.container
+   }, [
+      Hso.div(styles.result.hint.message, hint.message),
+      Hso.div(styles.result.hint.link, `Try: ` + Hs.tt(styles.result.hint.uri, Hc.b(hint.commandKey))),
+      Hso.div(styles.result.hint.description, hint.description)
+   ]));
+   return renderedPathHints.concat(renderedOtherHints);
+}
+
+function getRelatedCommandHints(req, reqx, relatedCommands) {
+   const {rquery} = global;
+   return lodash.compact(relatedCommands
+      .map(commandKey => rquery.commandMap.get(commandKey))
+      .filter(command => command && command.key && command.params)
+      .filter(command => !rquery.isSecureDomain(req)
+      || !command.access || lodash.includes(['get', 'debug']
+      , command.access))
+      .map(command => {
+         let uri = [command.key];
+         const params = command.params
+         .map(key => {
+            let value = req.params[key] || [];
+            if (command && command.exampleKeyParams && command.exampleKeyParams.hasOwnProperty(key)) {
+               value = command.exampleKeyParams[key]
+            }
+            rquery.logger.info('related', key, value);
+            return value;
+         });
+         rquery.logger.info('related params', params);
+         if (params.length !== command.params.length) {
+            rquery.logger.warn('params length', command);
+            return null;
+         } else {
+            uri = uri.concat(...params);
+         }
+         return {
+            uri,
+            description: command.description
+         };
+      })
+   );
+}
