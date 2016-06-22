@@ -86,9 +86,48 @@ export default class rquery {
       } else {
          this.addTelegramWebhook();
       }
+      this.expressApp.use(async (req, res, next) => {
+         try {
+            await this.handlePublish(req, res, next);
+         } catch (err) {
+            sendError(req, res, err);
+         }
+      });
+      this.expressApp.use((req, res) => {
+         try {
+            this.sendErrorRoute(req, res);
+         } catch (err) {
+            sendError(req, res, err);
+         }
+      });
       this.expressApp.use((req, res) => this.sendErrorRoute(req, res));
       this.expressServer = await Express.listen(this.expressApp, this.config.port);
       this.logger.info('listen', this.config.port, this.config.redisUrl);
+   }
+
+   async handlePublish(req, res, next) {
+      const [account, keyspace, commandKey, key] = req.url.slice(1).split('/');
+      this.logger.debug('split', account, keyspace, key);
+      if (key && ['get', 'smembers'].includes(commandKey)) {
+         const command = this.commandMap.get(commandKey);
+         const keyspaceKey = this.keyspaceKey(account, keyspace, key);
+         const accountKey = this.adminKey('account', account);
+         const [access, type, result] = await this.redis.multiExecAsync(multi => {
+            multi.hget(accountKey, 'access');
+            if (commandKey === 'get') {
+               multi.get(keyspaceKey);
+            } else if (commandKey === 'smembers') {
+               multi.sadd(keyspaceKey);
+            } else {
+               throw new ValidationError('Unsupported: ' + commandKey);
+            }
+         });
+         if (access !== 'open') {
+            throw new ValidationError({status: 403, message: 'Access Prohibited e.g. unpublished keyspace'});
+         }
+         await Result.sendResult(command, req, res, reqx, result);
+      }
+      next();
    }
 
    addMonitoringRoutes() { // TODO
