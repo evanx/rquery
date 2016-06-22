@@ -363,7 +363,7 @@ var rquery = function () {
                         result = _ref2[2];
 
                         if (reqx.commandKey) {
-                           _context5.next = 57;
+                           _context5.next = 63;
                            break;
                         }
 
@@ -376,58 +376,70 @@ var rquery = function () {
 
                      case 39:
                         if (!(type === 'set')) {
-                           _context5.next = 44;
+                           _context5.next = 46;
                            break;
                         }
 
                         reqx.commandKey = 'smembers';
-                        result = this.redis.smembersAsync(keyspaceKey);
-                        _context5.next = 57;
+                        _context5.next = 43;
+                        return this.redis.smembersAsync(keyspaceKey);
+
+                     case 43:
+                        result = _context5.sent;
+                        _context5.next = 63;
                         break;
 
-                     case 44:
+                     case 46:
                         if (!(type === 'string')) {
-                           _context5.next = 49;
+                           _context5.next = 53;
                            break;
                         }
 
                         reqx.commandKey = 'get';
-                        result = this.redis.getAsync(keyspaceKey);
-                        _context5.next = 57;
+                        _context5.next = 50;
+                        return this.redis.getAsync(keyspaceKey);
+
+                     case 50:
+                        result = _context5.sent;
+                        _context5.next = 63;
                         break;
 
-                     case 49:
+                     case 53:
                         if (!(type === 'list')) {
-                           _context5.next = 56;
+                           _context5.next = 62;
                            break;
                         }
 
                         reqx.commandKey = 'lrange';
                         req.params.start = 0;
                         req.params.stop = this.config.lrangeStop;
-                        result = this.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop); // TODO
-                        _context5.next = 57;
+                        _context5.next = 59;
+                        return this.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop);
+
+                     case 59:
+                        result = _context5.sent;
+                        _context5.next = 63;
                         break;
 
-                     case 56:
+                     case 62:
                         throw new ValidationError('Unsupported publish key type: ' + type);
 
-                     case 57:
+                     case 63:
                         if (!(access !== 'open')) {
-                           _context5.next = 60;
+                           _context5.next = 66;
                            break;
                         }
 
                         this.logger.debug('access', access, type, typeof result === 'undefined' ? 'undefined' : _typeof(result));
                         throw new ValidationError({ status: 403, message: 'Access Prohibited e.g. unpublished keyspace' });
 
-                     case 60:
+                     case 66:
                         reqx.published = true;
                         command = this.commandMap.get(reqx.commandKey);
-                        _context5.next = 64;
+                        _context5.next = 70;
                         return Result.sendResult(command, req, res, reqx, result);
 
-                     case 64:
+                     case 70:
                      case 'end':
                         return _context5.stop();
                   }

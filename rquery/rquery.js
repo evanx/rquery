@@ -144,15 +144,15 @@ export default class rquery {
             throw new ValidationError({message: 'Unpublished', status: 404});
          } else if (type === 'set') {
             reqx.commandKey = 'smembers';
-            result = this.redis.smembersAsync(keyspaceKey);
+            result = await this.redis.smembersAsync(keyspaceKey);
          } else if (type === 'string') {
             reqx.commandKey = 'get';
-            result = this.redis.getAsync(keyspaceKey);
+            result = await this.redis.getAsync(keyspaceKey);
          } else if (type === 'list') {
             reqx.commandKey = 'lrange';
             req.params.start = 0;
             req.params.stop = this.config.lrangeStop;
-            result = this.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop); // TODO
+            result = await this.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop); // TODO
          } else {
             throw new ValidationError('Unsupported publish key type: ' + type);
          }
