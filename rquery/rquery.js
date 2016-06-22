@@ -21,6 +21,8 @@ import KeyspaceHelpPage from './jsx/KeyspaceHelpPage';
 
 import styles from './html/styles';
 
+const AccessKeys = ['open', 'private', 'add'];
+
 const logger = Loggers.create(module.filename);
 
 export default class rquery {
@@ -90,14 +92,14 @@ export default class rquery {
          try {
             await this.handlePublish(req, res, next);
          } catch (err) {
-            sendError(req, res, err);
+            this.sendError(req, res, err);
          }
       });
       this.expressApp.use((req, res) => {
          try {
             this.sendErrorRoute(req, res);
          } catch (err) {
-            sendError(req, res, err);
+            this.sendError(req, res, err);
          }
       });
       this.expressApp.use((req, res) => this.sendErrorRoute(req, res));
@@ -110,24 +112,30 @@ export default class rquery {
       this.logger.debug('split', account, keyspace, key);
       if (key && ['get', 'smembers'].includes(commandKey)) {
          const command = this.commandMap.get(commandKey);
+         const accountKeyspace = this.accountKeyspace(account, keyspace);
          const keyspaceKey = this.keyspaceKey(account, keyspace, key);
          const accountKey = this.adminKey('account', account);
+         const reqx = {account, keyspace, keyspaceKey, accountKey, accountKeyspace};
+         this.logger.debug('publish', req.url, reqx);
          const [access, type, result] = await this.redis.multiExecAsync(multi => {
-            multi.hget(accountKey, 'access');
+            multi.hget(accountKeyspace, 'access');
+            multi.type(keyspaceKey);
             if (commandKey === 'get') {
                multi.get(keyspaceKey);
             } else if (commandKey === 'smembers') {
-               multi.sadd(keyspaceKey);
+               multi.smembers(keyspaceKey);
             } else {
                throw new ValidationError('Unsupported: ' + commandKey);
             }
          });
          if (access !== 'open') {
+            this.logger.debug('access', access, type, typeof result);
             throw new ValidationError({status: 403, message: 'Access Prohibited e.g. unpublished keyspace'});
          }
          await Result.sendResult(command, req, res, reqx, result);
+      } else {
+         next();
       }
-      next();
    }
 
    addMonitoringRoutes() { // TODO
@@ -750,6 +758,17 @@ export default class rquery {
          return keyspaces;
       });
       this.addKeyspaceCommand({
+         key: 'set-keyspace-access',
+         params: ['access'],
+         relatedCommands: ['ttls'],
+         access: 'admin'
+      }, async (req, res, {account, keyspace}, multi) => {
+         if (lodash.includes(AccessKeys, req.params.access)) {
+            throw new ValidationError('Invalid access key. Must be one of: ' + AccessKeys.join(', '));
+         }
+         return await redis.hsetAsync(accountKeyspace, 'access', req.params.access);
+      });
+      this.addKeyspaceCommand({
          key: 'destroy-keyspace',
          access: 'admin'
       }, async (req, res, {account, keyspace, accountKey, keyspaceKey}) => {
@@ -814,6 +833,39 @@ export default class rquery {
          const results = await multi.execAsync();
          const result = {};
          keys.forEach((key, index) => result[key.substring(keyIndex)] = results[index]);
+         return result;
+      });
+      this.addKeyspaceCommand({
+         key: 'values',
+         access: 'debug',
+         description: 'view all key values in this keyspace',
+         relatedCommands: ['ttls', 'keys']
+      }, async (req, res, reqx) => {
+         const {account, keyspace} = reqx;
+         const keys = await this.redis.keysAsync(this.keyspaceKey(account, keyspace, '*'));
+         this.logger.debug('ttl ak', account, keyspace, keys);
+         const keyIndex = this.keyIndex(account, keyspace);
+         const multi = this.redis.multi();
+         keys.forEach(key => multi.type(key));
+         const types = await multi.execAsync();
+         const result = {};
+         const multiValues = this.redis.multi();
+         keys.forEach((key, index) => {
+            const type = types[index];
+            if (type === 'string') {
+               multiValues.get(key);
+            } else if (type === 'hash') {
+               multiValues.hlen(key);
+            } else if (type === 'set') {
+               multiValues.scard(key);
+            } else if (type === 'zset') {
+               multiValues.zcard(key);
+            } else {
+               multiValues.type(key);
+            }
+         });
+         const values = await multiValues.execAsync();
+         keys.forEach((key, index) => result[key.substring(keyIndex)] = values[index]);
          return result;
       });
       this.addKeyspaceCommand({
