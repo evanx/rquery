@@ -1950,13 +1950,14 @@ var rquery = function () {
                   while (1) {
                      switch (_context34.prev = _context34.next) {
                         case 0:
-                           _context34.next = 2;
+                           _this7.logger.debug('get-keyspace-info', reqx.accountKeyspace);
+                           _context34.next = 3;
                            return _this7.redis.hgetallAsync(reqx.accountKeyspace);
 
-                        case 2:
+                        case 3:
                            return _context34.abrupt('return', _context34.sent);
 
-                        case 3:
+                        case 4:
                         case 'end':
                            return _context34.stop();
                      }
@@ -4905,7 +4906,7 @@ var rquery = function () {
                                     case 5:
                                        clientIp = req.get('x-forwarded-for');
 
-                                       _this15.logger.debug('createEphemeral clientIp', clientIp, account, keyspace, _this15.accountKeyspace(account, keyspace));
+                                       _this15.logger.debug('createEphemeral clientIp', clientIp, account, keyspace);
                                        _context111.next = 9;
                                        return _this15.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(_this15.accountKeyspace(account, keyspace), 'registered', Seconds.now());
@@ -5852,7 +5853,7 @@ var rquery = function () {
          var sha1 = _crypto2.default.createHash('sha1');
          sha1.update(new Buffer(content));
          var digest = sha1.digest('hex');
-         this.logger.debug('digestPem', pem, content, digest);
+         this.logger.debug('digestPem', digest);
          if (digest.length < 32) {
             throw new ValidationError({
                status: 400,

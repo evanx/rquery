@@ -806,6 +806,7 @@ export default class rquery {
          access: 'debug',
          description: 'show admin info for this keyspace'
       }, async (req, res, reqx) => {
+         this.logger.debug('get-keyspace-info', reqx.accountKeyspace);
          return await this.redis.hgetallAsync(reqx.accountKeyspace);
       });
       this.addAccountCommand({
@@ -1817,8 +1818,7 @@ export default class rquery {
             return;
          }
          let clientIp = req.get('x-forwarded-for');
-         this.logger.debug('createEphemeral clientIp', clientIp, account, keyspace
-         , this.accountKeyspace(account, keyspace));
+         this.logger.debug('createEphemeral clientIp', clientIp, account, keyspace);
          const replies = await this.redis.multiExecAsync(multi => {
             multi.hsetnx(this.accountKeyspace(account, keyspace), 'registered', Seconds.now());
             if (clientIp) {
@@ -2424,7 +2424,7 @@ export default class rquery {
       const sha1 = crypto.createHash('sha1');
       sha1.update(new Buffer(content));
       const digest = sha1.digest('hex');
-      this.logger.debug('digestPem', pem, content, digest);
+      this.logger.debug('digestPem', digest);
       if (digest.length < 32) {
          throw new ValidationError({
             status: 400,
