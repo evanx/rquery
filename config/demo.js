@@ -16,7 +16,7 @@ module.exports = {
          assetsUrl: '/assets',
          aboutUrl: 'https://github.com/webserva/webserva/blob/master/README.md',
          helpUrl: 'https://github.com/webserva/webserva/blob/master/README.md',
-         indexCommand: 'show-keyspace-config',
+         indexCommand: 'get-keyspace-info',
          enrollExpire: 300,
          keyspaceExpire: 604800, // 7 days
          keyExpire: 600,

@@ -114,7 +114,7 @@ module.exports = {
          allowedValues: ['html', 'plain', 'line']
       },
       indexCommand: {
-         defaultValue: 'show-keyspace-config'
+         defaultValue: 'get-keyspace-info'
       },
       secureDomain: {
          type: 'boolean',

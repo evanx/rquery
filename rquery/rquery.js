@@ -762,11 +762,12 @@ export default class rquery {
          params: ['access'],
          relatedCommands: ['ttls'],
          access: 'admin'
-      }, async (req, res, {account, keyspace}, multi) => {
-         if (lodash.includes(AccessKeys, req.params.access)) {
+      }, async (req, res, {account, keyspace, accountKeyspace}, multi) => {
+         this.logger.debug('access params', accountKeyspace, req.params);
+         if (!lodash.includes(AccessKeys, req.params.access)) {
             throw new ValidationError('Invalid access key. Must be one of: ' + AccessKeys.join(', '));
          }
-         return await redis.hsetAsync(accountKeyspace, 'access', req.params.access);
+         return await this.redis.hsetAsync(accountKeyspace, 'access', req.params.access);
       });
       this.addKeyspaceCommand({
          key: 'destroy-keyspace',
@@ -801,7 +802,14 @@ export default class rquery {
          return keys.map(key => key.substring(keyIndex));
       });
       this.addKeyspaceCommand({
-         key: 'show-keyspace-info',
+         key: 'get-keyspace-info',
+         access: 'debug',
+         description: 'show admin info for this keyspace'
+      }, async (req, res, reqx) => {
+         return await this.redis.hgetallAsync(reqx.accountKeyspace);
+      });
+      this.addAccountCommand({
+         key: 'get-account-info',
          access: 'debug',
          description: 'show admin info for this keyspace'
       }, async (req, res, reqx) => {

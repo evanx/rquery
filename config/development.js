@@ -18,7 +18,7 @@ module.exports = {
          assetsUrl: 'https://test.redishub.com/assets',
          aboutUrl: 'https://github.com/webserva/webserva/blob/master/README.md',
          helpUrl: 'https://github.com/webserva/webserva/blob/master/README.md',
-         indexCommand: 'show-keyspace-config',
+         indexCommand: 'get-keyspace-info',
          enrollExpire: 300,
          keyspaceExpire: 2592000, // 30 days
          keyExpire: 600,

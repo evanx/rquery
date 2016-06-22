@@ -26,7 +26,7 @@ config:
       defaultValue: 'plain'
       allowedValues: ['html', 'plain', 'line']
    indexCommand:
-      defaultValue: 'show-keyspace-config'
+      defaultValue: 'get-keyspace-info'
    secureDomain:
       type: 'boolean'
       defaultValue: false
