@@ -318,7 +318,7 @@ var rquery = function () {
                                        accountKeyspace = _this2.accountKeyspace(account, keyspace);
                                        keyspaceKey = _this2.keyspaceKey(account, keyspace, key);
                                        accountKey = _this2.adminKey('account', account);
-                                       reqx = { account: account, keyspace: keyspace, keyspaceKey: keyspaceKey, accountKey: accountKey, accountKeyspace: accountKeyspace };
+                                       reqx = { account: account, keyspace: keyspace, keyspaceKey: keyspaceKey, accountKey: accountKey, accountKeyspace: accountKeyspace, key: key };
 
                                        _this2.logger.debug('publish', req.url, reqx);
                                        _context5.next = 8;

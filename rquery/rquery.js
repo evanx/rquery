@@ -115,7 +115,7 @@ export default class rquery {
          const accountKeyspace = this.accountKeyspace(account, keyspace);
          const keyspaceKey = this.keyspaceKey(account, keyspace, key);
          const accountKey = this.adminKey('account', account);
-         const reqx = {account, keyspace, keyspaceKey, accountKey, accountKeyspace};
+         const reqx = {account, keyspace, keyspaceKey, accountKey, accountKeyspace, key};
          this.logger.debug('publish', req.url, reqx);
          const [access, type, result] = await this.redis.multiExecAsync(multi => {
             multi.hget(accountKeyspace, 'access');
