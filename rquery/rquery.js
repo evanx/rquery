@@ -1911,7 +1911,7 @@ export default class rquery {
             const accountKey = this.accountKey(account);
             const accountKeyspace = this.accountKeyspace(account, keyspace);
             const helpPath = `/ak/${account}/${keyspace}/help`;
-            const reqx = {account, keyspace, accountKey, key, helpPath, command};
+            const reqx = {account, keyspace, accountKey, accountKeyspace, key, helpPath, command};
             if (key) {
                reqx.keyspaceKey = this.keyspaceKey(account, keyspace, key);
             }

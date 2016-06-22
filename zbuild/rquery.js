@@ -5094,7 +5094,7 @@ var rquery = function () {
                                           accountKey = _this16.accountKey(account);
                                           accountKeyspace = _this16.accountKeyspace(account, keyspace);
                                           helpPath = '/ak/' + account + '/' + keyspace + '/help';
-                                          reqx = { account: account, keyspace: keyspace, accountKey: accountKey, key: key, helpPath: helpPath, command: command };
+                                          reqx = { account: account, keyspace: keyspace, accountKey: accountKey, accountKeyspace: accountKeyspace, key: key, helpPath: helpPath, command: command };
 
                                           if (key) {
                                              reqx.keyspaceKey = _this16.keyspaceKey(account, keyspace, key);
