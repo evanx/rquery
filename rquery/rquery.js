@@ -135,11 +135,13 @@ export default class rquery {
          } else if (reqx.commandKey === 'smembers') {
             multi.smembers(keyspaceKey);
          } else {
-            throw new ValidationError('Unsupported: ' + commandKey);
+            throw new ValidationError('Unsupported: ' + reqx.commandKey);
          }
       });
       if (!reqx.commandKey) {
-         if (type === 'set') {
+         if (!type) {
+            throw new ValidationError({message: 'Unpublished', status: 404});
+         } else if (type === 'set') {
             result = this.redis.smembersAsync(keyspaceKey);
          } else if (type === 'string') {
             result = this.redis.getAsync(keyspaceKey);

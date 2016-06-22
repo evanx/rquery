@@ -285,7 +285,7 @@ var rquery = function () {
       key: 'handlePublish',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee5(req, res, next) {
-            var parts, reqx, _parts, account, keyspace, _commandKey, key, _parts2, _account, _keyspace, _key, accountKeyspace, keyspaceKey, accountKey, _ref, _ref2, access, type, result;
+            var parts, reqx, _parts, account, keyspace, commandKey, key, _parts2, _account, _keyspace, _key, accountKeyspace, keyspaceKey, accountKey, _ref, _ref2, access, type, result;
 
             return regeneratorRuntime.wrap(function _callee5$(_context5) {
                while (1) {
@@ -302,10 +302,10 @@ var rquery = function () {
                         _parts = _slicedToArray(parts, 4);
                         account = _parts[0];
                         keyspace = _parts[1];
-                        _commandKey = _parts[2];
+                        commandKey = _parts[2];
                         key = _parts[3];
 
-                        if (['get', 'smembers'].includes(_commandKey)) {
+                        if (['get', 'smembers'].includes(commandKey)) {
                            _context5.next = 10;
                            break;
                         }
@@ -313,7 +313,7 @@ var rquery = function () {
                         return _context5.abrupt('return', next());
 
                      case 10:
-                        Object.assign(reqx, { account: account, keyspace: keyspace, commandKey: _commandKey, key: key });
+                        Object.assign(reqx, { account: account, keyspace: keyspace, commandKey: commandKey, key: key });
                         _context5.next = 22;
                         break;
 
@@ -351,7 +351,7 @@ var rquery = function () {
                            } else if (reqx.commandKey === 'smembers') {
                               multi.smembers(keyspaceKey);
                            } else {
-                              throw new ValidationError('Unsupported: ' + commandKey);
+                              throw new ValidationError('Unsupported: ' + reqx.commandKey);
                            }
                         });
 
@@ -363,57 +363,65 @@ var rquery = function () {
                         result = _ref2[2];
 
                         if (reqx.commandKey) {
-                           _context5.next = 48;
+                           _context5.next = 52;
                            break;
                         }
 
-                        if (!(type === 'set')) {
+                        if (type) {
                            _context5.next = 39;
                            break;
                         }
 
-                        result = this.redis.smembersAsync(keyspaceKey);
-                        _context5.next = 48;
-                        break;
+                        throw new ValidationError({ message: 'Unpublished', status: 404 });
 
                      case 39:
-                        if (!(type === 'string')) {
+                        if (!(type === 'set')) {
                            _context5.next = 43;
                            break;
                         }
 
-                        result = this.redis.getAsync(keyspaceKey);
-                        _context5.next = 48;
+                        result = this.redis.smembersAsync(keyspaceKey);
+                        _context5.next = 52;
                         break;
 
                      case 43:
-                        if (!(type === 'list')) {
+                        if (!(type === 'string')) {
                            _context5.next = 47;
                            break;
                         }
 
-                        result = this.redis.lrangeAsync(keyspaceKey, 0, this.config.lrangeStop); // TODO
-                        _context5.next = 48;
+                        result = this.redis.getAsync(keyspaceKey);
+                        _context5.next = 52;
                         break;
 
                      case 47:
+                        if (!(type === 'list')) {
+                           _context5.next = 51;
+                           break;
+                        }
+
+                        result = this.redis.lrangeAsync(keyspaceKey, 0, this.config.lrangeStop); // TODO
+                        _context5.next = 52;
+                        break;
+
+                     case 51:
                         throw new ValidationError('Unsupported publish key type: ' + type);
 
-                     case 48:
+                     case 52:
                         if (!(access !== 'open')) {
-                           _context5.next = 51;
+                           _context5.next = 55;
                            break;
                         }
 
                         this.logger.debug('access', access, type, typeof result === 'undefined' ? 'undefined' : _typeof(result));
                         throw new ValidationError({ status: 403, message: 'Access Prohibited e.g. unpublished keyspace' });
 
-                     case 51:
+                     case 55:
                         reqx.published = true;
-                        _context5.next = 54;
+                        _context5.next = 58;
                         return Result.sendResult(command, req, res, reqx, result);
 
-                     case 54:
+                     case 58:
                      case 'end':
                         return _context5.stop();
                   }
