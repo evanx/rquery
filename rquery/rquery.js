@@ -108,35 +108,53 @@ export default class rquery {
    }
 
    async handlePublish(req, res, next) {
-      const [account, keyspace, commandKey, key] = req.url.slice(1).split('/');
-      this.logger.debug('split', account, keyspace, key);
-      if (key && ['get', 'smembers'].includes(commandKey)) {
-         const command = this.commandMap.get(commandKey);
-         const accountKeyspace = this.accountKeyspace(account, keyspace);
-         const keyspaceKey = this.keyspaceKey(account, keyspace, key);
-         const accountKey = this.adminKey('account', account);
-         const reqx = {account, keyspace, keyspaceKey, accountKey, accountKeyspace, key};
-         this.logger.debug('publish', req.url, reqx);
-         const [access, type, result] = await this.redis.multiExecAsync(multi => {
-            multi.hget(accountKeyspace, 'access');
-            multi.type(keyspaceKey);
-            if (commandKey === 'get') {
-               multi.get(keyspaceKey);
-            } else if (commandKey === 'smembers') {
-               multi.smembers(keyspaceKey);
-            } else {
-               throw new ValidationError('Unsupported: ' + commandKey);
-            }
-         });
-         if (access !== 'open') {
-            this.logger.debug('access', access, type, typeof result);
-            throw new ValidationError({status: 403, message: 'Access Prohibited e.g. unpublished keyspace'});
+      const parts = req.url.slice(1).split('/');
+      const reqx = {};
+      if (parts.length == 4) {
+         const [account, keyspace, commandKey, key] = parts;
+         if (!['get', 'smembers'].includes(commandKey)) {
+            return next();
          }
-         reqx.published = true;
-         await Result.sendResult(command, req, res, reqx, result);
+         Object.assign(reqx, {account, keyspace, commandKey, key});
+      } else if (parts.length == 3) {
+         const [account, keyspace, key] = parts;
+         Object.assign(reqx, {account, keyspace, key});
       } else {
-         next();
+         return next();
       }
+      this.logger.debug('publish', req.url, reqx);
+      const accountKeyspace = this.accountKeyspace(reqx.account, reqx.keyspace);
+      const keyspaceKey = this.keyspaceKey(reqx.account, reqx.keyspace, reqx.key);
+      const accountKey = this.adminKey('account', reqx.account);
+      this.logger.debug('publish', req.url, reqx);
+      let [access, type, result] = await this.redis.multiExecAsync(multi => {
+         multi.hget(accountKeyspace, 'access');
+         multi.type(keyspaceKey);
+         if (reqx.commandKey === 'get') {
+            multi.get(keyspaceKey);
+         } else if (reqx.commandKey === 'smembers') {
+            multi.smembers(keyspaceKey);
+         } else {
+            throw new ValidationError('Unsupported: ' + commandKey);
+         }
+      });
+      if (!reqx.commandKey) {
+         if (type === 'set') {
+            result = this.redis.smembersAsync(keyspaceKey);
+         } else if (type === 'string') {
+            result = this.redis.getAsync(keyspaceKey);
+         } else if (type === 'list') {
+            result = this.redis.lrangeAsync(keyspaceKey, 0, this.config.lrangeStop); // TODO
+         } else {
+            throw new ValidationError('Unsupported publish key type: ' + type);
+         }
+      }
+      if (access !== 'open') {
+         this.logger.debug('access', access, type, typeof result);
+         throw new ValidationError({status: 403, message: 'Access Prohibited e.g. unpublished keyspace'});
+      }
+      reqx.published = true;
+      await Result.sendResult(command, req, res, reqx, result);
    }
 
    addMonitoringRoutes() { // TODO

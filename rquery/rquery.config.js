@@ -164,6 +164,9 @@ module.exports = {
       },
       disableTelegramHook: {
          defaultValue: false,
+      },
+      lrangeStop: {
+         defaultValue: 99
       }
    },
    state: {

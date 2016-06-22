@@ -31,7 +31,8 @@ module.exports = {
          importLimit: 5,
          adminLimit: 1,
          defaultFormat: 'html',
-         addClientIp: false
+         addClientIp: false,
+         lrangeStop: 999
       }
    }
 };

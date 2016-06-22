@@ -159,6 +159,8 @@ module.exports = {
       defaultValue: false
    }), _defineProperty(_config, 'disableTelegramHook', {
       defaultValue: false
+   }), _defineProperty(_config, 'lrangeStop', {
+      defaultValue: 99
    }), _config),
    state: {
       redis: {},
