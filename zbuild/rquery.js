@@ -558,7 +558,7 @@ var rquery = function () {
       key: 'handlePublishKeyspace',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee8(req, res, next, reqx) {
-            var accountKeyspace, _ref5, _ref6, access, publishedKeys;
+            var accountKeyspace, _ref5, _ref6, access, publishedKeys, renderedResult;
 
             return regeneratorRuntime.wrap(function _callee8$(_context8) {
                while (1) {
@@ -589,10 +589,13 @@ var rquery = function () {
 
                      case 11:
                         publishedKeys = _context8.sent;
-                        _context8.next = 14;
-                        return Result.sendResult({}, req, res, reqx, publishedKeys);
+                        renderedResult = publishedKeys.map(function (key) {
+                           return '<a href="' + req.url + '/' + key + '">' + key + '</a>';
+                        });
+                        _context8.next = 15;
+                        return Result.sendResult({}, req, res, reqx, renderedResult);
 
-                     case 14:
+                     case 15:
                      case 'end':
                         return _context8.stop();
                   }
@@ -2069,7 +2072,7 @@ var rquery = function () {
                var account = _ref33.account;
                var keyspace = _ref33.keyspace;
                var accountKeyspace = _ref33.accountKeyspace;
-               var publishedKeysKey, virtualKeys;
+               var publishedSetKey, virtualKeys;
                return regeneratorRuntime.wrap(function _callee34$(_context34) {
                   while (1) {
                      switch (_context34.prev = _context34.next) {
@@ -2084,29 +2087,29 @@ var rquery = function () {
                            throw new ValidationError('Invalid access key. Must be one of: ' + AccessKeys.join(', '));
 
                         case 3:
-                           publishedKeysKey = _this6.accountKeyspace(account, keyspace, 'published-keys');
+                           publishedSetKey = _this6.accountKeyspace(account, keyspace, 'published-keys');
 
                            if (!(req.params.access === 'open')) {
-                              _context34.next = 9;
+                              _context34.next = 12;
                               break;
                            }
 
                            multi.sadd(_this6.accountKey(account, 'open-keyspaces'), keyspace);
-                           multi.del(publishedKeysKey);
-                           _context34.next = 14;
-                           break;
-
-                        case 9:
-                           multi.srem(_this6.accountKey(account, 'open-keyspaces'), keyspace);
-                           _context34.next = 12;
+                           _context34.next = 8;
                            return _this6.scanVirtualKeys(account, keyspace, '*', 999);
 
-                        case 12:
+                        case 8:
                            virtualKeys = _context34.sent;
 
                            virtualKeys.forEach(function (key) {
-                              return multi.sadd(publishedKeysKey);
+                              return multi.sadd(publishedSetKey, key);
                            });
+                           _context34.next = 14;
+                           break;
+
+                        case 12:
+                           multi.srem(_this6.accountKey(account, 'open-keyspaces'), keyspace);
+                           multi.del(publishedSetKey);
 
                         case 14:
                            _context34.next = 16;

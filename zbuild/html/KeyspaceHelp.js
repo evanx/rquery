@@ -60,7 +60,6 @@ function render(props) {
    logger.debug('standardCommands', standardCommands.map(function (command) {
       return command.key;
    }).join(' '));
-   logger.debug('zz', Loggers.keys(props.result));
    return Object.assign(props, {
       title: [props.reqx.account, keyspaceLabel].join('/'),
       heading: [Hc.b(props.reqx.account), Hs.tt(_styles2.default.header.keyspace, keyspaceLabel)].join(''),

@@ -206,7 +206,9 @@ export default class rquery {
       const publishedKeys = await this.redis.smembersAsync(
          this.accountKeyspace(reqx.account, reqx.keyspace, 'published-keys')
       );
-      await Result.sendResult({}, req, res, reqx, publishedKeys);
+      const renderedResult = publishedKeys
+      .map(key => `<a href="${req.url}/${key}">${key}</a>`);
+      await Result.sendResult({}, req, res, reqx, renderedResult);
    }
 
    async handlePublishAccount(req, res, next, reqx) {
@@ -848,14 +850,14 @@ export default class rquery {
          if (!lodash.includes(AccessKeys, req.params.access)) {
             throw new ValidationError('Invalid access key. Must be one of: ' + AccessKeys.join(', '));
          }
-         const publishedKeysKey = this.accountKeyspace(account, keyspace, 'published-keys');
+         const publishedSetKey = this.accountKeyspace(account, keyspace, 'published-keys');
          if (req.params.access === 'open') {
             multi.sadd(this.accountKey(account, 'open-keyspaces'), keyspace);
-            multi.del(publishedKeysKey);
+            const virtualKeys = await this.scanVirtualKeys(account, keyspace, '*', 999);
+            virtualKeys.forEach(key => multi.sadd(publishedSetKey, key));
          } else {
             multi.srem(this.accountKey(account, 'open-keyspaces'), keyspace);
-            const virtualKeys = await this.scanVirtualKeys(account, keyspace, '*', 999);
-            virtualKeys.forEach(key => multi.sadd(publishedKeysKey));
+            multi.del(publishedSetKey);
          }
          return await this.redis.hsetAsync(accountKeyspace, 'access', req.params.access);
       });

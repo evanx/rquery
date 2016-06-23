@@ -28,7 +28,6 @@ export function render(props) {
    const standardCommands = commands
    .filter(command => !isCustomCommand(command));
    logger.debug('standardCommands', standardCommands.map(command => command.key).join(' '));
-   logger.debug('zz', Loggers.keys(props.result));
    return Object.assign(props, {
       title: [props.reqx.account, keyspaceLabel].join('/'),
       heading: [Hc.b(props.reqx.account), Hs.tt(styles.header.keyspace, keyspaceLabel)].join(''),
