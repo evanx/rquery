@@ -154,8 +154,8 @@ export default class rquery {
       if (access !== 'open') {
          throw new ValidationError({status: 403, message: 'Access Prohibited e.g. unpublished keyspace'});
       }
-      reqx.backPath = `/${reqx.account}/${req.keyspace}`;
       let command = this.commandMap.get(reqx.commandKey);
+      reqx.backPath = `/${reqx.account}/${reqx.keyspace}`;
       await Result.sendResult(command, req, res, reqx, result);
    }
 
@@ -192,7 +192,7 @@ export default class rquery {
          throw new ValidationError({message: 'Not found: ' + key, status: 404});
       }
       let command = this.commandMap.get(reqx.commandKey);
-      reqx.backPath = `/${reqx.account}/${req.keyspace}`;
+      reqx.backPath = `/${reqx.account}/${reqx.keyspace}`;
       await Result.sendResult(command, req, res, reqx, result);
    }
 

@@ -416,8 +416,9 @@ var rquery = function () {
                         throw new ValidationError({ status: 403, message: 'Access Prohibited e.g. unpublished keyspace' });
 
                      case 13:
-                        reqx.backPath = '/' + reqx.account + '/' + req.keyspace;
                         command = this.commandMap.get(reqx.commandKey);
+
+                        reqx.backPath = '/' + reqx.account + '/' + reqx.keyspace;
                         _context6.next = 17;
                         return Result.sendResult(command, req, res, reqx, result);
 
@@ -539,7 +540,7 @@ var rquery = function () {
                      case 43:
                         command = this.commandMap.get(reqx.commandKey);
 
-                        reqx.backPath = '/' + reqx.account + '/' + req.keyspace;
+                        reqx.backPath = '/' + reqx.account + '/' + reqx.keyspace;
                         _context7.next = 47;
                         return Result.sendResult(command, req, res, reqx, result);
 
