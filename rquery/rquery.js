@@ -189,7 +189,7 @@ export default class rquery {
          result = await this.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop); // TODO
       } else if (type === 'hash') {
          reqx.commandKey = 'hkeys';
-         result = await this.redis.hkeysAsync(keyspaceKey);
+         result = await this.redis.hgetallAsync(keyspaceKey);
       } else {
          throw new ValidationError('Unsupported publish key type: ' + type);
       }

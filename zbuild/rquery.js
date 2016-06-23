@@ -536,7 +536,7 @@ var rquery = function () {
 
                         reqx.commandKey = 'hkeys';
                         _context7.next = 44;
-                        return this.redis.hkeysAsync(keyspaceKey);
+                        return this.redis.hgetallAsync(keyspaceKey);
 
                      case 44:
                         result = _context7.sent;
