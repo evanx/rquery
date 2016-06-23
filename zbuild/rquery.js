@@ -493,7 +493,7 @@ var rquery = function () {
 
                      case 21:
                         result = _context7.sent;
-                        _context7.next = 41;
+                        _context7.next = 48;
                         break;
 
                      case 24:
@@ -508,7 +508,7 @@ var rquery = function () {
 
                      case 28:
                         result = _context7.sent;
-                        _context7.next = 41;
+                        _context7.next = 48;
                         break;
 
                      case 31:
@@ -525,28 +525,43 @@ var rquery = function () {
 
                      case 37:
                         result = _context7.sent;
-                        _context7.next = 41;
+                        _context7.next = 48;
                         break;
 
                      case 40:
+                        if (!(type === 'hash')) {
+                           _context7.next = 47;
+                           break;
+                        }
+
+                        reqx.commandKey = 'hkeys';
+                        _context7.next = 44;
+                        return this.redis.hkeysAsync(keyspaceKey);
+
+                     case 44:
+                        result = _context7.sent;
+                        _context7.next = 48;
+                        break;
+
+                     case 47:
                         throw new ValidationError('Unsupported publish key type: ' + type);
 
-                     case 41:
+                     case 48:
                         if (result) {
-                           _context7.next = 43;
+                           _context7.next = 50;
                            break;
                         }
 
                         throw new ValidationError({ message: 'Not found: ' + key, status: 404 });
 
-                     case 43:
+                     case 50:
                         command = this.commandMap.get(reqx.commandKey);
 
                         reqx.backPath = '/' + reqx.account + '/' + reqx.keyspace;
-                        _context7.next = 47;
+                        _context7.next = 54;
                         return Result.sendResult(command, req, res, reqx, result);
 
-                     case 47:
+                     case 54:
                      case 'end':
                         return _context7.stop();
                   }
