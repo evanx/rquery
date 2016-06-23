@@ -534,7 +534,7 @@ var rquery = function () {
                            break;
                         }
 
-                        reqx.commandKey = 'hkeys';
+                        reqx.commandKey = 'hgetall';
                         _context7.next = 44;
                         return this.redis.hgetallAsync(keyspaceKey);
 
