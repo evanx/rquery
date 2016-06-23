@@ -7,6 +7,7 @@ function iconBackgroundImage(name) {
 var lightTheme = {
    colors: {
       body: '#b0b0b0',
+      heading: '#a0a0a0',
       error: '#808080',
       link: '#13acac',
       commandKey: '#c2c2c2',
@@ -14,7 +15,7 @@ var lightTheme = {
       message: '#c2c2c2',
       description: '#808080',
       result: '#a2a2a2',
-      keyspaceName: '#505050'
+      keyspaceName: '#808080'
    },
    backgroundColors: {
       body: '#101010',
@@ -102,6 +103,7 @@ var styles = {
       },
       heading: {
          fontSize: 18,
+         color: theme.colors.heading,
          fontFamily: 'monospace',
          display: 'inline-block',
          margin: [0, 0, 0, 0],
