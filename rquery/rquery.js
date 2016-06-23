@@ -147,6 +147,8 @@ export default class rquery {
             multi.get(keyspaceKey);
          } else if (reqx.commandKey === 'smembers') {
             multi.smembers(keyspaceKey);
+         } else if (reqx.commandKey === 'hashes') {
+            multi.hkeys(keyspaceKey);
          } else {
             throw new ValidationError('Unsupported: ' + reqx.commandKey);
          }
