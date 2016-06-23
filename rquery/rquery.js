@@ -110,28 +110,40 @@ export default class rquery {
    async handlePublish(req, res, next) {
       const parts = req.url.slice(1).split('/');
       const reqx = {};
+      reqx.published = true;
       if (parts.length == 4) {
          const [account, keyspace, commandKey, key] = parts;
          if (!['get', 'smembers'].includes(commandKey)) {
             return next();
          }
          Object.assign(reqx, {account, keyspace, commandKey, key});
+         return this.handlePublishKeyCommand(req, res, next, reqx);
       } else if (parts.length == 3) {
          const [account, keyspace, key] = parts;
          Object.assign(reqx, {account, keyspace, key});
+         return this.handlePublishKey(req, res, next, reqx);
+      } else if (parts.length == 2) {
+         const [account, keyspace] = parts;
+         Object.assign(reqx, {account, keyspace});
+         return this.handlePublishKeyspace(req, res, next, reqx);
+      } else if (parts.length == 1) {
+         const [account] = parts;
+         Object.assign(reqx, {account});
+         return this.handlePublishAccount(req, res, next, reqx);
       } else {
          return next();
       }
-      this.logger.debug('publish', req.url, reqx);
+   }
+
+   async handlePublishKeyCommand(req, res, next, reqx) {
+      this.logger.debug('handlePublishKeyCommand', req.url, reqx);
       const accountKeyspace = this.accountKeyspace(reqx.account, reqx.keyspace);
       const keyspaceKey = this.keyspaceKey(reqx.account, reqx.keyspace, reqx.key);
       const accountKey = this.adminKey('account', reqx.account);
-      this.logger.debug('publish', req.url, reqx);
-      let [access, type, result] = await this.redis.multiExecAsync(multi => {
+      const [access, type, result] = await this.redis.multiExecAsync(multi => {
          multi.hget(accountKeyspace, 'access');
          multi.type(keyspaceKey);
-         if (!reqx.commandKey) {
-         } else if (reqx.commandKey === 'get') {
+         if (reqx.commandKey === 'get') {
             multi.get(keyspaceKey);
          } else if (reqx.commandKey === 'smembers') {
             multi.smembers(keyspaceKey);
@@ -139,31 +151,72 @@ export default class rquery {
             throw new ValidationError('Unsupported: ' + reqx.commandKey);
          }
       });
-      if (!reqx.commandKey) {
-         if (type === 'none') {
-            throw new ValidationError({message: 'Unpublished', status: 404});
-         } else if (type === 'set') {
-            reqx.commandKey = 'smembers';
-            result = await this.redis.smembersAsync(keyspaceKey);
-         } else if (type === 'string') {
-            reqx.commandKey = 'get';
-            result = await this.redis.getAsync(keyspaceKey);
-         } else if (type === 'list') {
-            reqx.commandKey = 'lrange';
-            req.params.start = 0;
-            req.params.stop = this.config.lrangeStop;
-            result = await this.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop); // TODO
-         } else {
-            throw new ValidationError('Unsupported publish key type: ' + type);
-         }
-      }
       if (access !== 'open') {
-         this.logger.debug('access', access, type, typeof result);
          throw new ValidationError({status: 403, message: 'Access Prohibited e.g. unpublished keyspace'});
       }
-      reqx.published = true;
       let command = this.commandMap.get(reqx.commandKey);
       await Result.sendResult(command, req, res, reqx, result);
+   }
+
+   async handlePublishKey(req, res, next, reqx) {
+      this.logger.debug('handlePublishKey', req.url, reqx);
+      const accountKeyspace = this.accountKeyspace(reqx.account, reqx.keyspace);
+      const keyspaceKey = this.keyspaceKey(reqx.account, reqx.keyspace, reqx.key);
+      const accountKey = this.adminKey('account', reqx.account);
+      const [access, type] = await this.redis.multiExecAsync(multi => {
+         multi.hget(accountKeyspace, 'access');
+         multi.type(keyspaceKey);
+      });
+      if (access !== 'open') {
+         throw new ValidationError({status: 403, message: 'Access Prohibited e.g. unpublished keyspace'});
+      }
+      let result;
+      if (type === 'none') {
+         throw new ValidationError({message: 'Unpublished', status: 404});
+      } else if (type === 'set') {
+         reqx.commandKey = 'smembers';
+         result = await this.redis.smembersAsync(keyspaceKey);
+      } else if (type === 'string') {
+         reqx.commandKey = 'get';
+         result = await this.redis.getAsync(keyspaceKey);
+      } else if (type === 'list') {
+         reqx.commandKey = 'lrange';
+         req.params.start = 0;
+         req.params.stop = this.config.lrangeStop;
+         result = await this.redis.lrangeAsync(keyspaceKey, req.params.start, req.params.stop); // TODO
+      } else {
+         throw new ValidationError('Unsupported publish key type: ' + type);
+      }
+      if (!result) {
+         throw new ValidationError({message: 'Not found: ' + key, status: 404});
+      }
+      let command = this.commandMap.get(reqx.commandKey);
+      await Result.sendResult(command, req, res, reqx, result);
+   }
+
+   async handlePublishKeyspace(req, res, next, reqx) {
+      this.logger.debug('publishKeyspace', req.url, reqx);
+      const accountKeyspace = this.accountKeyspace(reqx.account, reqx.keyspace);
+      const [access] = await this.redis.multiExecAsync(multi => {
+         multi.hget(accountKeyspace, 'access');
+      });
+      if (access !== 'open') {
+         throw new ValidationError({status: 403, message: 'Access Prohibited e.g. unpublished keyspace'});
+      }
+      const publishedKeys = await this.redis.smembersAsync(
+         this.accountKeyspace(reqx.account, reqx.keyspace, 'published-keys')
+      );
+      await Result.sendResult({}, req, res, reqx, publishedKeys);
+   }
+
+   async handlePublishAccount(req, res, next, reqx) {
+      this.logger.debug('publishAccount', req.url, reqx);
+      if (reqx.account === 'hub') {
+         throw new ValidationError('Invalid request');
+      }
+      const keyspaces = (await this.redis.smembersAsync(this.accountKey(reqx.account, 'open-keyspaces')))
+      .map(keyspace => `<a href="${req.url}/${keyspace}">${keyspace}</a>`);
+      await Result.sendResult({}, req, res, reqx, keyspaces);
    }
 
    addMonitoringRoutes() { // TODO
@@ -794,6 +847,15 @@ export default class rquery {
          this.logger.debug('access params', accountKeyspace, req.params);
          if (!lodash.includes(AccessKeys, req.params.access)) {
             throw new ValidationError('Invalid access key. Must be one of: ' + AccessKeys.join(', '));
+         }
+         const publishedKeysKey = this.accountKeyspace(account, keyspace, 'published-keys');
+         if (req.params.access === 'open') {
+            multi.sadd(this.accountKey(account, 'open-keyspaces'), keyspace);
+            multi.del(publishedKeysKey);
+         } else {
+            multi.srem(this.accountKey(account, 'open-keyspaces'), keyspace);
+            const virtualKeys = await this.scanVirtualKeys(account, keyspace, '*', 999);
+            virtualKeys.forEach(key => multi.sadd(publishedKeysKey));
          }
          return await this.redis.hsetAsync(accountKeyspace, 'access', req.params.access);
       });
@@ -2245,8 +2307,8 @@ export default class rquery {
       return this.adminKey('account', account, ...more);
    }
 
-   accountKeyspace(account, keyspace) {
-      return [this.config.redisKeyspace, 'ak', account, keyspace].join(':');
+   accountKeyspace(account, keyspace, ...more) {
+      return [this.config.redisKeyspace, 'ak', account, keyspace, ...more].join(':');
    }
 
    keyspaceKey(account, keyspace, key) {
@@ -2259,6 +2321,17 @@ export default class rquery {
 
    isDevelopment(req) {
       return req.hostname === 'localhost' && process.env.NODE_ENV === 'development';
+   }
+
+   async scanVirtualKeys(account, keyspace, match, count) {
+      let keys = await this.redis.keysAsync(this.keyspaceKey(account, keyspace, '*')); // TODO
+      if (count > 0 && keys.length > count) {
+         keys = keys.slice(0, count);
+      }
+      this.logger.error('scanVirtualKeys TODO', keys.length, account, keyspace, match, count);
+      const keyIndex = this.keyIndex(account, keyspace);
+      const virtualKeys = keys.map(key => key.substring(keyIndex));
+      return virtualKeys;
    }
 
    isSecureDomain(req) {
