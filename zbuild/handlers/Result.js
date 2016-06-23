@@ -238,7 +238,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
       icon = 'database';
    } else if (reqx.account) {
       title = '' + reqx.account;
-      heading = [Hc.b(reqx.account), Hs.tt(_styles2.default.header.keyspace, 'keyspaces')].join('');
+      heading = Hc.b(reqx.account);
       icon = 'database';
    }
    var resultString = '';
