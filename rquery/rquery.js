@@ -192,7 +192,7 @@ export default class rquery {
          throw new ValidationError({message: 'Not found: ' + key, status: 404});
       }
       let command = this.commandMap.get(reqx.commandKey);
-      reqx.backPath = `/${reqx.account}`;
+      reqx.backPath = `/${reqx.account}/${req.keyspace}`;
       await Result.sendResult(command, req, res, reqx, result);
    }
 
@@ -210,6 +210,7 @@ export default class rquery {
       );
       const renderedResult = publishedKeys
       .map(key => `<a href="${req.url}/${key}">${key}</a>`);
+      reqx.backPath = `/${reqx.account}`;
       await Result.sendResult({}, req, res, reqx, renderedResult);
    }
 

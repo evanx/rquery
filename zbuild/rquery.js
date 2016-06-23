@@ -539,7 +539,7 @@ var rquery = function () {
                      case 43:
                         command = this.commandMap.get(reqx.commandKey);
 
-                        reqx.backPath = '/' + reqx.account;
+                        reqx.backPath = '/' + reqx.account + '/' + req.keyspace;
                         _context7.next = 47;
                         return Result.sendResult(command, req, res, reqx, result);
 
@@ -595,10 +595,12 @@ var rquery = function () {
                         renderedResult = publishedKeys.map(function (key) {
                            return '<a href="' + req.url + '/' + key + '">' + key + '</a>';
                         });
-                        _context8.next = 15;
+
+                        reqx.backPath = '/' + reqx.account;
+                        _context8.next = 16;
                         return Result.sendResult({}, req, res, reqx, renderedResult);
 
-                     case 15:
+                     case 16:
                      case 'end':
                         return _context8.stop();
                   }
