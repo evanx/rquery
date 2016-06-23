@@ -118,7 +118,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
       icon = 'database';
    } else if (reqx.account) {
       title = `${reqx.account}`;
-      heading = [Hc.b(reqx.account), ' keyspaces'];
+      heading = [Hc.b(reqx.account), Hs.tt(styles.header.keyspace, 'keyspaces')].join('');
       icon = 'database';
    }
    let resultString = '';
