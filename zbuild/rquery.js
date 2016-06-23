@@ -623,7 +623,7 @@ var rquery = function () {
                      case 0:
                         this.logger.debug('publishAccount', req.url, reqx);
 
-                        if (!(reqx.account === 'hub')) {
+                        if (!(reqx.account === 'hub' && this.config.serviceKey !== 'development')) {
                            _context9.next = 3;
                            break;
                         }

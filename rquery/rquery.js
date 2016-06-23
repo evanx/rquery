@@ -215,7 +215,7 @@ export default class rquery {
 
    async handlePublishAccount(req, res, next, reqx) {
       this.logger.debug('publishAccount', req.url, reqx);
-      if (reqx.account === 'hub') {
+      if (reqx.account === 'hub' && this.config.serviceKey !== 'development') {
          throw new ValidationError('Invalid request');
       }
       const keyspaces = (await this.redis.smembersAsync(this.accountKey(reqx.account, 'open-keyspaces')))
