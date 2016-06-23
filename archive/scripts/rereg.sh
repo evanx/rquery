@@ -1,7 +1,7 @@
 
 set -u -e 
 
-rdemoToken=`dd if=/dev/urandom bs=16 count=1 2>/dev/null | sha1sum | cut -b1-16`
+rdemoToken=`dd if=/dev/urandom bs=16 count=1 2>/dev/null | shasum | cut -b1-16`
 rdemoUrl="https://demo.ibhala.com/rquery/kt/$rqueryGithubUser/$rdemoToken"
 echo $rdemoUrl
 [ -f rdemoUrl ] && curl -s `echo rdemoUrl`/deregister

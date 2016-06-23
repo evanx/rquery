@@ -5,7 +5,7 @@
   then
     openssl x509 -text -in cert.pem > x509.txt
     grep 'CN=' x509.txt
-    echo -n `cat cert.pem | head -n-1 | tail -n+2` | sed -e 's/\s//g' | sha1sum | cut -f1 -d' ' > cert.pem.sha1sum
+    echo -n `cat cert.pem | head -n-1 | tail -n+2` | sed -e 's/\s//g' | shasum | cut -f1 -d' ' > cert.pem.shasum
     cat privkey.pem cert.pem > privcert.pem
     openssl x509 -text -in privcert.pem | grep 'CN='
     curl -s -E privcert.pem "$certWebhook" ||
@@ -20,7 +20,7 @@
       sleep 2
       curl -s https://open.webserva.com/cert-script-help/${account}
       curl -s https://raw.githubusercontent.com/webserva/webserva/master/docs/install.wscurl.txt
-      certSha=`cat cert.pem.sha1sum`
+      certSha=`cat cert.pem.shasum`
       echo "Try '/grantcert $certSha' via https://telegram.me/WebServaBot?start"
     fi
   fi

@@ -133,8 +133,8 @@ This curls a versioned script: https://raw.githubusercontent.com/webserva/webser
 It's SHA is compared to an alternative source, to give confidence in its integrity, i.e. multiple sites would have been hacked to ensure that a tampered version of this script is not detectable.
 
 ```shell
-curl -s https://raw.githubusercontent.com/webserva/webserva/master/bin/cert-script.sh | sha1sum
-curl -s https://open.webserva.com/assets/cert-script.sh.sha1sum
+curl -s https://raw.githubusercontent.com/webserva/webserva/master/bin/cert-script.sh | shasum
+curl -s https://open.webserva.com/assets/cert-script.sh.shasum
 ```
 where the script currently has the following hash:
 ```
