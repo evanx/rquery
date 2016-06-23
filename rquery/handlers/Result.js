@@ -116,6 +116,10 @@ function sendHtmlResult(command, req, res, reqx, result) {
       title = `${reqx.account}/${keyspaceLabel}`;
       heading = [Hc.b(reqx.account), Hs.tt(styles.header.keyspace, keyspaceLabel)].join('');
       icon = 'database';
+   } else if (reqx.account) {
+      title = `${reqx.account}`;
+      heading = [Hc.b(reqx.account), 'keyspaces'];
+      icon = 'database';
    }
    let resultString = '';
    let resultArray = [];
