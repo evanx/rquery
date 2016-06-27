@@ -610,7 +610,7 @@ var rquery = function () {
 
                      case 11:
                         publishedKeys = _context8.sent;
-                        renderedResult = publishedKeys.map(function (key) {
+                        renderedResult = publishedKeys.sort().map(function (key) {
                            return '<a href="' + req.url + '/' + key + '">' + key + '</a>';
                         });
 

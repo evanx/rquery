@@ -213,7 +213,7 @@ export default class rquery {
       const publishedKeys = await this.redis.smembersAsync(
          this.accountKeyspace(reqx.account, reqx.keyspace, 'published-keys')
       );
-      const renderedResult = publishedKeys
+      const renderedResult = publishedKeys.sort()
       .map(key => `<a href="${req.url}/${key}">${key}</a>`);
       reqx.backPath = `/${reqx.account}`;
       await Result.sendResult({}, req, res, reqx, renderedResult);
