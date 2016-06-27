@@ -267,7 +267,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
          }));
       }
    } else if (lodash.isObject(result)) {
-      resultArray = Object.keys(result).map(function (key) {
+      resultArray = Object.keys(result).sort().map(function (key) {
          return '<b>' + key + '</b> ' + result[key];
       });
    } else if (result) {

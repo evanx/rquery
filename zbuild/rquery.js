@@ -2272,13 +2272,9 @@ var rquery = function () {
                      switch (_context37.prev = _context37.next) {
                         case 0:
                            _this6.logger.debug('get-keyspace-info', reqx.accountKeyspace);
-                           _context37.next = 3;
-                           return _this6.redis.hgetallAsync(reqx.accountKeyspace);
+                           return _context37.abrupt('return', _this6.redis.hgetallAsync(reqx.accountKeyspace));
 
-                        case 3:
-                           return _context37.abrupt('return', _context37.sent);
-
-                        case 4:
+                        case 2:
                         case 'end':
                            return _context37.stop();
                      }
@@ -2300,13 +2296,9 @@ var rquery = function () {
                   while (1) {
                      switch (_context38.prev = _context38.next) {
                         case 0:
-                           _context38.next = 2;
-                           return _this6.redis.hgetallAsync(reqx.accountKey);
+                           return _context38.abrupt('return', _this6.redis.hgetallAsync(reqx.accountKey));
 
-                        case 2:
-                           return _context38.abrupt('return', _context38.sent);
-
-                        case 3:
+                        case 1:
                         case 'end':
                            return _context38.stop();
                      }

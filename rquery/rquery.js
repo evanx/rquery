@@ -907,7 +907,7 @@ export default class rquery {
          description: 'show admin info for this keyspace'
       }, async (req, res, reqx) => {
          this.logger.debug('get-keyspace-info', reqx.accountKeyspace);
-         return await this.redis.hgetallAsync(reqx.accountKeyspace);
+         return this.redis.hgetallAsync(reqx.accountKeyspace);
       });
       this.addAccountCommand({
          key: 'get-account-info',
@@ -915,7 +915,7 @@ export default class rquery {
          description: 'show admin info for this keyspace',
          relatedCommands: ['keyspaces']
       }, async (req, res, reqx) => {
-         return await this.redis.hgetallAsync(reqx.accountKey);
+         return this.redis.hgetallAsync(reqx.accountKey);
       });
       this.addKeyspaceCommand({
          key: 'keys',

@@ -147,7 +147,7 @@ function sendHtmlResult(command, req, res, reqx, result) {
          }));
       }
    } else if (lodash.isObject(result)) {
-      resultArray = Object.keys(result).map(key => `<b>${key}</b> ${result[key]}`);
+      resultArray = Object.keys(result).sort().map(key => `<b>${key}</b> ${result[key]}`);
    } else if (result) {
       resultString = result.toString();
    }
