@@ -21,7 +21,7 @@ import KeyspaceHelpPage from './jsx/KeyspaceHelpPage';
 
 import styles from './html/styles';
 
-const AccessKeys = ['open', 'private', 'add'];
+const AccessKeys = ['private', 'add', 'read'];
 
 const logger = Loggers.create(module.filename);
 
@@ -153,7 +153,7 @@ export default class rquery {
             throw new ValidationError('Unsupported: ' + reqx.commandKey);
          }
       });
-      if (access !== 'open') {
+      if (access !== 'open' && access !== 'read') {
          throw new ValidationError({status: 403, message: 'Access Prohibited e.g. unpublished keyspace'});
       }
       let command = this.commandMap.get(reqx.commandKey);
@@ -170,7 +170,7 @@ export default class rquery {
          multi.hget(accountKeyspace, 'access');
          multi.type(keyspaceKey);
       });
-      if (access !== 'open') {
+      if (access !== 'open' && access !== 'read') {
          throw new ValidationError({status: 403, message: 'Access Prohibited e.g. unpublished keyspace'});
       }
       let result;
@@ -207,7 +207,7 @@ export default class rquery {
       const [access] = await this.redis.multiExecAsync(multi => {
          multi.hget(accountKeyspace, 'access');
       });
-      if (access !== 'open') {
+      if (access !== 'open' && access !== 'read') {
          throw new ValidationError({status: 403, message: 'Access Prohibited e.g. unpublished keyspace'});
       }
       const publishedKeys = await this.redis.smembersAsync(
@@ -859,7 +859,7 @@ export default class rquery {
             throw new ValidationError('Invalid access key. Must be one of: ' + AccessKeys.join(', '));
          }
          const publishedSetKey = this.accountKeyspace(account, keyspace, 'published-keys');
-         if (req.params.access === 'open') {
+         if (req.params.access === 'openread') {
             multi.sadd(this.accountKey(account, 'open-keyspaces'), keyspace);
             const virtualKeys = await this.scanVirtualKeys(account, keyspace, '*', 999);
             virtualKeys.forEach(key => multi.sadd(publishedSetKey, key));

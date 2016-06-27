@@ -88,7 +88,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var AccessKeys = ['open', 'private', 'add'];
+var AccessKeys = ['private', 'add', 'read'];
 
 var logger = Loggers.create(module.filename);
 
@@ -410,7 +410,7 @@ var rquery = function () {
                         type = _ref2[1];
                         result = _ref2[2];
 
-                        if (!(access !== 'open')) {
+                        if (!(access !== 'open' && access !== 'read')) {
                            _context6.next = 13;
                            break;
                         }
@@ -464,7 +464,7 @@ var rquery = function () {
                         access = _ref4[0];
                         type = _ref4[1];
 
-                        if (!(access !== 'open')) {
+                        if (!(access !== 'open' && access !== 'read')) {
                            _context7.next = 12;
                            break;
                         }
@@ -597,7 +597,7 @@ var rquery = function () {
                         _ref6 = _slicedToArray(_ref5, 1);
                         access = _ref6[0];
 
-                        if (!(access !== 'open')) {
+                        if (!(access !== 'open' && access !== 'read')) {
                            _context8.next = 9;
                            break;
                         }
@@ -2112,7 +2112,7 @@ var rquery = function () {
                         case 3:
                            publishedSetKey = _this6.accountKeyspace(account, keyspace, 'published-keys');
 
-                           if (!(req.params.access === 'open')) {
+                           if (!(req.params.access === 'openread')) {
                               _context34.next = 12;
                               break;
                            }
