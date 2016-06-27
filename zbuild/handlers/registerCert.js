@@ -188,3 +188,4 @@ exports.default = function () {
 
    return registerCert;
 }();
+//# sourceMappingURL=registerCert.js.map
