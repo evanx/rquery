@@ -3010,18 +3010,21 @@ var rquery = function () {
             relatedCommands: ['exists', 'type', 'ttl']
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee57(req, res, _ref44) {
+               var account = _ref44.account;
+               var keyspace = _ref44.keyspace;
                var keyspaceKey = _ref44.keyspaceKey;
                return regeneratorRuntime.wrap(function _callee57$(_context57) {
                   while (1) {
                      switch (_context57.prev = _context57.next) {
                         case 0:
-                           _context57.next = 2;
-                           return _this6.redis.renameAsync(keyspaceKey, _this6.keyspaceKey(req.params.newkey));
-
-                        case 2:
-                           return _context57.abrupt('return', _context57.sent);
+                           _this6.logger.debug('rename', keyspaceKey, req.params.newkey, _this6.keyspaceKey(account, keyspace, req.params.newkey));
+                           _context57.next = 3;
+                           return _this6.redis.renameAsync(keyspaceKey, _this6.keyspaceKey(account, keyspace, req.params.newkey));
 
                         case 3:
+                           return _context57.abrupt('return', _context57.sent);
+
+                        case 4:
                         case 'end':
                            return _context57.stop();
                      }

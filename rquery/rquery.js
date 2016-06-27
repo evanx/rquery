@@ -1162,8 +1162,9 @@ export default class rquery {
          access: 'set',
          description: 'rename a key',
          relatedCommands: ['exists', 'type', 'ttl'],
-      }, async (req, res, {keyspaceKey}) => {
-         return await this.redis.renameAsync(keyspaceKey, this.keyspaceKey(req.params.newkey));
+      }, async (req, res, {account, keyspace, keyspaceKey}) => {
+         this.logger.debug('rename', keyspaceKey, req.params.newkey, this.keyspaceKey(account, keyspace, req.params.newkey));
+         return await this.redis.renameAsync(keyspaceKey, this.keyspaceKey(account, keyspace, req.params.newkey));
       });
       this.addKeyspaceCommand({
          key: 'sadd',
