@@ -224,7 +224,7 @@ export default class rquery {
       if (reqx.account === 'hub' && this.config.serviceKey !== 'development') {
          throw new ValidationError('Invalid request');
       }
-      const keyspaces = (await this.redis.smembersAsync(this.accountKey(reqx.account, 'open-keyspaces')))
+      const keyspaces = (await this.redis.smembersAsync(this.accountKey(reqx.account, 'read-keyspaces')))
       .map(keyspace => `<a href="${req.url}/${keyspace}">${keyspace}</a>`);
       await Result.sendResult({}, req, res, reqx, keyspaces);
    }
@@ -859,12 +859,12 @@ export default class rquery {
             throw new ValidationError('Invalid access key. Must be one of: ' + AccessKeys.join(', '));
          }
          const publishedSetKey = this.accountKeyspace(account, keyspace, 'published-keys');
-         if (req.params.access === 'openread') {
-            multi.sadd(this.accountKey(account, 'open-keyspaces'), keyspace);
+         if (req.params.access === 'open' || req.params.access === 'read') {
+            multi.sadd(this.accountKey(account, 'read-keyspaces'), keyspace);
             const virtualKeys = await this.scanVirtualKeys(account, keyspace, '*', 999);
             virtualKeys.forEach(key => multi.sadd(publishedSetKey, key));
          } else {
-            multi.srem(this.accountKey(account, 'open-keyspaces'), keyspace);
+            multi.srem(this.accountKey(account, 'read-keyspaces'), keyspace);
             multi.del(publishedSetKey);
          }
          return await this.redis.hsetAsync(accountKeyspace, 'access', req.params.access);

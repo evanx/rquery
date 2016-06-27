@@ -652,7 +652,7 @@ var rquery = function () {
 
                      case 3:
                         _context9.next = 5;
-                        return this.redis.smembersAsync(this.accountKey(reqx.account, 'open-keyspaces'));
+                        return this.redis.smembersAsync(this.accountKey(reqx.account, 'read-keyspaces'));
 
                      case 5:
                         _context9.t0 = function (keyspace) {
@@ -2112,12 +2112,12 @@ var rquery = function () {
                         case 3:
                            publishedSetKey = _this6.accountKeyspace(account, keyspace, 'published-keys');
 
-                           if (!(req.params.access === 'openread')) {
+                           if (!(req.params.access === 'open' || req.params.access === 'read')) {
                               _context34.next = 12;
                               break;
                            }
 
-                           multi.sadd(_this6.accountKey(account, 'open-keyspaces'), keyspace);
+                           multi.sadd(_this6.accountKey(account, 'read-keyspaces'), keyspace);
                            _context34.next = 8;
                            return _this6.scanVirtualKeys(account, keyspace, '*', 999);
 
@@ -2131,7 +2131,7 @@ var rquery = function () {
                            break;
 
                         case 12:
-                           multi.srem(_this6.accountKey(account, 'open-keyspaces'), keyspace);
+                           multi.srem(_this6.accountKey(account, 'read-keyspaces'), keyspace);
                            multi.del(publishedSetKey);
 
                         case 14:
