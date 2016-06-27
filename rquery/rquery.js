@@ -1157,6 +1157,15 @@ export default class rquery {
          return await this.redis.delAsync(keyspaceKey);
       });
       this.addKeyspaceCommand({
+         key: 'rename',
+         params: ['key', 'newkey'],
+         access: 'set',
+         description: 'rename a key',
+         relatedCommands: ['exists', 'type', 'ttl'],
+      }, async (req, res, {keyspaceKey}) => {
+         return await this.redis.renameAsync(keyspaceKey, req.params.newkey);
+      });
+      this.addKeyspaceCommand({
          key: 'sadd',
          params: ['key', 'member'],
          access: 'add',
