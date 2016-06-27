@@ -3016,7 +3016,7 @@ var rquery = function () {
                      switch (_context57.prev = _context57.next) {
                         case 0:
                            _context57.next = 2;
-                           return _this6.redis.renameAsync(keyspaceKey, req.params.newkey);
+                           return _this6.redis.renameAsync(keyspaceKey, _this6.keyspaceKey(req.params.newkey));
 
                         case 2:
                            return _context57.abrupt('return', _context57.sent);
