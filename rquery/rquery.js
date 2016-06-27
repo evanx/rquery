@@ -862,6 +862,7 @@ export default class rquery {
          if (req.params.access === 'open' || req.params.access === 'read') {
             multi.sadd(this.accountKey(account, 'read-keyspaces'), keyspace);
             const virtualKeys = await this.scanVirtualKeys(account, keyspace, '*', 999);
+            multi.del(publishedSetKey);
             virtualKeys.forEach(key => multi.sadd(publishedSetKey, key));
          } else {
             multi.srem(this.accountKey(account, 'read-keyspaces'), keyspace);
@@ -1163,7 +1164,6 @@ export default class rquery {
          description: 'rename a key',
          relatedCommands: ['exists', 'type', 'ttl'],
       }, async (req, res, {account, keyspace, keyspaceKey}) => {
-         this.logger.debug('rename', keyspaceKey, req.params.newkey, this.keyspaceKey(account, keyspace, req.params.newkey));
          return await this.redis.renameAsync(keyspaceKey, this.keyspaceKey(account, keyspace, req.params.newkey));
       });
       this.addKeyspaceCommand({

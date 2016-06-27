@@ -2113,7 +2113,7 @@ var rquery = function () {
                            publishedSetKey = _this6.accountKeyspace(account, keyspace, 'published-keys');
 
                            if (!(req.params.access === 'open' || req.params.access === 'read')) {
-                              _context34.next = 12;
+                              _context34.next = 13;
                               break;
                            }
 
@@ -2124,24 +2124,25 @@ var rquery = function () {
                         case 8:
                            virtualKeys = _context34.sent;
 
+                           multi.del(publishedSetKey);
                            virtualKeys.forEach(function (key) {
                               return multi.sadd(publishedSetKey, key);
                            });
-                           _context34.next = 14;
+                           _context34.next = 15;
                            break;
 
-                        case 12:
+                        case 13:
                            multi.srem(_this6.accountKey(account, 'read-keyspaces'), keyspace);
                            multi.del(publishedSetKey);
 
-                        case 14:
-                           _context34.next = 16;
+                        case 15:
+                           _context34.next = 17;
                            return _this6.redis.hsetAsync(accountKeyspace, 'access', req.params.access);
 
-                        case 16:
+                        case 17:
                            return _context34.abrupt('return', _context34.sent);
 
-                        case 17:
+                        case 18:
                         case 'end':
                            return _context34.stop();
                      }
@@ -3017,14 +3018,13 @@ var rquery = function () {
                   while (1) {
                      switch (_context57.prev = _context57.next) {
                         case 0:
-                           _this6.logger.debug('rename', keyspaceKey, req.params.newkey, _this6.keyspaceKey(account, keyspace, req.params.newkey));
-                           _context57.next = 3;
+                           _context57.next = 2;
                            return _this6.redis.renameAsync(keyspaceKey, _this6.keyspaceKey(account, keyspace, req.params.newkey));
 
-                        case 3:
+                        case 2:
                            return _context57.abrupt('return', _context57.sent);
 
-                        case 4:
+                        case 3:
                         case 'end':
                            return _context57.stop();
                      }
