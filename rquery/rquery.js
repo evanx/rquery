@@ -864,6 +864,7 @@ export default class rquery {
             const virtualKeys = await this.scanVirtualKeys(account, keyspace, '*', 999);
             multi.del(publishedSetKey);
             virtualKeys.forEach(key => multi.sadd(publishedSetKey, key));
+            virtualKeys.forEach(key => multi.expire(this.keyspacekey(account, keyspace, key), this.config.keyspaceExpire));
          } else {
             multi.srem(this.accountKey(account, 'read-keyspaces'), keyspace);
             multi.del(publishedSetKey);
@@ -917,17 +918,6 @@ export default class rquery {
          relatedCommands: ['keyspaces']
       }, async (req, res, reqx) => {
          return this.redis.hgetallAsync(reqx.accountKey);
-      });
-      this.addKeyspaceCommand({
-         key: 'keys',
-         access: 'debug',
-         description: 'show keys in this keyspace',
-         relatedCommands: ['ttls', 'types']
-      }, async (req, res, reqx) => {
-         const {account, keyspace} = reqx;
-         const keys = await this.redis.keysAsync(this.keyspaceKey(account, keyspace, '*'));
-         const keyIndex = this.keyIndex(account, keyspace);
-         return keys.map(key => key.substring(keyIndex));
       });
       this.addKeyspaceCommand({
          key: 'types',
