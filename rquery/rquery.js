@@ -864,7 +864,7 @@ export default class rquery {
             const virtualKeys = await this.scanVirtualKeys(account, keyspace, '*', 999);
             multi.del(publishedSetKey);
             virtualKeys.forEach(key => multi.sadd(publishedSetKey, key));
-            virtualKeys.forEach(key => multi.expire(this.keyspacekey(account, keyspace, key), this.config.keyspaceExpire));
+            virtualKeys.forEach(key => multi.expire(this.keyspaceKey(account, keyspace, key), this.config.keyspaceExpire));
          } else {
             multi.srem(this.accountKey(account, 'read-keyspaces'), keyspace);
             multi.del(publishedSetKey);

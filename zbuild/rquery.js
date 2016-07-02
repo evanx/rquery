@@ -2129,7 +2129,7 @@ var rquery = function () {
                               return multi.sadd(publishedSetKey, key);
                            });
                            virtualKeys.forEach(function (key) {
-                              return multi.expire(_this6.keyspacekey(account, keyspace, key), _this6.config.keyspaceExpire);
+                              return multi.expire(_this6.keyspaceKey(account, keyspace, key), _this6.config.keyspaceExpire);
                            });
                            _context34.next = 16;
                            break;
