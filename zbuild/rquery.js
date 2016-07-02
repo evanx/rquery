@@ -2113,7 +2113,7 @@ var rquery = function () {
                            publishedSetKey = _this6.accountKeyspace(account, keyspace, 'published-keys');
 
                            if (!(req.params.access === 'open' || req.params.access === 'read')) {
-                              _context34.next = 14;
+                              _context34.next = 13;
                               break;
                            }
 
@@ -2126,26 +2126,27 @@ var rquery = function () {
 
                            multi.del(publishedSetKey);
                            virtualKeys.forEach(function (key) {
-                              return multi.sadd(publishedSetKey, key);
+                              multi.sadd(publishedSetKey, key);
+                              var keyspaceKey = _this6.keyspaceKey(account, keyspace, key);
+                              var expire = _this6.config.keyspaceExpire;
+                              _this6.logger.debug('expire', keyspaceKey, expire);
+                              multi.expire(keyspaceKey, expire);
                            });
-                           virtualKeys.forEach(function (key) {
-                              return multi.expire(_this6.keyspaceKey(account, keyspace, key), _this6.config.keyspaceExpire);
-                           });
-                           _context34.next = 16;
+                           _context34.next = 15;
                            break;
 
-                        case 14:
+                        case 13:
                            multi.srem(_this6.accountKey(account, 'read-keyspaces'), keyspace);
                            multi.del(publishedSetKey);
 
-                        case 16:
-                           _context34.next = 18;
+                        case 15:
+                           _context34.next = 17;
                            return _this6.redis.hsetAsync(accountKeyspace, 'access', req.params.access);
 
-                        case 18:
+                        case 17:
                            return _context34.abrupt('return', _context34.sent);
 
-                        case 19:
+                        case 18:
                         case 'end':
                            return _context34.stop();
                      }
