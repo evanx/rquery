@@ -9,8 +9,8 @@
     "watch": "node_modules/.bin/babel -w lib -w rquery -w telegram -d zbuild -s",
     "test": "scripts/test.sh",
     "demo": "NODE_ENV=development configModule=./config/demo.js redisUrl='redis://localhost:6379/13' npm start | ./node_modules/.bin/bunyan -o short",
-    "secure": "NODE_ENV=production configModule=./config/secure.js redisUrl='redis://localhost:6379/1' npm start | ./node_modules/.bin/bunyan -o short"
-    "secure-1": "NODE_ENV=production configModule=./config/secure.js redisUrl='redis://localhost:6379/1' port=4401 npm start | ./node_modules/.bin/bunyan -o short"
+    "secure": "NODE_ENV=production configModule=./config/secure.js redisUrl='redis://localhost:6379/1' npm start | ./node_modules/.bin/bunyan -o short",
+    "secure-1": "NODE_ENV=production configModule=./config/secure.js redisUrl='redis://localhost:6379/1' port=4401 npm start | ./node_modules/.bin/bunyan -o short",
     "secure-2": "NODE_ENV=production configModule=./config/secure.js redisUrl='redis://localhost:6379/1' port=4402 npm start | ./node_modules/.bin/bunyan -o short"
   },
   "author": "@evanxsummers",
