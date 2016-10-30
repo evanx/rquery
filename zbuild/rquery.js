@@ -1194,6 +1194,8 @@ var rquery = function () {
       key: 'handleTelegramList',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee15(request) {
+            var _this6 = this;
+
             var account, _ref21, _ref22, smembers;
 
             return regeneratorRuntime.wrap(function _callee15$(_context15) {
@@ -1205,7 +1207,7 @@ var rquery = function () {
                         this.logger.info('handleTelegramList', request);
                         _context15.next = 4;
                         return this.redis.multiExecAsync(function (multi) {
-                           multi.smembers(rquery.adminKey('account', account, 'certs'));
+                           multi.smembers(_this6.adminKey('account', account, 'certs'));
                         });
 
                      case 4:
@@ -1233,6 +1235,8 @@ var rquery = function () {
       key: 'handleTelegramRevoke',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee16(request) {
+            var _this7 = this;
+
             var now, match, account, certDigest, _ref23, _ref24, srem;
 
             return regeneratorRuntime.wrap(function _callee16$(_context16) {
@@ -1260,7 +1264,7 @@ var rquery = function () {
                         certDigest = match[1];
                         _context16.next = 11;
                         return this.redis.multiExecAsync(function (multi) {
-                           multi.srem(rquery.adminKey('account', account, 'certs'), certDigest);
+                           multi.srem(_this7.adminKey('account', account, 'certs'), certDigest);
                         });
 
                      case 11:
@@ -1438,7 +1442,7 @@ var rquery = function () {
    }, {
       key: 'addRoutes',
       value: function addRoutes() {
-         var _this6 = this;
+         var _this8 = this;
 
          this.addPublicCommand(require('./handlers/routes'));
          this.addPublicCommand({
@@ -1450,8 +1454,8 @@ var rquery = function () {
                   while (1) {
                      switch (_context20.prev = _context20.next) {
                         case 0:
-                           if (_this6.config.aboutUrl) {
-                              res.redirect(302, _this6.config.aboutUrl);
+                           if (_this8.config.aboutUrl) {
+                              res.redirect(302, _this8.config.aboutUrl);
                            }
 
                         case 1:
@@ -1459,7 +1463,7 @@ var rquery = function () {
                            return _context20.stop();
                      }
                   }
-               }, _callee20, _this6);
+               }, _callee20, _this8);
             }));
             return function (_x39, _x40) {
                return ref.apply(this, arguments);
@@ -1478,7 +1482,7 @@ var rquery = function () {
                            return _context21.stop();
                      }
                   }
-               }, _callee21, _this6);
+               }, _callee21, _this8);
             }));
             return function (_x41, _x42) {
                return ref.apply(this, arguments);
@@ -1492,17 +1496,17 @@ var rquery = function () {
                   while (1) {
                      switch (_context22.prev = _context22.next) {
                         case 0:
-                           if (!_this6.isBrowser(req)) {
+                           if (!_this8.isBrowser(req)) {
                               _context22.next = 12;
                               break;
                            }
 
-                           if (!_this6.config.helpUrl) {
+                           if (!_this8.config.helpUrl) {
                               _context22.next = 5;
                               break;
                            }
 
-                           res.redirect(302, _this6.config.helpUrl);
+                           res.redirect(302, _this8.config.helpUrl);
                            _context22.next = 10;
                            break;
 
@@ -1520,13 +1524,13 @@ var rquery = function () {
 
                            if (false) {
                               (0, _brucedown2.default)('README.md', function (err, htmlResult) {
-                                 _this6.logger.debug('brucedown', htmlResult);
+                                 _this8.logger.debug('brucedown', htmlResult);
                               });
                            } else {
                               _content = (0, _Page2.default)({
-                                 config: _this6.config,
+                                 config: _this8.config,
                                  req: req,
-                                 title: _this6.config.serviceLabel,
+                                 title: _this8.config.serviceLabel,
                                  content: (0, _marked2.default)(_content.toString())
                               });
                               res.set('Content-Type', 'text/html');
@@ -1538,22 +1542,22 @@ var rquery = function () {
                            break;
 
                         case 12:
-                           if (!_this6.isCliDomain(req)) {
+                           if (!_this8.isCliDomain(req)) {
                               _context22.next = 16;
                               break;
                            }
 
-                           return _context22.abrupt('return', _this6.listCommands());
+                           return _context22.abrupt('return', _this8.listCommands());
 
                         case 16:
-                           return _context22.abrupt('return', _this6.listCommands());
+                           return _context22.abrupt('return', _this8.listCommands());
 
                         case 17:
                         case 'end':
                            return _context22.stop();
                      }
                   }
-               }, _callee22, _this6);
+               }, _callee22, _this8);
             }));
             return function (_x43, _x44) {
                return ref.apply(this, arguments);
@@ -1569,7 +1573,7 @@ var rquery = function () {
                               res.set('Content-Type', 'text/plain');
                               _context23.t0 = res;
                               _context23.next = 4;
-                              return _this6.redis.infoAsync();
+                              return _this8.redis.infoAsync();
 
                            case 4:
                               _context23.t1 = _context23.sent;
@@ -1581,7 +1585,7 @@ var rquery = function () {
                               return _context23.stop();
                         }
                      }
-                  }, _callee23, _this6);
+                  }, _callee23, _this8);
                }));
                return function (_x45, _x46) {
                   return ref.apply(this, arguments);
@@ -1595,7 +1599,7 @@ var rquery = function () {
                   switch (_context24.prev = _context24.next) {
                      case 0:
                         _context24.next = 2;
-                        return _this6.redis.timeAsync();
+                        return _this8.redis.timeAsync();
 
                      case 2:
                         time = _context24.sent;
@@ -1606,7 +1610,7 @@ var rquery = function () {
                         return _context24.stop();
                   }
                }
-            }, _callee24, _this6);
+            }, _callee24, _this8);
          })));
          this.addPublicRoute('time/seconds', (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee25() {
             var time;
@@ -1615,7 +1619,7 @@ var rquery = function () {
                   switch (_context25.prev = _context25.next) {
                      case 0:
                         _context25.next = 2;
-                        return _this6.redis.timeAsync();
+                        return _this8.redis.timeAsync();
 
                      case 2:
                         time = _context25.sent;
@@ -1626,7 +1630,7 @@ var rquery = function () {
                         return _context25.stop();
                   }
                }
-            }, _callee25, _this6);
+            }, _callee25, _this8);
          })));
          this.addPublicRoute('time/milliseconds', (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee26() {
             var time;
@@ -1635,7 +1639,7 @@ var rquery = function () {
                   switch (_context26.prev = _context26.next) {
                      case 0:
                         _context26.next = 2;
-                        return _this6.redis.timeAsync();
+                        return _this8.redis.timeAsync();
 
                      case 2:
                         time = _context26.sent;
@@ -1646,7 +1650,7 @@ var rquery = function () {
                         return _context26.stop();
                   }
                }
-            }, _callee26, _this6);
+            }, _callee26, _this8);
          })));
          this.addPublicRoute('time/nanoseconds', (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee27() {
             var time;
@@ -1655,7 +1659,7 @@ var rquery = function () {
                   switch (_context27.prev = _context27.next) {
                      case 0:
                         _context27.next = 2;
-                        return _this6.redis.timeAsync();
+                        return _this8.redis.timeAsync();
 
                      case 2:
                         time = _context27.sent;
@@ -1666,10 +1670,10 @@ var rquery = function () {
                         return _context27.stop();
                   }
                }
-            }, _callee27, _this6);
+            }, _callee27, _this8);
          })));
          this.addPublicRoute('time', function () {
-            return _this6.redis.timeAsync();
+            return _this8.redis.timeAsync();
          });
          this.addPublicCommand({
             key: 'genkey-otp',
@@ -1687,15 +1691,15 @@ var rquery = function () {
                            user = _req$params.user;
                            host = _req$params.host;
 
-                           _this6.logger.debug('genkey-otp', user, host);
-                           return _context28.abrupt('return', _this6.buildQrReply({ user: user, host: host }));
+                           _this8.logger.debug('genkey-otp', user, host);
+                           return _context28.abrupt('return', _this8.buildQrReply({ user: user, host: host }));
 
                         case 5:
                         case 'end':
                            return _context28.stop();
                      }
                   }
-               }, _callee28, _this6);
+               }, _callee28, _this8);
             }));
             return function (_x47, _x48) {
                return ref.apply(this, arguments);
@@ -1717,15 +1721,15 @@ var rquery = function () {
                            address = _req$params2.address;
                            issuer = _req$params2.issuer;
 
-                           _this6.logger.debug('genkey-ga', address, issuer);
-                           return _context29.abrupt('return', _this6.buildQrReply({ account: address, issuer: issuer }));
+                           _this8.logger.debug('genkey-ga', address, issuer);
+                           return _context29.abrupt('return', _this8.buildQrReply({ account: address, issuer: issuer }));
 
                         case 5:
                         case 'end':
                            return _context29.stop();
                      }
                   }
-               }, _callee29, _this6);
+               }, _callee29, _this8);
             }));
             return function (_x49, _x50) {
                return ref.apply(this, arguments);
@@ -1746,14 +1750,14 @@ var rquery = function () {
                         switch (_context30.prev = _context30.next) {
                            case 0:
                               account = req.params.account;
-                              accountKey = _this6.adminKey('account', account);
+                              accountKey = _this8.adminKey('account', account);
                               _context30.next = 4;
-                              return _this6.redis.multiExecAsync(function (multi) {
+                              return _this8.redis.multiExecAsync(function (multi) {
                                  multi.time();
                                  multi.hget(accountKey, 'registered');
                                  multi.hget(accountKey, 'admined');
                                  multi.hget(accountKey, 'accessed');
-                                 multi.smembers(_this6.adminKey('account', account, 'certs'));
+                                 multi.smembers(_this8.adminKey('account', account, 'certs'));
                               });
 
                            case 4:
@@ -1767,21 +1771,21 @@ var rquery = function () {
                               certs = _ref26[4];
                               duration = time - admined;
 
-                              if (!(duration < _this6.config.adminLimit)) {
+                              if (!(duration < _this8.config.adminLimit)) {
                                  _context30.next = 15;
                                  break;
                               }
 
-                              return _context30.abrupt('return', 'Admin command interval not elapsed: ' + _this6.config.adminLimit + 's');
+                              return _context30.abrupt('return', 'Admin command interval not elapsed: ' + _this8.config.adminLimit + 's');
 
                            case 15:
-                              _this6.logger.debug('gentoken', accountKey);
-                              _validateCert = _this6.validateCert(req, reqx, certs, account, []);
+                              _this8.logger.debug('gentoken', accountKey);
+                              _validateCert = _this8.validateCert(req, reqx, certs, account, []);
                               certDigest = _validateCert.certDigest;
                               certRole = _validateCert.certRole;
-                              token = _this6.generateTokenKey(6);
+                              token = _this8.generateTokenKey(6);
                               _context30.next = 22;
-                              return _this6.redis.setexAsync([accountKey, token].join(':'), _this6.config.keyExpire, token);
+                              return _this8.redis.setexAsync([accountKey, token].join(':'), _this8.config.keyExpire, token);
 
                            case 22:
                               return _context30.abrupt('return', token);
@@ -1791,7 +1795,7 @@ var rquery = function () {
                               return _context30.stop();
                         }
                      }
-                  }, _callee30, _this6);
+                  }, _callee30, _this8);
                }));
                return function (_x51, _x52, _x53) {
                   return ref.apply(this, arguments);
@@ -1812,11 +1816,11 @@ var rquery = function () {
                         switch (_context31.prev = _context31.next) {
                            case 0:
                               user = req.params.user;
-                              userKey = _this6.adminKey('telegram', 'user', user);
+                              userKey = _this8.adminKey('telegram', 'user', user);
                               _context31.next = 4;
-                              return _this6.redis.multiExecAsync(function (multi) {
+                              return _this8.redis.multiExecAsync(function (multi) {
                                  multi.time();
-                                 multi.sismember(_this6.adminKey('telegram:verified:users'), user);
+                                 multi.sismember(_this8.adminKey('telegram:verified:users'), user);
                                  multi.hget(userKey, 'verified');
                                  multi.hget(userKey, 'secret');
                               });
@@ -1851,14 +1855,14 @@ var rquery = function () {
                               break;
 
                            case 20:
-                              return _context31.abrupt('return', ['Telegram user not yet verified: ' + user + '.', 'Please Telegram \'@' + _this6.config.adminBotName + ' /verify\'', 'e.g. via https://web.telegram.org'].join(' '));
+                              return _context31.abrupt('return', ['Telegram user not yet verified: ' + user + '.', 'Please Telegram \'@' + _this8.config.adminBotName + ' /verify\'', 'e.g. via https://web.telegram.org'].join(' '));
 
                            case 21:
                            case 'end':
                               return _context31.stop();
                         }
                      }
-                  }, _callee31, _this6);
+                  }, _callee31, _this8);
                }));
                return function (_x54, _x55) {
                   return ref.apply(this, arguments);
@@ -1870,14 +1874,14 @@ var rquery = function () {
             params: ['account'],
             format: 'cli'
          }, function (req, res, reqx) {
-            return (0, _certScript.handleCertScript)(req, res, reqx, { config: _this6.config });
+            return (0, _certScript.handleCertScript)(req, res, reqx, { config: _this8.config });
          });
          this.addPublicCommand({
             key: 'cert-script-help',
             params: ['account'],
             format: 'cli'
          }, function (req, res, reqx) {
-            return (0, _certScript.handleCertScriptHelp)(req, res, reqx, { config: _this6.config });
+            return (0, _certScript.handleCertScriptHelp)(req, res, reqx, { config: _this8.config });
          });
          this.addRegisterRoutes();
          this.addAccountRoutes();
@@ -1891,21 +1895,21 @@ var rquery = function () {
                      while (1) {
                         switch (_context32.prev = _context32.next) {
                            case 0:
-                              if (_this6.isCliDomain(req)) {
+                              if (_this8.isCliDomain(req)) {
                                  _context32.next = 5;
                                  break;
                               }
 
                               res.set('Content-Type', 'text/html');
                               res.send((0, _Page2.default)(KeyspaceHelp.render({
-                                 config: _this6.config, commandMap: _this6.commandMap,
+                                 config: _this8.config, commandMap: _this8.commandMap,
                                  req: req, reqx: reqx, result: result
                               })));
                               _context32.next = 11;
                               break;
 
                            case 5:
-                              if (!(false && !_this6.isMobile(req))) {
+                              if (!(false && !_this8.isMobile(req))) {
                                  _context32.next = 10;
                                  break;
                               }
@@ -1935,7 +1939,7 @@ var rquery = function () {
                               return _context32.stop();
                         }
                      }
-                  }, _callee32, _this6);
+                  }, _callee32, _this8);
                }));
 
                function sendResult(_x56, _x57, _x58, _x59) {
@@ -1955,12 +1959,12 @@ var rquery = function () {
                               _req$params3 = req.params;
                               account = _req$params3.account;
                               keyspace = _req$params3.keyspace;
-                              hostUrl = _this6.config.hostUrl;
+                              hostUrl = _this8.config.hostUrl;
 
-                              if (_this6.config.hostDomain !== 'localhost') {
+                              if (_this8.config.hostDomain !== 'localhost') {
                                  hostUrl = 'https://' + req.hostname;
                               }
-                              _this6.logger.ndebug('help', req.params, _this6.commands.map(function (command) {
+                              _this8.logger.ndebug('help', req.params, _this8.commands.map(function (command) {
                                  return command.key;
                               }).join('/'));
                               message = Switch.on('Welcome to this keyspace', [reqx.account === 'hub', ['Welcome to this ephemeral keyspace.'].join(' ')], [reqx.account, ['Welcome to your account keyspace'].join(' ')]);
@@ -1968,7 +1972,7 @@ var rquery = function () {
                               customCommandHeading = 'Custom commands';
                               description = ['You can set, get and add data to sets, lists, zsets, hashes etc.', 'Try click the example URLs below.', 'Also edit the URL in the location bar to try other combinations.', 'Click anywhere on the iconized header bar to navigate back.'];
 
-                              if (false && _this6.isSecureDomain(req)) {
+                              if (false && _this8.isSecureDomain(req)) {
                                  description.push('When reading keys, you can also try changing the subdomain to \'replica.\'');
                               }
                               description.push('<i>(A client-side command completion tool will come later. This is an MVP without any such bells and whistles yet.)</i>');
@@ -1984,8 +1988,8 @@ var rquery = function () {
                                  return url;
                               });
                               return _context33.abrupt('return', { message: message, commandReferenceMessage: commandReferenceMessage, customCommandHeading: customCommandHeading, description: description, exampleUrls: exampleUrls,
-                                 commands: _this6.commands,
-                                 keyspaceCommands: _this6.listCommands('keyspace')
+                                 commands: _this8.commands,
+                                 keyspaceCommands: _this8.listCommands('keyspace')
                               });
 
                            case 17:
@@ -1993,7 +1997,7 @@ var rquery = function () {
                               return _context33.stop();
                         }
                      }
-                  }, _callee33, _this6);
+                  }, _callee33, _this8);
                }));
 
                function handleReq(_x60, _x61, _x62) {
@@ -2033,12 +2037,12 @@ var rquery = function () {
                            });
 
                         case 9:
-                           _this6.logger.debug('command', command.key, account, role);
+                           _this8.logger.debug('command', command.key, account, role);
                            _context34.next = 12;
-                           return _this6.redis.multiExecAsync(function (multi) {
-                              multi.sadd(_this6.accountKey(account, 'keyspaces'), keyspace);
-                              multi.hget(_this6.accountKey(account), 'expire');
-                              multi.hlen(_this6.accountKeyspace(account, keyspace));
+                           return _this8.redis.multiExecAsync(function (multi) {
+                              multi.sadd(_this8.accountKey(account, 'keyspaces'), keyspace);
+                              multi.hget(_this8.accountKey(account), 'expire');
+                              multi.hlen(_this8.accountKeyspace(account, keyspace));
                            });
 
                         case 12:
@@ -2056,7 +2060,7 @@ var rquery = function () {
                            throw new ValidationError({
                               status: 400,
                               message: 'Keyspace already exists',
-                              hint: _this6.hints.routes
+                              hint: _this8.hints.routes
                            });
 
                         case 19:
@@ -2068,20 +2072,20 @@ var rquery = function () {
                            throw new ValidationError({
                               status: 400,
                               message: 'Keyspace already exists (hlen)',
-                              hint: _this6.hints.routes
+                              hint: _this8.hints.routes
                            });
 
                         case 21:
                            _context34.next = 23;
-                           return _this6.redis.multiExecAsync(function (multi) {
-                              multi.incr(_this6.adminKey('keyspaces:seq'));
+                           return _this8.redis.multiExecAsync(function (multi) {
+                              multi.incr(_this8.adminKey('keyspaces:seq'));
                            });
 
                         case 23:
                            _ref31 = _context34.sent;
                            _ref32 = _slicedToArray(_ref31, 1);
                            keyspaceId = _ref32[0];
-                           expire = Seconds.parse(req.query.expire) || _this6.config.keyspaceExpire;
+                           expire = Seconds.parse(req.query.expire) || _this8.config.keyspaceExpire;
 
                            if (!(req.query && req.query.expire)) {
                               _context34.next = 35;
@@ -2096,7 +2100,7 @@ var rquery = function () {
                            throw new ValidationError('Keyspace expiry must be greater than 10 seconds');
 
                         case 30:
-                           if (!(expire > _this6.config.keyspaceExpire)) {
+                           if (!(expire > _this8.config.keyspaceExpire)) {
                               _context34.next = 33;
                               break;
                            }
@@ -2106,7 +2110,7 @@ var rquery = function () {
                               break;
                            }
 
-                           throw new ValidationError('Keyspace expiry must be less than ' + Seconds.toDays(_this6.config.keyspaceExpire) + ' days for cert role ' + certRole);
+                           throw new ValidationError('Keyspace expiry must be less than ' + Seconds.toDays(_this8.config.keyspaceExpire) + ' days for cert role ' + certRole);
 
                         case 33:
                            if (!(expire > accountExpire)) {
@@ -2118,8 +2122,8 @@ var rquery = function () {
 
                         case 35:
                            _context34.next = 37;
-                           return _this6.redis.multiExecAsync(function (multi) {
-                              multi.hmset(_this6.accountKey(account, keyspace), {
+                           return _this8.redis.multiExecAsync(function (multi) {
+                              multi.hmset(_this8.accountKey(account, keyspace), {
                                  expire: expire, role: role, registered: time
                               });
                            });
@@ -2140,7 +2144,7 @@ var rquery = function () {
 
                         case 42:
                            _context34.next = 44;
-                           return _this6.sendTelegramAlert(account, 'html', ['Registered new keyspace <code>' + keyspace + '</code>']);
+                           return _this8.sendTelegramAlert(account, 'html', ['Registered new keyspace <code>' + keyspace + '</code>']);
 
                         case 44:
                            return _context34.abrupt('return', 'OK');
@@ -2150,7 +2154,7 @@ var rquery = function () {
                            return _context34.stop();
                      }
                   }
-               }, _callee34, _this6);
+               }, _callee34, _this8);
             }));
             return function (_x63, _x64, _x65) {
                return ref.apply(this, arguments);
@@ -2163,7 +2167,7 @@ var rquery = function () {
             relatedCommands: ['create-keyspace'],
             dangerousRelatedCommands: ['destroy-keyspace'],
             renderHtmlEach: function renderHtmlEach(req, res, reqx, keyspace) {
-               _this6.logger.debug('renderHtmlEach', keyspace);
+               _this8.logger.debug('renderHtmlEach', keyspace);
                return '<a href="/ak/' + reqx.account + '/' + keyspace + '/help">' + keyspace + '</a>';
             },
             access: 'admin'
@@ -2175,10 +2179,10 @@ var rquery = function () {
                   while (1) {
                      switch (_context35.prev = _context35.next) {
                         case 0:
-                           _this6.logger.debug('keyspaces', reqx.command.key, reqx.account, _this6.accountKey(reqx.account, 'keyspaces'));
+                           _this8.logger.debug('keyspaces', reqx.command.key, reqx.account, _this8.accountKey(reqx.account, 'keyspaces'));
                            _context35.next = 3;
-                           return _this6.redis.multiExecAsync(function (multi) {
-                              multi.smembers(_this6.accountKey(reqx.account, 'keyspaces'));
+                           return _this8.redis.multiExecAsync(function (multi) {
+                              multi.smembers(_this8.accountKey(reqx.account, 'keyspaces'));
                            });
 
                         case 3:
@@ -2196,7 +2200,7 @@ var rquery = function () {
                            return _context35.stop();
                      }
                   }
-               }, _callee35, _this6);
+               }, _callee35, _this8);
             }));
             return function (_x66, _x67, _x68) {
                return ref.apply(this, arguments);
@@ -2217,7 +2221,7 @@ var rquery = function () {
                   while (1) {
                      switch (_context36.prev = _context36.next) {
                         case 0:
-                           _this6.logger.debug('access params', accountKeyspace, req.params);
+                           _this8.logger.debug('access params', accountKeyspace, req.params);
 
                            if (lodash.includes(AccessKeys, req.params.access)) {
                               _context36.next = 3;
@@ -2227,16 +2231,16 @@ var rquery = function () {
                            throw new ValidationError('Invalid access key. Must be one of: ' + AccessKeys.join(', '));
 
                         case 3:
-                           publishedSetKey = _this6.accountKeyspace(account, keyspace, 'published-keys');
+                           publishedSetKey = _this8.accountKeyspace(account, keyspace, 'published-keys');
 
                            if (!(req.params.access === 'open' || req.params.access === 'read')) {
                               _context36.next = 13;
                               break;
                            }
 
-                           multi.sadd(_this6.accountKey(account, 'read-keyspaces'), keyspace);
+                           multi.sadd(_this8.accountKey(account, 'read-keyspaces'), keyspace);
                            _context36.next = 8;
-                           return _this6.scanVirtualKeys(account, keyspace, '*', 999);
+                           return _this8.scanVirtualKeys(account, keyspace, '*', 999);
 
                         case 8:
                            virtualKeys = _context36.sent;
@@ -2244,21 +2248,21 @@ var rquery = function () {
                            multi.del(publishedSetKey);
                            virtualKeys.forEach(function (key) {
                               multi.sadd(publishedSetKey, key);
-                              var keyspaceKey = _this6.keyspaceKey(account, keyspace, key);
-                              var expire = _this6.config.keyspaceExpire;
-                              _this6.logger.debug('expire', keyspaceKey, expire);
+                              var keyspaceKey = _this8.keyspaceKey(account, keyspace, key);
+                              var expire = _this8.config.keyspaceExpire;
+                              _this8.logger.debug('expire', keyspaceKey, expire);
                               multi.expire(keyspaceKey, expire);
                            });
                            _context36.next = 15;
                            break;
 
                         case 13:
-                           multi.srem(_this6.accountKey(account, 'read-keyspaces'), keyspace);
+                           multi.srem(_this8.accountKey(account, 'read-keyspaces'), keyspace);
                            multi.del(publishedSetKey);
 
                         case 15:
                            _context36.next = 17;
-                           return _this6.redis.hsetAsync(accountKeyspace, 'access', req.params.access);
+                           return _this8.redis.hsetAsync(accountKeyspace, 'access', req.params.access);
 
                         case 17:
                            return _context36.abrupt('return', _context36.sent);
@@ -2268,7 +2272,7 @@ var rquery = function () {
                            return _context36.stop();
                      }
                   }
-               }, _callee36, _this6);
+               }, _callee36, _this8);
             }));
             return function (_x69, _x70, _x71, _x72) {
                return ref.apply(this, arguments);
@@ -2291,8 +2295,8 @@ var rquery = function () {
                      switch (_context37.prev = _context37.next) {
                         case 0:
                            _context37.next = 2;
-                           return _this6.redis.multiExecAsync(function (multi) {
-                              multi.keys(_this6.keyspaceKey(account, keyspace, '*'));
+                           return _this8.redis.multiExecAsync(function (multi) {
+                              multi.keys(_this8.keyspaceKey(account, keyspace, '*'));
                            });
 
                         case 2:
@@ -2300,8 +2304,8 @@ var rquery = function () {
                            _ref40 = _slicedToArray(_ref39, 1);
                            keys = _ref40[0];
                            _context37.next = 7;
-                           return _this6.redis.multiExecAsync(function (multi) {
-                              multi.smembers(_this6.accountKey(account, 'keyspaces'));
+                           return _this8.redis.multiExecAsync(function (multi) {
+                              multi.smembers(_this8.accountKey(account, 'keyspaces'));
                            });
 
                         case 7:
@@ -2309,14 +2313,14 @@ var rquery = function () {
                            _ref42 = _slicedToArray(_ref41, 1);
                            keyspaces = _ref42[0];
 
-                           _this6.logger.info('destroy-keyspace', keyspace, keys.length, keyspaces);
-                           keyIndex = _this6.keyIndex(account, keyspace);
+                           _this8.logger.info('destroy-keyspace', keyspace, keys.length, keyspaces);
+                           keyIndex = _this8.keyIndex(account, keyspace);
                            _context37.next = 14;
-                           return _this6.redis.multiExecAsync(function (multi) {
+                           return _this8.redis.multiExecAsync(function (multi) {
                               keys.forEach(function (key) {
                                  return multi.del(key);
                               });
-                              multi.del(_this6.accountKey(account, 'keyspaces'), keyspace);
+                              multi.del(_this8.accountKey(account, 'keyspaces'), keyspace);
                               //multi.del(this.accountKey(account, 'certs'));
                               //multi.del(accountKey);
                            });
@@ -2332,7 +2336,7 @@ var rquery = function () {
                            return _context37.stop();
                      }
                   }
-               }, _callee37, _this6);
+               }, _callee37, _this8);
             }));
             return function (_x73, _x74, _x75) {
                return ref.apply(this, arguments);
@@ -2353,12 +2357,12 @@ var rquery = function () {
                            account = _req$params4.account;
                            keyspace = _req$params4.keyspace;
                            _context38.next = 5;
-                           return _this6.redis.keysAsync(_this6.keyspaceKey(account, keyspace, '*'));
+                           return _this8.redis.keysAsync(_this8.keyspaceKey(account, keyspace, '*'));
 
                         case 5:
                            keys = _context38.sent;
-                           keyIndex = _this6.keyIndex(account, keyspace);
-                           multi = _this6.redis.multi();
+                           keyIndex = _this8.keyIndex(account, keyspace);
+                           multi = _this8.redis.multi();
 
                            keys.forEach(function (key) {
                               return multi.del(key);
@@ -2377,7 +2381,7 @@ var rquery = function () {
                            return _context38.stop();
                      }
                   }
-               }, _callee38, _this6);
+               }, _callee38, _this8);
             }));
             return function (_x76, _x77) {
                return ref.apply(this, arguments);
@@ -2393,15 +2397,15 @@ var rquery = function () {
                   while (1) {
                      switch (_context39.prev = _context39.next) {
                         case 0:
-                           _this6.logger.debug('get-keyspace-info', reqx.accountKeyspace);
-                           return _context39.abrupt('return', _this6.redis.hgetallAsync(reqx.accountKeyspace));
+                           _this8.logger.debug('get-keyspace-info', reqx.accountKeyspace);
+                           return _context39.abrupt('return', _this8.redis.hgetallAsync(reqx.accountKeyspace));
 
                         case 2:
                         case 'end':
                            return _context39.stop();
                      }
                   }
-               }, _callee39, _this6);
+               }, _callee39, _this8);
             }));
             return function (_x78, _x79, _x80) {
                return ref.apply(this, arguments);
@@ -2418,14 +2422,14 @@ var rquery = function () {
                   while (1) {
                      switch (_context40.prev = _context40.next) {
                         case 0:
-                           return _context40.abrupt('return', _this6.redis.hgetallAsync(reqx.accountKey));
+                           return _context40.abrupt('return', _this8.redis.hgetallAsync(reqx.accountKey));
 
                         case 1:
                         case 'end':
                            return _context40.stop();
                      }
                   }
-               }, _callee40, _this6);
+               }, _callee40, _this8);
             }));
             return function (_x81, _x82, _x83) {
                return ref.apply(this, arguments);
@@ -2446,14 +2450,14 @@ var rquery = function () {
                            account = reqx.account;
                            keyspace = reqx.keyspace;
                            _context41.next = 4;
-                           return _this6.redis.keysAsync(_this6.keyspaceKey(account, keyspace, '*'));
+                           return _this8.redis.keysAsync(_this8.keyspaceKey(account, keyspace, '*'));
 
                         case 4:
                            keys = _context41.sent;
 
-                           _this6.logger.debug('ttl ak', account, keyspace, keys);
-                           keyIndex = _this6.keyIndex(account, keyspace);
-                           multi = _this6.redis.multi();
+                           _this8.logger.debug('ttl ak', account, keyspace, keys);
+                           keyIndex = _this8.keyIndex(account, keyspace);
+                           multi = _this8.redis.multi();
 
                            keys.forEach(function (key) {
                               return multi.type(key);
@@ -2475,7 +2479,7 @@ var rquery = function () {
                            return _context41.stop();
                      }
                   }
-               }, _callee41, _this6);
+               }, _callee41, _this8);
             }));
             return function (_x84, _x85, _x86) {
                return ref.apply(this, arguments);
@@ -2496,14 +2500,14 @@ var rquery = function () {
                            account = reqx.account;
                            keyspace = reqx.keyspace;
                            _context42.next = 4;
-                           return _this6.redis.keysAsync(_this6.keyspaceKey(account, keyspace, '*'));
+                           return _this8.redis.keysAsync(_this8.keyspaceKey(account, keyspace, '*'));
 
                         case 4:
                            keys = _context42.sent;
 
-                           _this6.logger.debug('ttl ak', account, keyspace, keys);
-                           keyIndex = _this6.keyIndex(account, keyspace);
-                           multi = _this6.redis.multi();
+                           _this8.logger.debug('ttl ak', account, keyspace, keys);
+                           keyIndex = _this8.keyIndex(account, keyspace);
+                           multi = _this8.redis.multi();
 
                            keys.forEach(function (key) {
                               return multi.type(key);
@@ -2514,7 +2518,7 @@ var rquery = function () {
                         case 11:
                            types = _context42.sent;
                            result = {};
-                           multiValues = _this6.redis.multi();
+                           multiValues = _this8.redis.multi();
 
                            keys.forEach(function (key, index) {
                               var type = types[index];
@@ -2554,7 +2558,7 @@ var rquery = function () {
                            return _context42.stop();
                      }
                   }
-               }, _callee42, _this6);
+               }, _callee42, _this8);
             }));
             return function (_x87, _x88, _x89) {
                return ref.apply(this, arguments);
@@ -2575,14 +2579,14 @@ var rquery = function () {
                            account = reqx.account;
                            keyspace = reqx.keyspace;
                            _context43.next = 4;
-                           return _this6.redis.keysAsync(_this6.keyspaceKey(account, keyspace, '*'));
+                           return _this8.redis.keysAsync(_this8.keyspaceKey(account, keyspace, '*'));
 
                         case 4:
                            keys = _context43.sent;
 
-                           _this6.logger.debug('ttl ak', account, keyspace, keys);
-                           keyIndex = _this6.keyIndex(account, keyspace);
-                           multi = _this6.redis.multi();
+                           _this8.logger.debug('ttl ak', account, keyspace, keys);
+                           keyIndex = _this8.keyIndex(account, keyspace);
+                           multi = _this8.redis.multi();
 
                            keys.forEach(function (key) {
                               return multi.ttl(key);
@@ -2604,7 +2608,7 @@ var rquery = function () {
                            return _context43.stop();
                      }
                   }
-               }, _callee43, _this6);
+               }, _callee43, _this8);
             }));
             return function (_x90, _x91, _x92) {
                return ref.apply(this, arguments);
@@ -2623,7 +2627,7 @@ var rquery = function () {
                      switch (_context44.prev = _context44.next) {
                         case 0:
                            _context44.next = 2;
-                           return _this6.redis.ttlAsync(reqx.keyspaceKey);
+                           return _this8.redis.ttlAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context44.abrupt('return', _context44.sent);
@@ -2633,7 +2637,7 @@ var rquery = function () {
                            return _context44.stop();
                      }
                   }
-               }, _callee44, _this6);
+               }, _callee44, _this8);
             }));
             return function (_x93, _x94, _x95) {
                return ref.apply(this, arguments);
@@ -2652,7 +2656,7 @@ var rquery = function () {
                      switch (_context45.prev = _context45.next) {
                         case 0:
                            _context45.next = 2;
-                           return _this6.redis.typeAsync(reqx.keyspaceKey);
+                           return _this8.redis.typeAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context45.abrupt('return', _context45.sent);
@@ -2662,7 +2666,7 @@ var rquery = function () {
                            return _context45.stop();
                      }
                   }
-               }, _callee45, _this6);
+               }, _callee45, _this8);
             }));
             return function (_x96, _x97, _x98) {
                return ref.apply(this, arguments);
@@ -2696,14 +2700,14 @@ var rquery = function () {
                            throw new ValidationError({
                               status: 403,
                               message: 'No client cert',
-                              hint: _this6.hints.signup
+                              hint: _this8.hints.signup
                            });
 
                         case 6:
                            cert = cert.replace(/\t/g, '\n');
                            encrypted = _crypto2.default.publicEncrypt(cert, new Buffer(value)).toString('base64');
                            _context46.next = 10;
-                           return _this6.redis.setAsync(keyspaceKey, encrypted);
+                           return _this8.redis.setAsync(keyspaceKey, encrypted);
 
                         case 10:
                            reply = _context46.sent;
@@ -2714,7 +2718,7 @@ var rquery = function () {
                            return _context46.stop();
                      }
                   }
-               }, _callee46, _this6);
+               }, _callee46, _this8);
             }));
             return function (_x99, _x100, _x101) {
                return ref.apply(this, arguments);
@@ -2733,7 +2737,7 @@ var rquery = function () {
                      switch (_context47.prev = _context47.next) {
                         case 0:
                            _context47.next = 2;
-                           return _this6.redis.setAsync(reqx.keyspaceKey, req.params.value);
+                           return _this8.redis.setAsync(reqx.keyspaceKey, req.params.value);
 
                         case 2:
                            return _context47.abrupt('return', _context47.sent);
@@ -2743,7 +2747,7 @@ var rquery = function () {
                            return _context47.stop();
                      }
                   }
-               }, _callee47, _this6);
+               }, _callee47, _this8);
             }));
             return function (_x102, _x103, _x104) {
                return ref.apply(this, arguments);
@@ -2769,7 +2773,7 @@ var rquery = function () {
                               string = string.replace(/(\W)(\w+):/g, '$1"$2":');
                            }
                            _context48.next = 4;
-                           return _this6.redis.setAsync(reqx.keyspaceKey, string);
+                           return _this8.redis.setAsync(reqx.keyspaceKey, string);
 
                         case 4:
                            return _context48.abrupt('return', _context48.sent);
@@ -2779,7 +2783,7 @@ var rquery = function () {
                            return _context48.stop();
                      }
                   }
-               }, _callee48, _this6);
+               }, _callee48, _this8);
             }));
             return function (_x105, _x106, _x107) {
                return ref.apply(this, arguments);
@@ -2798,7 +2802,7 @@ var rquery = function () {
                      switch (_context49.prev = _context49.next) {
                         case 0:
                            _context49.next = 2;
-                           return _this6.redis.setAsync(reqx.keyspaceKey, JSON.stringify(req.query));
+                           return _this8.redis.setAsync(reqx.keyspaceKey, JSON.stringify(req.query));
 
                         case 2:
                            return _context49.abrupt('return', _context49.sent);
@@ -2808,7 +2812,7 @@ var rquery = function () {
                            return _context49.stop();
                      }
                   }
-               }, _callee49, _this6);
+               }, _callee49, _this8);
             }));
             return function (_x108, _x109, _x110) {
                return ref.apply(this, arguments);
@@ -2832,7 +2836,7 @@ var rquery = function () {
                            seconds = _req$params6.seconds;
                            value = _req$params6.value;
                            _context50.next = 5;
-                           return _this6.redis.setexAsync(reqx.keyspaceKey, seconds, value);
+                           return _this8.redis.setexAsync(reqx.keyspaceKey, seconds, value);
 
                         case 5:
                            return _context50.abrupt('return', _context50.sent);
@@ -2842,7 +2846,7 @@ var rquery = function () {
                            return _context50.stop();
                      }
                   }
-               }, _callee50, _this6);
+               }, _callee50, _this8);
             }));
             return function (_x111, _x112, _x113) {
                return ref.apply(this, arguments);
@@ -2862,7 +2866,7 @@ var rquery = function () {
                      switch (_context51.prev = _context51.next) {
                         case 0:
                            _context51.next = 2;
-                           return _this6.redis.setnxAsync(keyspaceKey, req.params.value);
+                           return _this8.redis.setnxAsync(keyspaceKey, req.params.value);
 
                         case 2:
                            return _context51.abrupt('return', _context51.sent);
@@ -2872,7 +2876,7 @@ var rquery = function () {
                            return _context51.stop();
                      }
                   }
-               }, _callee51, _this6);
+               }, _callee51, _this8);
             }));
             return function (_x114, _x115, _x116) {
                return ref.apply(this, arguments);
@@ -2890,7 +2894,7 @@ var rquery = function () {
                      switch (_context52.prev = _context52.next) {
                         case 0:
                            _context52.next = 2;
-                           return _this6.redis.getAsync(reqx.keyspaceKey);
+                           return _this8.redis.getAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context52.abrupt('return', _context52.sent);
@@ -2900,7 +2904,7 @@ var rquery = function () {
                            return _context52.stop();
                      }
                   }
-               }, _callee52, _this6);
+               }, _callee52, _this8);
             }));
             return function (_x117, _x118, _x119) {
                return ref.apply(this, arguments);
@@ -2921,12 +2925,12 @@ var rquery = function () {
                            key = reqx.key;
                            keyspaceKey = reqx.keyspaceKey;
                            _context53.next = 4;
-                           return _this6.redis.getAsync(keyspaceKey);
+                           return _this8.redis.getAsync(keyspaceKey);
 
                         case 4:
                            value = _context53.sent;
 
-                           _this6.logger.info('get-json', typeof value === 'undefined' ? 'undefined' : _typeof(value), value);
+                           _this8.logger.info('get-json', typeof value === 'undefined' ? 'undefined' : _typeof(value), value);
 
                            if (!value) {
                               _context53.next = 14;
@@ -2953,7 +2957,7 @@ var rquery = function () {
                               break;
                            }
 
-                           _this6.sendStatusMessage(req, res, 404, 'Not found: ' + key);
+                           _this8.sendStatusMessage(req, res, 404, 'Not found: ' + key);
                            _context53.next = 19;
                            break;
 
@@ -2965,7 +2969,7 @@ var rquery = function () {
                            return _context53.stop();
                      }
                   }
-               }, _callee53, _this6);
+               }, _callee53, _this8);
             }));
             return function (_x120, _x121, _x122) {
                return ref.apply(this, arguments);
@@ -2985,7 +2989,7 @@ var rquery = function () {
                      switch (_context54.prev = _context54.next) {
                         case 0:
                            _context54.next = 2;
-                           return _this6.redis.incrAsync(keyspaceKey);
+                           return _this8.redis.incrAsync(keyspaceKey);
 
                         case 2:
                            return _context54.abrupt('return', _context54.sent);
@@ -2995,7 +2999,7 @@ var rquery = function () {
                            return _context54.stop();
                      }
                   }
-               }, _callee54, _this6);
+               }, _callee54, _this8);
             }));
             return function (_x123, _x124, _x125) {
                return ref.apply(this, arguments);
@@ -3014,7 +3018,7 @@ var rquery = function () {
                      switch (_context55.prev = _context55.next) {
                         case 0:
                            _context55.next = 2;
-                           return _this6.redis.incrbyAsync(reqx.keyspaceKey, req.params.increment);
+                           return _this8.redis.incrbyAsync(reqx.keyspaceKey, req.params.increment);
 
                         case 2:
                            return _context55.abrupt('return', _context55.sent);
@@ -3024,7 +3028,7 @@ var rquery = function () {
                            return _context55.stop();
                      }
                   }
-               }, _callee55, _this6);
+               }, _callee55, _this8);
             }));
             return function (_x126, _x127, _x128) {
                return ref.apply(this, arguments);
@@ -3043,7 +3047,7 @@ var rquery = function () {
                      switch (_context56.prev = _context56.next) {
                         case 0:
                            _context56.next = 2;
-                           return _this6.redis.existsAsync(keyspaceKey);
+                           return _this8.redis.existsAsync(keyspaceKey);
 
                         case 2:
                            return _context56.abrupt('return', _context56.sent);
@@ -3053,7 +3057,7 @@ var rquery = function () {
                            return _context56.stop();
                      }
                   }
-               }, _callee56, _this6);
+               }, _callee56, _this8);
             }));
             return function (_x129, _x130, _x131) {
                return ref.apply(this, arguments);
@@ -3073,7 +3077,7 @@ var rquery = function () {
                      switch (_context57.prev = _context57.next) {
                         case 0:
                            _context57.next = 2;
-                           return _this6.redis.delAsync(keyspaceKey);
+                           return _this8.redis.delAsync(keyspaceKey);
 
                         case 2:
                            return _context57.abrupt('return', _context57.sent);
@@ -3083,7 +3087,7 @@ var rquery = function () {
                            return _context57.stop();
                      }
                   }
-               }, _callee57, _this6);
+               }, _callee57, _this8);
             }));
             return function (_x132, _x133, _x134) {
                return ref.apply(this, arguments);
@@ -3105,7 +3109,7 @@ var rquery = function () {
                      switch (_context58.prev = _context58.next) {
                         case 0:
                            _context58.next = 2;
-                           return _this6.redis.renameAsync(keyspaceKey, _this6.keyspaceKey(account, keyspace, req.params.newkey));
+                           return _this8.redis.renameAsync(keyspaceKey, _this8.keyspaceKey(account, keyspace, req.params.newkey));
 
                         case 2:
                            return _context58.abrupt('return', _context58.sent);
@@ -3115,7 +3119,7 @@ var rquery = function () {
                            return _context58.stop();
                      }
                   }
-               }, _callee58, _this6);
+               }, _callee58, _this8);
             }));
             return function (_x135, _x136, _x137) {
                return ref.apply(this, arguments);
@@ -3134,7 +3138,7 @@ var rquery = function () {
                      switch (_context59.prev = _context59.next) {
                         case 0:
                            _context59.next = 2;
-                           return _this6.redis.saddAsync(reqx.keyspaceKey, req.params.member);
+                           return _this8.redis.saddAsync(reqx.keyspaceKey, req.params.member);
 
                         case 2:
                            return _context59.abrupt('return', _context59.sent);
@@ -3144,7 +3148,7 @@ var rquery = function () {
                            return _context59.stop();
                      }
                   }
-               }, _callee59, _this6);
+               }, _callee59, _this8);
             }));
             return function (_x138, _x139, _x140) {
                return ref.apply(this, arguments);
@@ -3164,7 +3168,7 @@ var rquery = function () {
                      switch (_context60.prev = _context60.next) {
                         case 0:
                            _context60.next = 2;
-                           return _this6.redis.sremAsync(keyspaceKey, req.params.member);
+                           return _this8.redis.sremAsync(keyspaceKey, req.params.member);
 
                         case 2:
                            return _context60.abrupt('return', _context60.sent);
@@ -3174,7 +3178,7 @@ var rquery = function () {
                            return _context60.stop();
                      }
                   }
-               }, _callee60, _this6);
+               }, _callee60, _this8);
             }));
             return function (_x141, _x142, _x143) {
                return ref.apply(this, arguments);
@@ -3199,14 +3203,14 @@ var rquery = function () {
                            _req$params7 = req.params;
                            dest = _req$params7.dest;
                            member = _req$params7.member;
-                           destKey = _this6.keyspaceKey(account, keyspace, dest);
+                           destKey = _this8.keyspaceKey(account, keyspace, dest);
                            _context61.next = 6;
-                           return _this6.redis.smoveAsync(keyspaceKey, destKey, member);
+                           return _this8.redis.smoveAsync(keyspaceKey, destKey, member);
 
                         case 6:
                            result = _context61.sent;
 
-                           multi.expire(destKey, _this6.getKeyExpire(account));
+                           multi.expire(destKey, _this8.getKeyExpire(account));
                            return _context61.abrupt('return', result);
 
                         case 9:
@@ -3214,7 +3218,7 @@ var rquery = function () {
                            return _context61.stop();
                      }
                   }
-               }, _callee61, _this6);
+               }, _callee61, _this8);
             }));
             return function (_x144, _x145, _x146, _x147) {
                return ref.apply(this, arguments);
@@ -3233,7 +3237,7 @@ var rquery = function () {
                      switch (_context62.prev = _context62.next) {
                         case 0:
                            _context62.next = 2;
-                           return _this6.redis.spopAsync(reqx.keyspaceKey);
+                           return _this8.redis.spopAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context62.abrupt('return', _context62.sent);
@@ -3243,7 +3247,7 @@ var rquery = function () {
                            return _context62.stop();
                      }
                   }
-               }, _callee62, _this6);
+               }, _callee62, _this8);
             }));
             return function (_x148, _x149, _x150) {
                return ref.apply(this, arguments);
@@ -3261,7 +3265,7 @@ var rquery = function () {
                      switch (_context63.prev = _context63.next) {
                         case 0:
                            _context63.next = 2;
-                           return _this6.redis.smembersAsync(reqx.keyspaceKey);
+                           return _this8.redis.smembersAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context63.abrupt('return', _context63.sent);
@@ -3271,7 +3275,7 @@ var rquery = function () {
                            return _context63.stop();
                      }
                   }
-               }, _callee63, _this6);
+               }, _callee63, _this8);
             }));
             return function (_x151, _x152, _x153) {
                return ref.apply(this, arguments);
@@ -3290,7 +3294,7 @@ var rquery = function () {
                      switch (_context64.prev = _context64.next) {
                         case 0:
                            _context64.next = 2;
-                           return _this6.redis.sismemberAsync(reqx.keyspaceKey, req.params.member);
+                           return _this8.redis.sismemberAsync(reqx.keyspaceKey, req.params.member);
 
                         case 2:
                            reply = _context64.sent;
@@ -3301,7 +3305,7 @@ var rquery = function () {
                            return _context64.stop();
                      }
                   }
-               }, _callee64, _this6);
+               }, _callee64, _this8);
             }));
             return function (_x154, _x155, _x156) {
                return ref.apply(this, arguments);
@@ -3318,7 +3322,7 @@ var rquery = function () {
                      switch (_context65.prev = _context65.next) {
                         case 0:
                            _context65.next = 2;
-                           return _this6.redis.scardAsync(reqx.keyspaceKey);
+                           return _this8.redis.scardAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context65.abrupt('return', _context65.sent);
@@ -3328,7 +3332,7 @@ var rquery = function () {
                            return _context65.stop();
                      }
                   }
-               }, _callee65, _this6);
+               }, _callee65, _this8);
             }));
             return function (_x157, _x158, _x159) {
                return ref.apply(this, arguments);
@@ -3347,7 +3351,7 @@ var rquery = function () {
                      switch (_context66.prev = _context66.next) {
                         case 0:
                            _context66.next = 2;
-                           return _this6.redis.lpushAsync(reqx.keyspaceKey, req.params.value);
+                           return _this8.redis.lpushAsync(reqx.keyspaceKey, req.params.value);
 
                         case 2:
                            return _context66.abrupt('return', _context66.sent);
@@ -3357,7 +3361,7 @@ var rquery = function () {
                            return _context66.stop();
                      }
                   }
-               }, _callee66, _this6);
+               }, _callee66, _this8);
             }));
             return function (_x160, _x161, _x162) {
                return ref.apply(this, arguments);
@@ -3376,7 +3380,7 @@ var rquery = function () {
                      switch (_context67.prev = _context67.next) {
                         case 0:
                            _context67.next = 2;
-                           return _this6.redis.lpushxAsync(reqx.keyspaceKey, req.params.value);
+                           return _this8.redis.lpushxAsync(reqx.keyspaceKey, req.params.value);
 
                         case 2:
                            return _context67.abrupt('return', _context67.sent);
@@ -3386,7 +3390,7 @@ var rquery = function () {
                            return _context67.stop();
                      }
                   }
-               }, _callee67, _this6);
+               }, _callee67, _this8);
             }));
             return function (_x163, _x164, _x165) {
                return ref.apply(this, arguments);
@@ -3419,7 +3423,7 @@ var rquery = function () {
                            return _context68.stop();
                      }
                   }
-               }, _callee68, _this6);
+               }, _callee68, _this8);
             }));
             return function (_x166, _x167, _x168, _x169) {
                return ref.apply(this, arguments);
@@ -3439,7 +3443,7 @@ var rquery = function () {
                      switch (_context69.prev = _context69.next) {
                         case 0:
                            _context69.next = 2;
-                           return _this6.redis.rpushAsync(reqx.keyspaceKey, req.params.value);
+                           return _this8.redis.rpushAsync(reqx.keyspaceKey, req.params.value);
 
                         case 2:
                            return _context69.abrupt('return', _context69.sent);
@@ -3449,7 +3453,7 @@ var rquery = function () {
                            return _context69.stop();
                      }
                   }
-               }, _callee69, _this6);
+               }, _callee69, _this8);
             }));
             return function (_x170, _x171, _x172) {
                return ref.apply(this, arguments);
@@ -3468,7 +3472,7 @@ var rquery = function () {
                      switch (_context70.prev = _context70.next) {
                         case 0:
                            _context70.next = 2;
-                           return _this6.redis.lpopAsync(reqx.keyspaceKey);
+                           return _this8.redis.lpopAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context70.abrupt('return', _context70.sent);
@@ -3478,7 +3482,7 @@ var rquery = function () {
                            return _context70.stop();
                      }
                   }
-               }, _callee70, _this6);
+               }, _callee70, _this8);
             }));
             return function (_x173, _x174, _x175) {
                return ref.apply(this, arguments);
@@ -3498,7 +3502,7 @@ var rquery = function () {
                      switch (_context71.prev = _context71.next) {
                         case 0:
                            _context71.next = 2;
-                           return _this6.redis.blpopAsync(reqx.keyspaceKey, req.params.timeout);
+                           return _this8.redis.blpopAsync(reqx.keyspaceKey, req.params.timeout);
 
                         case 2:
                            reply = _context71.sent;
@@ -3518,7 +3522,7 @@ var rquery = function () {
                            return _context71.stop();
                      }
                   }
-               }, _callee71, _this6);
+               }, _callee71, _this8);
             }));
             return function (_x176, _x177, _x178) {
                return ref.apply(this, arguments);
@@ -3537,7 +3541,7 @@ var rquery = function () {
                      switch (_context72.prev = _context72.next) {
                         case 0:
                            _context72.next = 2;
-                           return _this6.redis.rpopAsync(reqx.keyspaceKey);
+                           return _this8.redis.rpopAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context72.abrupt('return', _context72.sent);
@@ -3547,7 +3551,7 @@ var rquery = function () {
                            return _context72.stop();
                      }
                   }
-               }, _callee72, _this6);
+               }, _callee72, _this8);
             }));
             return function (_x179, _x180, _x181) {
                return ref.apply(this, arguments);
@@ -3567,7 +3571,7 @@ var rquery = function () {
                      switch (_context73.prev = _context73.next) {
                         case 0:
                            _context73.next = 2;
-                           return _this6.redis.brpopAsync(reqx.keyspaceKey, req.params.timeout);
+                           return _this8.redis.brpopAsync(reqx.keyspaceKey, req.params.timeout);
 
                         case 2:
                            reply = _context73.sent;
@@ -3587,7 +3591,7 @@ var rquery = function () {
                            return _context73.stop();
                      }
                   }
-               }, _callee73, _this6);
+               }, _callee73, _this8);
             }));
             return function (_x182, _x183, _x184) {
                return ref.apply(this, arguments);
@@ -3614,14 +3618,14 @@ var rquery = function () {
                            _req$params9 = req.params;
                            dest = _req$params9.dest;
                            timeout = _req$params9.timeout;
-                           destKey = _this6.keyspaceKey(account, keyspace, dest);
+                           destKey = _this8.keyspaceKey(account, keyspace, dest);
                            _context74.next = 6;
-                           return _this6.redis.brpoplpushAsync(keyspaceKey, destKey, timeout);
+                           return _this8.redis.brpoplpushAsync(keyspaceKey, destKey, timeout);
 
                         case 6:
                            result = _context74.sent;
 
-                           multi.expire(destKey, _this6.getKeyExpire(account));
+                           multi.expire(destKey, _this8.getKeyExpire(account));
                            return _context74.abrupt('return', result);
 
                         case 9:
@@ -3629,7 +3633,7 @@ var rquery = function () {
                            return _context74.stop();
                      }
                   }
-               }, _callee74, _this6);
+               }, _callee74, _this8);
             }));
             return function (_x185, _x186, _x187, _x188) {
                return ref.apply(this, arguments);
@@ -3647,7 +3651,7 @@ var rquery = function () {
                      switch (_context75.prev = _context75.next) {
                         case 0:
                            _context75.next = 2;
-                           return _this6.redis.llenAsync(reqx.keyspaceKey);
+                           return _this8.redis.llenAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context75.abrupt('return', _context75.sent);
@@ -3657,7 +3661,7 @@ var rquery = function () {
                            return _context75.stop();
                      }
                   }
-               }, _callee75, _this6);
+               }, _callee75, _this8);
             }));
             return function (_x189, _x190, _x191) {
                return ref.apply(this, arguments);
@@ -3678,7 +3682,7 @@ var rquery = function () {
                      switch (_context76.prev = _context76.next) {
                         case 0:
                            _context76.next = 2;
-                           return _this6.redis.lindexAsync(reqx.keyspaceKey, req.params.index);
+                           return _this8.redis.lindexAsync(reqx.keyspaceKey, req.params.index);
 
                         case 2:
                            return _context76.abrupt('return', _context76.sent);
@@ -3688,7 +3692,7 @@ var rquery = function () {
                            return _context76.stop();
                      }
                   }
-               }, _callee76, _this6);
+               }, _callee76, _this8);
             }));
             return function (_x192, _x193, _x194) {
                return ref.apply(this, arguments);
@@ -3706,7 +3710,7 @@ var rquery = function () {
                      switch (_context77.prev = _context77.next) {
                         case 0:
                            _context77.next = 2;
-                           return _this6.redis.lremAsync(reqx.keyspaceKey, req.params.count, req.params.value);
+                           return _this8.redis.lremAsync(reqx.keyspaceKey, req.params.count, req.params.value);
 
                         case 2:
                            return _context77.abrupt('return', _context77.sent);
@@ -3716,7 +3720,7 @@ var rquery = function () {
                            return _context77.stop();
                      }
                   }
-               }, _callee77, _this6);
+               }, _callee77, _this8);
             }));
             return function (_x195, _x196, _x197) {
                return ref.apply(this, arguments);
@@ -3735,7 +3739,7 @@ var rquery = function () {
                      switch (_context78.prev = _context78.next) {
                         case 0:
                            _context78.next = 2;
-                           return _this6.redis.lsetAsync(reqx.keyspaceKey, req.params.index, req.params.value);
+                           return _this8.redis.lsetAsync(reqx.keyspaceKey, req.params.index, req.params.value);
 
                         case 2:
                            return _context78.abrupt('return', _context78.sent);
@@ -3745,7 +3749,7 @@ var rquery = function () {
                            return _context78.stop();
                      }
                   }
-               }, _callee78, _this6);
+               }, _callee78, _this8);
             }));
             return function (_x198, _x199, _x200) {
                return ref.apply(this, arguments);
@@ -3764,7 +3768,7 @@ var rquery = function () {
                      switch (_context79.prev = _context79.next) {
                         case 0:
                            _context79.next = 2;
-                           return _this6.redis.ltrimAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
+                           return _this8.redis.ltrimAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
 
                         case 2:
                            return _context79.abrupt('return', _context79.sent);
@@ -3774,7 +3778,7 @@ var rquery = function () {
                            return _context79.stop();
                      }
                   }
-               }, _callee79, _this6);
+               }, _callee79, _this8);
             }));
             return function (_x201, _x202, _x203) {
                return ref.apply(this, arguments);
@@ -3796,7 +3800,7 @@ var rquery = function () {
                      switch (_context80.prev = _context80.next) {
                         case 0:
                            _context80.next = 2;
-                           return _this6.redis.lrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
+                           return _this8.redis.lrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
 
                         case 2:
                            return _context80.abrupt('return', _context80.sent);
@@ -3806,7 +3810,7 @@ var rquery = function () {
                            return _context80.stop();
                      }
                   }
-               }, _callee80, _this6);
+               }, _callee80, _this8);
             }));
             return function (_x204, _x205, _x206) {
                return ref.apply(this, arguments);
@@ -3829,7 +3833,7 @@ var rquery = function () {
                      switch (_context81.prev = _context81.next) {
                         case 0:
                            _context81.next = 2;
-                           return _this6.redis.lrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
+                           return _this8.redis.lrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
 
                         case 2:
                            array = _context81.sent;
@@ -3840,7 +3844,7 @@ var rquery = function () {
                            return _context81.stop();
                      }
                   }
-               }, _callee81, _this6);
+               }, _callee81, _this8);
             }));
             return function (_x207, _x208, _x209) {
                return ref.apply(this, arguments);
@@ -3879,7 +3883,7 @@ var rquery = function () {
 
                         case 4:
                            _context82.next = 6;
-                           return _this6.redis.lrangeAsync(reqx.keyspaceKey, 0 - req.params.stop, 0 - req.params.start - 1);
+                           return _this8.redis.lrangeAsync(reqx.keyspaceKey, 0 - req.params.stop, 0 - req.params.start - 1);
 
                         case 6:
                            array = _context82.sent;
@@ -3890,7 +3894,7 @@ var rquery = function () {
                            return _context82.stop();
                      }
                   }
-               }, _callee82, _this6);
+               }, _callee82, _this8);
             }));
             return function (_x210, _x211, _x212) {
                return ref.apply(this, arguments);
@@ -3929,7 +3933,7 @@ var rquery = function () {
 
                         case 4:
                            _context83.next = 6;
-                           return _this6.redis.lrangeAsync(reqx.keyspaceKey, 0 - req.params.stop, 0 - req.params.start - 1);
+                           return _this8.redis.lrangeAsync(reqx.keyspaceKey, 0 - req.params.stop, 0 - req.params.start - 1);
 
                         case 6:
                            array = _context83.sent;
@@ -3940,7 +3944,7 @@ var rquery = function () {
                            return _context83.stop();
                      }
                   }
-               }, _callee83, _this6);
+               }, _callee83, _this8);
             }));
             return function (_x213, _x214, _x215) {
                return ref.apply(this, arguments);
@@ -3959,7 +3963,7 @@ var rquery = function () {
                      switch (_context84.prev = _context84.next) {
                         case 0:
                            _context84.next = 2;
-                           return _this6.redis.hsetAsync(reqx.keyspaceKey, req.params.field, req.params.value);
+                           return _this8.redis.hsetAsync(reqx.keyspaceKey, req.params.field, req.params.value);
 
                         case 2:
                            return _context84.abrupt('return', _context84.sent);
@@ -3969,7 +3973,7 @@ var rquery = function () {
                            return _context84.stop();
                      }
                   }
-               }, _callee84, _this6);
+               }, _callee84, _this8);
             }));
             return function (_x216, _x217, _x218) {
                return ref.apply(this, arguments);
@@ -3988,7 +3992,7 @@ var rquery = function () {
                      switch (_context85.prev = _context85.next) {
                         case 0:
                            _context85.next = 2;
-                           return _this6.redis.hsetnxAsync(reqx.keyspaceKey, req.params.field, req.params.value);
+                           return _this8.redis.hsetnxAsync(reqx.keyspaceKey, req.params.field, req.params.value);
 
                         case 2:
                            return _context85.abrupt('return', _context85.sent);
@@ -3998,7 +4002,7 @@ var rquery = function () {
                            return _context85.stop();
                      }
                   }
-               }, _callee85, _this6);
+               }, _callee85, _this8);
             }));
             return function (_x219, _x220, _x221) {
                return ref.apply(this, arguments);
@@ -4016,7 +4020,7 @@ var rquery = function () {
                      switch (_context86.prev = _context86.next) {
                         case 0:
                            _context86.next = 2;
-                           return _this6.redis.hgetAsync(reqx.keyspaceKey, req.params.field);
+                           return _this8.redis.hgetAsync(reqx.keyspaceKey, req.params.field);
 
                         case 2:
                            return _context86.abrupt('return', _context86.sent);
@@ -4026,7 +4030,7 @@ var rquery = function () {
                            return _context86.stop();
                      }
                   }
-               }, _callee86, _this6);
+               }, _callee86, _this8);
             }));
             return function (_x222, _x223, _x224) {
                return ref.apply(this, arguments);
@@ -4045,7 +4049,7 @@ var rquery = function () {
                      switch (_context87.prev = _context87.next) {
                         case 0:
                            _context87.next = 2;
-                           return _this6.redis.hdelAsync(reqx.keyspaceKey, req.params.field);
+                           return _this8.redis.hdelAsync(reqx.keyspaceKey, req.params.field);
 
                         case 2:
                            return _context87.abrupt('return', _context87.sent);
@@ -4055,7 +4059,7 @@ var rquery = function () {
                            return _context87.stop();
                      }
                   }
-               }, _callee87, _this6);
+               }, _callee87, _this8);
             }));
             return function (_x225, _x226, _x227) {
                return ref.apply(this, arguments);
@@ -4074,7 +4078,7 @@ var rquery = function () {
                      switch (_context88.prev = _context88.next) {
                         case 0:
                            _context88.next = 2;
-                           return _this6.redis.hincrbyAsync(reqx.keyspaceKey, req.params.field, req.params.increment);
+                           return _this8.redis.hincrbyAsync(reqx.keyspaceKey, req.params.field, req.params.increment);
 
                         case 2:
                            return _context88.abrupt('return', _context88.sent);
@@ -4084,7 +4088,7 @@ var rquery = function () {
                            return _context88.stop();
                      }
                   }
-               }, _callee88, _this6);
+               }, _callee88, _this8);
             }));
             return function (_x228, _x229, _x230) {
                return ref.apply(this, arguments);
@@ -4103,7 +4107,7 @@ var rquery = function () {
                      switch (_context89.prev = _context89.next) {
                         case 0:
                            _context89.next = 2;
-                           return _this6.redis.hexistsAsync(reqx.keyspaceKey, req.params.field);
+                           return _this8.redis.hexistsAsync(reqx.keyspaceKey, req.params.field);
 
                         case 2:
                            reply = _context89.sent;
@@ -4114,7 +4118,7 @@ var rquery = function () {
                            return _context89.stop();
                      }
                   }
-               }, _callee89, _this6);
+               }, _callee89, _this8);
             }));
             return function (_x231, _x232, _x233) {
                return ref.apply(this, arguments);
@@ -4132,7 +4136,7 @@ var rquery = function () {
                      switch (_context90.prev = _context90.next) {
                         case 0:
                            _context90.next = 2;
-                           return _this6.redis.hlenAsync(reqx.keyspaceKey);
+                           return _this8.redis.hlenAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context90.abrupt('return', _context90.sent);
@@ -4142,7 +4146,7 @@ var rquery = function () {
                            return _context90.stop();
                      }
                   }
-               }, _callee90, _this6);
+               }, _callee90, _this8);
             }));
             return function (_x234, _x235, _x236) {
                return ref.apply(this, arguments);
@@ -4160,7 +4164,7 @@ var rquery = function () {
                      switch (_context91.prev = _context91.next) {
                         case 0:
                            _context91.next = 2;
-                           return _this6.redis.hkeysAsync(reqx.keyspaceKey);
+                           return _this8.redis.hkeysAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context91.abrupt('return', _context91.sent);
@@ -4170,7 +4174,7 @@ var rquery = function () {
                            return _context91.stop();
                      }
                   }
-               }, _callee91, _this6);
+               }, _callee91, _this8);
             }));
             return function (_x237, _x238, _x239) {
                return ref.apply(this, arguments);
@@ -4188,7 +4192,7 @@ var rquery = function () {
                      switch (_context92.prev = _context92.next) {
                         case 0:
                            _context92.next = 2;
-                           return _this6.redis.hvalsAsync(reqx.keyspaceKey);
+                           return _this8.redis.hvalsAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context92.abrupt('return', _context92.sent);
@@ -4198,7 +4202,7 @@ var rquery = function () {
                            return _context92.stop();
                      }
                   }
-               }, _callee92, _this6);
+               }, _callee92, _this8);
             }));
             return function (_x240, _x241, _x242) {
                return ref.apply(this, arguments);
@@ -4216,7 +4220,7 @@ var rquery = function () {
                      switch (_context93.prev = _context93.next) {
                         case 0:
                            _context93.next = 2;
-                           return _this6.redis.hgetallAsync(reqx.keyspaceKey);
+                           return _this8.redis.hgetallAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context93.abrupt('return', _context93.sent);
@@ -4226,7 +4230,7 @@ var rquery = function () {
                            return _context93.stop();
                      }
                   }
-               }, _callee93, _this6);
+               }, _callee93, _this8);
             }));
             return function (_x243, _x244, _x245) {
                return ref.apply(this, arguments);
@@ -4244,7 +4248,7 @@ var rquery = function () {
                      switch (_context94.prev = _context94.next) {
                         case 0:
                            _context94.next = 2;
-                           return _this6.redis.zcardAsync(reqx.keyspaceKey);
+                           return _this8.redis.zcardAsync(reqx.keyspaceKey);
 
                         case 2:
                            return _context94.abrupt('return', _context94.sent);
@@ -4254,7 +4258,7 @@ var rquery = function () {
                            return _context94.stop();
                      }
                   }
-               }, _callee94, _this6);
+               }, _callee94, _this8);
             }));
             return function (_x246, _x247, _x248) {
                return ref.apply(this, arguments);
@@ -4274,7 +4278,7 @@ var rquery = function () {
                         switch (_context95.prev = _context95.next) {
                            case 0:
                               _context95.next = 2;
-                              return _this6.redis.zaddAsync(reqx.keyspaceKey, 'NX', req.params.score, req.params.member);
+                              return _this8.redis.zaddAsync(reqx.keyspaceKey, 'NX', req.params.score, req.params.member);
 
                            case 2:
                               return _context95.abrupt('return', _context95.sent);
@@ -4284,7 +4288,7 @@ var rquery = function () {
                               return _context95.stop();
                         }
                      }
-                  }, _callee95, _this6);
+                  }, _callee95, _this8);
                }));
                return function (_x249, _x250, _x251) {
                   return ref.apply(this, arguments);
@@ -4304,7 +4308,7 @@ var rquery = function () {
                      switch (_context96.prev = _context96.next) {
                         case 0:
                            _context96.next = 2;
-                           return _this6.redis.zincrbyAsync(reqx.keyspaceKey, req.params.increment, req.params.member);
+                           return _this8.redis.zincrbyAsync(reqx.keyspaceKey, req.params.increment, req.params.member);
 
                         case 2:
                            return _context96.abrupt('return', _context96.sent);
@@ -4314,7 +4318,7 @@ var rquery = function () {
                            return _context96.stop();
                      }
                   }
-               }, _callee96, _this6);
+               }, _callee96, _this8);
             }));
             return function (_x252, _x253, _x254) {
                return ref.apply(this, arguments);
@@ -4333,7 +4337,7 @@ var rquery = function () {
                      switch (_context97.prev = _context97.next) {
                         case 0:
                            _context97.next = 2;
-                           return _this6.redis.zaddAsync(reqx.keyspaceKey, req.params.score, req.params.member);
+                           return _this8.redis.zaddAsync(reqx.keyspaceKey, req.params.score, req.params.member);
 
                         case 2:
                            return _context97.abrupt('return', _context97.sent);
@@ -4343,7 +4347,7 @@ var rquery = function () {
                            return _context97.stop();
                      }
                   }
-               }, _callee97, _this6);
+               }, _callee97, _this8);
             }));
             return function (_x255, _x256, _x257) {
                return ref.apply(this, arguments);
@@ -4362,7 +4366,7 @@ var rquery = function () {
                      switch (_context98.prev = _context98.next) {
                         case 0:
                            _context98.next = 2;
-                           return _this6.redis.zremAsync(reqx.keyspaceKey, req.params.member);
+                           return _this8.redis.zremAsync(reqx.keyspaceKey, req.params.member);
 
                         case 2:
                            return _context98.abrupt('return', _context98.sent);
@@ -4372,7 +4376,7 @@ var rquery = function () {
                            return _context98.stop();
                      }
                   }
-               }, _callee98, _this6);
+               }, _callee98, _this8);
             }));
             return function (_x258, _x259, _x260) {
                return ref.apply(this, arguments);
@@ -4391,7 +4395,7 @@ var rquery = function () {
                      switch (_context99.prev = _context99.next) {
                         case 0:
                            _context99.next = 2;
-                           return _this6.redis.zrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
+                           return _this8.redis.zrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
 
                         case 2:
                            return _context99.abrupt('return', _context99.sent);
@@ -4401,7 +4405,7 @@ var rquery = function () {
                            return _context99.stop();
                      }
                   }
-               }, _callee99, _this6);
+               }, _callee99, _this8);
             }));
             return function (_x261, _x262, _x263) {
                return ref.apply(this, arguments);
@@ -4419,7 +4423,7 @@ var rquery = function () {
                      switch (_context100.prev = _context100.next) {
                         case 0:
                            _context100.next = 2;
-                           return _this6.redis.zrevrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
+                           return _this8.redis.zrevrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
 
                         case 2:
                            return _context100.abrupt('return', _context100.sent);
@@ -4429,7 +4433,7 @@ var rquery = function () {
                            return _context100.stop();
                      }
                   }
-               }, _callee100, _this6);
+               }, _callee100, _this8);
             }));
             return function (_x264, _x265, _x266) {
                return ref.apply(this, arguments);
@@ -4447,7 +4451,7 @@ var rquery = function () {
                      switch (_context101.prev = _context101.next) {
                         case 0:
                            _context101.next = 2;
-                           return _this6.redis.zrevrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
+                           return _this8.redis.zrevrangeAsync(reqx.keyspaceKey, req.params.start, req.params.stop);
 
                         case 2:
                            return _context101.abrupt('return', _context101.sent);
@@ -4457,7 +4461,7 @@ var rquery = function () {
                            return _context101.stop();
                      }
                   }
-               }, _callee101, _this6);
+               }, _callee101, _this8);
             }));
             return function (_x267, _x268, _x269) {
                return ref.apply(this, arguments);
@@ -4489,7 +4493,7 @@ var rquery = function () {
    }, {
       key: 'addPublicCommand',
       value: function addPublicCommand(command, handleReq) {
-         var _this7 = this;
+         var _this9 = this;
 
          handleReq = handleReq || command.handleReq;
          assert(Values.isDefined(handleReq), command.key);
@@ -4517,7 +4521,7 @@ var rquery = function () {
                            throw { message: 'Invalid path: leading colon. Try substituting parameter: ' + match.pop() };
 
                         case 4:
-                           _this7.logger.debug('command', command.key);
+                           _this9.logger.debug('command', command.key);
                            _context102.next = 7;
                            return handleReq(req, res, { command: command });
 
@@ -4549,14 +4553,14 @@ var rquery = function () {
                            _context102.prev = 16;
                            _context102.t0 = _context102['catch'](0);
 
-                           _this7.sendError(req, res, _context102.t0);
+                           _this9.sendError(req, res, _context102.t0);
 
                         case 19:
                         case 'end':
                            return _context102.stop();
                      }
                   }
-               }, _callee102, _this7, [[0, 16]]);
+               }, _callee102, _this9, [[0, 16]]);
             }));
             return function (_x270, _x271) {
                return ref.apply(this, arguments);
@@ -4567,7 +4571,7 @@ var rquery = function () {
    }, {
       key: 'addPublicRoute',
       value: function addPublicRoute(uri, handleReq) {
-         var _this8 = this;
+         var _this10 = this;
 
          uri = [this.config.location, uri].join('/');
          this.logger.debug('addPublicRoute', uri);
@@ -4601,14 +4605,14 @@ var rquery = function () {
                            _context103.prev = 9;
                            _context103.t0 = _context103['catch'](0);
 
-                           _this8.sendError(req, res, _context103.t0);
+                           _this10.sendError(req, res, _context103.t0);
 
                         case 12:
                         case 'end':
                            return _context103.stop();
                      }
                   }
-               }, _callee103, _this8, [[0, 9]]);
+               }, _callee103, _this10, [[0, 9]]);
             }));
             return function (_x272, _x273) {
                return ref.apply(this, arguments);
@@ -4618,7 +4622,7 @@ var rquery = function () {
    }, {
       key: 'addRegisterRoutes',
       value: function addRegisterRoutes() {
-         var _this9 = this;
+         var _this11 = this;
 
          this.addPublicCommand({
             key: 'register-ephemeral' // TODO remove 10 june
@@ -4629,14 +4633,14 @@ var rquery = function () {
                      switch (_context104.prev = _context104.next) {
                         case 0:
                            req.params = { account: 'hub' };
-                           return _context104.abrupt('return', _this9.createEphemeral(req, res));
+                           return _context104.abrupt('return', _this11.createEphemeral(req, res));
 
                         case 2:
                         case 'end':
                            return _context104.stop();
                      }
                   }
-               }, _callee104, _this9);
+               }, _callee104, _this11);
             }));
             return function (_x274, _x275) {
                return ref.apply(this, arguments);
@@ -4651,14 +4655,14 @@ var rquery = function () {
                      switch (_context105.prev = _context105.next) {
                         case 0:
                            req.params = { account: 'hub' };
-                           return _context105.abrupt('return', _this9.createEphemeral(req, res));
+                           return _context105.abrupt('return', _this11.createEphemeral(req, res));
 
                         case 2:
                         case 'end':
                            return _context105.stop();
                      }
                   }
-               }, _callee105, _this9);
+               }, _callee105, _this11);
             }));
             return function (_x276, _x277) {
                return ref.apply(this, arguments);
@@ -4674,14 +4678,14 @@ var rquery = function () {
                      switch (_context106.prev = _context106.next) {
                         case 0:
                            req.params = { account: 'hub' };
-                           return _context106.abrupt('return', _this9.createEphemeral(req, res));
+                           return _context106.abrupt('return', _this11.createEphemeral(req, res));
 
                         case 2:
                         case 'end':
                            return _context106.stop();
                      }
                   }
-               }, _callee106, _this9);
+               }, _callee106, _this11);
             }));
             return function (_x278, _x279) {
                return ref.apply(this, arguments);
@@ -4697,14 +4701,14 @@ var rquery = function () {
                      switch (_context107.prev = _context107.next) {
                         case 0:
                            req.params.account = 'hub';
-                           return _context107.abrupt('return', _this9.createEphemeral(req, res));
+                           return _context107.abrupt('return', _this11.createEphemeral(req, res));
 
                         case 2:
                         case 'end':
                            return _context107.stop();
                      }
                   }
-               }, _callee107, _this9);
+               }, _callee107, _this11);
             }));
             return function (_x280, _x281) {
                return ref.apply(this, arguments);
@@ -4720,14 +4724,14 @@ var rquery = function () {
                   while (1) {
                      switch (_context108.prev = _context108.next) {
                         case 0:
-                           return _context108.abrupt('return', _this9.createAccount(req, res, reqx));
+                           return _context108.abrupt('return', _this11.createAccount(req, res, reqx));
 
                         case 1:
                         case 'end':
                            return _context108.stop();
                      }
                   }
-               }, _callee108, _this9);
+               }, _callee108, _this11);
             }));
             return function (_x282, _x283, _x284) {
                return ref.apply(this, arguments);
@@ -4748,8 +4752,8 @@ var rquery = function () {
                            account = reqx.account;
                            accountKey = reqx.accountKey;
                            _context109.next = 4;
-                           return _this9.redis.multiExecAsync(function (multi) {
-                              multi.scard(_this9.accountKey(account, 'keyspaces'));
+                           return _this11.redis.multiExecAsync(function (multi) {
+                              multi.scard(_this11.accountKey(account, 'keyspaces'));
                            });
 
                         case 4:
@@ -4763,7 +4767,7 @@ var rquery = function () {
                            throw { message: 'All keyspaces must be destroyed individually first' };
 
                         case 7:
-                           _this9.logger.error('not implemented', reqx);
+                           _this11.logger.error('not implemented', reqx);
                            throw { message: 'Not implemented. Bug @evanxsummers after 24 June' };
 
                         case 9:
@@ -4771,7 +4775,7 @@ var rquery = function () {
                            return _context109.stop();
                      }
                   }
-               }, _callee109, _this9);
+               }, _callee109, _this11);
             }));
             return function (_x285, _x286, _x287) {
                return ref.apply(this, arguments);
@@ -4802,7 +4806,7 @@ var rquery = function () {
    }, {
       key: 'parseDn',
       value: function parseDn(dn) {
-         var _this10 = this;
+         var _this12 = this;
 
          var parts = {};
          dn.split('/').filter(function (part) {
@@ -4818,7 +4822,7 @@ var rquery = function () {
             if (name && value) {
                parts[name.toLowerCase()] = value;
             } else {
-               _this10.logger.warn('parseDn', dn, part, name, value);
+               _this12.logger.warn('parseDn', dn, part, name, value);
             }
          });
          return parts;
@@ -4826,7 +4830,7 @@ var rquery = function () {
    }, {
       key: 'addAccountRoutes',
       value: function addAccountRoutes() {
-         var _this11 = this;
+         var _this13 = this;
 
          if (this.config.secureDomain) {
             this.addAccountCommand({
@@ -4851,8 +4855,8 @@ var rquery = function () {
                         switch (_context110.prev = _context110.next) {
                            case 0:
                               _context110.next = 2;
-                              return _this11.redis.multiExecAsync(function (multi) {
-                                 multi.hgetall(_this11.adminKey('cert', certId));
+                              return _this13.redis.multiExecAsync(function (multi) {
+                                 multi.hgetall(_this13.adminKey('cert', certId));
                               });
 
                            case 2:
@@ -4866,7 +4870,7 @@ var rquery = function () {
                               return _context110.stop();
                         }
                      }
-                  }, _callee110, _this11);
+                  }, _callee110, _this13);
                }));
                return function (_x288, _x289, _x290) {
                   return ref.apply(this, arguments);
@@ -4878,7 +4882,7 @@ var rquery = function () {
       key: 'createAccount',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee112(req, res) {
-            var _this12 = this;
+            var _this14 = this;
 
             var _ret;
 
@@ -4894,21 +4898,21 @@ var rquery = function () {
                               while (1) {
                                  switch (_context111.prev = _context111.next) {
                                     case 0:
-                                       errorMessage = _this12.validateRegisterTime();
+                                       errorMessage = _this14.validateRegisterTime();
 
                                        if (!errorMessage) {
                                           _context111.next = 4;
                                           break;
                                        }
 
-                                       _this12.sendError(req, res, { message: errorMessage });
+                                       _this14.sendError(req, res, { message: errorMessage });
                                        return _context111.abrupt('return', {
                                           v: void 0
                                        });
 
                                     case 4:
                                        account = req.params.account;
-                                       v = _this12.validateRegisterAccount(account);
+                                       v = _this14.validateRegisterAccount(account);
 
                                        if (!v) {
                                           _context111.next = 8;
@@ -4921,25 +4925,25 @@ var rquery = function () {
                                        dn = req.get('ssl_client_s_dn');
                                        cert = req.get('ssl_client_cert');
 
-                                       _this12.logger.info('createAccount dn', dn);
+                                       _this14.logger.info('createAccount dn', dn);
 
                                        if (cert) {
                                           _context111.next = 13;
                                           break;
                                        }
 
-                                       throw new ValidationError({ message: 'No client cert', hint: _this12.hints.signup });
+                                       throw new ValidationError({ message: 'No client cert', hint: _this14.hints.signup });
 
                                     case 13:
-                                       certDigest = _this12.digestPem(cert);
-                                       otpSecret = _this12.generateTokenKey();
-                                       accountKey = _this12.adminKey('account', account);
+                                       certDigest = _this14.digestPem(cert);
+                                       otpSecret = _this14.generateTokenKey();
+                                       accountKey = _this14.adminKey('account', account);
                                        _context111.next = 18;
-                                       return _this12.redis.multiExecAsync(function (multi) {
+                                       return _this14.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', Seconds.now());
-                                          multi.sadd(_this12.adminKey('accounts'), account);
-                                          multi.hsetnx(accountKey, 'expire', _this12.config.keyExpire);
-                                          multi.sadd(_this12.adminKey('account', account, 'topt'), otpSecret);
+                                          multi.sadd(_this14.adminKey('accounts'), account);
+                                          multi.hsetnx(accountKey, 'expire', _this14.config.keyExpire);
+                                          multi.sadd(_this14.adminKey('account', account, 'topt'), otpSecret);
                                        });
 
                                     case 18:
@@ -4965,8 +4969,8 @@ var rquery = function () {
 
                                     case 26:
                                        _context111.next = 28;
-                                       return _this12.redis.multiExecAsync(function (multi) {
-                                          multi.sadd(_this12.adminKey('account', account, 'certs'), certDigest);
+                                       return _this14.redis.multiExecAsync(function (multi) {
+                                          multi.sadd(_this14.adminKey('account', account, 'certs'), certDigest);
                                        });
 
                                     case 28:
@@ -4982,11 +4986,11 @@ var rquery = function () {
                                        throw { message: 'Cert already exists' };
 
                                     case 33:
-                                       result = _this12.buildQrReply({
+                                       result = _this14.buildQrReply({
                                           otpSecret: otpSecret,
                                           user: account,
-                                          host: _this12.config.hostDomain,
-                                          label: _this12.config.serviceLabel
+                                          host: _this14.config.hostDomain,
+                                          label: _this14.config.serviceLabel
                                        });
                                        _context111.next = 36;
                                        return Result.sendResult({}, req, res, { account: account }, result);
@@ -4996,7 +5000,7 @@ var rquery = function () {
                                        return _context111.stop();
                                  }
                               }
-                           }, _callee111, _this12);
+                           }, _callee111, _this14);
                         })(), 't0', 2);
 
                      case 2:
@@ -5037,7 +5041,7 @@ var rquery = function () {
       key: 'addAccountCommand',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee115(command, handleReq) {
-            var _this13 = this;
+            var _this15 = this;
 
             var uri;
             return regeneratorRuntime.wrap(function _callee115$(_context115) {
@@ -5072,7 +5076,7 @@ var rquery = function () {
                                                 while (1) {
                                                    switch (_context113.prev = _context113.next) {
                                                       case 0:
-                                                         message = _this13.validatePath(req);
+                                                         message = _this15.validatePath(req);
 
                                                          if (!message) {
                                                             _context113.next = 3;
@@ -5083,12 +5087,12 @@ var rquery = function () {
 
                                                       case 3:
                                                          account = req.params.account;
-                                                         accountKey = _this13.adminKey('account', account);
+                                                         accountKey = _this15.adminKey('account', account);
                                                          _context113.next = 7;
-                                                         return _this13.redis.multiExecAsync(function (multi) {
+                                                         return _this15.redis.multiExecAsync(function (multi) {
                                                             multi.time();
                                                             multi.hget(accountKey, 'admined');
-                                                            multi.smembers(_this13.adminKey('account', account, 'certs'));
+                                                            multi.smembers(_this15.adminKey('account', account, 'certs'));
                                                          });
 
                                                       case 7:
@@ -5099,7 +5103,7 @@ var rquery = function () {
                                                          admined = _ref61[1];
                                                          certs = _ref61[2];
 
-                                                         _this13.logger.debug('admin command', { account: account, accountKey: accountKey, time: time, admined: admined, certs: certs });
+                                                         _this15.logger.debug('admin command', { account: account, accountKey: accountKey, time: time, admined: admined, certs: certs });
                                                          if (!admined) {
                                                             //throw {message: 'Invalid account'};
                                                          }
@@ -5114,17 +5118,17 @@ var rquery = function () {
                                                       case 17:
                                                          duration = time - admined;
 
-                                                         if (!(duration < _this13.config.adminLimit)) {
+                                                         if (!(duration < _this15.config.adminLimit)) {
                                                             _context113.next = 20;
                                                             break;
                                                          }
 
                                                          return _context113.abrupt('return', {
-                                                            v: 'Admin command interval not elapsed: ' + _this13.config.adminLimit + 's'
+                                                            v: 'Admin command interval not elapsed: ' + _this15.config.adminLimit + 's'
                                                          });
 
                                                       case 20:
-                                                         _validateCert2 = _this13.validateCert(req, reqx, certs, account, []);
+                                                         _validateCert2 = _this15.validateCert(req, reqx, certs, account, []);
                                                          certDigest = _validateCert2.certDigest;
                                                          certRole = _validateCert2.certRole;
 
@@ -5148,7 +5152,7 @@ var rquery = function () {
                                                          return _context113.stop();
                                                    }
                                                 }
-                                             }, _callee113, _this13);
+                                             }, _callee113, _this15);
                                           })(), 't0', 3);
 
                                        case 3:
@@ -5169,14 +5173,14 @@ var rquery = function () {
                                           _context114.prev = 8;
                                           _context114.t1 = _context114['catch'](1);
 
-                                          _this13.sendError(req, res, _context114.t1);
+                                          _this15.sendError(req, res, _context114.t1);
 
                                        case 11:
                                        case 'end':
                                           return _context114.stop();
                                     }
                                  }
-                              }, _callee114, _this13, [[1, 8]]);
+                              }, _callee114, _this15, [[1, 8]]);
                            }));
                            return function (_x295, _x296) {
                               return ref.apply(this, arguments);
@@ -5279,7 +5283,7 @@ var rquery = function () {
       key: 'createEphemeral',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee117(req, res, previousError) {
-            var _this14 = this;
+            var _this16 = this;
 
             var _req$params10, account, keyspace, access, v, _ret3;
 
@@ -5332,15 +5336,15 @@ var rquery = function () {
                               while (1) {
                                  switch (_context116.prev = _context116.next) {
                                     case 0:
-                                       _this14.logger.debug('createEphemeral');
-                                       errorMessage = _this14.validateRegisterTime();
+                                       _this16.logger.debug('createEphemeral');
+                                       errorMessage = _this16.validateRegisterTime();
 
                                        if (!errorMessage) {
                                           _context116.next = 5;
                                           break;
                                        }
 
-                                       _this14.sendError(req, res, { message: errorMessage });
+                                       _this16.sendError(req, res, { message: errorMessage });
                                        return _context116.abrupt('return', {
                                           v: void 0
                                        });
@@ -5348,14 +5352,14 @@ var rquery = function () {
                                     case 5:
                                        clientIp = req.get('x-forwarded-for');
 
-                                       _this14.logger.debug('createEphemeral clientIp', clientIp, account, keyspace);
+                                       _this16.logger.debug('createEphemeral clientIp', clientIp, account, keyspace);
                                        _context116.next = 9;
-                                       return _this14.redis.multiExecAsync(function (multi) {
-                                          multi.hsetnx(_this14.accountKeyspace(account, keyspace), 'registered', Seconds.now());
+                                       return _this16.redis.multiExecAsync(function (multi) {
+                                          multi.hsetnx(_this16.accountKeyspace(account, keyspace), 'registered', Seconds.now());
                                           if (clientIp) {
-                                             multi.hsetnx(_this14.accountKeyspace(account, keyspace), 'clientIp', clientIp);
-                                             if (_this14.config.addClientIp) {
-                                                multi.sadd(_this14.adminKey('keyspaces:ephemeral:ips'), clientIp);
+                                             multi.hsetnx(_this16.accountKeyspace(account, keyspace), 'clientIp', clientIp);
+                                             if (_this16.config.addClientIp) {
+                                                multi.sadd(_this16.adminKey('keyspaces:ephemeral:ips'), clientIp);
                                              }
                                           }
                                           //this.count(multi, 'keyspaces:ephemeral'); // TODO del old keyspaces:expire
@@ -5369,7 +5373,7 @@ var rquery = function () {
                                           break;
                                        }
 
-                                       _this14.logger.error('keyspace clash', account, keyspace);
+                                       _this16.logger.error('keyspace clash', account, keyspace);
 
                                        if (previousError) {
                                           _context116.next = 14;
@@ -5377,7 +5381,7 @@ var rquery = function () {
                                        }
 
                                        return _context116.abrupt('return', {
-                                          v: _this14.createEphemeral(req, res, { message: 'keyspace clash' })
+                                          v: _this16.createEphemeral(req, res, { message: 'keyspace clash' })
                                        });
 
                                     case 14:
@@ -5386,9 +5390,9 @@ var rquery = function () {
                                     case 15:
                                        replyPath = ['ak', account, keyspace].join('/');
 
-                                       _this14.logger.debug('createEphemeral replyPath', replyPath);
+                                       _this16.logger.debug('createEphemeral replyPath', replyPath);
 
-                                       if (!_this14.isBrowser(req)) {
+                                       if (!_this16.isBrowser(req)) {
                                           _context116.next = 21;
                                           break;
                                        }
@@ -5407,7 +5411,7 @@ var rquery = function () {
                                        return _context116.stop();
                                  }
                               }
-                           }, _callee116, _this14);
+                           }, _callee116, _this16);
                         })(), 't0', 16);
 
                      case 16:
@@ -5507,7 +5511,7 @@ var rquery = function () {
    }, {
       key: 'createKeyspaceHandler',
       value: function createKeyspaceHandler(command) {
-         var _this15 = this;
+         var _this17 = this;
 
          return function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee119(req, res) {
@@ -5533,52 +5537,52 @@ var rquery = function () {
 
                                           assert(account, 'account');
                                           assert(keyspace, 'keyspace');
-                                          accountKey = _this15.accountKey(account);
-                                          accountKeyspace = _this15.accountKeyspace(account, keyspace);
+                                          accountKey = _this17.accountKey(account);
+                                          accountKeyspace = _this17.accountKeyspace(account, keyspace);
                                           helpPath = '/ak/' + account + '/' + keyspace + '/help';
                                           reqx = { account: account, keyspace: keyspace, accountKey: accountKey, accountKeyspace: accountKeyspace, key: key, helpPath: helpPath, command: command };
 
                                           if (key) {
-                                             reqx.keyspaceKey = _this15.keyspaceKey(account, keyspace, key);
+                                             reqx.keyspaceKey = _this17.keyspaceKey(account, keyspace, key);
                                           }
                                           req.rquery = reqx;
                                           v = void 0;
                                           //await this.migrateKeyspace(req.params);
 
-                                          v = _this15.validateAccount(account);
+                                          v = _this17.validateAccount(account);
 
                                           if (!v) {
                                              _context118.next = 18;
                                              break;
                                           }
 
-                                          _this15.sendStatusMessage(req, res, 400, 'Invalid account: ' + v);
+                                          _this17.sendStatusMessage(req, res, 400, 'Invalid account: ' + v);
                                           return _context118.abrupt('return', {
                                              v: void 0
                                           });
 
                                        case 18:
-                                          v = _this15.validateKeyspace(keyspace);
+                                          v = _this17.validateKeyspace(keyspace);
 
                                           if (!v) {
                                              _context118.next = 22;
                                              break;
                                           }
 
-                                          _this15.sendStatusMessage(req, res, 400, 'Invalid keyspace: ' + v);
+                                          _this17.sendStatusMessage(req, res, 400, 'Invalid keyspace: ' + v);
                                           return _context118.abrupt('return', {
                                              v: void 0
                                           });
 
                                        case 22:
-                                          v = _this15.validateKey(key);
+                                          v = _this17.validateKey(key);
 
                                           if (!v) {
                                              _context118.next = 26;
                                              break;
                                           }
 
-                                          _this15.sendStatusMessage(req, res, 400, 'Invalid key: ' + v);
+                                          _this17.sendStatusMessage(req, res, 400, 'Invalid key: ' + v);
                                           return _context118.abrupt('return', {
                                              v: void 0
                                           });
@@ -5594,7 +5598,7 @@ var rquery = function () {
                                              break;
                                           }
 
-                                          _this15.sendStatusMessage(req, res, 400, 'Invalid timeout: require range 1 to 9 seconds');
+                                          _this17.sendStatusMessage(req, res, 400, 'Invalid timeout: require range 1 to 9 seconds');
                                           return _context118.abrupt('return', {
                                              v: void 0
                                           });
@@ -5602,13 +5606,13 @@ var rquery = function () {
                                        case 30:
                                           isSecureAccount = !/^(pub|hub)$/.test(account);
                                           _context118.next = 33;
-                                          return _this15.redis.multiExecAsync(function (multi) {
+                                          return _this17.redis.multiExecAsync(function (multi) {
                                              multi.time();
                                              multi.hget(accountKey, 'registered');
                                              multi.hget(accountKey, 'admined');
                                              multi.hget(accountKey, 'accessed');
                                              if (isSecureAccount) {
-                                                multi.smembers(_this15.adminKey('account', account, 'certs'));
+                                                multi.smembers(_this17.adminKey('account', account, 'certs'));
                                              }
                                           });
 
@@ -5625,10 +5629,10 @@ var rquery = function () {
                                           Objects.kvs({ time: time, registered: registered, admined: admined, accessed: accessed }).forEach(function (kv) {
                                              reqx[kv.key] = parseInt(kv.value);
                                           });
-                                          _this15.validateAccess(req, reqx, { certs: certs });
+                                          _this17.validateAccess(req, reqx, { certs: certs });
                                           hostname = void 0;
 
-                                          if (!(req.hostname === _this15.config.hostDomain)) {
+                                          if (!(req.hostname === _this17.config.hostDomain)) {
                                              _context118.next = 47;
                                              break;
                                           }
@@ -5637,14 +5641,14 @@ var rquery = function () {
                                           break;
 
                                        case 47:
-                                          if (!lodash.endsWith(req.hostname, _this15.config.keyspaceHostname)) {
+                                          if (!lodash.endsWith(req.hostname, _this17.config.keyspaceHostname)) {
                                              _context118.next = 59;
                                              break;
                                           }
 
                                           hostname = req.hostname.replace(/\..*$/, '');
                                           _context118.next = 51;
-                                          return _this15.redis.hgetallAsync(_this15.adminKey('host', hostname));
+                                          return _this17.redis.hgetallAsync(_this17.adminKey('host', hostname));
 
                                        case 51:
                                           hostHashes = _context118.sent;
@@ -5657,7 +5661,7 @@ var rquery = function () {
                                           throw new ValidationError('Invalid host: ' + hostname);
 
                                        case 54:
-                                          _this15.logger.debug('hostHashes', hostHashes);
+                                          _this17.logger.debug('hostHashes', hostHashes);
 
                                           if (hostHashes.keyspaces) {
                                              _context118.next = 57;
@@ -5696,9 +5700,9 @@ var rquery = function () {
                                           throw new ValidationError('Timeout must range from 1 to 10 seconds: ' + timeout);
 
                                        case 64:
-                                          multi = _this15.redis.multi();
+                                          multi = _this17.redis.multi();
 
-                                          multi.sadd(_this15.adminKey('keyspaces'), keyspace);
+                                          multi.sadd(_this17.adminKey('keyspaces'), keyspace);
                                           multi.hset(accountKey, 'accessed', time);
                                           if (command && command.access === 'admin') {
                                              multi.hset(accountKey, 'admined', time);
@@ -5720,10 +5724,10 @@ var rquery = function () {
                                        case 74:
                                           if (key) {
                                              assert(reqx.keyspaceKey);
-                                             _expire = _this15.getKeyExpire(account);
+                                             _expire = _this17.getKeyExpire(account);
 
                                              multi.expire(reqx.keyspaceKey, _expire);
-                                             _this15.logger.debug('expire', reqx.keyspaceKey, _expire);
+                                             _this17.logger.debug('expire', reqx.keyspaceKey, _expire);
                                           }
                                           _context118.next = 77;
                                           return multi.execAsync();
@@ -5745,7 +5749,7 @@ var rquery = function () {
                                           return _context118.stop();
                                     }
                                  }
-                              }, _callee118, _this15);
+                              }, _callee118, _this17);
                            })(), 't0', 2);
 
                         case 2:
@@ -5766,14 +5770,14 @@ var rquery = function () {
                            _context119.prev = 7;
                            _context119.t1 = _context119['catch'](0);
 
-                           _this15.sendError(req, res, _context119.t1);
+                           _this17.sendError(req, res, _context119.t1);
 
                         case 10:
                         case 'end':
                            return _context119.stop();
                      }
                   }
-               }, _callee119, _this15, [[0, 7]]);
+               }, _callee119, _this17, [[0, 7]]);
             }));
             return function (_x301, _x302) {
                return ref.apply(this, arguments);
@@ -6185,7 +6189,7 @@ var rquery = function () {
    }, {
       key: 'sendStatusMessage',
       value: function sendStatusMessage(req, res, statusCode, err) {
-         var _this16 = this;
+         var _this18 = this;
 
          var reqx = req.rquery || {};
          var command = reqx.command || {};
@@ -6229,13 +6233,13 @@ var rquery = function () {
                hint = Object.assign({}, hint);
                if (hint.url) {
                   if (hint.message) {
-                     if (_this16.isBrowser(req)) {} else if (hint.message) {
+                     if (_this18.isBrowser(req)) {} else if (hint.message) {
                         hint.message = hint.message.replace(/<\/?(b|tt|i|code|pre)>/g, '');
                      }
                   }
                } else if (hint.uri) {
                   var url = void 0;
-                  if (_this16.isBrowser(req)) {
+                  if (_this18.isBrowser(req)) {
                      url = '/' + hint.uri;
                   } else if (/localhost/.test(req.hostname)) {
                      url = 'http://localhost:8765/' + hint.uri;
@@ -6279,7 +6283,7 @@ var rquery = function () {
                   style: _styles2.default.error.detail,
                   meta: 'optional'
                }, lodash.flatten(messageLines).join('\n')), hints.map(function (hint) {
-                  _this16.logger.debug('hint', hint);
+                  _this18.logger.debug('hint', hint);
                   var attributes = {
                      style: _styles2.default.error.hintContainer,
                      href: hint.url
