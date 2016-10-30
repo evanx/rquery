@@ -1214,10 +1214,37 @@ var rquery = function () {
                         _ref21 = _context15.sent;
                         _ref22 = _slicedToArray(_ref21, 1);
                         smembers = _ref22[0];
-                        _context15.next = 9;
-                        return this.sendTelegramReply(request, 'html', ['The following certs are active: ' + smembers]);
 
-                     case 9:
+                        if (!(smembers.length === 0)) {
+                           _context15.next = 12;
+                           break;
+                        }
+
+                        _context15.next = 10;
+                        return this.sendTelegramReply(request, 'html', ['No certs are active.']);
+
+                     case 10:
+                        _context15.next = 19;
+                        break;
+
+                     case 12:
+                        if (!(smembers.length === 1)) {
+                           _context15.next = 17;
+                           break;
+                        }
+
+                        _context15.next = 15;
+                        return this.sendTelegramReply(request, 'html', ['One cert is active: ' + smembers]);
+
+                     case 15:
+                        _context15.next = 19;
+                        break;
+
+                     case 17:
+                        _context15.next = 19;
+                        return this.sendTelegramReply(request, 'html', ['The following ' + smembers.length + ' certs are active: ' + smembers.join(', ')]);
+
+                     case 19:
                      case 'end':
                         return _context15.stop();
                   }

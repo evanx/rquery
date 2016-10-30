@@ -476,9 +476,19 @@ export default class rquery {
       const [smembers] = await this.redis.multiExecAsync(multi => {
          multi.smembers(this.adminKey('account', account, 'certs'));
       });
-      await this.sendTelegramReply(request, 'html', [
-         `The following certs are active: ${smembers}`,
-      ]);
+      if (smembers.length === 0) {
+         await this.sendTelegramReply(request, 'html', [
+            `No certs are active.`
+         ]);
+      } else if (smembers.length === 1) {
+         await this.sendTelegramReply(request, 'html', [
+            `One cert is active: ${smembers}`
+         ]);
+      } else {
+         await this.sendTelegramReply(request, 'html', [
+            `The following ${smembers.length} certs are active: ${smembers.join(', ')}`
+         ]);
+      }
    }
 
    async handleTelegramRevoke(request) {
