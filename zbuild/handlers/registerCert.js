@@ -93,7 +93,7 @@ exports.default = function () {
 
                case 19:
                   accountKey = rquery.adminKey('account', account);
-                  grantKey = rquery.adminKey('telegram', 'user', account, 'grant_cert');
+                  grantKey = rquery.adminKey('telegram', 'user', account, 'grant');
                   certDigest = rquery.digestPem(cert);
                   shortDigest = certDigest.slice(-12);
 
@@ -130,7 +130,7 @@ exports.default = function () {
                   throw new ValidationError({ message: 'Cert must be granted via @' + rquery.config.adminBotName,
                      status: 403,
                      hint: {
-                        message: ['Try @' + rquery.config.adminBotName + ' "/grant ' + certDigest + '"', 'e.g. via https://web.telegram.org,'].join(' '),
+                        message: ['Try @' + rquery.config.adminBotName + ' "/grant ' + certDigest + '"', 'e.g. via https://web.telegram.org'].join(' '),
                         clipboard: '/grant ' + certDigest,
                         url: 'https://telegram.me/' + rquery.config.adminBotName + '?start'
                      }

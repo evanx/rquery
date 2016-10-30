@@ -39,7 +39,7 @@ export default async function registerCert(req, res, reqx) {
       });
    }
    const accountKey = rquery.adminKey('account', account);
-   const grantKey = rquery.adminKey('telegram', 'user', account, 'grant_cert');
+   const grantKey = rquery.adminKey('telegram', 'user', account, 'grant');
    const certDigest = rquery.digestPem(cert);
    const shortDigest = certDigest.slice(-12);
    logger.debug('cert', certDigest);
@@ -60,7 +60,7 @@ export default async function registerCert(req, res, reqx) {
          hint: {
             message: [
                `Try @${rquery.config.adminBotName} "/grant ${certDigest}"`,
-               `e.g. via https://web.telegram.org,`,
+               `e.g. via https://web.telegram.org`,
             ].join(' '),
             clipboard: `/grant ${certDigest}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
