@@ -21,6 +21,6 @@
       curl -s https://open.webserva.com/cert-script-help/${account}
       curl -s https://raw.githubusercontent.com/webserva/webserva/master/docs/install.wscurl.txt
       certSha=`cat cert.pem.shasum`
-      echo "Try '/grant_cert $certSha' via https://telegram.me/WebServaBot?start"
+      echo "Try '/grant $certSha' via https://telegram.me/WebServaBot?start"
     fi
   fi

@@ -130,8 +130,8 @@ exports.default = function () {
                   throw new ValidationError({ message: 'Cert must be granted via @' + rquery.config.adminBotName,
                      status: 403,
                      hint: {
-                        message: ['Try @' + rquery.config.adminBotName + ' "/grant_cert ' + certDigest + '"', 'e.g. via https://web.telegram.org,'].join(' '),
-                        clipboard: '/grant_cert ' + certDigest,
+                        message: ['Try @' + rquery.config.adminBotName + ' "/grant ' + certDigest + '"', 'e.g. via https://web.telegram.org,'].join(' '),
+                        clipboard: '/grant ' + certDigest,
                         url: 'https://telegram.me/' + rquery.config.adminBotName + '?start'
                      }
                   });
@@ -146,9 +146,9 @@ exports.default = function () {
                      status: 400,
                      message: 'Granted cert not matching: ' + certDigest,
                      hint: {
-                        message: 'Try @' + rquery.config.adminBotName + ' "/grant_cert ' + certDigest + '"' + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
+                        message: 'Try @' + rquery.config.adminBotName + ' "/grant ' + certDigest + '"' + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
 
-                        clipboard: '/grant_cert ' + certDigest,
+                        clipboard: '/grant ' + certDigest,
                         url: 'https://telegram.me/' + rquery.config.adminBotName + '?start'
                      }
                   });

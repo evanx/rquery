@@ -59,10 +59,10 @@ export default async function registerCert(req, res, reqx) {
          status: 403,
          hint: {
             message: [
-               `Try @${rquery.config.adminBotName} "/grant_cert ${certDigest}"`,
+               `Try @${rquery.config.adminBotName} "/grant ${certDigest}"`,
                `e.g. via https://web.telegram.org,`,
             ].join(' '),
-            clipboard: `/grant_cert ${certDigest}`,
+            clipboard: `/grant ${certDigest}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });
@@ -73,11 +73,11 @@ export default async function registerCert(req, res, reqx) {
          status: 400,
          message: 'Granted cert not matching: ' + certDigest,
          hint: {
-            message: `Try @${rquery.config.adminBotName} "/grant_cert ${certDigest}"`
+            message: `Try @${rquery.config.adminBotName} "/grant ${certDigest}"`
             + ` from the authoritative Telegram account`
             + ` e.g. via https://web.telegram.org`
             ,
-            clipboard: `/grant_cert ${certDigest}`,
+            clipboard: `/grant ${certDigest}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });

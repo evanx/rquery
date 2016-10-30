@@ -149,7 +149,7 @@ var rquery = function () {
                               url: 'https://telegram.me/' + this.config.adminBotName + '?start'
                            },
                            grantCert: {
-                              message: 'Try "@' + this.config.adminBotName + ' /grant_cert certId" e.g. via https://web.telegram.org',
+                              message: 'Try "@' + this.config.adminBotName + ' /grant certId" e.g. via https://web.telegram.org',
                               url: 'https://telegram.me/' + this.config.adminBotName + '?start'
                            },
                            registerCert: {
@@ -1122,7 +1122,7 @@ var rquery = function () {
                         now = Millis.now();
 
                         this.logger.info('handleTelegramGrant', request);
-                        match = request.text.match(/\/grant_cert (\w+)$/);
+                        match = request.text.match(/\/grant (\w+)$/);
 
                         if (match) {
                            _context14.next = 7;
@@ -1204,7 +1204,7 @@ var rquery = function () {
 
                         this.logger.info('handleTelegramList', request);
                         _context15.next = 4;
-                        return rquery.redis.multiExecAsync(function (multi) {
+                        return this.redis.multiExecAsync(function (multi) {
                            multi.smembers(rquery.adminKey('account', account, 'certs'), certDigest);
                         });
 
@@ -1258,7 +1258,7 @@ var rquery = function () {
                      case 7:
                         certDigest = match[1];
                         _context16.next = 10;
-                        return rquery.redis.multiExecAsync(function (multi) {
+                        return this.redis.multiExecAsync(function (multi) {
                            multi.srem(rquery.adminKey('account', account, 'certs'), certDigest);
                         });
 

@@ -41,7 +41,7 @@ export default class rquery {
             url: `https://telegram.me/${this.config.adminBotName}?start`
          },
          grantCert: {
-            message: `Try "@${this.config.adminBotName} /grant_cert certId" e.g. via https://web.telegram.org`,
+            message: `Try "@${this.config.adminBotName} /grant certId" e.g. via https://web.telegram.org`,
             url: `https://telegram.me/${this.config.adminBotName}?start`
          },
          registerCert: {
@@ -433,7 +433,7 @@ export default class rquery {
    async handleTelegramGrant(request) {
       const now = Millis.now();
       this.logger.info('handleTelegramGrant', request);
-      const match = request.text.match(/\/grant_cert (\w+)$/);
+      const match = request.text.match(/\/grant (\w+)$/);
       if (!match) {
          await this.sendTelegram(request.chatId, 'html', [
             `Try <code>/grant &lt;digest&gt;</code>`,
@@ -473,7 +473,7 @@ export default class rquery {
    async handleTelegramList(request) {
       const now = Millis.now();
       this.logger.info('handleTelegramList', request);
-      const [smembers] = await rquery.redis.multiExecAsync(multi => {
+      const [smembers] = await this.redis.multiExecAsync(multi => {
          multi.smembers(rquery.adminKey('account', account, 'certs'), certDigest);
       });
       await this.sendTelegramReply(request, 'html', [
@@ -492,7 +492,7 @@ export default class rquery {
          return;
       }
       const certDigest = match[1];
-      const [srem] = await rquery.redis.multiExecAsync(multi => {
+      const [srem] = await this.redis.multiExecAsync(multi => {
          multi.srem(rquery.adminKey('account', account, 'certs'), certDigest);
       });
       if (srem) {
