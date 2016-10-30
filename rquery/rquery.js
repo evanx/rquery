@@ -471,10 +471,10 @@ export default class rquery {
    }
 
    async handleTelegramList(request) {
-      const now = Millis.now();
+      const account = request.username;
       this.logger.info('handleTelegramList', request);
       const [smembers] = await this.redis.multiExecAsync(multi => {
-         multi.smembers(rquery.adminKey('account', account, 'certs'), certDigest);
+         multi.smembers(rquery.adminKey('account', account, 'certs'));
       });
       await this.sendTelegramReply(request, 'html', [
          `The following certs are active: ${smembers}`,
@@ -491,6 +491,7 @@ export default class rquery {
          ]);
          return;
       }
+      const account = request.username;
       const certDigest = match[1];
       const [srem] = await this.redis.multiExecAsync(multi => {
          multi.srem(rquery.adminKey('account', account, 'certs'), certDigest);

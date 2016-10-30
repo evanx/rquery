@@ -285,7 +285,7 @@ var rquery = function () {
       key: 'handlePublish',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee5(req, res, next) {
-            var parts, reqx, _parts, _account, keyspace, commandKey, _key, _parts2, _account2, _keyspace, _key2, _parts3, _account3, _keyspace2, _parts4, _account4;
+            var parts, reqx, _parts, account, keyspace, commandKey, _key, _parts2, _account, _keyspace, _key2, _parts3, _account2, _keyspace2, _parts4, _account3;
 
             return regeneratorRuntime.wrap(function _callee5$(_context5) {
                while (1) {
@@ -302,7 +302,7 @@ var rquery = function () {
                         }
 
                         _parts = _slicedToArray(parts, 4);
-                        _account = _parts[0];
+                        account = _parts[0];
                         keyspace = _parts[1];
                         commandKey = _parts[2];
                         _key = _parts[3];
@@ -315,7 +315,7 @@ var rquery = function () {
                         return _context5.abrupt('return', next());
 
                      case 11:
-                        Object.assign(reqx, { account: _account, keyspace: keyspace, commandKey: commandKey, key: _key });
+                        Object.assign(reqx, { account: account, keyspace: keyspace, commandKey: commandKey, key: _key });
                         return _context5.abrupt('return', this.handlePublishKeyCommand(req, res, next, reqx));
 
                      case 15:
@@ -325,11 +325,11 @@ var rquery = function () {
                         }
 
                         _parts2 = _slicedToArray(parts, 3);
-                        _account2 = _parts2[0];
+                        _account = _parts2[0];
                         _keyspace = _parts2[1];
                         _key2 = _parts2[2];
 
-                        Object.assign(reqx, { account: _account2, keyspace: _keyspace, key: _key2 });
+                        Object.assign(reqx, { account: _account, keyspace: _keyspace, key: _key2 });
                         return _context5.abrupt('return', this.handlePublishKey(req, res, next, reqx));
 
                      case 24:
@@ -339,10 +339,10 @@ var rquery = function () {
                         }
 
                         _parts3 = _slicedToArray(parts, 2);
-                        _account3 = _parts3[0];
+                        _account2 = _parts3[0];
                         _keyspace2 = _parts3[1];
 
-                        Object.assign(reqx, { account: _account3, keyspace: _keyspace2 });
+                        Object.assign(reqx, { account: _account2, keyspace: _keyspace2 });
                         return _context5.abrupt('return', this.handlePublishKeyspace(req, res, next, reqx));
 
                      case 32:
@@ -352,9 +352,9 @@ var rquery = function () {
                         }
 
                         _parts4 = _slicedToArray(parts, 1);
-                        _account4 = _parts4[0];
+                        _account3 = _parts4[0];
 
-                        Object.assign(reqx, { account: _account4 });
+                        Object.assign(reqx, { account: _account3 });
                         return _context5.abrupt('return', this.handlePublishAccount(req, res, next, reqx));
 
                      case 39:
@@ -695,14 +695,14 @@ var rquery = function () {
             var _ref8 = _slicedToArray(_ref7, 3);
 
             var matching = _ref8[0];
-            var _account5 = _ref8[1];
+            var account = _ref8[1];
             var keyspace = _ref8[2];
 
-            this.logger.debug('sendErrorRoute', req.path, _account5, keyspace, this.isBrowser(req));
+            this.logger.debug('sendErrorRoute', req.path, account, keyspace, this.isBrowser(req));
             if (this.isBrowser(req)) {
                var redirectPath = '/routes';
-               if (_account5 && keyspace) {
-                  redirectPath = ['/ak', _account5, keyspace, 'help'].join('/');
+               if (account && keyspace) {
+                  redirectPath = ['/ak', account, keyspace, 'help'].join('/');
                }
                res.redirect(302, redirectPath);
             } else {
@@ -1194,18 +1194,18 @@ var rquery = function () {
       key: 'handleTelegramList',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee15(request) {
-            var now, _ref21, _ref22, smembers;
+            var account, _ref21, _ref22, smembers;
 
             return regeneratorRuntime.wrap(function _callee15$(_context15) {
                while (1) {
                   switch (_context15.prev = _context15.next) {
                      case 0:
-                        now = Millis.now();
+                        account = request.username;
 
                         this.logger.info('handleTelegramList', request);
                         _context15.next = 4;
                         return this.redis.multiExecAsync(function (multi) {
-                           multi.smembers(rquery.adminKey('account', account, 'certs'), certDigest);
+                           multi.smembers(rquery.adminKey('account', account, 'certs'));
                         });
 
                      case 4:
@@ -1233,7 +1233,7 @@ var rquery = function () {
       key: 'handleTelegramRevoke',
       value: function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee16(request) {
-            var now, match, certDigest, _ref23, _ref24, srem;
+            var now, match, account, certDigest, _ref23, _ref24, srem;
 
             return regeneratorRuntime.wrap(function _callee16$(_context16) {
                while (1) {
@@ -1256,34 +1256,35 @@ var rquery = function () {
                         return _context16.abrupt('return');
 
                      case 7:
+                        account = request.username;
                         certDigest = match[1];
-                        _context16.next = 10;
+                        _context16.next = 11;
                         return this.redis.multiExecAsync(function (multi) {
                            multi.srem(rquery.adminKey('account', account, 'certs'), certDigest);
                         });
 
-                     case 10:
+                     case 11:
                         _ref23 = _context16.sent;
                         _ref24 = _slicedToArray(_ref23, 1);
                         srem = _ref24[0];
 
                         if (!srem) {
-                           _context16.next = 18;
+                           _context16.next = 19;
                            break;
                         }
 
-                        _context16.next = 16;
+                        _context16.next = 17;
                         return this.sendTelegramReply(request, 'html', ['You have removed cert <b>' + certDigest + '</b>.']);
 
-                     case 16:
-                        _context16.next = 20;
+                     case 17:
+                        _context16.next = 21;
                         break;
 
-                     case 18:
-                        _context16.next = 20;
+                     case 19:
+                        _context16.next = 21;
                         return this.sendTelegramReply(request, 'html', ['Apologies, that cert was not found. Try <code>/list</code>.']);
 
-                     case 20:
+                     case 21:
                      case 'end':
                         return _context16.stop();
                   }
@@ -6204,15 +6205,15 @@ var rquery = function () {
             this.logger.debug('sendStatusMessage', err, req.params);
             if (err.code === 'WRONGTYPE') {
                var _req$params12 = req.params;
-               var _account6 = _req$params12.account;
+               var account = _req$params12.account;
                var keyspace = _req$params12.keyspace;
                var _key9 = _req$params12.key;
 
                title = 'Wrong type for key';
-               if (_account6 && keyspace && _key9) {
+               if (account && keyspace && _key9) {
                   hints.push({
                      message: 'Check the key type',
-                     uri: ['ak', _account6, keyspace, 'type', _key9].join('/')
+                     uri: ['ak', account, keyspace, 'type', _key9].join('/')
                   });
                }
             } else if (err.message) {
