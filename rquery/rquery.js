@@ -477,15 +477,15 @@ export default class rquery {
          multi.smembers(this.adminKey('account', account, 'certs'));
       });
       if (smembers.length === 0) {
-         await this.sendTelegramReply(request, 'html', [
+         await this.sendTelegramAlert(request, 'html', [
             `No certs are active.`
          ]);
       } else if (smembers.length === 1) {
-         await this.sendTelegramReply(request, 'html', [
+         await this.sendTelegram(request, 'html', [
             `One cert is active: ${smembers}`
          ]);
       } else {
-         await this.sendTelegramReply(request, 'html', [
+         await this.sendTelegram(request, 'html', [
             `The following ${smembers.length} certs are active: ${smembers.join(', ')}`
          ]);
       }
