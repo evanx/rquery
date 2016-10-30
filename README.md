@@ -113,12 +113,9 @@ where `ttl/mykey` returns the TTL decreasing from 600 seconds:
 
 For secure access to permanent keyspaces, let's try SSL client cert authentication on `cli.webserva.com.` Incidently, this is the same server as `secure.webserva.com` but with different a default format, in particular plain text rather than JSON.
 
-Note that we will register an account using our Telegram.org username. (I like Telegram.org, have an Ubuntu phone, and want to build a Telegram Bot to win one of those prizes, woohoo!)
+Note that we will register an account using our Telegram.org username.
 
-So visit https://web.telegram.org or install the mobile app, and message `@WebServaBot /verify_me.` That will verify your Telegram username to Redishub.
-
-![WebServaBot /verify_me](http://evanx.github.io/images/rquery/ws040-verify_me.png)
-<hr>
+So visit https://web.telegram.org or install the mobile app, and message `@WebServaBot /signup.`
 
 See the following instructions for creating a client cert:
 
