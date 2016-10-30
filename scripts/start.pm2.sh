@@ -4,14 +4,10 @@ set -u -e
 . ./scripts/_name.sh
 
 serviceId=`basename $PWD`
-if [ $serviceId -gt 0 ]
-then
-  name=$config-$serviceId
-fi
 
 rquery_botUrl=$botUrl rquery_botSecret=$botSecret rquery_port=$port \
   NODE_ENV=production loggerLevel=debug configModule=./config/${config}.js \
-  pm2 start index.js --name $name
+  pm2 start index.js --name $serviceId
 
 (
   sleep 1
