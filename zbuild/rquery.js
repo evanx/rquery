@@ -935,7 +935,7 @@ var rquery = function () {
 
                      case 57:
                         _context11.next = 59;
-                        return this.sendTelegram(message.chatId, 'html', ['Commands: <code>/signup /grant /revoke</code>']);
+                        return this.sendTelegram(message.chatId, 'html', ['Commands: <code>/signup /grant /list /revoke</code>']);
 
                      case 59:
                         this.logger.info('telegram message', message, telegram);
