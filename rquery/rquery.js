@@ -481,11 +481,11 @@ export default class rquery {
             `No certs are active.`
          ]);
       } else if (smembers.length === 1) {
-         await this.sendTelegram(request, 'html', [
+         await this.sendTelegram(request.chatId, 'html', [
             `One cert is active: ${smembers}`
          ]);
       } else {
-         await this.sendTelegram(request, 'html', [
+         await this.sendTelegram(request.chatId, 'html', [
             `The following ${smembers.length} certs are active: ${smembers.join(', ')}`
          ]);
       }

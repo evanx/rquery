@@ -1234,7 +1234,7 @@ var rquery = function () {
                         }
 
                         _context15.next = 15;
-                        return this.sendTelegram(request, 'html', ['One cert is active: ' + smembers]);
+                        return this.sendTelegram(request.chatId, 'html', ['One cert is active: ' + smembers]);
 
                      case 15:
                         _context15.next = 19;
@@ -1242,7 +1242,7 @@ var rquery = function () {
 
                      case 17:
                         _context15.next = 19;
-                        return this.sendTelegram(request, 'html', ['The following ' + smembers.length + ' certs are active: ' + smembers.join(', ')]);
+                        return this.sendTelegram(request.chatId, 'html', ['The following ' + smembers.length + ' certs are active: ' + smembers.join(', ')]);
 
                      case 19:
                      case 'end':
