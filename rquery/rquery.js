@@ -512,7 +512,7 @@ export default class rquery {
                `You have removed all certs.`,
             ]);
          } else {
-            await this.sendTelegramReply(request, 'html', [
+            await this.sendTelegramAlert(request, 'html', [
                `Apologies, no certs were found. Try <code>/list</code>.`,
             ]);
          }
@@ -525,7 +525,7 @@ export default class rquery {
                `You have removed cert <b>${certDigest}</b>.`,
             ]);
          } else {
-            await this.sendTelegramReply(request, 'html', [
+            await this.sendTelegramAlert(request, 'html', [
                `Apologies, that cert was not found. Try <code>/list</code>.`,
             ]);
          }

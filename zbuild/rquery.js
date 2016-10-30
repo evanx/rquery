@@ -1319,7 +1319,7 @@ var rquery = function () {
 
                      case 20:
                         _context16.next = 22;
-                        return this.sendTelegramReply(request, 'html', ['Apologies, no certs were found. Try <code>/list</code>.']);
+                        return this.sendTelegramAlert(request, 'html', ['Apologies, no certs were found. Try <code>/list</code>.']);
 
                      case 22:
                         _context16.next = 36;
@@ -1350,7 +1350,7 @@ var rquery = function () {
 
                      case 34:
                         _context16.next = 36;
-                        return this.sendTelegramReply(request, 'html', ['Apologies, that cert was not found. Try <code>/list</code>.']);
+                        return this.sendTelegramAlert(request, 'html', ['Apologies, that cert was not found. Try <code>/list</code>.']);
 
                      case 36:
                      case 'end':
