@@ -503,28 +503,32 @@ export default class rquery {
       }
       const account = request.username;
       const certDigest = match[1];
-      const [srem] = await this.redis.multiExecAsync(multi => {
-         if (certDigest === 'all') {
+      if (certDigest === 'all') {
+         const [del] = await this.redis.multiExecAsync(multi => {
             multi.del(this.adminKey('account', account, 'certs'));
-         } else {
-            multi.srem(this.adminKey('account', account, 'certs'), certDigest);
-         }
-      });
-      if (srem) {
-         if (certDigest === 'all') {
+         });
+         if (del) {
             await this.sendTelegramReply(request, 'html', [
                `You have removed all certs.`,
             ]);
-
          } else {
             await this.sendTelegramReply(request, 'html', [
-               `You have removed cert <b>${certDigest}</b>.`,
+               `Apologies, no certs were found. Try <code>/list</code>.`,
             ]);
          }
       } else {
-         await this.sendTelegramReply(request, 'html', [
-            `Apologies, that cert was not found. Try <code>/list</code>.`,
-         ]);
+         const [srem] = await this.redis.multiExecAsync(multi => {
+            multi.srem(this.adminKey('account', account, 'certs'), certDigest);
+         });
+         if (srem) {
+            await this.sendTelegramReply(request, 'html', [
+               `You have removed cert <b>${certDigest}</b>.`,
+            ]);
+         } else {
+            await this.sendTelegramReply(request, 'html', [
+               `Apologies, that cert was not found. Try <code>/list</code>.`,
+            ]);
+         }
       }
    }
 
