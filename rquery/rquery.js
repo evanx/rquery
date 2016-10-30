@@ -41,7 +41,7 @@ export default class rquery {
             url: `https://telegram.me/${this.config.adminBotName}?start`
          },
          grantCert: {
-            message: `Try "@${this.config.adminBotName} /grantcert certId" e.g. via https://web.telegram.org`,
+            message: `Try "@${this.config.adminBotName} /grant_cert certId" e.g. via https://web.telegram.org`,
             url: `https://telegram.me/${this.config.adminBotName}?start`
          },
          registerCert: {
@@ -338,17 +338,20 @@ export default class rquery {
                `We use this for your ${this.config.serviceLabel} account name.`,
             ]);
          } else if (/\/verify/.test(content.text)) {
-            message.action = 'verify';
+            message.action = 'verify_me';
             await this.handleTelegramVerify(message);
-         } else if (/\/grant/.test(content.text)) {
-            message.action = 'grant';
-            await this.handleTelegramGrant(message);
+         } else if (/\/grant_cert/.test(content.text)) {
+            message.action = 'grant_cert';
+            await this.handleTelegramGrantCert(message);
+         } else if (/\/revoke_cert/.test(content.text)) {
+            message.action = 'revoke_cert';
+            await this.handleTelegramRevokeCert(message);
          } else if (/\/signup/.test(content.text)) {
             message.action = 'signup';
             await this.handleTelegramSignup(message);
          } else {
             await this.sendTelegram(message.chatId, 'html', [
-               `Commands: <code>/signup /verifyme /grantcert</code>`
+               `Commands: <code>/signup /verify_me /grant_cert</code>`
             ]);
          }
       }
@@ -427,13 +430,13 @@ export default class rquery {
       }
    }
 
-   async handleTelegramGrant(request) {
+   async handleTelegramGrantCert(request) {
       const now = Millis.now();
-      this.logger.info('handleTelegramGrant', request);
-      const match = request.text.match(/\/grantcert (\w+)$/);
+      this.logger.info('handleTelegramGrantCert', request);
+      const match = request.text.match(/\/grant_cert (\w+)$/);
       if (!match) {
          await this.sendTelegram(request.chatId, 'html', [
-            `Try <code>/grantcert &lt;digest&gt;</code>`,
+            `Try <code>/grant_cert &lt;digest&gt;</code>`,
             `where the <code>digest</code> is returned by ${this.config.secureHostname}/register-cert`,
             `performed with the cert to be enrolled.`,
             `Read ${this.config.openHostname}/docs/register-cert.md for further info.`,
@@ -444,8 +447,8 @@ export default class rquery {
       }
       const cert = match[1];
       const userKey = this.adminKey('telegram', 'user', request.username);
-      const grantKey = this.adminKey('telegram', 'user', request.username, 'grantcert');
-      this.logger.info('handleTelegramGrant', userKey, grantKey, request, cert);
+      const grantKey = this.adminKey('telegram', 'user', request.username, 'grant_cert');
+      this.logger.info('handleTelegramGrantCert', userKey, grantKey, request, cert);
       let [ismember, verified, secret, exists] = await this.redis.multiExecAsync(multi => {
          multi.sismember(this.adminKey('telegram:verified:users'), request.username);
          multi.hget(userKey, 'verified');
@@ -453,7 +456,7 @@ export default class rquery {
          multi.exists(grantKey);
       });
       let [setex] = await this.redis.multiExecAsync(multi => {
-         this.logger.info('handleTelegramGrant setex', grantKey, cert, this.config.enrollExpire);
+         this.logger.info('handleTelegramGrantCert setex', grantKey, cert, this.config.enrollExpire);
          multi.setex(grantKey, this.config.enrollExpire, cert);
       });
       if (setex) {
@@ -467,6 +470,31 @@ export default class rquery {
       } else {
          await this.sendTelegramReply(request, 'html', [
             `Apologies, the 'setex' command reply was <tt>${setex}</tt>`,
+         ]);
+      }
+   }
+
+   async handleTelegramRevokeCert(request) {
+      const now = Millis.now();
+      this.logger.info('handleTelegramRevokeCert', request);
+      const match = request.text.match(/\/revoke_cert (\w+)$/);
+      if (!match) {
+         await this.sendTelegram(request.chatId, 'html', [
+            `Try <code>/revoke_cert &lt;digest&gt;</code>`
+         ]);
+         return;
+      }
+      const certDigest = match[1];
+      const [srem] = await rquery.redis.multiExecAsync(multi => {
+         multi.srem(rquery.adminKey('account', account, 'certs'), certDigest);
+      });
+      if (srem) {
+         await this.sendTelegramReply(request, 'html', [
+            `You have removed cert <b>${certDigest}</b>.`,
+         ]);
+      } else {
+         await this.sendTelegramReply(request, 'html', [
+            `Apologies, that cert digest was not found.`,
          ]);
       }
    }
@@ -641,7 +669,7 @@ export default class rquery {
          } else {
             return [
                `Telegram user not yet verified: ${user}.`,
-               `Please Telegram '@${this.config.adminBotName} /verifyme'`,
+               `Please Telegram '@${this.config.adminBotName} /verify_me'`,
                `e.g. via https://web.telegram.org`
             ].join(' ');
          }

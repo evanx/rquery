@@ -93,7 +93,7 @@ exports.default = function () {
 
                case 19:
                   accountKey = rquery.adminKey('account', account);
-                  grantKey = rquery.adminKey('telegram', 'user', account, 'grantcert');
+                  grantKey = rquery.adminKey('telegram', 'user', account, 'grant_cert');
                   certDigest = rquery.digestPem(cert);
                   shortDigest = certDigest.slice(-12);
 
@@ -130,8 +130,8 @@ exports.default = function () {
                   throw new ValidationError({ message: 'Cert must be granted via @' + rquery.config.adminBotName,
                      status: 403,
                      hint: {
-                        message: ['Try @' + rquery.config.adminBotName + ' "/grantcert ' + certDigest + '"', 'e.g. via https://web.telegram.org,'].join(' '),
-                        clipboard: '/grantcert ' + certDigest,
+                        message: ['Try @' + rquery.config.adminBotName + ' "/grant_cert ' + certDigest + '"', 'e.g. via https://web.telegram.org,'].join(' '),
+                        clipboard: '/grant_cert ' + certDigest,
                         url: 'https://telegram.me/' + rquery.config.adminBotName + '?start'
                      }
                   });
@@ -146,9 +146,9 @@ exports.default = function () {
                      status: 400,
                      message: 'Granted cert not matching: ' + certDigest,
                      hint: {
-                        message: 'Try @' + rquery.config.adminBotName + ' "/grantcert ' + certDigest + '"' + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
+                        message: 'Try @' + rquery.config.adminBotName + ' "/grant_cert ' + certDigest + '"' + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
 
-                        clipboard: '/grantcert ' + certDigest,
+                        clipboard: '/grant_cert ' + certDigest,
                         url: 'https://telegram.me/' + rquery.config.adminBotName + '?start'
                      }
                   });

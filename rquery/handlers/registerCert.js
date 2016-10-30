@@ -39,7 +39,7 @@ export default async function registerCert(req, res, reqx) {
       });
    }
    const accountKey = rquery.adminKey('account', account);
-   const grantKey = rquery.adminKey('telegram', 'user', account, 'grantcert');
+   const grantKey = rquery.adminKey('telegram', 'user', account, 'grant_cert');
    const certDigest = rquery.digestPem(cert);
    const shortDigest = certDigest.slice(-12);
    logger.debug('cert', certDigest);
@@ -59,10 +59,10 @@ export default async function registerCert(req, res, reqx) {
          status: 403,
          hint: {
             message: [
-               `Try @${rquery.config.adminBotName} "/grantcert ${certDigest}"`,
+               `Try @${rquery.config.adminBotName} "/grant_cert ${certDigest}"`,
                `e.g. via https://web.telegram.org,`,
             ].join(' '),
-            clipboard: `/grantcert ${certDigest}`,
+            clipboard: `/grant_cert ${certDigest}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });
@@ -73,11 +73,11 @@ export default async function registerCert(req, res, reqx) {
          status: 400,
          message: 'Granted cert not matching: ' + certDigest,
          hint: {
-            message: `Try @${rquery.config.adminBotName} "/grantcert ${certDigest}"`
+            message: `Try @${rquery.config.adminBotName} "/grant_cert ${certDigest}"`
             + ` from the authoritative Telegram account`
             + ` e.g. via https://web.telegram.org`
             ,
-            clipboard: `/grantcert ${certDigest}`,
+            clipboard: `/grant_cert ${certDigest}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });

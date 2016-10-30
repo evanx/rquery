@@ -149,7 +149,7 @@ var rquery = function () {
                               url: 'https://telegram.me/' + this.config.adminBotName + '?start'
                            },
                            grantCert: {
-                              message: 'Try "@' + this.config.adminBotName + ' /grantcert certId" e.g. via https://web.telegram.org',
+                              message: 'Try "@' + this.config.adminBotName + ' /grant_cert certId" e.g. via https://web.telegram.org',
                               url: 'https://telegram.me/' + this.config.adminBotName + '?start'
                            },
                            registerCert: {
@@ -921,7 +921,7 @@ var rquery = function () {
 
                      case 51:
                         _context11.next = 53;
-                        return this.sendTelegram(message.chatId, 'html', ['Commands: <code>/signup /verifyme /grantcert</code>']);
+                        return this.sendTelegram(message.chatId, 'html', ['Commands: <code>/signup /verify_me /grant_cert</code>']);
 
                      case 53:
                         this.logger.info('telegram message', message, telegram);
@@ -1108,7 +1108,7 @@ var rquery = function () {
                         now = Millis.now();
 
                         this.logger.info('handleTelegramGrant', request);
-                        match = request.text.match(/\/grantcert (\w+)$/);
+                        match = request.text.match(/\/grant_cert (\w+)$/);
 
                         if (match) {
                            _context14.next = 7;
@@ -1116,7 +1116,7 @@ var rquery = function () {
                         }
 
                         _context14.next = 6;
-                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/grantcert &lt;digest&gt;</code>', 'where the <code>digest</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', 'Read ' + this.config.openHostname + '/docs/register-cert.md for further info.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + request.username + '?id=' + request.username]);
+                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/grant_cert &lt;digest&gt;</code>', 'where the <code>digest</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', 'Read ' + this.config.openHostname + '/docs/register-cert.md for further info.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + request.username + '?id=' + request.username]);
 
                      case 6:
                         return _context14.abrupt('return');
@@ -1124,7 +1124,7 @@ var rquery = function () {
                      case 7:
                         cert = match[1];
                         userKey = this.adminKey('telegram', 'user', request.username);
-                        grantKey = this.adminKey('telegram', 'user', request.username, 'grantcert');
+                        grantKey = this.adminKey('telegram', 'user', request.username, 'grant_cert');
 
                         this.logger.info('handleTelegramGrant', userKey, grantKey, request, cert);
                         _context14.next = 13;
@@ -1735,7 +1735,7 @@ var rquery = function () {
                            break;
 
                         case 20:
-                           return _context29.abrupt('return', ['Telegram user not yet verified: ' + user + '.', 'Please Telegram \'@' + _this6.config.adminBotName + ' /verifyme\'', 'e.g. via https://web.telegram.org'].join(' '));
+                           return _context29.abrupt('return', ['Telegram user not yet verified: ' + user + '.', 'Please Telegram \'@' + _this6.config.adminBotName + ' /verify_me\'', 'e.g. via https://web.telegram.org'].join(' '));
 
                         case 21:
                         case 'end':
