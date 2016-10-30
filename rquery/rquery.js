@@ -494,7 +494,11 @@ export default class rquery {
       const account = request.username;
       const certDigest = match[1];
       const [srem] = await this.redis.multiExecAsync(multi => {
-         multi.srem(this.adminKey('account', account, 'certs'), certDigest);
+         if (certDigest === 'all') {
+            multi.del(this.adminKey('account', account, 'certs'));
+         } else {
+            multi.srem(this.adminKey('account', account, 'certs'), certDigest);
+         }
       });
       if (srem) {
          await this.sendTelegramReply(request, 'html', [

@@ -1264,7 +1264,11 @@ var rquery = function () {
                         certDigest = match[1];
                         _context16.next = 11;
                         return this.redis.multiExecAsync(function (multi) {
-                           multi.srem(_this7.adminKey('account', account, 'certs'), certDigest);
+                           if (certDigest === 'all') {
+                              multi.del(_this7.adminKey('account', account, 'certs'));
+                           } else {
+                              multi.srem(_this7.adminKey('account', account, 'certs'), certDigest);
+                           }
                         });
 
                      case 11:
