@@ -477,7 +477,7 @@ export default class rquery {
          multi.smembers(this.adminKey('account', account, 'certs'));
       });
       if (smembers.length === 0) {
-         await this.sendTelegramAlert(request, 'html', [
+         await this.sendTelegramAlert(request.chatId, 'html', [
             `No certs are active.`
          ]);
       } else if (smembers.length === 1) {
@@ -512,7 +512,7 @@ export default class rquery {
                `You have removed all certs.`,
             ]);
          } else {
-            await this.sendTelegramAlert(request, 'html', [
+            await this.sendTelegramAlert(request.chatId, 'html', [
                `Apologies, no certs were found. Try <code>/list</code>.`,
             ]);
          }
@@ -525,7 +525,7 @@ export default class rquery {
                `You have removed cert <b>${certDigest}</b>.`,
             ]);
          } else {
-            await this.sendTelegramAlert(request, 'html', [
+            await this.sendTelegramAlert(request.chatId, 'html', [
                `Apologies, that cert was not found. Try <code>/list</code>.`,
             ]);
          }

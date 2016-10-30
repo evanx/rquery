@@ -1221,7 +1221,7 @@ var rquery = function () {
                         }
 
                         _context15.next = 10;
-                        return this.sendTelegramAlert(request, 'html', ['No certs are active.']);
+                        return this.sendTelegramAlert(request.chatId, 'html', ['No certs are active.']);
 
                      case 10:
                         _context15.next = 19;
@@ -1319,7 +1319,7 @@ var rquery = function () {
 
                      case 20:
                         _context16.next = 22;
-                        return this.sendTelegramAlert(request, 'html', ['Apologies, no certs were found. Try <code>/list</code>.']);
+                        return this.sendTelegramAlert(request.chatId, 'html', ['Apologies, no certs were found. Try <code>/list</code>.']);
 
                      case 22:
                         _context16.next = 36;
@@ -1350,7 +1350,7 @@ var rquery = function () {
 
                      case 34:
                         _context16.next = 36;
-                        return this.sendTelegramAlert(request, 'html', ['Apologies, that cert was not found. Try <code>/list</code>.']);
+                        return this.sendTelegramAlert(request.chatId, 'html', ['Apologies, that cert was not found. Try <code>/list</code>.']);
 
                      case 36:
                      case 'end':
