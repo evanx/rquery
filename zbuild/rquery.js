@@ -1277,22 +1277,35 @@ var rquery = function () {
                         srem = _ref24[0];
 
                         if (!srem) {
-                           _context16.next = 19;
+                           _context16.next = 24;
                            break;
                         }
 
-                        _context16.next = 17;
-                        return this.sendTelegramReply(request, 'html', ['You have removed cert <b>' + certDigest + '</b>.']);
+                        if (!(certDigest === 'all')) {
+                           _context16.next = 20;
+                           break;
+                        }
 
-                     case 17:
-                        _context16.next = 21;
+                        _context16.next = 18;
+                        return this.sendTelegramReply(request, 'html', ['You have removed all certs.']);
+
+                     case 18:
+                        _context16.next = 22;
                         break;
 
-                     case 19:
-                        _context16.next = 21;
+                     case 20:
+                        _context16.next = 22;
+                        return this.sendTelegramReply(request, 'html', ['You have removed cert <b>' + certDigest + '</b>.']);
+
+                     case 22:
+                        _context16.next = 26;
+                        break;
+
+                     case 24:
+                        _context16.next = 26;
                         return this.sendTelegramReply(request, 'html', ['Apologies, that cert was not found. Try <code>/list</code>.']);
 
-                     case 21:
+                     case 26:
                      case 'end':
                         return _context16.stop();
                   }

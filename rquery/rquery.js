@@ -501,9 +501,16 @@ export default class rquery {
          }
       });
       if (srem) {
-         await this.sendTelegramReply(request, 'html', [
-            `You have removed cert <b>${certDigest}</b>.`,
-         ]);
+         if (certDigest === 'all') {
+            await this.sendTelegramReply(request, 'html', [
+               `You have removed all certs.`,
+            ]);
+
+         } else {
+            await this.sendTelegramReply(request, 'html', [
+               `You have removed cert <b>${certDigest}</b>.`,
+            ]);
+         }
       } else {
          await this.sendTelegramReply(request, 'html', [
             `Apologies, that cert was not found. Try <code>/list</code>.`,
