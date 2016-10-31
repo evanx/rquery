@@ -1257,14 +1257,14 @@ var rquery = function () {
                                     case 2:
                                        results = _context15.sent;
                                        _context15.next = 5;
-                                       return _this6.sendTelegram(request.chatId, 'html', ['The following ' + smembers.length + ' certs are active: '].concat(_toConsumableArray(smembers.map(function (cert, index) {
+                                       return _this6.sendTelegram(request.chatId, 'html', ['The following ' + smembers.length + ' certs are active: ', smembers.map(function (cert, index) {
                                           var info = results[index];
                                           if (!info) {
                                              return cert;
                                           } else {
                                              return [cert, info.toString()].join(' ');
                                           }
-                                       }))));
+                                       }).join(', ')]);
 
                                     case 5:
                                     case 'end':

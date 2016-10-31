@@ -492,14 +492,14 @@ export default class rquery {
          });
          await this.sendTelegram(request.chatId, 'html', [
             `The following ${smembers.length} certs are active: `,
-            ...smembers.map((cert, index) => {
+            smembers.map((cert, index) => {
                const info = results[index];
                if (!info) {
                   return cert;
                } else {
                   return [cert, info.toString()].join(' ');
                }
-            })
+            }).join(', ')
          ]);
       }
    }
