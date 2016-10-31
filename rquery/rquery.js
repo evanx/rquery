@@ -1816,10 +1816,11 @@ export default class rquery {
                group: 'admin'
             },
             access: 'admin'
-         }, async (req, res, {account, accountKey, time, certDigest, certRole}) => {
+         }, async (req, res, {account, accountKey, time, fingerprint}) => {
             const [cert] = await this.redis.multiExecAsync(multi => {
-               multi.hgetall(this.adminKey('cert', certId));
+               multi.hgetall(this.adminKey('account', account, 'cert', fingerprint));
             });
+            this.logger.debug('grant-cert', {fingerprint, cert});
             throw new ApplicationError('Unimplemented');
          });
       }
@@ -1839,11 +1840,11 @@ export default class rquery {
          }
          const dn = req.get('ssl_client_s_dn');
          const cert = req.get('ssl_client_cert');
+         const fingerprint = req.get('ssl_client_fingerprint');
          this.logger.info('createAccount dn', dn);
          if (!cert) {
             throw new ValidationError({message: 'No client cert', hint: this.hints.signup});
          }
-         const certDigest = this.digestPem(cert);
          const otpSecret = this.generateTokenKey();
          const accountKey = this.adminKey('account', account);
          const [hsetnx, saddAccount] = await this.redis.multiExecAsync(multi => {
@@ -1859,7 +1860,7 @@ export default class rquery {
             throw {message: 'Account already exists (set)'};
          }
          const [saddCert] = await this.redis.multiExecAsync(multi => {
-            multi.sadd(this.adminKey('account', account, 'certs'), certDigest);
+            multi.sadd(this.adminKey('account', account, 'certs'), fingerprint);
          });
          if (!saddCert) {
             throw {message: 'Cert already exists'};
@@ -1908,8 +1909,8 @@ export default class rquery {
             if (duration < this.config.adminLimit) {
                return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
             }
-            const {certDigest, certRole} = this.validateCert(req, reqx, certs, account, []);
-            Object.assign(reqx, {account, accountKey, time, admined, certDigest, certRole});
+            const {fingerprint, certRole} = this.validateCert(req, reqx, certs, account, []);
+            Object.assign(reqx, {account, accountKey, time, admined, fingerprint, certRole});
             const result = await handleReq(req, res, reqx);
             if (result !== undefined) {
                await Result.sendResult(command, req, res, reqx, result);
@@ -2382,9 +2383,9 @@ export default class rquery {
          message: 'No role access',
          hint: this.hints.registerCert
       });
-      const certDigest = this.digestPem(cert);
-      if (!certs.includes(certDigest)) {
-         this.logger.warn('validateCert', account, certRole, certDigest, certs);
+      const fingerprint = req.get('ssl_client_fingerprint');
+      if (!certs.includes(fingerprint)) {
+         this.logger.warn('validateCert', account, certRole, fingerprint, certs);
          throw new ValidationError({
             status: 403,
             message: 'Invalid cert',

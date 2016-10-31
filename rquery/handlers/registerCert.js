@@ -9,7 +9,11 @@ export default async function registerCert(req, res, reqx) {
       message: 'No client cert',
       hint: rquery.hints.signup
    });
-   const fingerprint = rquery.getClientCertFingerprint(req);
+   const certFingerprint = rquery.getClientCertFingerprint(req);
+   if (!certFingerprint) throw new ValidationError({
+      status: 500,
+      message: 'No client cert certFingerprint'
+   });
    const dn = rquery.parseCertDn(req);
    if (!dn.ou) throw new ValidationError({
       status: 400,
@@ -17,7 +21,7 @@ export default async function registerCert(req, res, reqx) {
       hint: rquery.hints.signup
    });
    const [type, account, role, id] = dn.cn.split(':');
-   logger.debug('CN', dn, type, {account, role, id}, {fingerprint});
+   logger.debug('CN', dn, type, {account, role, id}, {certFingerprint});
    if (type !== 'ws' || !account || !role || !id) {
       throw new ValidationError({
          status: 400,
@@ -41,12 +45,9 @@ export default async function registerCert(req, res, reqx) {
    }
    const accountKey = rquery.adminKey('account', account);
    const grantKey = rquery.adminKey('telegram', 'user', account, 'grant');
-   const certDigest = rquery.digestPem(cert);
-   const shortDigest = certDigest.slice(-12);
-   logger.debug('cert', certDigest);
    const [granted, sismember] = await rquery.redis.multiExecAsync(multi => {
       multi.get(grantKey);
-      multi.sismember(rquery.adminKey('account', account, 'certs'), certDigest);
+      multi.sismember(rquery.adminKey('account', account, 'certs'), certFingerprint);
    });
    if (sismember) {
       throw new ValidationError({
@@ -60,32 +61,31 @@ export default async function registerCert(req, res, reqx) {
          status: 403,
          hint: {
             message: [
-               `/grant ${certDigest}`
+               `/grant ${certFingerprint}`
             ].join(' '),
-            clipboard: `/grant ${certDigest}`,
+            clipboard: `/grant ${certFingerprint}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });
    }
-   if (granted.indexOf(shortDigest) < 0 &&
-   certDigest.indexOf(granted) < 0) {
+   if (certFingerprint.indexOf(granted) < 0) {
       throw new ValidationError({
          status: 400,
-         message: 'Granted cert not matching: ' + certDigest,
+         message: 'Granted cert not matching: ' + certFingerprint,
          hint: {
-            message: `Try @${rquery.config.adminBotName} "/grant ${certDigest}"`
+            message: `Try @${rquery.config.adminBotName} "/grant ${certFingerprint}"`
             + ` from the authoritative Telegram account`
             + ` e.g. via https://web.telegram.org`
             ,
-            clipboard: `/grant ${certDigest}`,
+            clipboard: `/grant ${certFingerprint}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });
    }
    const [del, sadd, hmset] = await rquery.redis.multiExecAsync(multi => {
       multi.del(grantKey);
-      multi.sadd(rquery.adminKey('account', account, 'certs'), certDigest);
-      multi.hmset(rquery.adminKey('account', account, 'cert', certDigest), {account, role, id});
+      multi.sadd(rquery.adminKey('account', account, 'certs'), certFingerprint);
+      multi.hmset(rquery.adminKey('account', account, 'cert', certFingerprint), {account, role, id});
    });
    if (!sadd) {
       logger.debug('certs sadd');

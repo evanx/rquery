@@ -4946,8 +4946,7 @@ var rquery = function () {
                   var account = _ref55.account;
                   var accountKey = _ref55.accountKey;
                   var time = _ref55.time;
-                  var certDigest = _ref55.certDigest;
-                  var certRole = _ref55.certRole;
+                  var fingerprint = _ref55.fingerprint;
 
                   var _ref56, _ref57, cert;
 
@@ -4957,16 +4956,18 @@ var rquery = function () {
                            case 0:
                               _context111.next = 2;
                               return _this13.redis.multiExecAsync(function (multi) {
-                                 multi.hgetall(_this13.adminKey('cert', certId));
+                                 multi.hgetall(_this13.adminKey('account', account, 'cert', fingerprint));
                               });
 
                            case 2:
                               _ref56 = _context111.sent;
                               _ref57 = _slicedToArray(_ref56, 1);
                               cert = _ref57[0];
+
+                              _this13.logger.debug('grant-cert', { fingerprint: fingerprint, cert: cert });
                               throw new ApplicationError('Unimplemented');
 
-                           case 6:
+                           case 7:
                            case 'end':
                               return _context111.stop();
                         }
@@ -4993,7 +4994,7 @@ var rquery = function () {
                      case 0:
                         _context113.prev = 0;
                         return _context113.delegateYield(regeneratorRuntime.mark(function _callee112() {
-                           var errorMessage, account, v, dn, cert, certDigest, otpSecret, accountKey, _ref58, _ref59, hsetnx, saddAccount, _ref60, _ref61, saddCert, result;
+                           var errorMessage, account, v, dn, cert, fingerprint, otpSecret, accountKey, _ref58, _ref59, hsetnx, saddAccount, _ref60, _ref61, saddCert, result;
 
                            return regeneratorRuntime.wrap(function _callee112$(_context112) {
                               while (1) {
@@ -5025,18 +5026,18 @@ var rquery = function () {
                                     case 8:
                                        dn = req.get('ssl_client_s_dn');
                                        cert = req.get('ssl_client_cert');
+                                       fingerprint = req.get('ssl_client_fingerprint');
 
                                        _this14.logger.info('createAccount dn', dn);
 
                                        if (cert) {
-                                          _context112.next = 13;
+                                          _context112.next = 14;
                                           break;
                                        }
 
                                        throw new ValidationError({ message: 'No client cert', hint: _this14.hints.signup });
 
-                                    case 13:
-                                       certDigest = _this14.digestPem(cert);
+                                    case 14:
                                        otpSecret = _this14.generateTokenKey();
                                        accountKey = _this14.adminKey('account', account);
                                        _context112.next = 18;
@@ -5071,7 +5072,7 @@ var rquery = function () {
                                     case 26:
                                        _context112.next = 28;
                                        return _this14.redis.multiExecAsync(function (multi) {
-                                          multi.sadd(_this14.adminKey('account', account, 'certs'), certDigest);
+                                          multi.sadd(_this14.adminKey('account', account, 'certs'), fingerprint);
                                        });
 
                                     case 28:
@@ -5171,7 +5172,7 @@ var rquery = function () {
                                           reqx = { command: command };
                                           _context115.prev = 1;
                                           return _context115.delegateYield(regeneratorRuntime.mark(function _callee114() {
-                                             var message, account, accountKey, _ref62, _ref63, _ref63$, time, admined, certs, duration, _validateCert2, certDigest, certRole, result;
+                                             var message, account, accountKey, _ref62, _ref63, _ref63$, time, admined, certs, duration, _validateCert2, fingerprint, certRole, result;
 
                                              return regeneratorRuntime.wrap(function _callee114$(_context114) {
                                                 while (1) {
@@ -5230,10 +5231,10 @@ var rquery = function () {
 
                                                       case 20:
                                                          _validateCert2 = _this15.validateCert(req, reqx, certs, account, []);
-                                                         certDigest = _validateCert2.certDigest;
+                                                         fingerprint = _validateCert2.fingerprint;
                                                          certRole = _validateCert2.certRole;
 
-                                                         Object.assign(reqx, { account: account, accountKey: accountKey, time: time, admined: admined, certDigest: certDigest, certRole: certRole });
+                                                         Object.assign(reqx, { account: account, accountKey: accountKey, time: time, admined: admined, fingerprint: fingerprint, certRole: certRole });
                                                          _context114.next = 26;
                                                          return handleReq(req, res, reqx);
 
@@ -6132,9 +6133,9 @@ var rquery = function () {
             message: 'No role access',
             hint: this.hints.registerCert
          });
-         var certDigest = this.digestPem(cert);
-         if (!certs.includes(certDigest)) {
-            this.logger.warn('validateCert', account, certRole, certDigest, certs);
+         var fingerprint = req.get('ssl_client_fingerprint');
+         if (!certs.includes(fingerprint)) {
+            this.logger.warn('validateCert', account, certRole, fingerprint, certs);
             throw new ValidationError({
                status: 403,
                message: 'Invalid cert',
