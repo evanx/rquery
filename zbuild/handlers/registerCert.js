@@ -13,7 +13,7 @@ var rquery = global.rquery;
 
 exports.default = function () {
    var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee(req, res, reqx) {
-      var cert, dn, _dn$cn$split, _dn$cn$split2, matching, account, role, id, accountKey, grantKey, certDigest, shortDigest, _ref, _ref2, granted, sismember, _ref3, _ref4, del, sadd;
+      var cert, dn, _dn$cn$split, _dn$cn$split2, type, account, role, id, accountKey, grantKey, certDigest, shortDigest, _ref, _ref2, granted, sismember, _ref3, _ref4, del, sadd, hmset;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
          while (1) {
@@ -49,21 +49,21 @@ exports.default = function () {
                case 6:
                   _dn$cn$split = dn.cn.split(':');
                   _dn$cn$split2 = _slicedToArray(_dn$cn$split, 4);
-                  matching = _dn$cn$split2[0];
+                  type = _dn$cn$split2[0];
                   account = _dn$cn$split2[1];
                   role = _dn$cn$split2[2];
                   id = _dn$cn$split2[3];
 
-                  logger.debug('CN', dn, matching, { account: account, role: role, id: id });
+                  logger.debug('CN', dn, type, { account: account, role: role, id: id });
 
-                  if (matching) {
+                  if (!(type !== 'ws' || !account || !role || !id)) {
                      _context.next = 15;
                      break;
                   }
 
                   throw new ValidationError({
                      status: 400,
-                     message: 'Cert CN mismatch',
+                     message: 'Invalid cert CN. Expect: \'ws:account:role:id\'',
                      hint: rquery.hints.signup
                   });
 
@@ -75,7 +75,7 @@ exports.default = function () {
 
                   throw new ValidationError({
                      status: 400,
-                     message: 'Cert OU/role mismatch',
+                     message: 'Cert OU/role mismatch. Expect role as per CN.',
                      hint: rquery.hints.signup
                   });
 
@@ -87,7 +87,7 @@ exports.default = function () {
 
                   throw new ValidationError({
                      status: 400,
-                     message: 'Cert O/account mismatch',
+                     message: 'Cert O/account mismatch. Expect account as per CN.',
                      hint: rquery.hints.signup
                   });
 
@@ -158,13 +158,15 @@ exports.default = function () {
                   return rquery.redis.multiExecAsync(function (multi) {
                      multi.del(grantKey);
                      multi.sadd(rquery.adminKey('account', account, 'certs'), certDigest);
+                     multi.hmset(rquery.adminKey('account', account, 'cert', certDigest), { account: account, role: role, id: id });
                   });
 
                case 38:
                   _ref3 = _context.sent;
-                  _ref4 = _slicedToArray(_ref3, 2);
+                  _ref4 = _slicedToArray(_ref3, 3);
                   del = _ref4[0];
                   sadd = _ref4[1];
+                  hmset = _ref4[2];
 
                   if (!sadd) {
                      logger.debug('certs sadd');
@@ -174,7 +176,7 @@ exports.default = function () {
                   }
                   return _context.abrupt('return', { account: account });
 
-               case 45:
+               case 46:
                case 'end':
                   return _context.stop();
             }

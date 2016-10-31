@@ -15,26 +15,26 @@ export default async function registerCert(req, res, reqx) {
       message: 'No client cert OU name',
       hint: rquery.hints.signup
    });
-   const [matching, account, role, id] = dn.cn.split(':');
-   logger.debug('CN', dn, matching, {account, role, id});
-   if (!matching) {
+   const [type, account, role, id] = dn.cn.split(':');
+   logger.debug('CN', dn, type, {account, role, id});
+   if (type !== 'ws' || !account || !role || !id) {
       throw new ValidationError({
          status: 400,
-         message: 'Cert CN mismatch',
+         message: `Invalid cert CN. Expect: 'ws:account:role:id'`,
          hint: rquery.hints.signup
       });
    }
    if (dn.ou !== role) {
       throw new ValidationError({
          status: 400,
-         message: 'Cert OU/role mismatch',
+         message: `Cert OU/role mismatch. Expect role as per CN.`,
          hint: rquery.hints.signup
       });
    }
    if (dn.o !== account) {
       throw new ValidationError({
          status: 400,
-         message: 'Cert O/account mismatch',
+         message: `Cert O/account mismatch. Expect account as per CN.`,
          hint: rquery.hints.signup
       });
    }
@@ -82,9 +82,10 @@ export default async function registerCert(req, res, reqx) {
          }
       });
    }
-   const [del, sadd] = await rquery.redis.multiExecAsync(multi => {
+   const [del, sadd, hmset] = await rquery.redis.multiExecAsync(multi => {
       multi.del(grantKey);
       multi.sadd(rquery.adminKey('account', account, 'certs'), certDigest);
+      multi.hmset(rquery.adminKey('account', account, 'cert', certDigest), {account, role, id});
    });
    if (!sadd) {
       logger.debug('certs sadd');
