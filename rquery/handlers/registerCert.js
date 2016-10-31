@@ -9,6 +9,7 @@ export default async function registerCert(req, res, reqx) {
       message: 'No client cert',
       hint: rquery.hints.signup
    });
+   const fingerprint = rquery.getClientCertFingerprint(req);
    const dn = rquery.parseCertDn(req);
    if (!dn.ou) throw new ValidationError({
       status: 400,
@@ -16,7 +17,7 @@ export default async function registerCert(req, res, reqx) {
       hint: rquery.hints.signup
    });
    const [type, account, role, id] = dn.cn.split(':');
-   logger.debug('CN', dn, type, {account, role, id});
+   logger.debug('CN', dn, type, {account, role, id}, {fingerprint});
    if (type !== 'ws' || !account || !role || !id) {
       throw new ValidationError({
          status: 400,

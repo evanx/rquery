@@ -56,7 +56,7 @@ module.exports = {
    }(),
    handleReq: function () {
       var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee2(req, res, reqx) {
-         var hostUrl, routes, accountOnlyRoutes, account, fingerprint, dn, names, $, messages;
+         var hostUrl, routes, accountOnlyRoutes, account, dn, names, $, messages;
          return regeneratorRuntime.wrap(function _callee2$(_context2) {
             while (1) {
                switch (_context2.prev = _context2.next) {
@@ -81,7 +81,6 @@ module.exports = {
                      account = void 0;
 
                      try {
-                        fingerprint = req.get('ssl_client_fingerfrint');
                         dn = req.get('ssl_client_s_dn');
 
                         if (dn) {
@@ -90,7 +89,7 @@ module.exports = {
                            if (names.o.match(/^[\-_a-z]+$/)) {
                               account = names.o;
                            }
-                           undefined.logger.debug('dn', { dn: dn, names: names, account: account, fingerprint: fingerprint });
+                           undefined.logger.debug('dn', { dn: dn, names: names, account: account });
                         }
                      } catch (err) {
                         logger.error('cert', err);

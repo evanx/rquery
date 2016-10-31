@@ -13,7 +13,7 @@ var rquery = global.rquery;
 
 exports.default = function () {
    var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee(req, res, reqx) {
-      var cert, dn, _dn$cn$split, _dn$cn$split2, type, account, role, id, accountKey, grantKey, certDigest, shortDigest, _ref, _ref2, granted, sismember, _ref3, _ref4, del, sadd, hmset;
+      var cert, fingerprint, dn, _dn$cn$split, _dn$cn$split2, type, account, role, id, accountKey, grantKey, certDigest, shortDigest, _ref, _ref2, granted, sismember, _ref3, _ref4, del, sadd, hmset;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
          while (1) {
@@ -33,10 +33,11 @@ exports.default = function () {
                   });
 
                case 3:
+                  fingerprint = rquery.getClientCertFingerprint(req);
                   dn = rquery.parseCertDn(req);
 
                   if (dn.ou) {
-                     _context.next = 6;
+                     _context.next = 7;
                      break;
                   }
 
@@ -46,7 +47,7 @@ exports.default = function () {
                      hint: rquery.hints.signup
                   });
 
-               case 6:
+               case 7:
                   _dn$cn$split = dn.cn.split(':');
                   _dn$cn$split2 = _slicedToArray(_dn$cn$split, 4);
                   type = _dn$cn$split2[0];
@@ -54,10 +55,10 @@ exports.default = function () {
                   role = _dn$cn$split2[2];
                   id = _dn$cn$split2[3];
 
-                  logger.debug('CN', dn, type, { account: account, role: role, id: id });
+                  logger.debug('CN', dn, type, { account: account, role: role, id: id }, { fingerprint: fingerprint });
 
                   if (!(type !== 'ws' || !account || !role || !id)) {
-                     _context.next = 15;
+                     _context.next = 16;
                      break;
                   }
 
@@ -67,9 +68,9 @@ exports.default = function () {
                      hint: rquery.hints.signup
                   });
 
-               case 15:
+               case 16:
                   if (!(dn.ou !== role)) {
-                     _context.next = 17;
+                     _context.next = 18;
                      break;
                   }
 
@@ -79,9 +80,9 @@ exports.default = function () {
                      hint: rquery.hints.signup
                   });
 
-               case 17:
+               case 18:
                   if (!(dn.o !== account)) {
-                     _context.next = 19;
+                     _context.next = 20;
                      break;
                   }
 
@@ -91,27 +92,27 @@ exports.default = function () {
                      hint: rquery.hints.signup
                   });
 
-               case 19:
+               case 20:
                   accountKey = rquery.adminKey('account', account);
                   grantKey = rquery.adminKey('telegram', 'user', account, 'grant');
                   certDigest = rquery.digestPem(cert);
                   shortDigest = certDigest.slice(-12);
 
                   logger.debug('cert', certDigest);
-                  _context.next = 26;
+                  _context.next = 27;
                   return rquery.redis.multiExecAsync(function (multi) {
                      multi.get(grantKey);
                      multi.sismember(rquery.adminKey('account', account, 'certs'), certDigest);
                   });
 
-               case 26:
+               case 27:
                   _ref = _context.sent;
                   _ref2 = _slicedToArray(_ref, 2);
                   granted = _ref2[0];
                   sismember = _ref2[1];
 
                   if (!sismember) {
-                     _context.next = 32;
+                     _context.next = 33;
                      break;
                   }
 
@@ -121,9 +122,9 @@ exports.default = function () {
                      hint: rquery.hints.routes
                   });
 
-               case 32:
+               case 33:
                   if (granted) {
-                     _context.next = 34;
+                     _context.next = 35;
                      break;
                   }
 
@@ -136,9 +137,9 @@ exports.default = function () {
                      }
                   });
 
-               case 34:
+               case 35:
                   if (!(granted.indexOf(shortDigest) < 0 && certDigest.indexOf(granted) < 0)) {
-                     _context.next = 36;
+                     _context.next = 37;
                      break;
                   }
 
@@ -153,15 +154,15 @@ exports.default = function () {
                      }
                   });
 
-               case 36:
-                  _context.next = 38;
+               case 37:
+                  _context.next = 39;
                   return rquery.redis.multiExecAsync(function (multi) {
                      multi.del(grantKey);
                      multi.sadd(rquery.adminKey('account', account, 'certs'), certDigest);
                      multi.hmset(rquery.adminKey('account', account, 'cert', certDigest), { account: account, role: role, id: id });
                   });
 
-               case 38:
+               case 39:
                   _ref3 = _context.sent;
                   _ref4 = _slicedToArray(_ref3, 3);
                   del = _ref4[0];
@@ -176,7 +177,7 @@ exports.default = function () {
                   }
                   return _context.abrupt('return', { account: account });
 
-               case 46:
+               case 47:
                case 'end':
                   return _context.stop();
             }

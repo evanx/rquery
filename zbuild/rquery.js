@@ -4892,6 +4892,12 @@ var rquery = function () {
          return cert;
       }
    }, {
+      key: 'getClientCertFingerprint',
+      value: function getClientCertFingerprint(req) {
+         var fingerprint = req.get('ssl_client_fingerprint');
+         return fingerprint;
+      }
+   }, {
       key: 'parseCertDn',
       value: function parseCertDn(req) {
          var dn = req.get('ssl_client_s_dn');

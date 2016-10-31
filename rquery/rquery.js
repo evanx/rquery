@@ -1782,6 +1782,11 @@ export default class rquery {
       return cert;
    }
 
+   getClientCertFingerprint(req) {
+      const fingerprint = req.get('ssl_client_fingerprint');
+      return fingerprint;
+   }
+
    parseCertDn(req) {
       const dn = req.get('ssl_client_s_dn');
       if (!dn) throw new ValidationError({message: 'No client cert DN', hint: this.hints.signup});
