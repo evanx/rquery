@@ -1828,7 +1828,7 @@ export default class rquery {
          const dn = req.get('ssl_client_s_dn');
          const cert = req.get('ssl_client_cert');
          const certFingerprint = req.get('ssl_client_fingerprint');
-         const certId = [this.parseDn(dn).cn, certFingerprint].join('#');
+         const certId = [this.parseDn(dn).cn, '#', certFingerprint.slice(0, 6), '/', certFingerprint.slice(-6)].join('');
          this.logger.info('createAccount dn', dn);
          if (!cert) {
             throw new ValidationError({message: 'No client cert', hint: this.hints.signup});
@@ -2372,7 +2372,7 @@ export default class rquery {
          hint: this.hints.registerCert
       });
       const certFingerprint = req.get('ssl_client_fingerprint');
-      const certId = [names.cn, certFingerprint].join('#');
+      const certId = [names.cn, '#', certFingerprint.slice(0, 6), '/', certFingerprint.slice(-6)].join('');
       if (!certs.includes(certId)) {
          this.logger.warn('validateCert', account, certRole, certId, certs);
          throw new ValidationError({
