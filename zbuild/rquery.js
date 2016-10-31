@@ -1259,6 +1259,7 @@ var rquery = function () {
                                        _context15.next = 5;
                                        return _this6.sendTelegram(request.chatId, 'html', ['The following ' + smembers.length + ' certs are active: ', smembers.map(function (cert, index) {
                                           var info = results[index];
+                                          _this6.logger.debug('handleTelegramList', cert, index, info);
                                           if (!info) {
                                              return cert;
                                           } else {

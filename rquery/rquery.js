@@ -494,6 +494,7 @@ export default class rquery {
             `The following ${smembers.length} certs are active: `,
             smembers.map((cert, index) => {
                const info = results[index];
+               this.logger.debug('handleTelegramList', cert, index, info);
                if (!info) {
                   return cert;
                } else {
