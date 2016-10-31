@@ -56,7 +56,7 @@ export async function handleCertScript(req, res, reqx, {config}) {
    const account = req.params.account;
    const role = req.params.role || req.query.role || 'admin';
    const dateIso = new Date().toISOString();
-   const timestamp = [dateIso.slice(0, 10), dateIso.slice(11, 13) + dateIso.slice(15, 16), new Date().getTime().toString().slice(-8, -3)].join('.');
+   const timestamp = [dateIso.slice(0, 10), dateIso.slice(11, 16).replace(/:/, 'h'), new Date().getTime().toString().slice(-8, -3)].join('.');
    const id = req.params.id || req.query.id || 'admin' + timestamp;
    const CN = [config.certPrefix, account, role, req.params.clientId || req.query.clientId || id].join(':');
    const OU = role;

@@ -99,7 +99,7 @@ var handleCertScript = exports.handleCertScript = function () {
                   account = req.params.account;
                   role = req.params.role || req.query.role || 'admin';
                   dateIso = new Date().toISOString();
-                  timestamp = [dateIso.slice(0, 10), dateIso.slice(11, 13) + dateIso.slice(15, 16), new Date().getTime().toString().slice(-8, -3)].join('.');
+                  timestamp = [dateIso.slice(0, 10), dateIso.slice(11, 16).replace(/:/, 'h'), new Date().getTime().toString().slice(-8, -3)].join('.');
                   id = req.params.id || req.query.id || 'admin' + timestamp;
                   CN = [config.certPrefix, account, role, req.params.clientId || req.query.clientId || id].join(':');
                   OU = role;
