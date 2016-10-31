@@ -62,7 +62,7 @@ var handleCertScriptHelp = exports.handleCertScriptHelp = function () {
 var handleCertScript = exports.handleCertScript = function () {
    var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee2(req, res, reqx, _ref2) {
       var config = _ref2.config;
-      var defaultDir, dir, archive, isArchive, commandKey, serviceUrl, telegramBot, account, role, dateIso, timestamp, id, CN, OU, O, curlAccount, result;
+      var defaultDir, dir, archive, isArchive, commandKey, serviceUrl, telegramBot, account, role, dateIso, timestampId, id, CN, OU, O, curlAccount, result;
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
          while (1) {
             switch (_context2.prev = _context2.next) {
@@ -99,8 +99,8 @@ var handleCertScript = exports.handleCertScript = function () {
                   account = req.params.account;
                   role = req.params.role || req.query.role || 'admin';
                   dateIso = new Date().toISOString();
-                  timestamp = [dateIso.slice(0, 10).replace(/-/g, ''), dateIso.slice(11, 16).replace(/:/, 'h'), new Date().getTime().toString().slice(-8, -3)].join('.');
-                  id = req.params.id || req.query.id || 'admin' + timestamp;
+                  timestampId = ['admin', dateIso.slice(0, 10).replace(/-/g, ''), dateIso.slice(11, 16).replace(/:/, 'h'), new Date().getTime().toString().slice(-8, -3)].join('-');
+                  id = req.params.id || req.query.id || timestampId;
                   CN = [config.certPrefix, account, role, req.params.clientId || req.query.clientId || id].join(':');
                   OU = role;
                   O = account;
