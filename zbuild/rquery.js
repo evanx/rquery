@@ -1263,7 +1263,7 @@ var rquery = function () {
                                           if (!info) {
                                              return cert;
                                           } else {
-                                             return [cert, info.role, info.id].join(' ');
+                                             return [cert, 'role:' + info.role, 'id:' + info.id].join(' ');
                                           }
                                        }).join(', ')]);
 
