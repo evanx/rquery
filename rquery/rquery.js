@@ -2477,7 +2477,7 @@ export default class rquery {
       } else if (lodash.isArray(err)) {
          messageLines = messageLines.concat(err);
       } else if (typeof err === 'object') {
-         this.logger.debug('sendStatusMessage', err, req.params);
+         this.logger.debug('sendStatusMessage', req.params);
          if (err.code === 'WRONGTYPE') {
             const {account, keyspace, key} = req.params;
             title = 'Wrong type for key';

@@ -6270,7 +6270,7 @@ var rquery = function () {
          } else if (lodash.isArray(err)) {
             messageLines = messageLines.concat(err);
          } else if ((typeof err === 'undefined' ? 'undefined' : _typeof(err)) === 'object') {
-            this.logger.debug('sendStatusMessage', err, req.params);
+            this.logger.debug('sendStatusMessage', req.params);
             if (err.code === 'WRONGTYPE') {
                var _req$params12 = req.params;
                var account = _req$params12.account;
