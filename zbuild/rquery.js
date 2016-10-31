@@ -4996,7 +4996,7 @@ var rquery = function () {
                                        dn = req.get('ssl_client_s_dn');
                                        cert = req.get('ssl_client_cert');
                                        certFingerprint = req.get('ssl_client_fingerprint');
-                                       certId = [_this14.parseDn(dn).cn, '#', certFingerprint.slice(0, 6), '/', certFingerprint.slice(-6)].join('');
+                                       certId = [_this14.parseDn(dn).cn, '#', certFingerprint.slice(0, 6), ':', certFingerprint.slice(-6)].join('');
 
                                        _this14.logger.info('createAccount dn', dn);
 
@@ -6104,7 +6104,7 @@ var rquery = function () {
             hint: this.hints.registerCert
          });
          var certFingerprint = req.get('ssl_client_fingerprint');
-         var certId = [names.cn, '#', certFingerprint.slice(0, 6), '/', certFingerprint.slice(-6)].join('');
+         var certId = [names.cn, '#', certFingerprint.slice(0, 6), ':', certFingerprint.slice(-6)].join('');
          if (!certs.includes(certId)) {
             this.logger.warn('validateCert', account, certRole, certId, certs);
             throw new ValidationError({
