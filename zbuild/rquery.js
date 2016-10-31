@@ -1113,7 +1113,7 @@ var rquery = function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee14(request) {
             var _this5 = this;
 
-            var now, match, certFingerprint, grantKey, _ref17, _ref18, exists, _ref19, _ref20, setex;
+            var now, match, certId, grantKey, _ref17, _ref18, exists, _ref19, _ref20, setex;
 
             return regeneratorRuntime.wrap(function _callee14$(_context14) {
                while (1) {
@@ -1136,10 +1136,10 @@ var rquery = function () {
                         return _context14.abrupt('return');
 
                      case 7:
-                        certFingerprint = match[1];
+                        certId = match[1];
                         grantKey = this.adminKey('telegram', 'user', request.username, 'grant');
 
-                        this.logger.info('handleTelegramGrant', grantKey, request, certFingerprint);
+                        this.logger.info('handleTelegramGrant', grantKey, request, certId);
                         _context14.next = 12;
                         return this.redis.multiExecAsync(function (multi) {
                            multi.exists(grantKey);
@@ -1151,8 +1151,8 @@ var rquery = function () {
                         exists = _ref18[0];
                         _context14.next = 17;
                         return this.redis.multiExecAsync(function (multi) {
-                           _this5.logger.info('handleTelegramGrant setex', grantKey, certFingerprint, _this5.config.enrollExpire);
-                           multi.setex(grantKey, _this5.config.enrollExpire, certFingerprint);
+                           _this5.logger.info('handleTelegramGrant setex', grantKey, certId, _this5.config.enrollExpire);
+                           multi.setex(grantKey, _this5.config.enrollExpire, certId);
                         });
 
                      case 17:
@@ -1166,7 +1166,7 @@ var rquery = function () {
                         }
 
                         _context14.next = 23;
-                        return this.sendTelegramReply(request, 'html', ['You have approved enrollment of the cert <b>' + certFingerprint + '</b>.', 'That identity can now enroll via ' + this.config.secureHostname + '/register-cert.', 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request, after it expires.', 'See ' + this.config.openHostname + '/docs/register-cert.md for further info.']);
+                        return this.sendTelegramReply(request, 'html', ['You have approved enrollment of the cert <b>' + certId + '</b>.', 'That identity can now enroll via ' + this.config.secureHostname + '/register-cert.', 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request, after it expires.', 'See ' + this.config.openHostname + '/docs/register-cert.md for further info.']);
 
                      case 23:
                         _context14.next = 27;
@@ -1295,7 +1295,7 @@ var rquery = function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee17(request) {
             var _this7 = this;
 
-            var now, match, account, certFingerprint, _ref23, _ref24, del, _ref25, _ref26, srem;
+            var now, match, account, certId, _ref23, _ref24, del, _ref25, _ref26, srem;
 
             return regeneratorRuntime.wrap(function _callee17$(_context17) {
                while (1) {
@@ -1312,16 +1312,16 @@ var rquery = function () {
                         }
 
                         _context17.next = 6;
-                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/revoke &lt;fingerprint&gt;</code>']);
+                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/revoke &lt;id&gt;</code>']);
 
                      case 6:
                         return _context17.abrupt('return');
 
                      case 7:
                         account = request.username;
-                        certFingerprint = match[1];
+                        certId = match[1];
 
-                        if (!(certFingerprint === 'all')) {
+                        if (!(certId === 'all')) {
                            _context17.next = 24;
                            break;
                         }
@@ -1359,7 +1359,7 @@ var rquery = function () {
                      case 24:
                         _context17.next = 26;
                         return this.redis.multiExecAsync(function (multi) {
-                           multi.srem(_this7.adminKey('account', account, 'certs'), certFingerprint);
+                           multi.srem(_this7.adminKey('account', account, 'certs'), certId);
                         });
 
                      case 26:
@@ -1373,7 +1373,7 @@ var rquery = function () {
                         }
 
                         _context17.next = 32;
-                        return this.sendTelegramReply(request, 'html', ['You have removed cert <b>' + certFingerprint + '</b>.']);
+                        return this.sendTelegramReply(request, 'html', ['You have removed cert <b>' + certId + '</b>.']);
 
                      case 32:
                         _context17.next = 36;
@@ -1838,7 +1838,7 @@ var rquery = function () {
                params: ['account']
             }, function () {
                var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee31(req, res, reqx) {
-                  var account, accountKey, _ref27, _ref28, _ref28$, time, registered, admined, accessed, certs, duration, _validateCert, certFingerprint, certRole, token;
+                  var account, accountKey, _ref27, _ref28, _ref28$, time, registered, admined, accessed, certs, duration, _validateCert, certId, certRole, token;
 
                   return regeneratorRuntime.wrap(function _callee31$(_context31) {
                      while (1) {
@@ -1876,7 +1876,7 @@ var rquery = function () {
                            case 15:
                               _this8.logger.debug('gentoken', accountKey);
                               _validateCert = _this8.validateCert(req, reqx, certs, account, []);
-                              certFingerprint = _validateCert.certFingerprint;
+                              certId = _validateCert.certId;
                               certRole = _validateCert.certRole;
                               token = _this8.generateTokenKey(6);
                               _context31.next = 22;
@@ -2107,7 +2107,7 @@ var rquery = function () {
             access: 'admin'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee35(req, res, reqx) {
-               var command, time, account, keyspace, certFingerprint, certRole, role, _ref31, _ref32, sadd, accountExpire, hlen, _ref33, _ref34, keyspaceId, expire, _ref35, _ref36, hmset;
+               var command, time, account, keyspace, certId, certRole, role, _ref31, _ref32, sadd, accountExpire, hlen, _ref33, _ref34, keyspaceId, expire, _ref35, _ref36, hmset;
 
                return regeneratorRuntime.wrap(function _callee35$(_context35) {
                   while (1) {
@@ -2117,7 +2117,7 @@ var rquery = function () {
                            time = reqx.time;
                            account = reqx.account;
                            keyspace = reqx.keyspace;
-                           certFingerprint = reqx.certFingerprint;
+                           certId = reqx.certId;
                            certRole = reqx.certRole;
                            role = req.query.role || 'admin';
 
@@ -4946,7 +4946,7 @@ var rquery = function () {
                   var account = _ref55.account;
                   var accountKey = _ref55.accountKey;
                   var time = _ref55.time;
-                  var certFingerprint = _ref55.certFingerprint;
+                  var certId = _ref55.certId;
 
                   var _ref56, _ref57, cert;
 
@@ -4956,7 +4956,7 @@ var rquery = function () {
                            case 0:
                               _context111.next = 2;
                               return _this13.redis.multiExecAsync(function (multi) {
-                                 multi.hgetall(_this13.adminKey('account', account, 'cert', certFingerprint));
+                                 multi.hgetall(_this13.adminKey('account', account, 'cert', certId));
                               });
 
                            case 2:
@@ -4964,7 +4964,7 @@ var rquery = function () {
                               _ref57 = _slicedToArray(_ref56, 1);
                               cert = _ref57[0];
 
-                              _this13.logger.debug('grant-cert', { certFingerprint: certFingerprint, cert: cert });
+                              _this13.logger.debug('grant-cert', { certId: certId, cert: cert });
                               throw new ApplicationError('Unimplemented');
 
                            case 7:
@@ -4994,7 +4994,7 @@ var rquery = function () {
                      case 0:
                         _context113.prev = 0;
                         return _context113.delegateYield(regeneratorRuntime.mark(function _callee112() {
-                           var errorMessage, account, v, dn, cert, certFingerprint, otpSecret, accountKey, _ref58, _ref59, hsetnx, saddAccount, _ref60, _ref61, saddCert, result;
+                           var errorMessage, account, v, dn, cert, certFingerprint, certId, otpSecret, accountKey, _ref58, _ref59, hsetnx, saddAccount, _ref60, _ref61, saddCert, result;
 
                            return regeneratorRuntime.wrap(function _callee112$(_context112) {
                               while (1) {
@@ -5027,20 +5027,21 @@ var rquery = function () {
                                        dn = req.get('ssl_client_s_dn');
                                        cert = req.get('ssl_client_cert');
                                        certFingerprint = req.get('ssl_client_fingerprint');
+                                       certId = [_this14.parseDn(dn).cn, certFingerprint].join('#');
 
                                        _this14.logger.info('createAccount dn', dn);
 
                                        if (cert) {
-                                          _context112.next = 14;
+                                          _context112.next = 15;
                                           break;
                                        }
 
                                        throw new ValidationError({ message: 'No client cert', hint: _this14.hints.signup });
 
-                                    case 14:
+                                    case 15:
                                        otpSecret = _this14.generateTokenKey();
                                        accountKey = _this14.adminKey('account', account);
-                                       _context112.next = 18;
+                                       _context112.next = 19;
                                        return _this14.redis.multiExecAsync(function (multi) {
                                           multi.hsetnx(accountKey, 'registered', Seconds.now());
                                           multi.sadd(_this14.adminKey('accounts'), account);
@@ -5048,56 +5049,56 @@ var rquery = function () {
                                           multi.sadd(_this14.adminKey('account', account, 'topt'), otpSecret);
                                        });
 
-                                    case 18:
+                                    case 19:
                                        _ref58 = _context112.sent;
                                        _ref59 = _slicedToArray(_ref58, 2);
                                        hsetnx = _ref59[0];
                                        saddAccount = _ref59[1];
 
                                        if (hsetnx) {
-                                          _context112.next = 24;
+                                          _context112.next = 25;
                                           break;
                                        }
 
                                        throw { message: 'Account already exists (hashes)' };
 
-                                    case 24:
+                                    case 25:
                                        if (saddAccount) {
-                                          _context112.next = 26;
+                                          _context112.next = 27;
                                           break;
                                        }
 
                                        throw { message: 'Account already exists (set)' };
 
-                                    case 26:
-                                       _context112.next = 28;
+                                    case 27:
+                                       _context112.next = 29;
                                        return _this14.redis.multiExecAsync(function (multi) {
-                                          multi.sadd(_this14.adminKey('account', account, 'certs'), certFingerprint);
+                                          multi.sadd(_this14.adminKey('account', account, 'certs'), certId);
                                        });
 
-                                    case 28:
+                                    case 29:
                                        _ref60 = _context112.sent;
                                        _ref61 = _slicedToArray(_ref60, 1);
                                        saddCert = _ref61[0];
 
                                        if (saddCert) {
-                                          _context112.next = 33;
+                                          _context112.next = 34;
                                           break;
                                        }
 
                                        throw { message: 'Cert already exists' };
 
-                                    case 33:
+                                    case 34:
                                        result = _this14.buildQrReply({
                                           otpSecret: otpSecret,
                                           user: account,
                                           host: _this14.config.hostDomain,
                                           label: _this14.config.serviceLabel
                                        });
-                                       _context112.next = 36;
+                                       _context112.next = 37;
                                        return Result.sendResult({}, req, res, { account: account }, result);
 
-                                    case 36:
+                                    case 37:
                                     case 'end':
                                        return _context112.stop();
                                  }
@@ -5172,7 +5173,7 @@ var rquery = function () {
                                           reqx = { command: command };
                                           _context115.prev = 1;
                                           return _context115.delegateYield(regeneratorRuntime.mark(function _callee114() {
-                                             var message, account, accountKey, _ref62, _ref63, _ref63$, time, admined, certs, duration, _validateCert2, certFingerprint, certRole, result;
+                                             var message, account, accountKey, _ref62, _ref63, _ref63$, time, admined, certs, duration, _validateCert2, certId, certRole, result;
 
                                              return regeneratorRuntime.wrap(function _callee114$(_context114) {
                                                 while (1) {
@@ -5231,10 +5232,10 @@ var rquery = function () {
 
                                                       case 20:
                                                          _validateCert2 = _this15.validateCert(req, reqx, certs, account, []);
-                                                         certFingerprint = _validateCert2.certFingerprint;
+                                                         certId = _validateCert2.certId;
                                                          certRole = _validateCert2.certRole;
 
-                                                         Object.assign(reqx, { account: account, accountKey: accountKey, time: time, admined: admined, certFingerprint: certFingerprint, certRole: certRole });
+                                                         Object.assign(reqx, { account: account, accountKey: accountKey, time: time, admined: admined, certId: certId, certRole: certRole });
                                                          _context114.next = 26;
                                                          return handleReq(req, res, reqx);
 
@@ -6134,15 +6135,16 @@ var rquery = function () {
             hint: this.hints.registerCert
          });
          var certFingerprint = req.get('ssl_client_fingerprint');
-         if (!certs.includes(certFingerprint)) {
-            this.logger.warn('validateCert', account, certRole, certFingerprint, certs);
+         var certId = [names.cn, certFingerprint].join('#');
+         if (!certs.includes(certId)) {
+            this.logger.warn('validateCert', account, certRole, certId, certs);
             throw new ValidationError({
                status: 403,
                message: 'Invalid cert',
                hint: this.hints.registerCert
             });
          }
-         return { certFingerprint: certFingerprint, certRole: certRole };
+         return { certId: certId, certRole: certRole };
       }
    }, {
       key: 'keyIndex',

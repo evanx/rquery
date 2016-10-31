@@ -13,7 +13,7 @@ var rquery = global.rquery;
 
 exports.default = function () {
    var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee(req, res, reqx) {
-      var cert, certFingerprint, dn, _dn$cn$split, _dn$cn$split2, type, account, role, id, accountKey, grantKey, _ref, _ref2, granted, sismember, _ref3, _ref4, del, sadd, hmset;
+      var cert, certFingerprint, dn, _dn$cn$split, _dn$cn$split2, type, account, role, id, certId, accountKey, grantKey, _ref, _ref2, granted, sismember, _ref3, _ref4, del, sadd, hmset;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
          while (1) {
@@ -66,11 +66,12 @@ exports.default = function () {
                   account = _dn$cn$split2[1];
                   role = _dn$cn$split2[2];
                   id = _dn$cn$split2[3];
+                  certId = [dn.cn, certFingerprint].join('#');
 
-                  logger.debug('CN', dn, type, { account: account, role: role, id: id }, { certFingerprint: certFingerprint });
+                  logger.debug('CN', dn, type, { account: account, role: role, id: id }, { certId: certId });
 
                   if (!(type !== 'ws' || !account || !role || !id)) {
-                     _context.next = 18;
+                     _context.next = 19;
                      break;
                   }
 
@@ -80,9 +81,9 @@ exports.default = function () {
                      hint: rquery.hints.signup
                   });
 
-               case 18:
+               case 19:
                   if (!(dn.ou !== role)) {
-                     _context.next = 20;
+                     _context.next = 21;
                      break;
                   }
 
@@ -92,9 +93,9 @@ exports.default = function () {
                      hint: rquery.hints.signup
                   });
 
-               case 20:
+               case 21:
                   if (!(dn.o !== account)) {
-                     _context.next = 22;
+                     _context.next = 23;
                      break;
                   }
 
@@ -104,23 +105,23 @@ exports.default = function () {
                      hint: rquery.hints.signup
                   });
 
-               case 22:
+               case 23:
                   accountKey = rquery.adminKey('account', account);
                   grantKey = rquery.adminKey('telegram', 'user', account, 'grant');
-                  _context.next = 26;
+                  _context.next = 27;
                   return rquery.redis.multiExecAsync(function (multi) {
                      multi.get(grantKey);
-                     multi.sismember(rquery.adminKey('account', account, 'certs'), certFingerprint);
+                     multi.sismember(rquery.adminKey('account', account, 'certs'), certId);
                   });
 
-               case 26:
+               case 27:
                   _ref = _context.sent;
                   _ref2 = _slicedToArray(_ref, 2);
                   granted = _ref2[0];
                   sismember = _ref2[1];
 
                   if (!sismember) {
-                     _context.next = 32;
+                     _context.next = 33;
                      break;
                   }
 
@@ -130,47 +131,47 @@ exports.default = function () {
                      hint: rquery.hints.routes
                   });
 
-               case 32:
+               case 33:
                   if (granted) {
-                     _context.next = 34;
+                     _context.next = 35;
                      break;
                   }
 
                   throw new ValidationError({ message: 'Cert must be granted via https://telegram.me/' + rquery.config.adminBotName,
                      status: 403,
                      hint: {
-                        message: ['/grant ' + certFingerprint].join(' '),
-                        clipboard: '/grant ' + certFingerprint,
+                        message: ['/grant ' + certId].join(' '),
+                        clipboard: '/grant ' + certId,
                         url: 'https://telegram.me/' + rquery.config.adminBotName + '?start'
                      }
                   });
 
-               case 34:
-                  if (!(certFingerprint.indexOf(granted) < 0)) {
-                     _context.next = 36;
+               case 35:
+                  if (!(certId.indexOf(granted) < 0)) {
+                     _context.next = 37;
                      break;
                   }
 
                   throw new ValidationError({
                      status: 400,
-                     message: 'Granted cert not matching: ' + certFingerprint,
+                     message: 'Granted cert not matching: ' + certId,
                      hint: {
-                        message: 'Try @' + rquery.config.adminBotName + ' "/grant ' + certFingerprint + '"' + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
+                        message: 'Try @' + rquery.config.adminBotName + ' "/grant ' + certId + '"' + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
 
-                        clipboard: '/grant ' + certFingerprint,
+                        clipboard: '/grant ' + certId,
                         url: 'https://telegram.me/' + rquery.config.adminBotName + '?start'
                      }
                   });
 
-               case 36:
-                  _context.next = 38;
+               case 37:
+                  _context.next = 39;
                   return rquery.redis.multiExecAsync(function (multi) {
                      multi.del(grantKey);
-                     multi.sadd(rquery.adminKey('account', account, 'certs'), certFingerprint);
-                     multi.hmset(rquery.adminKey('account', account, 'cert', certFingerprint), { account: account, role: role, id: id });
+                     multi.sadd(rquery.adminKey('account', account, 'certs'), certId);
+                     multi.hmset(rquery.adminKey('account', account, 'cert', certId), { account: account, role: role, id: id });
                   });
 
-               case 38:
+               case 39:
                   _ref3 = _context.sent;
                   _ref4 = _slicedToArray(_ref3, 3);
                   del = _ref4[0];
@@ -185,7 +186,7 @@ exports.default = function () {
                   }
                   return _context.abrupt('return', { account: account });
 
-               case 46:
+               case 47:
                case 'end':
                   return _context.stop();
             }

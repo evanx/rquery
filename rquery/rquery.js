@@ -445,19 +445,19 @@ export default class rquery {
          ]);
          return;
       }
-      const certFingerprint = match[1];
+      const certId = match[1];
       const grantKey = this.adminKey('telegram', 'user', request.username, 'grant');
-      this.logger.info('handleTelegramGrant', grantKey, request, certFingerprint);
+      this.logger.info('handleTelegramGrant', grantKey, request, certId);
       let [exists] = await this.redis.multiExecAsync(multi => {
          multi.exists(grantKey);
       });
       let [setex] = await this.redis.multiExecAsync(multi => {
-         this.logger.info('handleTelegramGrant setex', grantKey, certFingerprint, this.config.enrollExpire);
-         multi.setex(grantKey, this.config.enrollExpire, certFingerprint);
+         this.logger.info('handleTelegramGrant setex', grantKey, certId, this.config.enrollExpire);
+         multi.setex(grantKey, this.config.enrollExpire, certId);
       });
       if (setex) {
          await this.sendTelegramReply(request, 'html', [
-            `You have approved enrollment of the cert <b>${certFingerprint}</b>.`,
+            `You have approved enrollment of the cert <b>${certId}</b>.`,
             `That identity can now enroll via ${this.config.secureHostname}/register-cert.`,
             `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.enrollExpire)}`,
             `otherwise you need to repeat this request, after it expires.`,
@@ -511,13 +511,13 @@ export default class rquery {
       const match = request.text.match(/\/revoke (\w+)$/);
       if (!match) {
          await this.sendTelegram(request.chatId, 'html', [
-            `Try <code>/revoke &lt;fingerprint&gt;</code>`
+            `Try <code>/revoke &lt;id&gt;</code>`
          ]);
          return;
       }
       const account = request.username;
-      const certFingerprint = match[1];
-      if (certFingerprint === 'all') {
+      const certId = match[1];
+      if (certId === 'all') {
          const [del] = await this.redis.multiExecAsync(multi => {
             multi.del(this.adminKey('account', account, 'certs'));
          });
@@ -532,11 +532,11 @@ export default class rquery {
          }
       } else {
          const [srem] = await this.redis.multiExecAsync(multi => {
-            multi.srem(this.adminKey('account', account, 'certs'), certFingerprint);
+            multi.srem(this.adminKey('account', account, 'certs'), certId);
          });
          if (srem) {
             await this.sendTelegramReply(request, 'html', [
-               `You have removed cert <b>${certFingerprint}</b>.`,
+               `You have removed cert <b>${certId}</b>.`,
             ]);
          } else {
             await this.sendTelegramAlert(request.chatId, 'html', [
@@ -687,7 +687,7 @@ export default class rquery {
                return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
             }
             this.logger.debug('gentoken', accountKey);
-            const {certFingerprint, certRole} = this.validateCert(req, reqx, certs, account, []);
+            const {certId, certRole} = this.validateCert(req, reqx, certs, account, []);
             const token = this.generateTokenKey(6);
             await this.redis.setexAsync([accountKey, token].join(':'), this.config.keyExpire, token);
             return token;
@@ -838,7 +838,7 @@ export default class rquery {
          key: 'create-keyspace',
          access: 'admin'
       }, async (req, res, reqx) => {
-         const {command, time, account, keyspace, certFingerprint, certRole} = reqx;
+         const {command, time, account, keyspace, certId, certRole} = reqx;
          const role = req.query.role || 'admin';
          if (role !== certRole) {
             throw new ValidationError({
@@ -1816,11 +1816,11 @@ export default class rquery {
                group: 'admin'
             },
             access: 'admin'
-         }, async (req, res, {account, accountKey, time, certFingerprint}) => {
+         }, async (req, res, {account, accountKey, time, certId}) => {
             const [cert] = await this.redis.multiExecAsync(multi => {
-               multi.hgetall(this.adminKey('account', account, 'cert', certFingerprint));
+               multi.hgetall(this.adminKey('account', account, 'cert', certId));
             });
-            this.logger.debug('grant-cert', {certFingerprint, cert});
+            this.logger.debug('grant-cert', {certId, cert});
             throw new ApplicationError('Unimplemented');
          });
       }
@@ -1841,6 +1841,7 @@ export default class rquery {
          const dn = req.get('ssl_client_s_dn');
          const cert = req.get('ssl_client_cert');
          const certFingerprint = req.get('ssl_client_fingerprint');
+         const certId = [this.parseDn(dn).cn, certFingerprint].join('#');
          this.logger.info('createAccount dn', dn);
          if (!cert) {
             throw new ValidationError({message: 'No client cert', hint: this.hints.signup});
@@ -1860,7 +1861,7 @@ export default class rquery {
             throw {message: 'Account already exists (set)'};
          }
          const [saddCert] = await this.redis.multiExecAsync(multi => {
-            multi.sadd(this.adminKey('account', account, 'certs'), certFingerprint);
+            multi.sadd(this.adminKey('account', account, 'certs'), certId);
          });
          if (!saddCert) {
             throw {message: 'Cert already exists'};
@@ -1909,8 +1910,8 @@ export default class rquery {
             if (duration < this.config.adminLimit) {
                return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
             }
-            const {certFingerprint, certRole} = this.validateCert(req, reqx, certs, account, []);
-            Object.assign(reqx, {account, accountKey, time, admined, certFingerprint, certRole});
+            const {certId, certRole} = this.validateCert(req, reqx, certs, account, []);
+            Object.assign(reqx, {account, accountKey, time, admined, certId, certRole});
             const result = await handleReq(req, res, reqx);
             if (result !== undefined) {
                await Result.sendResult(command, req, res, reqx, result);
@@ -2384,15 +2385,16 @@ export default class rquery {
          hint: this.hints.registerCert
       });
       const certFingerprint = req.get('ssl_client_fingerprint');
-      if (!certs.includes(certFingerprint)) {
-         this.logger.warn('validateCert', account, certRole, certFingerprint, certs);
+      const certId = [names.cn, certFingerprint].join('#');
+      if (!certs.includes(certId)) {
+         this.logger.warn('validateCert', account, certRole, certId, certs);
          throw new ValidationError({
             status: 403,
             message: 'Invalid cert',
             hint: this.hints.registerCert
          });
       }
-      return {certFingerprint, certRole};
+      return {certId, certRole};
    }
 
    keyIndex(account, keyspace) {
