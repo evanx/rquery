@@ -1259,7 +1259,11 @@ var rquery = function () {
                                        _context15.next = 5;
                                        return _this6.sendTelegram(request.chatId, 'html', ['The following ' + smembers.length + ' certs are active: '].concat(_toConsumableArray(smembers.map(function (cert, index) {
                                           var info = results[index];
-                                          return [cert, !info ? 'unknown' : lodash.pick(info, ['role', 'id'])].join(' ');
+                                          if (!info) {
+                                             return cert;
+                                          } else {
+                                             return [cert, info.toString()].join(' ');
+                                          }
                                        }))));
 
                                     case 5:
