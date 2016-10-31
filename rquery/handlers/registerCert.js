@@ -21,7 +21,7 @@ export default async function registerCert(req, res, reqx) {
       hint: rquery.hints.signup
    });
    const [type, account, role, id] = dn.cn.split(':');
-   const certId = [dn.cn, certFingerprint].join('#');
+   const certId = [dn.cn, '#', certFingerprint.slice(0, 6), '/' + certFingerprint.slice(-6)].join('');
    logger.debug('CN', dn, type, {account, role, id}, {certId});
    if (type !== 'ws' || !account || !role || !id) {
       throw new ValidationError({

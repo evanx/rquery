@@ -66,7 +66,7 @@ exports.default = function () {
                   account = _dn$cn$split2[1];
                   role = _dn$cn$split2[2];
                   id = _dn$cn$split2[3];
-                  certId = [dn.cn, certFingerprint].join('#');
+                  certId = [dn.cn, '#', certFingerprint.slice(0, 6), '/' + certFingerprint.slice(-6)].join('');
 
                   logger.debug('CN', dn, type, { account: account, role: role, id: id }, { certId: certId });
 
