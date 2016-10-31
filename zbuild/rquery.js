@@ -6257,7 +6257,7 @@ var rquery = function () {
 
          var reqx = req.rquery || {};
          var command = reqx.command || {};
-         this.logger.warn('status', req.path, statusCode, typeof err === 'undefined' ? 'undefined' : _typeof(err), err);
+         this.logger.warn('status', req.path, statusCode);
          var messageLines = [];
          if (!err) {
             this.logger.error('sendStatusMessage empty');

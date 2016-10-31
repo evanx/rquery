@@ -2464,7 +2464,7 @@ export default class rquery {
    sendStatusMessage(req, res, statusCode, err) {
       const reqx = req.rquery || {};
       const command = reqx.command || {};
-      this.logger.warn('status', req.path, statusCode, typeof err, err);
+      this.logger.warn('status', req.path, statusCode);
       let messageLines = [];
       if (!err) {
          this.logger.error('sendStatusMessage empty');
