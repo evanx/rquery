@@ -37,13 +37,14 @@ module.exports = {
       logger.debug('routes', routes.length);
       let account;
       try {
+         const fingerprint = req.get('ssl_client_fingerfrint');
          const dn = req.get('ssl_client_s_dn');
          if (dn) {
             const names = rquery.parseDn(dn);
             if (names.o.match(/^[\-_a-z]+$/)) {
                account = names.o;
             }
-            this.logger.debug('dn', dn, names, account);
+            this.logger.debug('dn', {dn, names, account, fingerprint});
          }
       } catch (err) {
          logger.error('cert', err);
