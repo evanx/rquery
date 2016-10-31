@@ -55,12 +55,11 @@ export default async function registerCert(req, res, reqx) {
       });
    }
    if (!granted) {
-      throw new ValidationError({message: `Cert must be granted via @${rquery.config.adminBotName}`,
+      throw new ValidationError({message: `Cert must be granted via https://telegram.me/${rquery.config.adminBotName}`,
          status: 403,
          hint: {
             message: [
-               `Try @${rquery.config.adminBotName} "/grant ${certDigest}"`,
-               `e.g. via https://web.telegram.org`,
+               `/grant ${certDigest}`
             ].join(' '),
             clipboard: `/grant ${certDigest}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
