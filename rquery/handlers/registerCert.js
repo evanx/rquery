@@ -16,7 +16,7 @@ export default async function registerCert(req, res, reqx) {
       hint: rquery.hints.signup
    });
    const [matching, account, role, id] = dn.cn.split(':');
-   logger.debug('CN', matching);
+   logger.debug('CN', dn, matching, {account, role, id});
    if (!matching) {
       throw new ValidationError({
          status: 400,

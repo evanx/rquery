@@ -54,7 +54,7 @@ exports.default = function () {
                   role = _dn$cn$split2[2];
                   id = _dn$cn$split2[3];
 
-                  logger.debug('CN', matching);
+                  logger.debug('CN', dn, matching, { account: account, role: role, id: id });
 
                   if (matching) {
                      _context.next = 15;
