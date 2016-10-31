@@ -1122,7 +1122,7 @@ var rquery = function () {
                         now = Millis.now();
 
                         this.logger.info('handleTelegramGrant', request);
-                        match = request.text.match(/\/grant ([#\:\w]+)$/);
+                        match = request.text.match(/\/grant\s+(\S+)\s*$/);
 
                         if (match) {
                            _context14.next = 7;

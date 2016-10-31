@@ -433,7 +433,7 @@ export default class rquery {
    async handleTelegramGrant(request) {
       const now = Millis.now();
       this.logger.info('handleTelegramGrant', request);
-      const match = request.text.match(/\/grant ([#\:\w]+)$/);
+      const match = request.text.match(/\/grant\s+(\S+)\s*$/);
       if (!match) {
          await this.sendTelegram(request.chatId, 'html', [
             `Try <code>/grant &lt;fingerprint&gt;</code>`,
