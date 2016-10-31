@@ -485,22 +485,9 @@ export default class rquery {
             `One cert is active: ${smembers}`
          ]);
       } else {
-         const results = await this.redis.multiExecAsync(multi => {
-            smembers.forEach(cert => {
-               multi.hgetall(this.adminKey('account', account, 'cert', cert));
-            });
-         });
          await this.sendTelegram(request.chatId, 'html', [
             `The following ${smembers.length} certs are active: `,
-            smembers.map((cert, index) => {
-               const info = results[index];
-               this.logger.debug('handleTelegramList', cert, index, info);
-               if (!info) {
-                  return cert;
-               } else {
-                  return [cert, 'role:' + info.role, 'id:' + info.id].join(' ');
-               }
-            }).join(', ')
+            smembers.join(', ')
          ]);
       }
    }
