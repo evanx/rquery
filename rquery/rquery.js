@@ -498,7 +498,7 @@ export default class rquery {
                if (!info) {
                   return cert;
                } else {
-                  return [cert, info.toString()].join(' ');
+                  return [cert, info.role, info.id].join(' ');
                }
             }).join(', ')
          ]);
