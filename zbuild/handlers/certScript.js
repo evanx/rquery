@@ -62,7 +62,7 @@ var handleCertScriptHelp = exports.handleCertScriptHelp = function () {
 var handleCertScript = exports.handleCertScript = function () {
    var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee2(req, res, reqx, _ref2) {
       var config = _ref2.config;
-      var defaultDir, dir, archive, isArchive, commandKey, serviceUrl, telegramBot, account, role, id, CN, OU, O, curlAccount, result;
+      var defaultDir, dir, archive, isArchive, commandKey, serviceUrl, telegramBot, account, role, timestamp, id, CN, OU, O, curlAccount, result;
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
          while (1) {
             switch (_context2.prev = _context2.next) {
@@ -98,7 +98,8 @@ var handleCertScript = exports.handleCertScript = function () {
                   telegramBot = config.adminBotName;
                   account = req.params.account;
                   role = req.params.role || req.query.role || 'admin';
-                  id = req.params.id || req.query.id || 'admin';
+                  timestamp = new Date().toISOString().replace(/\D/g, '').slice(0, 12) + '.' + new Date().getTime().toString().slice(-8, -3);
+                  id = req.params.id || req.query.id || 'admin' + timestamp;
                   CN = [config.certPrefix, account, role, req.params.clientId || req.query.clientId || id].join(':');
                   OU = role;
                   O = account;
@@ -119,7 +120,7 @@ var handleCertScript = exports.handleCertScript = function () {
                   result.push('');
                   return _context2.abrupt('return', lodash.flatten(result));
 
-               case 25:
+               case 26:
                case 'end':
                   return _context2.stop();
             }
