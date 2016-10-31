@@ -55,7 +55,8 @@ export async function handleCertScript(req, res, reqx, {config}) {
    const telegramBot = config.adminBotName;
    const account = req.params.account;
    const role = req.params.role || req.query.role || 'admin';
-   const timestamp = new Date().toISOString().replace(/\D/g, '').slice(0, 12) + '.' + new Date().getTime().toString().slice(-8, -3);
+   const dateIso = new Date().toISOString();
+   const timestamp = [dateIso.slice(0, 10), dateIso.slice(11, 13) + dateIso.slice(15, 16), new Date().getTime().toString().slice(-8, -3)].join('.');
    const id = req.params.id || req.query.id || 'admin' + timestamp;
    const CN = [config.certPrefix, account, role, req.params.clientId || req.query.clientId || id].join(':');
    const OU = role;
