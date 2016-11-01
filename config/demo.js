@@ -10,7 +10,7 @@ module.exports = {
          hostUrl: 'https://demo.webserva.com',
          serviceKey: 'demo',
          serviceLabel: 'WebServa Demo',
-         adminBotName: 'WebServaBot',
+         adminBotName: 'wsdemo_bot',
          port: 8765,
          location: '',
          assetsUrl: '/assets',
