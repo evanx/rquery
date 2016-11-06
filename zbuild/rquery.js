@@ -1865,18 +1865,19 @@ var rquery = function () {
                            _ref30 = _slicedToArray(_ref29, 1);
                            hgetall = _ref30[0];
 
+                           assert(hgetall, loginKey);
                            assert.equal(hgetall.account, account, 'account');
                            assert.equal(hgetall.role, role, 'role');
                            assert.equal(hgetall.id, id, 'id');
                            sessionToken = _this9.generateTokenKey().toLowerCase();
                            sessionKey = _this9.adminKey('session', sessionToken);
-                           _context29.next = 18;
+                           _context29.next = 19;
                            return _this9.redis.multiExecAsync(function (multi) {
                               multi.hmset(sessionKey, { account: account, role: role, id: id });
                               multi.expire(sessionKey, _this9.config.sessionExpire);
                            });
 
-                        case 18:
+                        case 19:
                            _ref31 = _context29.sent;
                            _ref32 = _slicedToArray(_ref31, 1);
                            hmset = _ref32[0];
@@ -1884,7 +1885,7 @@ var rquery = function () {
                            res.cookie('login', sessionToken, { maxAge: 600000 });
                            return _context29.abrupt('return', { token: token, account: account, role: role, id: id, sessionToken: sessionToken });
 
-                        case 23:
+                        case 24:
                         case 'end':
                            return _context29.stop();
                      }

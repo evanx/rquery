@@ -685,6 +685,7 @@ export default class rquery {
             multi.hgetall(loginKey);
             multi.del(loginKey);
          });
+         assert(hgetall, loginKey);
          assert.equal(hgetall.account, account, 'account');
          assert.equal(hgetall.role, role, 'role');
          assert.equal(hgetall.id, id, 'id');
