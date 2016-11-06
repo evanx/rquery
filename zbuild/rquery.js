@@ -1249,7 +1249,7 @@ var rquery = function () {
                         return this.redis.multiExecAsync(function (multi) {
                            _this6.logger.info('handleTelegramLogin hmset', loginKey, _this6.config.enrollExpire);
                            multi.hmset(loginKey, { account: account, role: role, id: id });
-                           multi.expire(loginKey, _this6.config.enrollExpire);
+                           multi.expire(loginKey, _this6.config.loginExpire);
                         });
 
                      case 15:
@@ -1263,7 +1263,7 @@ var rquery = function () {
                         }
 
                         _context15.next = 21;
-                        return this.sendTelegramReply(request, 'html', ['You can login via https://' + [this.config.openHostname, 'login', account, role, id, token].join('/'), 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request, after it expires.']);
+                        return this.sendTelegramReply(request, 'html', ['You can login via https://' + [this.config.openHostname, 'login', account, role, id, token].join('/'), 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.loginExpire), 'otherwise you need to repeat this request, after it expires.']);
 
                      case 21:
                         _context15.next = 25;

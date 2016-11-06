@@ -494,12 +494,12 @@ export default class rquery {
       let [hmset] = await this.redis.multiExecAsync(multi => {
          this.logger.info('handleTelegramLogin hmset', loginKey, this.config.enrollExpire);
          multi.hmset(loginKey, {account, role, id});
-         multi.expire(loginKey, this.config.enrollExpire);
+         multi.expire(loginKey, this.config.loginExpire);
       });
       if (hmset) {
          await this.sendTelegramReply(request, 'html', [
             `You can login via https://${[this.config.openHostname, 'login', account, role, id, token].join('/')}`,
-            `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.enrollExpire)}`,
+            `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.loginExpire)}`,
             `otherwise you need to repeat this request, after it expires.`
          ]);
       } else {
