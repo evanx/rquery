@@ -694,8 +694,8 @@ export default class rquery {
             multi.hmset(sessionKey, {account, role, id});
             multi.expire(sessionKey, this.config.sessionExpire);
          });
-         res.cookie('login', sessionKey, {maxAge: 600000});
-         return req.params;
+         res.cookie('login', sessionToken, {maxAge: 600000});
+         return {token, account, role, id, sessionToken};
       });
       this.addPublicCommand({
          key: 'genkey-otp',
