@@ -490,7 +490,7 @@ export default class rquery {
          multi.exists(loginKey);
       });
       let [setex] = await this.redis.multiExecAsync(multi => {
-         this.logger.info('handleTelegramLogin setex', loginKey, certId, this.config.enrollExpire);
+         this.logger.info('handleTelegramLogin setex', loginKey, this.config.enrollExpire);
          multi.setex(loginKey, this.config.enrollExpire, token);
       });
       if (setex) {

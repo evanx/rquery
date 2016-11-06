@@ -1248,7 +1248,7 @@ var rquery = function () {
                         exists = _ref22[0];
                         _context15.next = 17;
                         return this.redis.multiExecAsync(function (multi) {
-                           _this6.logger.info('handleTelegramLogin setex', loginKey, certId, _this6.config.enrollExpire);
+                           _this6.logger.info('handleTelegramLogin setex', loginKey, _this6.config.enrollExpire);
                            multi.setex(loginKey, _this6.config.enrollExpire, token);
                         });
 
