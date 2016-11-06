@@ -340,6 +340,9 @@ export default class rquery {
          } else if (/\/signup/.test(content.text)) {
             message.action = 'signup';
             await this.handleTelegramSignup(message);
+         } else if (/\/login/.test(content.text)) {
+            message.action = 'login';
+            await this.handleTelegramLogin(message);
          } else if (/\/grant/.test(content.text)) {
             message.action = 'grant';
             await this.handleTelegramGrant(message);
@@ -436,8 +439,8 @@ export default class rquery {
       const match = request.text.match(/\/grant\s+(\S+)\s*$/);
       if (!match) {
          await this.sendTelegram(request.chatId, 'html', [
-            `Try <code>/grant &lt;fingerprint&gt;</code>`,
-            `where the <code>fingerprint</code> is returned by ${this.config.secureHostname}/register-cert`,
+            `Try <code>/grant &lt;ID&gt;</code>`,
+            `where the <code>ID</code> is returned by ${this.config.secureHostname}/register-cert`,
             `performed with the cert to be enrolled.`,
             `Read ${this.config.openHostname}/docs/register-cert.md for further info.`,
             `Use the following link to create a client cert:`,
@@ -466,6 +469,39 @@ export default class rquery {
       } else {
          await this.sendTelegramReply(request, 'html', [
             `Apologies, the grant command failed.`,
+         ]);
+      }
+   }
+
+   async handleTelegramLogin(request) {
+      const now = Millis.now();
+      this.logger.info('handleTelegramLogin', request);
+      const match = request.text.match(/\/login$/);
+      if (!match) {
+         await this.sendTelegram(request.chatId, 'html', [
+            `Try <code>/login</code>`
+         ]);
+         return;
+      }
+      const token = this.generateTokenKey();
+      const loginKey = this.adminKey('telegram', 'user', request.username, 'login');
+      this.logger.info('handleTelegramLogin', loginKey, request);
+      let [exists] = await this.redis.multiExecAsync(multi => {
+         multi.exists(loginKey);
+      });
+      let [setex] = await this.redis.multiExecAsync(multi => {
+         this.logger.info('handleTelegramLogin setex', loginKey, certId, this.config.enrollExpire);
+         multi.setex(loginKey, this.config.enrollExpire, token);
+      });
+      if (setex) {
+         await this.sendTelegramReply(request, 'html', [
+            `You can login via ${this.config.secureHostname}/login/${token}`,
+            `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.enrollExpire)}`,
+            `otherwise you need to repeat this request, after it expires.`
+         ]);
+      } else {
+         await this.sendTelegramReply(request, 'html', [
+            `Apologies, the login command failed.`,
          ]);
       }
    }
