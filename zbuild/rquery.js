@@ -1247,7 +1247,7 @@ var rquery = function () {
                         this.logger.info('handleTelegramLogin', loginKey, token, request);
                         _context15.next = 15;
                         return this.redis.multiExecAsync(function (multi) {
-                           _this6.logger.info('handleTelegramLogin hmset', loginKey, _this6.config.enrollExpire);
+                           _this6.logger.info('handleTelegramLogin hmset', loginKey, _this6.config.loginExpire);
                            multi.hmset(loginKey, { account: account, role: role, id: id });
                            multi.expire(loginKey, _this6.config.loginExpire);
                         });
@@ -1864,7 +1864,7 @@ var rquery = function () {
                            _ref30 = _slicedToArray(_ref29, 1);
                            hgetall = _ref30[0];
 
-                           assert(hgetall, 'login: ' + token);
+                           assert(hgetall, 'login:' + token);
                            assert.equal(hgetall.account, account, 'account');
                            assert.equal(hgetall.role, role, 'role');
                            assert.equal(hgetall.id, id, 'id');

@@ -492,7 +492,7 @@ export default class rquery {
       const loginKey = this.adminKey('login', token);
       this.logger.info('handleTelegramLogin', loginKey, token, request);
       let [hmset] = await this.redis.multiExecAsync(multi => {
-         this.logger.info('handleTelegramLogin hmset', loginKey, this.config.enrollExpire);
+         this.logger.info('handleTelegramLogin hmset', loginKey, this.config.loginExpire);
          multi.hmset(loginKey, {account, role, id});
          multi.expire(loginKey, this.config.loginExpire);
       });
@@ -684,7 +684,7 @@ export default class rquery {
          const [hgetall] = await this.redis.multiExecAsync(multi => {
             multi.hgetall(loginKey);
          });
-         assert(hgetall, 'login: ' + token);
+         assert(hgetall, 'login:' + token);
          assert.equal(hgetall.account, account, 'account');
          assert.equal(hgetall.role, role, 'role');
          assert.equal(hgetall.id, id, 'id');
