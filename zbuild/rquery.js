@@ -1257,7 +1257,7 @@ var rquery = function () {
                         _ref22 = _slicedToArray(_ref21, 1);
                         hmset = _ref22[0];
 
-                        if (!setex) {
+                        if (!hmset) {
                            _context15.next = 23;
                            break;
                         }

@@ -496,7 +496,7 @@ export default class rquery {
          multi.hmset(loginKey, {account, role, id});
          multi.expire(loginKey, this.config.enrollExpire);
       });
-      if (setex) {
+      if (hmset) {
          await this.sendTelegramReply(request, 'html', [
             `You can login via https://${[this.config.openHostname, 'login', account, role, id, token].join('/')}`,
             `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.enrollExpire)}`,
