@@ -77,6 +77,18 @@ module.exports = {
          unit: 'seconds',
          max: 999
       },
+      loginExpire: {
+         defaultValue: 180,
+         type: 'duration',
+         unit: 'seconds',
+         max: 999
+      },
+      sessionExpire: {
+         defaultValue: 180,
+         type: 'duration',
+         unit: 'seconds',
+         max: 999
+      },
       keyspaceExpire: {
          type: 'duration',
          unit: 'seconds',

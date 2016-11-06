@@ -1,5 +1,6 @@
 
-import expressLib from 'express';
+import express from 'express';
+import cookieParser from 'cookie-parser';
 import brucedown from 'brucedown';
 import marked from 'marked';
 import crypto from 'crypto';
@@ -58,11 +59,12 @@ export default class rquery {
          }
       };
       this.redis = redisLib.createClient(this.config.redisUrl);
-      this.expressApp = expressLib();
+      this.expressApp = express();
    }
 
    async start() {
       assert(global.rquery.config === this.config, 'global config');
+      this.expressApp.use(cookieParser());
       this.expressApp.use((req, res, next) => {
          const scheme = req.get('X-Forwarded-Proto');
          if (this.config.serviceKey === 'development') {
@@ -487,14 +489,12 @@ export default class rquery {
       const role = 'admin';
       const id = 'admin';
       const token = this.generateTokenKey().toLowerCase();
-      const loginKey = this.adminKey('telegram', 'user', request.username, 'login');
+      const loginKey = this.adminKey('login', token);
       this.logger.info('handleTelegramLogin', loginKey, token, request);
-      let [exists] = await this.redis.multiExecAsync(multi => {
-         multi.exists(loginKey);
-      });
-      let [setex] = await this.redis.multiExecAsync(multi => {
-         this.logger.info('handleTelegramLogin setex', loginKey, this.config.enrollExpire);
-         multi.setex(loginKey, this.config.enrollExpire, token);
+      let [hmset] = await this.redis.multiExecAsync(multi => {
+         this.logger.info('handleTelegramLogin hmset', loginKey, this.config.enrollExpire);
+         multi.hmset(loginKey, {account, role, id});
+         multi.exire(loginKey, this.config.enrollExpire);
       });
       if (setex) {
          await this.sendTelegramReply(request, 'html', [
@@ -680,6 +680,21 @@ export default class rquery {
          format: 'json'
       }, async (req, res) => {
          const {account, role, id, token} = req.params;
+         const loginKey = this.adminKey('login', token);
+         const [hgetall] = await this.redis.multiExecAsync(multi => {
+            multi.hgetall(loginKey);
+            multi.del(loginKey);
+         });
+         assert.equal(hgetall.account, account, 'account');
+         assert.equal(hgetall.role, role, 'role');
+         assert.equal(hgetall.id, id, 'id');
+         const sessionToken = this.generateTokenKey().toLowerCase();
+         const sessionKey = this.adminKey('session', sessionToken);
+         const [hmset] = await this.redis.multiExecAsync(multi => {
+            multi.hmset(sessionKey, {account, role, id});
+            multi.expire(sessionKey, this.config.sessionExpire);
+         });
+         res.cookie('login', sessionKey, {maxAge: 600000});
          return req.params;
       });
       this.addPublicCommand({
