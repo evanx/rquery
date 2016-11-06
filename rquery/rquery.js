@@ -354,7 +354,7 @@ export default class rquery {
             await this.handleTelegramRevoke(message);
          } else {
             await this.sendTelegram(message.chatId, 'html', [
-               `Commands: <code>/signup /grant /list /revoke</code>`
+               `Commands: <code>/signup /login /grant /list /revoke</code>`
             ]);
          }
       }
