@@ -483,6 +483,9 @@ export default class rquery {
          ]);
          return;
       }
+      const account = request.username;
+      const role = 'admin';
+      const id = 'admin';
       const token = this.generateTokenKey();
       const loginKey = this.adminKey('telegram', 'user', request.username, 'login');
       this.logger.info('handleTelegramLogin', loginKey, request);
@@ -495,7 +498,7 @@ export default class rquery {
       });
       if (setex) {
          await this.sendTelegramReply(request, 'html', [
-            `You can login via ${this.config.secureHostname}/login/${token}`,
+            `You can login via ${[this.config.secureHostname, 'login', account, role, id, token].join('/')}`,
             `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.enrollExpire)}`,
             `otherwise you need to repeat this request, after it expires.`
          ]);
@@ -671,6 +674,14 @@ export default class rquery {
          return Math.ceil(time[0] * 1000 * 1000 + parseInt(time[1]));
       });
       this.addPublicRoute('time', () => this.redis.timeAsync());
+      this.addPublicCommand({
+         key: 'login',
+         params: ['account', 'role', 'id', 'token'],
+         format: 'json'
+      }, async (req, res) => {
+         const {account, role, id, token} = req.params;
+         return req.params;
+      });
       this.addPublicCommand({
          key: 'genkey-otp',
          params: ['user', 'host'],
