@@ -1857,7 +1857,6 @@ var rquery = function () {
                            _context29.next = 8;
                            return _this9.redis.multiExecAsync(function (multi) {
                               multi.hgetall(loginKey);
-                              multi.del(loginKey);
                            });
 
                         case 8:
@@ -1865,7 +1864,7 @@ var rquery = function () {
                            _ref30 = _slicedToArray(_ref29, 1);
                            hgetall = _ref30[0];
 
-                           assert(hgetall, loginKey);
+                           assert(hgetall, 'login: ' + token);
                            assert.equal(hgetall.account, account, 'account');
                            assert.equal(hgetall.role, role, 'role');
                            assert.equal(hgetall.id, id, 'id');
@@ -1874,6 +1873,7 @@ var rquery = function () {
                            return _this9.redis.multiExecAsync(function (multi) {
                               multi.hmset(sessionKey, { account: account, role: role, id: id });
                               multi.expire(sessionKey, _this9.config.sessionExpire);
+                              multi.del(loginKey);
                            });
 
                         case 18:
