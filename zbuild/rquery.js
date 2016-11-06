@@ -1842,7 +1842,7 @@ var rquery = function () {
             format: 'json'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee29(req, res) {
-               var _req$params, account, role, id, token, loginKey, _ref29, _ref30, hgetall, sessionToken, sessionKey, _ref31, _ref32, hmset;
+               var _req$params, account, role, id, token, loginKey, _ref29, _ref30, hgetall, sessionKey, _ref31, _ref32, hmset;
 
                return regeneratorRuntime.wrap(function _callee29$(_context29) {
                   while (1) {
@@ -1869,23 +1869,22 @@ var rquery = function () {
                            assert.equal(hgetall.account, account, 'account');
                            assert.equal(hgetall.role, role, 'role');
                            assert.equal(hgetall.id, id, 'id');
-                           sessionToken = _this9.generateTokenKey().toLowerCase();
-                           sessionKey = _this9.adminKey('session', sessionToken);
-                           _context29.next = 19;
+                           sessionKey = _this9.adminKey('session', token);
+                           _context29.next = 18;
                            return _this9.redis.multiExecAsync(function (multi) {
                               multi.hmset(sessionKey, { account: account, role: role, id: id });
                               multi.expire(sessionKey, _this9.config.sessionExpire);
                            });
 
-                        case 19:
+                        case 18:
                            _ref31 = _context29.sent;
                            _ref32 = _slicedToArray(_ref31, 1);
                            hmset = _ref32[0];
 
-                           res.cookie('login', sessionToken, { maxAge: 600000 });
-                           return _context29.abrupt('return', { token: token, account: account, role: role, id: id, sessionToken: sessionToken });
+                           res.cookie('session', token, { maxAge: 600000 });
+                           return _context29.abrupt('return', { token: token, account: account, role: role, id: id });
 
-                        case 24:
+                        case 23:
                         case 'end':
                            return _context29.stop();
                      }

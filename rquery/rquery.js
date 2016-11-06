@@ -689,14 +689,13 @@ export default class rquery {
          assert.equal(hgetall.account, account, 'account');
          assert.equal(hgetall.role, role, 'role');
          assert.equal(hgetall.id, id, 'id');
-         const sessionToken = this.generateTokenKey().toLowerCase();
-         const sessionKey = this.adminKey('session', sessionToken);
+         const sessionKey = this.adminKey('session', token);
          const [hmset] = await this.redis.multiExecAsync(multi => {
             multi.hmset(sessionKey, {account, role, id});
             multi.expire(sessionKey, this.config.sessionExpire);
          });
-         res.cookie('login', sessionToken, {maxAge: 600000});
-         return {token, account, role, id, sessionToken};
+         res.cookie('session', token, {maxAge: 600000});
+         return {token, account, role, id};
       });
       this.addPublicCommand({
          key: 'genkey-otp',
