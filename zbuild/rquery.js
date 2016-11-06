@@ -1249,7 +1249,7 @@ var rquery = function () {
                         return this.redis.multiExecAsync(function (multi) {
                            _this6.logger.info('handleTelegramLogin hmset', loginKey, _this6.config.enrollExpire);
                            multi.hmset(loginKey, { account: account, role: role, id: id });
-                           multi.exire(loginKey, _this6.config.enrollExpire);
+                           multi.expire(loginKey, _this6.config.enrollExpire);
                         });
 
                      case 15:

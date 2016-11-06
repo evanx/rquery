@@ -494,7 +494,7 @@ export default class rquery {
       let [hmset] = await this.redis.multiExecAsync(multi => {
          this.logger.info('handleTelegramLogin hmset', loginKey, this.config.enrollExpire);
          multi.hmset(loginKey, {account, role, id});
-         multi.exire(loginKey, this.config.enrollExpire);
+         multi.expire(loginKey, this.config.enrollExpire);
       });
       if (setex) {
          await this.sendTelegramReply(request, 'html', [
