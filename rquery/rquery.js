@@ -488,7 +488,7 @@ export default class rquery {
       const id = 'admin';
       const token = this.generateTokenKey().toLowerCase();
       const loginKey = this.adminKey('telegram', 'user', request.username, 'login');
-      this.logger.info('handleTelegramLogin', loginKey, request);
+      this.logger.info('handleTelegramLogin', loginKey, token, request);
       let [exists] = await this.redis.multiExecAsync(multi => {
          multi.exists(loginKey);
       });
@@ -498,7 +498,7 @@ export default class rquery {
       });
       if (setex) {
          await this.sendTelegramReply(request, 'html', [
-            `You can login via ${[this.config.secureHostname, 'login', account, role, id, token].join('/')}`,
+            `You can login via https://${[this.config.openHostname, 'login', account, role, id, token].join('/')}`,
             `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.enrollExpire)}`,
             `otherwise you need to repeat this request, after it expires.`
          ]);

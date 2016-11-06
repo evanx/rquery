@@ -1239,7 +1239,7 @@ var rquery = function () {
                         token = this.generateTokenKey().toLowerCase();
                         loginKey = this.adminKey('telegram', 'user', request.username, 'login');
 
-                        this.logger.info('handleTelegramLogin', loginKey, request);
+                        this.logger.info('handleTelegramLogin', loginKey, token, request);
                         _context15.next = 15;
                         return this.redis.multiExecAsync(function (multi) {
                            multi.exists(loginKey);
@@ -1266,7 +1266,7 @@ var rquery = function () {
                         }
 
                         _context15.next = 26;
-                        return this.sendTelegramReply(request, 'html', ['You can login via ' + [this.config.secureHostname, 'login', account, role, id, token].join('/'), 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request, after it expires.']);
+                        return this.sendTelegramReply(request, 'html', ['You can login via https://' + [this.config.openHostname, 'login', account, role, id, token].join('/'), 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request, after it expires.']);
 
                      case 26:
                         _context15.next = 30;
