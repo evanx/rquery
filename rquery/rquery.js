@@ -486,7 +486,7 @@ export default class rquery {
       const account = request.username;
       const role = 'admin';
       const id = 'admin';
-      const token = this.generateTokenKey();
+      const token = this.generateTokenKey().toLowerCase();
       const loginKey = this.adminKey('telegram', 'user', request.username, 'login');
       this.logger.info('handleTelegramLogin', loginKey, request);
       let [exists] = await this.redis.multiExecAsync(multi => {

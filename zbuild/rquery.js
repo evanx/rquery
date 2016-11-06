@@ -1236,7 +1236,7 @@ var rquery = function () {
                         account = request.username;
                         role = 'admin';
                         id = 'admin';
-                        token = this.generateTokenKey();
+                        token = this.generateTokenKey().toLowerCase();
                         loginKey = this.adminKey('telegram', 'user', request.username, 'login');
 
                         this.logger.info('handleTelegramLogin', loginKey, request);
