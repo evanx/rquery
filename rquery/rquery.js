@@ -703,9 +703,8 @@ export default class rquery {
             multi.expire(sessionRedisKey, this.config.sessionExpire);
             multi.del(loginKey);
          });
-         res.cookie('session', sessionToken, {maxAge: 600000});
+         res.cookie('session', sessionToken, {maxAge: 600000, domain: 'webserva.com'});
          res.redirect(302, '/routes');
-         //return {sessionToken, account, role, id};
       });
       this.addPublicCommand({
          key: 'genkey-otp',

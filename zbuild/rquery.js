@@ -1902,9 +1902,8 @@ var rquery = function () {
                            _ref32 = _slicedToArray(_ref31, 1);
                            hmset = _ref32[0];
 
-                           res.cookie('session', sessionToken, { maxAge: 600000 });
+                           res.cookie('session', sessionToken, { maxAge: 600000, domain: 'webserva.com' });
                            res.redirect(302, '/routes');
-                           //return {sessionToken, account, role, id};
 
                         case 30:
                         case 'end':
