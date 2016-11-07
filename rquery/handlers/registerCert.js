@@ -21,8 +21,8 @@ export default async function registerCert(req, res, reqx) {
       hint: rquery.hints.signup
    });
    const [type, account, role, id] = dn.cn.split(':');
-   const certId = [dn.cn, '#', certFingerprint.slice(0, 6), ':' + certFingerprint.slice(-6)].join('');
-   logger.debug('CN', dn, type, {account, role, id}, {certId});
+   const clientId = [dn.cn, '#', certFingerprint.slice(0, 6), ':' + certFingerprint.slice(-6)].join('');
+   logger.debug('CN', dn, type, {account, role, id}, {clientId});
    if (type !== 'ws' || !account || !role || !id) {
       throw new ValidationError({
          status: 400,
@@ -48,7 +48,7 @@ export default async function registerCert(req, res, reqx) {
    const grantKey = rquery.adminKey('telegram', 'user', account, 'grant');
    const [granted, sismember] = await rquery.redis.multiExecAsync(multi => {
       multi.get(grantKey);
-      multi.sismember(rquery.adminKey('account', account, 'certs'), certId);
+      multi.sismember(rquery.adminKey('account', account, 'certs'), clientId);
    });
    if (sismember) {
       throw new ValidationError({
@@ -62,31 +62,31 @@ export default async function registerCert(req, res, reqx) {
          status: 403,
          hint: {
             message: [
-               `/grant ${certId}`
+               `/grant ${clientId}`
             ].join(' '),
-            clipboard: `/grant ${certId}`,
+            clipboard: `/grant ${clientId}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });
    }
-   if (certId.indexOf(granted) < 0) {
+   if (clientId.indexOf(granted) < 0) {
       throw new ValidationError({
          status: 400,
-         message: 'Granted cert not matching: ' + certId,
+         message: 'Granted cert not matching: ' + clientId,
          hint: {
-            message: `Try @${rquery.config.adminBotName} "/grant ${certId}"`
+            message: `Try @${rquery.config.adminBotName} "/grant ${clientId}"`
             + ` from the authoritative Telegram account`
             + ` e.g. via https://web.telegram.org`
             ,
-            clipboard: `/grant ${certId}`,
+            clipboard: `/grant ${clientId}`,
             url: `https://telegram.me/${rquery.config.adminBotName}?start`
          }
       });
    }
    const [del, sadd, hmset] = await rquery.redis.multiExecAsync(multi => {
       multi.del(grantKey);
-      multi.sadd(rquery.adminKey('account', account, 'certs'), certId);
-      multi.hmset(rquery.adminKey('account', account, 'cert', certId), {account, role, id});
+      multi.sadd(rquery.adminKey('account', account, 'certs'), clientId);
+      multi.hmset(rquery.adminKey('account', account, 'cert', clientId), {account, role, id});
    });
    if (!sadd) {
       logger.debug('certs sadd');

@@ -13,7 +13,7 @@ var rquery = global.rquery;
 
 exports.default = function () {
    var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee(req, res, reqx) {
-      var cert, certFingerprint, dn, _dn$cn$split, _dn$cn$split2, type, account, role, id, certId, accountKey, grantKey, _ref, _ref2, granted, sismember, _ref3, _ref4, del, sadd, hmset;
+      var cert, certFingerprint, dn, _dn$cn$split, _dn$cn$split2, type, account, role, id, clientId, accountKey, grantKey, _ref, _ref2, granted, sismember, _ref3, _ref4, del, sadd, hmset;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
          while (1) {
@@ -66,9 +66,9 @@ exports.default = function () {
                   account = _dn$cn$split2[1];
                   role = _dn$cn$split2[2];
                   id = _dn$cn$split2[3];
-                  certId = [dn.cn, '#', certFingerprint.slice(0, 6), ':' + certFingerprint.slice(-6)].join('');
+                  clientId = [dn.cn, '#', certFingerprint.slice(0, 6), ':' + certFingerprint.slice(-6)].join('');
 
-                  logger.debug('CN', dn, type, { account: account, role: role, id: id }, { certId: certId });
+                  logger.debug('CN', dn, type, { account: account, role: role, id: id }, { clientId: clientId });
 
                   if (!(type !== 'ws' || !account || !role || !id)) {
                      _context.next = 19;
@@ -111,7 +111,7 @@ exports.default = function () {
                   _context.next = 27;
                   return rquery.redis.multiExecAsync(function (multi) {
                      multi.get(grantKey);
-                     multi.sismember(rquery.adminKey('account', account, 'certs'), certId);
+                     multi.sismember(rquery.adminKey('account', account, 'certs'), clientId);
                   });
 
                case 27:
@@ -140,25 +140,25 @@ exports.default = function () {
                   throw new ValidationError({ message: 'Cert must be granted via https://telegram.me/' + rquery.config.adminBotName,
                      status: 403,
                      hint: {
-                        message: ['/grant ' + certId].join(' '),
-                        clipboard: '/grant ' + certId,
+                        message: ['/grant ' + clientId].join(' '),
+                        clipboard: '/grant ' + clientId,
                         url: 'https://telegram.me/' + rquery.config.adminBotName + '?start'
                      }
                   });
 
                case 35:
-                  if (!(certId.indexOf(granted) < 0)) {
+                  if (!(clientId.indexOf(granted) < 0)) {
                      _context.next = 37;
                      break;
                   }
 
                   throw new ValidationError({
                      status: 400,
-                     message: 'Granted cert not matching: ' + certId,
+                     message: 'Granted cert not matching: ' + clientId,
                      hint: {
-                        message: 'Try @' + rquery.config.adminBotName + ' "/grant ' + certId + '"' + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
+                        message: 'Try @' + rquery.config.adminBotName + ' "/grant ' + clientId + '"' + ' from the authoritative Telegram account' + ' e.g. via https://web.telegram.org',
 
-                        clipboard: '/grant ' + certId,
+                        clipboard: '/grant ' + clientId,
                         url: 'https://telegram.me/' + rquery.config.adminBotName + '?start'
                      }
                   });
@@ -167,8 +167,8 @@ exports.default = function () {
                   _context.next = 39;
                   return rquery.redis.multiExecAsync(function (multi) {
                      multi.del(grantKey);
-                     multi.sadd(rquery.adminKey('account', account, 'certs'), certId);
-                     multi.hmset(rquery.adminKey('account', account, 'cert', certId), { account: account, role: role, id: id });
+                     multi.sadd(rquery.adminKey('account', account, 'certs'), clientId);
+                     multi.hmset(rquery.adminKey('account', account, 'cert', clientId), { account: account, role: role, id: id });
                   });
 
                case 39:

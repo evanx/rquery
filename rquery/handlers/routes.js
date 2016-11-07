@@ -43,7 +43,7 @@ module.exports = {
             if (names.o.match(/^[\-_a-z]+$/)) {
                account = names.o;
             }
-            this.logger.debug('dn', {dn, names, account});
+            logger.debug('dn', {dn, names, account});
          }
       } catch (err) {
          logger.error('cert', err);

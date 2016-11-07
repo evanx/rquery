@@ -153,7 +153,7 @@ var rquery = function () {
                               url: 'https://telegram.me/' + this.config.adminBotName + '?start'
                            },
                            grantCert: {
-                              message: 'Try "@' + this.config.adminBotName + ' /grant certId" e.g. via https://web.telegram.org',
+                              message: 'Try "@' + this.config.adminBotName + ' /grant clientId" e.g. via https://web.telegram.org',
                               url: 'https://telegram.me/' + this.config.adminBotName + '?start'
                            },
                            registerCert: {
@@ -1132,7 +1132,7 @@ var rquery = function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee14(request) {
             var _this5 = this;
 
-            var now, match, certId, grantKey, _ref17, _ref18, exists, _ref19, _ref20, setex;
+            var now, match, clientId, grantKey, _ref17, _ref18, exists, _ref19, _ref20, setex;
 
             return regeneratorRuntime.wrap(function _callee14$(_context14) {
                while (1) {
@@ -1155,10 +1155,10 @@ var rquery = function () {
                         return _context14.abrupt('return');
 
                      case 7:
-                        certId = match[1];
+                        clientId = match[1];
                         grantKey = this.adminKey('telegram', 'user', request.username, 'grant');
 
-                        this.logger.info('handleTelegramGrant', grantKey, request, certId);
+                        this.logger.info('handleTelegramGrant', grantKey, request, clientId);
                         _context14.next = 12;
                         return this.redis.multiExecAsync(function (multi) {
                            multi.exists(grantKey);
@@ -1170,8 +1170,8 @@ var rquery = function () {
                         exists = _ref18[0];
                         _context14.next = 17;
                         return this.redis.multiExecAsync(function (multi) {
-                           _this5.logger.info('handleTelegramGrant setex', grantKey, certId, _this5.config.enrollExpire);
-                           multi.setex(grantKey, _this5.config.enrollExpire, certId);
+                           _this5.logger.info('handleTelegramGrant setex', grantKey, clientId, _this5.config.enrollExpire);
+                           multi.setex(grantKey, _this5.config.enrollExpire, clientId);
                         });
 
                      case 17:
@@ -1185,7 +1185,7 @@ var rquery = function () {
                         }
 
                         _context14.next = 23;
-                        return this.sendTelegramReply(request, 'html', ['You have approved enrollment of the cert <b>' + certId + '</b>.', 'That identity can now enroll via ' + this.config.secureHostname + '/register-cert.', 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request, after it expires.', 'See ' + this.config.openHostname + '/docs/register-cert.md for further info.']);
+                        return this.sendTelegramReply(request, 'html', ['You have approved enrollment of the cert <b>' + clientId + '</b>.', 'That identity can now enroll via ' + this.config.secureHostname + '/register-cert.', 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request, after it expires.', 'See ' + this.config.openHostname + '/docs/register-cert.md for further info.']);
 
                      case 23:
                         _context14.next = 27;
@@ -1361,7 +1361,7 @@ var rquery = function () {
          var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee17(request) {
             var _this8 = this;
 
-            var now, match, account, certId, _ref25, _ref26, del, _ref27, _ref28, srem;
+            var now, match, account, clientId, _ref25, _ref26, del, _ref27, _ref28, srem;
 
             return regeneratorRuntime.wrap(function _callee17$(_context17) {
                while (1) {
@@ -1385,9 +1385,9 @@ var rquery = function () {
 
                      case 7:
                         account = request.username;
-                        certId = match[1];
+                        clientId = match[1];
 
-                        if (!(certId === 'all')) {
+                        if (!(clientId === 'all')) {
                            _context17.next = 24;
                            break;
                         }
@@ -1425,7 +1425,7 @@ var rquery = function () {
                      case 24:
                         _context17.next = 26;
                         return this.redis.multiExecAsync(function (multi) {
-                           multi.srem(_this8.adminKey('account', account, 'certs'), certId);
+                           multi.srem(_this8.adminKey('account', account, 'certs'), clientId);
                         });
 
                      case 26:
@@ -1439,7 +1439,7 @@ var rquery = function () {
                         }
 
                         _context17.next = 32;
-                        return this.sendTelegramReply(request, 'html', ['You have removed cert <b>' + certId + '</b>.']);
+                        return this.sendTelegramReply(request, 'html', ['You have removed cert <b>' + clientId + '</b>.']);
 
                      case 32:
                         _context17.next = 36;
@@ -1842,7 +1842,7 @@ var rquery = function () {
             format: 'json'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee29(req, res) {
-               var ua, _req$params, account, role, id, token, loginKey, _ref29, _ref30, hgetall, sessionToken, sessionRedisKey, _ref31, _ref32, hmset;
+               var ua, _req$params, account, role, id, token, loginKey, _ref29, _ref30, hgetall, sessionId, sessionRedisKey, _ref31, _ref32, hmset;
 
                return regeneratorRuntime.wrap(function _callee29$(_context29) {
                   while (1) {
@@ -1888,8 +1888,8 @@ var rquery = function () {
                            assert.equal(hgetall.account, account, 'account');
                            assert.equal(hgetall.role, role, 'role');
                            assert.equal(hgetall.id, id, 'id');
-                           sessionToken = [token, _this9.generateTokenKey().toLowerCase()].join('_');
-                           sessionRedisKey = _this9.adminKey('session', sessionToken);
+                           sessionId = [token, _this9.generateTokenKey().toLowerCase()].join('_');
+                           sessionRedisKey = _this9.adminKey('session', sessionId);
                            _context29.next = 25;
                            return _this9.redis.multiExecAsync(function (multi) {
                               multi.hmset(sessionRedisKey, { account: account, role: role, id: id });
@@ -1902,7 +1902,7 @@ var rquery = function () {
                            _ref32 = _slicedToArray(_ref31, 1);
                            hmset = _ref32[0];
 
-                           res.cookie('session', sessionToken, { maxAge: 600000, domain: 'webserva.com' });
+                           res.cookie('sessionId', sessionId, { maxAge: 600000, domain: 'webserva.com' });
                            res.redirect(302, '/routes');
 
                         case 30:
@@ -1984,7 +1984,7 @@ var rquery = function () {
                params: ['account']
             }, function () {
                var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee32(req, res, reqx) {
-                  var account, accountKey, _ref33, _ref34, _ref34$, time, registered, admined, accessed, certs, duration, _validateCert, certId, certRole, token;
+                  var account, accountKey, _ref33, _ref34, _ref34$, time, registered, admined, accessed, certs, duration, _validateCert, clientId, clientRole, token;
 
                   return regeneratorRuntime.wrap(function _callee32$(_context32) {
                      while (1) {
@@ -2022,8 +2022,8 @@ var rquery = function () {
                            case 15:
                               _this9.logger.debug('gentoken', accountKey);
                               _validateCert = _this9.validateCert(req, reqx, certs, account, []);
-                              certId = _validateCert.certId;
-                              certRole = _validateCert.certRole;
+                              clientId = _validateCert.clientId;
+                              clientRole = _validateCert.clientRole;
                               token = _this9.generateTokenKey(6);
                               _context32.next = 22;
                               return _this9.redis.setexAsync([accountKey, token].join(':'), _this9.config.keyExpire, token);
@@ -2253,7 +2253,7 @@ var rquery = function () {
             access: 'admin'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee36(req, res, reqx) {
-               var command, time, account, keyspace, certId, certRole, role, _ref37, _ref38, sadd, accountExpire, hlen, _ref39, _ref40, keyspaceId, expire, _ref41, _ref42, hmset;
+               var command, time, account, keyspace, clientId, clientRole, role, _ref37, _ref38, sadd, accountExpire, hlen, _ref39, _ref40, keyspaceId, expire, _ref41, _ref42, hmset;
 
                return regeneratorRuntime.wrap(function _callee36$(_context36) {
                   while (1) {
@@ -2263,18 +2263,18 @@ var rquery = function () {
                            time = reqx.time;
                            account = reqx.account;
                            keyspace = reqx.keyspace;
-                           certId = reqx.certId;
-                           certRole = reqx.certRole;
+                           clientId = reqx.clientId;
+                           clientRole = reqx.clientRole;
                            role = req.query.role || 'admin';
 
-                           if (!(role !== certRole)) {
+                           if (!(role !== clientRole)) {
                               _context36.next = 9;
                               break;
                            }
 
                            throw new ValidationError({
                               status: 400,
-                              message: 'Cert Role (OU=' + certRole + ') mismatch (' + role + ')'
+                              message: 'Cert Role (OU=' + clientRole + ') mismatch (' + role + ')'
                            });
 
                         case 9:
@@ -2346,12 +2346,12 @@ var rquery = function () {
                               break;
                            }
 
-                           if (!(certRole !== 'admin')) {
+                           if (!(clientRole !== 'admin')) {
                               _context36.next = 33;
                               break;
                            }
 
-                           throw new ValidationError('Keyspace expiry must be less than ' + Seconds.toDays(_this9.config.keyspaceExpire) + ' days for cert role ' + certRole);
+                           throw new ValidationError('Keyspace expiry must be less than ' + Seconds.toDays(_this9.config.keyspaceExpire) + ' days for cert role ' + clientRole);
 
                         case 33:
                            if (!(expire > accountExpire)) {
@@ -5082,7 +5082,7 @@ var rquery = function () {
          if (this.config.secureDomain) {
             this.addAccountCommand({
                key: 'grant-cert',
-               params: ['account', 'role', 'certId'],
+               params: ['account', 'role', 'clientId'],
                defaultParams: {
                   group: 'admin'
                },
@@ -5092,7 +5092,7 @@ var rquery = function () {
                   var account = _ref61.account;
                   var accountKey = _ref61.accountKey;
                   var time = _ref61.time;
-                  var certId = _ref61.certId;
+                  var clientId = _ref61.clientId;
 
                   var _ref62, _ref63, cert;
 
@@ -5102,7 +5102,7 @@ var rquery = function () {
                            case 0:
                               _context112.next = 2;
                               return _this14.redis.multiExecAsync(function (multi) {
-                                 multi.hgetall(_this14.adminKey('account', account, 'cert', certId));
+                                 multi.hgetall(_this14.adminKey('account', account, 'cert', clientId));
                               });
 
                            case 2:
@@ -5110,7 +5110,7 @@ var rquery = function () {
                               _ref63 = _slicedToArray(_ref62, 1);
                               cert = _ref63[0];
 
-                              _this14.logger.debug('grant-cert', { certId: certId, cert: cert });
+                              _this14.logger.debug('grant-cert', { clientId: clientId, cert: cert });
                               throw new ApplicationError('Unimplemented');
 
                            case 7:
@@ -5140,7 +5140,7 @@ var rquery = function () {
                      case 0:
                         _context114.prev = 0;
                         return _context114.delegateYield(regeneratorRuntime.mark(function _callee113() {
-                           var errorMessage, account, v, dn, cert, certFingerprint, certId, otpSecret, accountKey, _ref64, _ref65, hsetnx, saddAccount, _ref66, _ref67, saddCert, result;
+                           var errorMessage, account, v, dn, cert, certFingerprint, clientId, otpSecret, accountKey, _ref64, _ref65, hsetnx, saddAccount, _ref66, _ref67, saddCert, result;
 
                            return regeneratorRuntime.wrap(function _callee113$(_context113) {
                               while (1) {
@@ -5173,7 +5173,7 @@ var rquery = function () {
                                        dn = req.get('ssl_client_s_dn');
                                        cert = req.get('ssl_client_cert');
                                        certFingerprint = req.get('ssl_client_fingerprint');
-                                       certId = [_this15.parseDn(dn).cn, '#', certFingerprint.slice(0, 6), ':', certFingerprint.slice(-6)].join('');
+                                       clientId = [_this15.parseDn(dn).cn, '#', certFingerprint.slice(0, 6), ':', certFingerprint.slice(-6)].join('');
 
                                        _this15.logger.info('createAccount dn', dn);
 
@@ -5219,7 +5219,7 @@ var rquery = function () {
                                     case 27:
                                        _context113.next = 29;
                                        return _this15.redis.multiExecAsync(function (multi) {
-                                          multi.sadd(_this15.adminKey('account', account, 'certs'), certId);
+                                          multi.sadd(_this15.adminKey('account', account, 'certs'), clientId);
                                        });
 
                                     case 29:
@@ -5319,7 +5319,7 @@ var rquery = function () {
                                           reqx = { command: command };
                                           _context116.prev = 1;
                                           return _context116.delegateYield(regeneratorRuntime.mark(function _callee115() {
-                                             var message, account, accountKey, _ref68, _ref69, _ref69$, time, admined, certs, duration, _validateCert2, certId, certRole, result;
+                                             var message, sessionId, account, _ref68, _ref69, _ref69$, time, session, id, role, clientId, clientRole, result, _ref70, _ref71, _ref71$, _time, _admined, certs, duration, _validateCert2, _clientId, _clientRole, _result;
 
                                              return regeneratorRuntime.wrap(function _callee115$(_context115) {
                                                 while (1) {
@@ -5335,40 +5335,99 @@ var rquery = function () {
                                                          throw { message: message };
 
                                                       case 3:
+                                                         sessionId = req.cookies.sessionId;
                                                          account = req.params.account;
-                                                         accountKey = _this16.adminKey('account', account);
-                                                         _context115.next = 7;
+
+                                                         if (!sessionId) {
+                                                            _context115.next = 31;
+                                                            break;
+                                                         }
+
+                                                         _context115.next = 8;
+                                                         return _this16.redis.multiExecAsync(function (multi) {
+                                                            multi.time();
+                                                            multi.hgetall(_this16.adminKey('session', sessionId));
+                                                         });
+
+                                                      case 8:
+                                                         _ref68 = _context115.sent;
+                                                         _ref69 = _slicedToArray(_ref68, 2);
+                                                         _ref69$ = _slicedToArray(_ref69[0], 1);
+                                                         time = _ref69$[0];
+                                                         session = _ref69[1];
+
+                                                         if (session) {
+                                                            _context115.next = 15;
+                                                            break;
+                                                         }
+
+                                                         throw ValidationError('Session expired or invalid');
+
+                                                      case 15:
+                                                         _this16.logger.debug('admin command', { account: account, time: time, session: session });
+                                                         id = session.id;
+                                                         role = session.role;
+
+                                                         if (!(role !== 'admin')) {
+                                                            _context115.next = 20;
+                                                            break;
+                                                         }
+
+                                                         throw ValidationError('Admin role required');
+
+                                                      case 20:
+                                                         clientId = id;
+                                                         clientRole = role;
+
+                                                         Object.assign(reqx, { account: account, accountKey: accountKey, time: time, admined: admined, clientId: clientId, clientRole: clientRole });
+                                                         _context115.next = 25;
+                                                         return handleReq(req, res, reqx);
+
+                                                      case 25:
+                                                         result = _context115.sent;
+
+                                                         if (!(result !== undefined)) {
+                                                            _context115.next = 29;
+                                                            break;
+                                                         }
+
+                                                         _context115.next = 29;
+                                                         return Result.sendResult(command, req, res, reqx, result);
+
+                                                      case 29:
+                                                         _context115.next = 55;
+                                                         break;
+
+                                                      case 31:
+                                                         _context115.next = 33;
                                                          return _this16.redis.multiExecAsync(function (multi) {
                                                             multi.time();
                                                             multi.hget(accountKey, 'admined');
                                                             multi.smembers(_this16.adminKey('account', account, 'certs'));
                                                          });
 
-                                                      case 7:
-                                                         _ref68 = _context115.sent;
-                                                         _ref69 = _slicedToArray(_ref68, 3);
-                                                         _ref69$ = _slicedToArray(_ref69[0], 1);
-                                                         time = _ref69$[0];
-                                                         admined = _ref69[1];
-                                                         certs = _ref69[2];
+                                                      case 33:
+                                                         _ref70 = _context115.sent;
+                                                         _ref71 = _slicedToArray(_ref70, 3);
+                                                         _ref71$ = _slicedToArray(_ref71[0], 1);
+                                                         _time = _ref71$[0];
+                                                         _admined = _ref71[1];
+                                                         certs = _ref71[2];
 
-                                                         _this16.logger.debug('admin command', { account: account, accountKey: accountKey, time: time, admined: admined, certs: certs });
-                                                         if (!admined) {
-                                                            //throw {message: 'Invalid account'};
-                                                         }
+                                                         _this16.logger.debug('admin command', { account: account, accountKey: accountKey, time: _time, admined: _admined, certs: certs });
 
                                                          if (!lodash.isEmpty(certs)) {
-                                                            _context115.next = 17;
+                                                            _context115.next = 42;
                                                             break;
                                                          }
 
                                                          throw { message: 'No certs' };
 
-                                                      case 17:
-                                                         duration = time - admined;
+                                                      case 42:
+                                                         duration = _time - _admined;
 
                                                          if (!(duration < _this16.config.adminLimit)) {
-                                                            _context115.next = 20;
+                                                            _context115.next = 45;
                                                             break;
                                                          }
 
@@ -5376,27 +5435,27 @@ var rquery = function () {
                                                             v: 'Admin command interval not elapsed: ' + _this16.config.adminLimit + 's'
                                                          });
 
-                                                      case 20:
+                                                      case 45:
                                                          _validateCert2 = _this16.validateCert(req, reqx, certs, account, []);
-                                                         certId = _validateCert2.certId;
-                                                         certRole = _validateCert2.certRole;
+                                                         _clientId = _validateCert2.clientId;
+                                                         _clientRole = _validateCert2.clientRole;
 
-                                                         Object.assign(reqx, { account: account, accountKey: accountKey, time: time, admined: admined, certId: certId, certRole: certRole });
-                                                         _context115.next = 26;
+                                                         Object.assign(reqx, { account: account, accountKey: accountKey, time: _time, admined: _admined, clientId: _clientId, clientRole: _clientRole });
+                                                         _context115.next = 51;
                                                          return handleReq(req, res, reqx);
 
-                                                      case 26:
-                                                         result = _context115.sent;
+                                                      case 51:
+                                                         _result = _context115.sent;
 
-                                                         if (!(result !== undefined)) {
-                                                            _context115.next = 30;
+                                                         if (!(_result !== undefined)) {
+                                                            _context115.next = 55;
                                                             break;
                                                          }
 
-                                                         _context115.next = 30;
-                                                         return Result.sendResult(command, req, res, reqx, result);
+                                                         _context115.next = 55;
+                                                         return Result.sendResult(command, req, res, reqx, _result);
 
-                                                      case 30:
+                                                      case 55:
                                                       case 'end':
                                                          return _context115.stop();
                                                    }
@@ -5772,12 +5831,13 @@ var rquery = function () {
                         case 0:
                            _context121.prev = 0;
                            return _context121.delegateYield(regeneratorRuntime.mark(function _callee120() {
-                              var _req$params12, account, keyspace, key, timeout, accountKey, accountKeyspace, helpPath, reqx, v, isSecureAccount, _ref70, _ref71, _ref71$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref72, _ref73, expire;
+                              var sessionId, _req$params12, account, keyspace, key, timeout, accountKey, accountKeyspace, helpPath, reqx, v, isSecureAccount, _ref72, _ref73, _ref73$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref74, _ref75, expire;
 
                               return regeneratorRuntime.wrap(function _callee120$(_context120) {
                                  while (1) {
                                     switch (_context120.prev = _context120.next) {
                                        case 0:
+                                          sessionId = req.cookies.sessionId;
                                           _req$params12 = req.params;
                                           account = _req$params12.account;
                                           keyspace = _req$params12.keyspace;
@@ -5801,7 +5861,7 @@ var rquery = function () {
                                           v = _this18.validateAccount(account);
 
                                           if (!v) {
-                                             _context120.next = 18;
+                                             _context120.next = 19;
                                              break;
                                           }
 
@@ -5810,11 +5870,11 @@ var rquery = function () {
                                              v: void 0
                                           });
 
-                                       case 18:
+                                       case 19:
                                           v = _this18.validateKeyspace(keyspace);
 
                                           if (!v) {
-                                             _context120.next = 22;
+                                             _context120.next = 23;
                                              break;
                                           }
 
@@ -5823,11 +5883,11 @@ var rquery = function () {
                                              v: void 0
                                           });
 
-                                       case 22:
+                                       case 23:
                                           v = _this18.validateKey(key);
 
                                           if (!v) {
-                                             _context120.next = 26;
+                                             _context120.next = 27;
                                              break;
                                           }
 
@@ -5836,14 +5896,14 @@ var rquery = function () {
                                              v: void 0
                                           });
 
-                                       case 26:
+                                       case 27:
                                           if (!timeout) {
-                                             _context120.next = 30;
+                                             _context120.next = 31;
                                              break;
                                           }
 
                                           if (/^[0-9]$/.test(timeout)) {
-                                             _context120.next = 30;
+                                             _context120.next = 31;
                                              break;
                                           }
 
@@ -5852,9 +5912,9 @@ var rquery = function () {
                                              v: void 0
                                           });
 
-                                       case 30:
+                                       case 31:
                                           isSecureAccount = !/^(pub|hub)$/.test(account);
-                                          _context120.next = 33;
+                                          _context120.next = 34;
                                           return _this18.redis.multiExecAsync(function (multi) {
                                              multi.time();
                                              multi.hget(accountKey, 'registered');
@@ -5865,15 +5925,15 @@ var rquery = function () {
                                              }
                                           });
 
-                                       case 33:
-                                          _ref70 = _context120.sent;
-                                          _ref71 = _slicedToArray(_ref70, 5);
-                                          _ref71$ = _slicedToArray(_ref71[0], 1);
-                                          time = _ref71$[0];
-                                          registered = _ref71[1];
-                                          admined = _ref71[2];
-                                          accessed = _ref71[3];
-                                          certs = _ref71[4];
+                                       case 34:
+                                          _ref72 = _context120.sent;
+                                          _ref73 = _slicedToArray(_ref72, 5);
+                                          _ref73$ = _slicedToArray(_ref73[0], 1);
+                                          time = _ref73$[0];
+                                          registered = _ref73[1];
+                                          admined = _ref73[2];
+                                          accessed = _ref73[3];
+                                          certs = _ref73[4];
 
                                           Objects.kvs({ time: time, registered: registered, admined: admined, accessed: accessed }).forEach(function (kv) {
                                              reqx[kv.key] = parseInt(kv.value);
@@ -5882,73 +5942,73 @@ var rquery = function () {
                                           hostname = void 0;
 
                                           if (!(req.hostname === _this18.config.hostDomain)) {
-                                             _context120.next = 47;
+                                             _context120.next = 48;
                                              break;
                                           }
 
-                                          _context120.next = 59;
+                                          _context120.next = 60;
                                           break;
 
-                                       case 47:
+                                       case 48:
                                           if (!lodash.endsWith(req.hostname, _this18.config.keyspaceHostname)) {
-                                             _context120.next = 59;
+                                             _context120.next = 60;
                                              break;
                                           }
 
                                           hostname = req.hostname.replace(/\..*$/, '');
-                                          _context120.next = 51;
+                                          _context120.next = 52;
                                           return _this18.redis.hgetallAsync(_this18.adminKey('host', hostname));
 
-                                       case 51:
+                                       case 52:
                                           hostHashes = _context120.sent;
 
                                           if (hostHashes) {
-                                             _context120.next = 54;
+                                             _context120.next = 55;
                                              break;
                                           }
 
                                           throw new ValidationError('Invalid host: ' + hostname);
 
-                                       case 54:
+                                       case 55:
                                           _this18.logger.debug('hostHashes', hostHashes);
 
                                           if (hostHashes.keyspaces) {
-                                             _context120.next = 57;
+                                             _context120.next = 58;
                                              break;
                                           }
 
                                           throw new ValidationError('Invalid host: ' + hostname);
 
-                                       case 57:
+                                       case 58:
                                           if (lodash.includes(hostHashes.keyspaces, keyspace)) {
-                                             _context120.next = 59;
+                                             _context120.next = 60;
                                              break;
                                           }
 
                                           throw new ValidationError('Invalid keyspace: ' + keyspace);
 
-                                       case 59:
+                                       case 60:
                                           if (keyspace) {
-                                             _context120.next = 61;
+                                             _context120.next = 62;
                                              break;
                                           }
 
                                           throw new ValidationError('Missing keyspace: ' + req.path);
 
-                                       case 61:
+                                       case 62:
                                           if (!timeout) {
-                                             _context120.next = 64;
+                                             _context120.next = 65;
                                              break;
                                           }
 
                                           if (!(timeout < 1 || timeout > 10)) {
-                                             _context120.next = 64;
+                                             _context120.next = 65;
                                              break;
                                           }
 
                                           throw new ValidationError('Timeout must range from 1 to 10 seconds: ' + timeout);
 
-                                       case 64:
+                                       case 65:
                                           multi = _this18.redis.multi();
 
                                           multi.sadd(_this18.adminKey('keyspaces'), keyspace);
@@ -5956,21 +6016,21 @@ var rquery = function () {
                                           if (command && command.access === 'admin') {
                                              multi.hset(accountKey, 'admined', time);
                                           }
-                                          _context120.next = 70;
+                                          _context120.next = 71;
                                           return command.handleReq(req, res, reqx, multi);
 
-                                       case 70:
+                                       case 71:
                                           result = _context120.sent;
 
                                           if (!(result !== undefined)) {
-                                             _context120.next = 74;
+                                             _context120.next = 75;
                                              break;
                                           }
 
-                                          _context120.next = 74;
+                                          _context120.next = 75;
                                           return Result.sendResult(command, req, res, reqx, result);
 
-                                       case 74:
+                                       case 75:
                                           if (key) {
                                              assert(reqx.keyspaceKey);
                                              _expire = _this18.getKeyExpire(account);
@@ -5978,22 +6038,22 @@ var rquery = function () {
                                              multi.expire(reqx.keyspaceKey, _expire);
                                              _this18.logger.debug('expire', reqx.keyspaceKey, _expire);
                                           }
-                                          _context120.next = 77;
+                                          _context120.next = 78;
                                           return multi.execAsync();
 
-                                       case 77:
-                                          _ref72 = _context120.sent;
-                                          _ref73 = _toArray(_ref72);
-                                          expire = _ref73;
+                                       case 78:
+                                          _ref74 = _context120.sent;
+                                          _ref75 = _toArray(_ref74);
+                                          expire = _ref75;
 
                                           if (expire) {
-                                             _context120.next = 82;
+                                             _context120.next = 83;
                                              break;
                                           }
 
                                           throw new ApplicationError('expire: ' + reqx.keyspaceKey);
 
-                                       case 82:
+                                       case 83:
                                        case 'end':
                                           return _context120.stop();
                                     }
@@ -6045,11 +6105,11 @@ var rquery = function () {
    }, {
       key: 'migrateKeyspace',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee122(_ref74) {
-            var account = _ref74.account;
-            var keyspace = _ref74.keyspace;
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee122(_ref76) {
+            var account = _ref76.account;
+            var keyspace = _ref76.keyspace;
 
-            var accountKey, _ref75, _ref76, accessToken, token, _ref77, _ref78, hsetnx, hdel;
+            var accountKey, _ref77, _ref78, accessToken, token, _ref79, _ref80, hsetnx, hdel;
 
             return regeneratorRuntime.wrap(function _callee122$(_context122) {
                while (1) {
@@ -6063,10 +6123,10 @@ var rquery = function () {
                         });
 
                      case 3:
-                        _ref75 = _context122.sent;
-                        _ref76 = _slicedToArray(_ref75, 2);
-                        accessToken = _ref76[0];
-                        token = _ref76[1];
+                        _ref77 = _context122.sent;
+                        _ref78 = _slicedToArray(_ref77, 2);
+                        accessToken = _ref78[0];
+                        token = _ref78[1];
 
                         if (!(!token && accessToken)) {
                            _context122.next = 20;
@@ -6080,10 +6140,10 @@ var rquery = function () {
                         });
 
                      case 10:
-                        _ref77 = _context122.sent;
-                        _ref78 = _slicedToArray(_ref77, 2);
-                        hsetnx = _ref78[0];
-                        hdel = _ref78[1];
+                        _ref79 = _context122.sent;
+                        _ref80 = _slicedToArray(_ref79, 2);
+                        hsetnx = _ref80[0];
+                        hdel = _ref80[1];
 
                         if (hsetnx) {
                            _context122.next = 18;
@@ -6179,8 +6239,8 @@ var rquery = function () {
       }
    }, {
       key: 'validateAccess',
-      value: function validateAccess(req, reqx, _ref79) {
-         var certs = _ref79.certs;
+      value: function validateAccess(req, reqx, _ref81) {
+         var certs = _ref81.certs;
          var command = reqx.command;
          var account = reqx.account;
          var keyspace = reqx.keyspace;
@@ -6274,23 +6334,23 @@ var rquery = function () {
             message: 'Cert O name mismatches account',
             hint: this.hints.registerCert
          });
-         var certRole = names.ou;
-         if (!lodash.isEmpty(roles) && !roles.includes(certRole)) throw new ValidationError({
+         var clientRole = names.ou;
+         if (!lodash.isEmpty(roles) && !roles.includes(clientRole)) throw new ValidationError({
             status: 403,
             message: 'No role access',
             hint: this.hints.registerCert
          });
          var certFingerprint = req.get('ssl_client_fingerprint');
-         var certId = [names.cn, '#', certFingerprint.slice(0, 6), ':', certFingerprint.slice(-6)].join('');
-         if (!certs.includes(certId)) {
-            this.logger.warn('validateCert', account, certRole, certId, certs);
+         var clientId = [names.cn, '#', certFingerprint.slice(0, 6), ':', certFingerprint.slice(-6)].join('');
+         if (!certs.includes(clientId)) {
+            this.logger.warn('validateCert', account, clientRole, clientId, certs);
             throw new ValidationError({
                status: 403,
                message: 'Invalid cert',
                hint: this.hints.registerCert
             });
          }
-         return { certId: certId, certRole: certRole };
+         return { clientId: clientId, clientRole: clientRole };
       }
    }, {
       key: 'keyIndex',

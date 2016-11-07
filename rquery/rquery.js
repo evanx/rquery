@@ -42,7 +42,7 @@ export default class rquery {
             url: `https://telegram.me/${this.config.adminBotName}?start`
          },
          grantCert: {
-            message: `Try "@${this.config.adminBotName} /grant certId" e.g. via https://web.telegram.org`,
+            message: `Try "@${this.config.adminBotName} /grant clientId" e.g. via https://web.telegram.org`,
             url: `https://telegram.me/${this.config.adminBotName}?start`
          },
          registerCert: {
@@ -450,19 +450,19 @@ export default class rquery {
          ]);
          return;
       }
-      const certId = match[1];
+      const clientId = match[1];
       const grantKey = this.adminKey('telegram', 'user', request.username, 'grant');
-      this.logger.info('handleTelegramGrant', grantKey, request, certId);
+      this.logger.info('handleTelegramGrant', grantKey, request, clientId);
       let [exists] = await this.redis.multiExecAsync(multi => {
          multi.exists(grantKey);
       });
       let [setex] = await this.redis.multiExecAsync(multi => {
-         this.logger.info('handleTelegramGrant setex', grantKey, certId, this.config.enrollExpire);
-         multi.setex(grantKey, this.config.enrollExpire, certId);
+         this.logger.info('handleTelegramGrant setex', grantKey, clientId, this.config.enrollExpire);
+         multi.setex(grantKey, this.config.enrollExpire, clientId);
       });
       if (setex) {
          await this.sendTelegramReply(request, 'html', [
-            `You have approved enrollment of the cert <b>${certId}</b>.`,
+            `You have approved enrollment of the cert <b>${clientId}</b>.`,
             `That identity can now enroll via ${this.config.secureHostname}/register-cert.`,
             `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.enrollExpire)}`,
             `otherwise you need to repeat this request, after it expires.`,
@@ -542,8 +542,8 @@ export default class rquery {
          return;
       }
       const account = request.username;
-      const certId = match[1];
-      if (certId === 'all') {
+      const clientId = match[1];
+      if (clientId === 'all') {
          const [del] = await this.redis.multiExecAsync(multi => {
             multi.del(this.adminKey('account', account, 'certs'));
          });
@@ -558,11 +558,11 @@ export default class rquery {
          }
       } else {
          const [srem] = await this.redis.multiExecAsync(multi => {
-            multi.srem(this.adminKey('account', account, 'certs'), certId);
+            multi.srem(this.adminKey('account', account, 'certs'), clientId);
          });
          if (srem) {
             await this.sendTelegramReply(request, 'html', [
-               `You have removed cert <b>${certId}</b>.`,
+               `You have removed cert <b>${clientId}</b>.`,
             ]);
          } else {
             await this.sendTelegramAlert(request.chatId, 'html', [
@@ -696,14 +696,14 @@ export default class rquery {
          assert.equal(hgetall.account, account, 'account');
          assert.equal(hgetall.role, role, 'role');
          assert.equal(hgetall.id, id, 'id');
-         const sessionToken = [token, this.generateTokenKey().toLowerCase()].join('_');
-         const sessionRedisKey = this.adminKey('session', sessionToken);
+         const sessionId = [token, this.generateTokenKey().toLowerCase()].join('_');
+         const sessionRedisKey = this.adminKey('session', sessionId);
          const [hmset] = await this.redis.multiExecAsync(multi => {
             multi.hmset(sessionRedisKey, {account, role, id});
             multi.expire(sessionRedisKey, this.config.sessionExpire);
             multi.del(loginKey);
          });
-         res.cookie('session', sessionToken, {maxAge: 600000, domain: 'webserva.com'});
+         res.cookie('sessionId', sessionId, {maxAge: 600000, domain: 'webserva.com'});
          res.redirect(302, '/routes');
       });
       this.addPublicCommand({
@@ -745,7 +745,7 @@ export default class rquery {
                return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
             }
             this.logger.debug('gentoken', accountKey);
-            const {certId, certRole} = this.validateCert(req, reqx, certs, account, []);
+            const {clientId, clientRole} = this.validateCert(req, reqx, certs, account, []);
             const token = this.generateTokenKey(6);
             await this.redis.setexAsync([accountKey, token].join(':'), this.config.keyExpire, token);
             return token;
@@ -896,12 +896,12 @@ export default class rquery {
          key: 'create-keyspace',
          access: 'admin'
       }, async (req, res, reqx) => {
-         const {command, time, account, keyspace, certId, certRole} = reqx;
+         const {command, time, account, keyspace, clientId, clientRole} = reqx;
          const role = req.query.role || 'admin';
-         if (role !== certRole) {
+         if (role !== clientRole) {
             throw new ValidationError({
                status: 400,
-               message: `Cert Role (OU=${certRole}) mismatch (${role})`
+               message: `Cert Role (OU=${clientRole}) mismatch (${role})`
             });
          }
          this.logger.debug('command', command.key, account, role);
@@ -935,9 +935,9 @@ export default class rquery {
                );
             }
             if (expire > this.config.keyspaceExpire)  {
-               if (certRole !== 'admin') {
+               if (clientRole !== 'admin') {
                   throw new ValidationError(
-                     `Keyspace expiry must be less than ${Seconds.toDays(this.config.keyspaceExpire)} days for cert role ${certRole}`
+                     `Keyspace expiry must be less than ${Seconds.toDays(this.config.keyspaceExpire)} days for cert role ${clientRole}`
                   );
                }
             }
@@ -1869,16 +1869,16 @@ export default class rquery {
       if (this.config.secureDomain) {
          this.addAccountCommand({
             key: 'grant-cert',
-            params: ['account', 'role', 'certId'],
+            params: ['account', 'role', 'clientId'],
             defaultParams: {
                group: 'admin'
             },
             access: 'admin'
-         }, async (req, res, {account, accountKey, time, certId}) => {
+         }, async (req, res, {account, accountKey, time, clientId}) => {
             const [cert] = await this.redis.multiExecAsync(multi => {
-               multi.hgetall(this.adminKey('account', account, 'cert', certId));
+               multi.hgetall(this.adminKey('account', account, 'cert', clientId));
             });
-            this.logger.debug('grant-cert', {certId, cert});
+            this.logger.debug('grant-cert', {clientId, cert});
             throw new ApplicationError('Unimplemented');
          });
       }
@@ -1899,7 +1899,7 @@ export default class rquery {
          const dn = req.get('ssl_client_s_dn');
          const cert = req.get('ssl_client_cert');
          const certFingerprint = req.get('ssl_client_fingerprint');
-         const certId = [this.parseDn(dn).cn, '#', certFingerprint.slice(0, 6), ':', certFingerprint.slice(-6)].join('');
+         const clientId = [this.parseDn(dn).cn, '#', certFingerprint.slice(0, 6), ':', certFingerprint.slice(-6)].join('');
          this.logger.info('createAccount dn', dn);
          if (!cert) {
             throw new ValidationError({message: 'No client cert', hint: this.hints.signup});
@@ -1919,7 +1919,7 @@ export default class rquery {
             throw {message: 'Account already exists (set)'};
          }
          const [saddCert] = await this.redis.multiExecAsync(multi => {
-            multi.sadd(this.adminKey('account', account, 'certs'), certId);
+            multi.sadd(this.adminKey('account', account, 'certs'), clientId);
          });
          if (!saddCert) {
             throw {message: 'Cert already exists'};
@@ -1950,29 +1950,47 @@ export default class rquery {
          try {
             let message = this.validatePath(req);
             if (message) throw {message};
+            const {sessionId} = req.cookies;
             const {account} = req.params;
-            const accountKey = this.adminKey('account', account);
-            const [[time], admined, certs] = await this.redis.multiExecAsync(multi => {
-               multi.time();
-               multi.hget(accountKey, 'admined');
-               multi.smembers(this.adminKey('account', account, 'certs'));
-            });
-            this.logger.debug('admin command', {account, accountKey, time, admined, certs});
-            if (!admined) {
-               //throw {message: 'Invalid account'};
-            }
-            if (lodash.isEmpty(certs)) {
-               throw {message: 'No certs'};
-            }
-            const duration = time - admined;
-            if (duration < this.config.adminLimit) {
-               return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
-            }
-            const {certId, certRole} = this.validateCert(req, reqx, certs, account, []);
-            Object.assign(reqx, {account, accountKey, time, admined, certId, certRole});
-            const result = await handleReq(req, res, reqx);
-            if (result !== undefined) {
-               await Result.sendResult(command, req, res, reqx, result);
+            if (sessionId) {
+               const [[time], session] = await this.redis.multiExecAsync(multi => {
+                  multi.time();
+                  multi.hgetall(this.adminKey('session', sessionId));
+               });
+               if (!session) {
+                  throw ValidationError('Session expired or invalid');
+               }
+               this.logger.debug('admin command', {account, time, session});
+               const {id, role} = session;
+               if (role !== 'admin') {
+                  throw ValidationError('Admin role required');
+               }
+               const [clientId, clientRole] = [id, role];
+               Object.assign(reqx, {account, accountKey, time, admined, clientId, clientRole});
+               const result = await handleReq(req, res, reqx);
+               if (result !== undefined) {
+                  await Result.sendResult(command, req, res, reqx, result);
+               }
+            } else {
+               const [[time], admined, certs] = await this.redis.multiExecAsync(multi => {
+                  multi.time();
+                  multi.hget(accountKey, 'admined');
+                  multi.smembers(this.adminKey('account', account, 'certs'));
+               });
+               this.logger.debug('admin command', {account, accountKey, time, admined, certs});
+               if (lodash.isEmpty(certs)) {
+                  throw {message: 'No certs'};
+               }
+               const duration = time - admined;
+               if (duration < this.config.adminLimit) {
+                  return `Admin command interval not elapsed: ${this.config.adminLimit}s`;
+               }
+               const {clientId, clientRole} = this.validateCert(req, reqx, certs, account, []);
+               Object.assign(reqx, {account, accountKey, time, admined, clientId, clientRole});
+               const result = await handleReq(req, res, reqx);
+               if (result !== undefined) {
+                  await Result.sendResult(command, req, res, reqx, result);
+               }
             }
          } catch (err) {
             this.sendError(req, res, err);
@@ -2162,6 +2180,7 @@ export default class rquery {
    createKeyspaceHandler(command) {
       return async (req, res) => {
          try {
+            const {sessionId} = req.cookies;
             const {account, keyspace, key, timeout} = req.params;
             assert(account, 'account');
             assert(keyspace, 'keyspace');
@@ -2436,23 +2455,23 @@ export default class rquery {
          message: 'Cert O name mismatches account',
          hint: this.hints.registerCert
       });
-      const certRole = names.ou;
-      if (!lodash.isEmpty(roles) && !roles.includes(certRole)) throw new ValidationError({
+      const clientRole = names.ou;
+      if (!lodash.isEmpty(roles) && !roles.includes(clientRole)) throw new ValidationError({
          status: 403,
          message: 'No role access',
          hint: this.hints.registerCert
       });
       const certFingerprint = req.get('ssl_client_fingerprint');
-      const certId = [names.cn, '#', certFingerprint.slice(0, 6), ':', certFingerprint.slice(-6)].join('');
-      if (!certs.includes(certId)) {
-         this.logger.warn('validateCert', account, certRole, certId, certs);
+      const clientId = [names.cn, '#', certFingerprint.slice(0, 6), ':', certFingerprint.slice(-6)].join('');
+      if (!certs.includes(clientId)) {
+         this.logger.warn('validateCert', account, clientRole, clientId, certs);
          throw new ValidationError({
             status: 403,
             message: 'Invalid cert',
             hint: this.hints.registerCert
          });
       }
-      return {certId, certRole};
+      return {clientId, clientRole};
    }
 
    keyIndex(account, keyspace) {
