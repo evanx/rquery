@@ -1874,7 +1874,7 @@ var rquery = function () {
                            return _this9.redis.multiExecAsync(function (multi) {
                               multi.hmset(sessionRedisKey, { account: account, role: role, id: id });
                               multi.expire(sessionRedisKey, _this9.config.sessionExpire);
-                              multi.del(loginKey);
+                              //multi.del(loginKey);
                            });
 
                         case 19:

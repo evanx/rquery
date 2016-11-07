@@ -693,7 +693,7 @@ export default class rquery {
          const [hmset] = await this.redis.multiExecAsync(multi => {
             multi.hmset(sessionRedisKey, {account, role, id});
             multi.expire(sessionRedisKey, this.config.sessionExpire);
-            multi.del(loginKey);
+            //multi.del(loginKey);
          });
          res.cookie('session', token, {maxAge: 600000});
          return {token, account, role, id};
