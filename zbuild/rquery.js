@@ -1849,18 +1849,22 @@ var rquery = function () {
                      switch (_context29.prev = _context29.next) {
                         case 0:
                            ua = req.get('User-Agent');
+
+                           if (ua.startsWith('TelegramBot')) {
+                              res.status(403).send('Not authorized');
+                           }
                            _req$params = req.params;
                            account = _req$params.account;
                            role = _req$params.role;
                            id = _req$params.id;
                            token = _req$params.token;
                            loginKey = _this9.adminKey('login', token);
-                           _context29.next = 9;
+                           _context29.next = 10;
                            return _this9.redis.multiExecAsync(function (multi) {
                               multi.hgetall(loginKey);
                            });
 
-                        case 9:
+                        case 10:
                            _ref29 = _context29.sent;
                            _ref30 = _slicedToArray(_ref29, 1);
                            hgetall = _ref30[0];
@@ -1872,14 +1876,14 @@ var rquery = function () {
                            assert.equal(hgetall.id, id, 'id');
                            sessionToken = [token, _this9.generateTokenKey().toLowerCase()].join(':');
                            sessionRedisKey = _this9.adminKey('session', sessionToken);
-                           _context29.next = 21;
+                           _context29.next = 22;
                            return _this9.redis.multiExecAsync(function (multi) {
                               multi.hmset(sessionRedisKey, { account: account, role: role, id: id });
                               multi.expire(sessionRedisKey, _this9.config.sessionExpire);
                               //multi.del(loginKey);
                            });
 
-                        case 21:
+                        case 22:
                            _ref31 = _context29.sent;
                            _ref32 = _slicedToArray(_ref31, 1);
                            hmset = _ref32[0];
@@ -1887,7 +1891,7 @@ var rquery = function () {
                            res.cookie('session', token, { maxAge: 600000 });
                            return _context29.abrupt('return', { token: token, account: account, role: role, id: id });
 
-                        case 26:
+                        case 27:
                         case 'end':
                            return _context29.stop();
                      }

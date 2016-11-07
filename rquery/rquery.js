@@ -680,6 +680,9 @@ export default class rquery {
          format: 'json'
       }, async (req, res) => {
          const ua = req.get('User-Agent');
+         if (ua.startsWith('TelegramBot')) {
+            res.status(403).send('Not authorized');
+         }
          const {account, role, id, token} = req.params;
          const loginKey = this.adminKey('login', token);
          const [hgetall] = await this.redis.multiExecAsync(multi => {
