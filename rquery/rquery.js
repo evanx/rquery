@@ -684,14 +684,15 @@ export default class rquery {
          const [hgetall] = await this.redis.multiExecAsync(multi => {
             multi.hgetall(loginKey);
          });
-         assert(hgetall, 'login:' + token);
+         assert(hgetall, loginKey);
          assert.equal(hgetall.account, account, 'account');
          assert.equal(hgetall.role, role, 'role');
          assert.equal(hgetall.id, id, 'id');
-         const sessionKey = this.adminKey('session', token);
+         const sessionToken = [token, this.generateTokenKey().toLowerCase()].join(':');
+         const sessionRedisKey = this.adminKey('session', sessionToken);
          const [hmset] = await this.redis.multiExecAsync(multi => {
-            multi.hmset(sessionKey, {account, role, id});
-            multi.expire(sessionKey, this.config.sessionExpire);
+            multi.hmset(sessionRedisKey, {account, role, id});
+            multi.expire(sessionRedisKey, this.config.sessionExpire);
             multi.del(loginKey);
          });
          res.cookie('session', token, {maxAge: 600000});
