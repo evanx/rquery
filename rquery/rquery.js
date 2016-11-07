@@ -704,7 +704,8 @@ export default class rquery {
             multi.del(loginKey);
          });
          res.cookie('session', sessionToken, {maxAge: 600000});
-         return {sessionToken, account, role, id};
+         res.redirect(302, '/routes');
+         //return {sessionToken, account, role, id};
       });
       this.addPublicCommand({
          key: 'genkey-otp',

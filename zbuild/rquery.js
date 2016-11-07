@@ -1903,7 +1903,8 @@ var rquery = function () {
                            hmset = _ref32[0];
 
                            res.cookie('session', sessionToken, { maxAge: 600000 });
-                           return _context29.abrupt('return', { sessionToken: sessionToken, account: account, role: role, id: id });
+                           res.redirect(302, '/routes');
+                           //return {sessionToken, account, role, id};
 
                         case 30:
                         case 'end':
