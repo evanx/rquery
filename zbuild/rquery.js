@@ -1876,20 +1876,28 @@ var rquery = function () {
                            hgetall = _ref30[0];
 
                            _this9.logger.debug('login', ua, loginKey, hgetall);
-                           assert(hgetall, loginKey);
+
+                           if (hgetall) {
+                              _context29.next = 18;
+                              break;
+                           }
+
+                           throw new ValidationError('Already logged in, or invalid');
+
+                        case 18:
                            assert.equal(hgetall.account, account, 'account');
                            assert.equal(hgetall.role, role, 'role');
                            assert.equal(hgetall.id, id, 'id');
                            sessionToken = [token, _this9.generateTokenKey().toLowerCase()].join(':');
                            sessionRedisKey = _this9.adminKey('session', sessionToken);
-                           _context29.next = 24;
+                           _context29.next = 25;
                            return _this9.redis.multiExecAsync(function (multi) {
                               multi.hmset(sessionRedisKey, { account: account, role: role, id: id });
                               multi.expire(sessionRedisKey, _this9.config.sessionExpire);
                               multi.del(loginKey);
                            });
 
-                        case 24:
+                        case 25:
                            _ref31 = _context29.sent;
                            _ref32 = _slicedToArray(_ref31, 1);
                            hmset = _ref32[0];
@@ -1897,7 +1905,7 @@ var rquery = function () {
                            res.cookie('session', sessionToken, { maxAge: 600000 });
                            return _context29.abrupt('return', { sessionToken: sessionToken, account: account, role: role, id: id });
 
-                        case 29:
+                        case 30:
                         case 'end':
                            return _context29.stop();
                      }

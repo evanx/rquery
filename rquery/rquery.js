@@ -690,7 +690,9 @@ export default class rquery {
             multi.hgetall(loginKey);
          });
          this.logger.debug('login', ua, loginKey, hgetall);
-         assert(hgetall, loginKey);
+         if (!hgetall) {
+            throw new ValidationError('Already logged in, or invalid');
+         }
          assert.equal(hgetall.account, account, 'account');
          assert.equal(hgetall.role, role, 'role');
          assert.equal(hgetall.id, id, 'id');
