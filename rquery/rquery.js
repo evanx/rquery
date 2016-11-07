@@ -498,7 +498,7 @@ export default class rquery {
       });
       if (hmset) {
          await this.sendTelegramReply(request, 'html', [
-            `You can login via https://${[this.config.openHostname, 'login', account, role, id, token].join('/')}`,
+            `You can login via https://${[this.config.openHostname, 'login', account, role, id, token].join('/')}.`,
             `This must be done in the next ${Millis.formatVerboseDuration(1000*this.config.loginExpire)}`,
             `otherwise you need to repeat this request, after it expires.`
          ]);
@@ -699,7 +699,7 @@ export default class rquery {
          const [hmset] = await this.redis.multiExecAsync(multi => {
             multi.hmset(sessionRedisKey, {account, role, id});
             multi.expire(sessionRedisKey, this.config.sessionExpire);
-            //multi.del(loginKey);
+            multi.del(loginKey);
          });
          res.cookie('session', sessionToken, {maxAge: 600000});
          return {sessionToken, account, role, id};

@@ -1263,7 +1263,7 @@ var rquery = function () {
                         }
 
                         _context15.next = 21;
-                        return this.sendTelegramReply(request, 'html', ['You can login via https://' + [this.config.openHostname, 'login', account, role, id, token].join('/'), 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.loginExpire), 'otherwise you need to repeat this request, after it expires.']);
+                        return this.sendTelegramReply(request, 'html', ['You can login via https://' + [this.config.openHostname, 'login', account, role, id, token].join('/') + '.', 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.loginExpire), 'otherwise you need to repeat this request, after it expires.']);
 
                      case 21:
                         _context15.next = 25;
@@ -1886,7 +1886,7 @@ var rquery = function () {
                            return _this9.redis.multiExecAsync(function (multi) {
                               multi.hmset(sessionRedisKey, { account: account, role: role, id: id });
                               multi.expire(sessionRedisKey, _this9.config.sessionExpire);
-                              //multi.del(loginKey);
+                              multi.del(loginKey);
                            });
 
                         case 24:
