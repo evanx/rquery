@@ -1894,8 +1894,8 @@ var rquery = function () {
                            _ref32 = _slicedToArray(_ref31, 1);
                            hmset = _ref32[0];
 
-                           res.cookie('session', token, { maxAge: 600000 });
-                           return _context29.abrupt('return', { token: token, account: account, role: role, id: id });
+                           res.cookie('session', sessionToken, { maxAge: 600000 });
+                           return _context29.abrupt('return', { sessionToken: sessionToken, account: account, role: role, id: id });
 
                         case 29:
                         case 'end':

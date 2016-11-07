@@ -701,8 +701,8 @@ export default class rquery {
             multi.expire(sessionRedisKey, this.config.sessionExpire);
             //multi.del(loginKey);
          });
-         res.cookie('session', token, {maxAge: 600000});
-         return {token, account, role, id};
+         res.cookie('session', sessionToken, {maxAge: 600000});
+         return {sessionToken, account, role, id};
       });
       this.addPublicCommand({
          key: 'genkey-otp',
