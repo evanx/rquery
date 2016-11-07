@@ -682,6 +682,7 @@ export default class rquery {
          const ua = req.get('User-Agent');
          if (ua.startsWith('TelegramBot')) {
             res.status(403).send('Not authorized');
+            return;
          }
          const {account, role, id, token} = req.params;
          const loginKey = this.adminKey('login', token);
