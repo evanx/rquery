@@ -1842,43 +1842,44 @@ var rquery = function () {
             format: 'json'
          }, function () {
             var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee29(req, res) {
-               var _req$params, account, role, id, token, loginKey, _ref29, _ref30, hgetall, sessionToken, sessionRedisKey, _ref31, _ref32, hmset;
+               var ua, _req$params, account, role, id, token, loginKey, _ref29, _ref30, hgetall, sessionToken, sessionRedisKey, _ref31, _ref32, hmset;
 
                return regeneratorRuntime.wrap(function _callee29$(_context29) {
                   while (1) {
                      switch (_context29.prev = _context29.next) {
                         case 0:
+                           ua = req.get('User-Agent');
                            _req$params = req.params;
                            account = _req$params.account;
                            role = _req$params.role;
                            id = _req$params.id;
                            token = _req$params.token;
                            loginKey = _this9.adminKey('login', token);
-                           _context29.next = 8;
+                           _context29.next = 9;
                            return _this9.redis.multiExecAsync(function (multi) {
                               multi.hgetall(loginKey);
                            });
 
-                        case 8:
+                        case 9:
                            _ref29 = _context29.sent;
                            _ref30 = _slicedToArray(_ref29, 1);
                            hgetall = _ref30[0];
 
-                           _this9.logger.debug('login', loginKey, hgetall);
+                           _this9.logger.debug('login', ua, loginKey, hgetall);
                            assert(hgetall, loginKey);
                            assert.equal(hgetall.account, account, 'account');
                            assert.equal(hgetall.role, role, 'role');
                            assert.equal(hgetall.id, id, 'id');
                            sessionToken = [token, _this9.generateTokenKey().toLowerCase()].join(':');
                            sessionRedisKey = _this9.adminKey('session', sessionToken);
-                           _context29.next = 20;
+                           _context29.next = 21;
                            return _this9.redis.multiExecAsync(function (multi) {
                               multi.hmset(sessionRedisKey, { account: account, role: role, id: id });
                               multi.expire(sessionRedisKey, _this9.config.sessionExpire);
                               //multi.del(loginKey);
                            });
 
-                        case 20:
+                        case 21:
                            _ref31 = _context29.sent;
                            _ref32 = _slicedToArray(_ref31, 1);
                            hmset = _ref32[0];
@@ -1886,7 +1887,7 @@ var rquery = function () {
                            res.cookie('session', token, { maxAge: 600000 });
                            return _context29.abrupt('return', { token: token, account: account, role: role, id: id });
 
-                        case 25:
+                        case 26:
                         case 'end':
                            return _context29.stop();
                      }

@@ -679,12 +679,13 @@ export default class rquery {
          params: ['account', 'role', 'id', 'token'],
          format: 'json'
       }, async (req, res) => {
+         const ua = req.get('User-Agent');
          const {account, role, id, token} = req.params;
          const loginKey = this.adminKey('login', token);
          const [hgetall] = await this.redis.multiExecAsync(multi => {
             multi.hgetall(loginKey);
          });
-         this.logger.debug('login', loginKey, hgetall);
+         this.logger.debug('login', ua, loginKey, hgetall);
          assert(hgetall, loginKey);
          assert.equal(hgetall.account, account, 'account');
          assert.equal(hgetall.role, role, 'role');
