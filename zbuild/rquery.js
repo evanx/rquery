@@ -1864,14 +1864,13 @@ var rquery = function () {
                            _ref30 = _slicedToArray(_ref29, 1);
                            hgetall = _ref30[0];
 
+                           _this9.logger.debug('login', loginKey, hgetall);
                            assert(hgetall, loginKey);
                            assert.equal(hgetall.account, account, 'account');
                            assert.equal(hgetall.role, role, 'role');
                            assert.equal(hgetall.id, id, 'id');
                            sessionToken = [token, _this9.generateTokenKey().toLowerCase()].join(':');
                            sessionRedisKey = _this9.adminKey('session', sessionToken);
-
-                           _this9.logger.debug('login', loginKey, hgetall, sessionRedisKey);
                            _context29.next = 20;
                            return _this9.redis.multiExecAsync(function (multi) {
                               multi.hmset(sessionRedisKey, { account: account, role: role, id: id });
