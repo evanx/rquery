@@ -696,7 +696,7 @@ export default class rquery {
          assert.equal(hgetall.account, account, 'account');
          assert.equal(hgetall.role, role, 'role');
          assert.equal(hgetall.id, id, 'id');
-         const sessionToken = [token, this.generateTokenKey().toLowerCase()].join(':');
+         const sessionToken = [token, this.generateTokenKey().toLowerCase()].join('_');
          const sessionRedisKey = this.adminKey('session', sessionToken);
          const [hmset] = await this.redis.multiExecAsync(multi => {
             multi.hmset(sessionRedisKey, {account, role, id});

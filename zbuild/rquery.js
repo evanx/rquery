@@ -1888,7 +1888,7 @@ var rquery = function () {
                            assert.equal(hgetall.account, account, 'account');
                            assert.equal(hgetall.role, role, 'role');
                            assert.equal(hgetall.id, id, 'id');
-                           sessionToken = [token, _this9.generateTokenKey().toLowerCase()].join(':');
+                           sessionToken = [token, _this9.generateTokenKey().toLowerCase()].join('_');
                            sessionRedisKey = _this9.adminKey('session', sessionToken);
                            _context29.next = 25;
                            return _this9.redis.multiExecAsync(function (multi) {
