@@ -50,14 +50,14 @@ module.exports = {
       }
       const {sessionId} = req.cookies;
       if (!account && sessionId) {
-         const [[time], session] = await this.redis.multiExecAsync(multi => {
+         const [[time], session] = await rquery.redis.multiExecAsync(multi => {
             multi.time();
-            multi.hgetall(this.adminKey('session', sessionId));
+            multi.hgetall(rquery.adminKey('session', sessionId));
          });
          if (!session) {
             throw ValidationError('Session expired or invalid');
          }
-         this.logger.debug('admin command', {account, time, session});
+         logger.debug('admin command', {account, time, session});
          const {id, role} = session;
          if (role !== 'admin') {
             throw ValidationError('Admin role required');

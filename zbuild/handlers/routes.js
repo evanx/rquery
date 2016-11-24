@@ -105,9 +105,9 @@ module.exports = {
                      }
 
                      _context2.next = 14;
-                     return undefined.redis.multiExecAsync(function (multi) {
+                     return rquery.redis.multiExecAsync(function (multi) {
                         multi.time();
-                        multi.hgetall(undefined.adminKey('session', sessionId));
+                        multi.hgetall(rquery.adminKey('session', sessionId));
                      });
 
                   case 14:
@@ -125,7 +125,7 @@ module.exports = {
                      throw ValidationError('Session expired or invalid');
 
                   case 21:
-                     undefined.logger.debug('admin command', { account: account, time: time, session: session });
+                     logger.debug('admin command', { account: account, time: time, session: session });
                      id = session.id;
                      role = session.role;
 
