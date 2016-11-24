@@ -4,7 +4,7 @@ module.exports = {
       rquery: {
          redisUrl: 'redis://localhost:6379/1',
          redisKeyspace: 'rquery',
-         openHostname: 'open.webserva.com',
+         openHostname: 'webserva.com',
          secureHostname: 'secure.webserva.com',
          hostDomain: 'secure.webserva.com',
          hostUrl: 'https://secure.webserva.com',
