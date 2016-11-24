@@ -2,6 +2,8 @@
 
 var _bluebird = require('bluebird');
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _Page = require('../html/Page');
 
 var _Page2 = _interopRequireDefault(_Page);
@@ -56,7 +58,8 @@ module.exports = {
    }(),
    handleReq: function () {
       var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee2(req, res, reqx) {
-         var hostUrl, routes, accountOnlyRoutes, account, dn, names, $, messages;
+         var hostUrl, routes, accountOnlyRoutes, account, dn, names, sessionId, _ref, _ref2, _ref2$, time, session, id, role, $, messages;
+
          return regeneratorRuntime.wrap(function _callee2$(_context2) {
             while (1) {
                switch (_context2.prev = _context2.next) {
@@ -94,6 +97,49 @@ module.exports = {
                      } catch (err) {
                         logger.error('cert', err);
                      }
+                     sessionId = req.cookies.sessionId;
+
+                     if (!(!account && sessionId)) {
+                        _context2.next = 27;
+                        break;
+                     }
+
+                     _context2.next = 14;
+                     return undefined.redis.multiExecAsync(function (multi) {
+                        multi.time();
+                        multi.hgetall(undefined.adminKey('session', sessionId));
+                     });
+
+                  case 14:
+                     _ref = _context2.sent;
+                     _ref2 = _slicedToArray(_ref, 2);
+                     _ref2$ = _slicedToArray(_ref2[0], 1);
+                     time = _ref2$[0];
+                     session = _ref2[1];
+
+                     if (session) {
+                        _context2.next = 21;
+                        break;
+                     }
+
+                     throw ValidationError('Session expired or invalid');
+
+                  case 21:
+                     undefined.logger.debug('admin command', { account: account, time: time, session: session });
+                     id = session.id;
+                     role = session.role;
+
+                     if (!(role !== 'admin')) {
+                        _context2.next = 26;
+                        break;
+                     }
+
+                     throw ValidationError('Admin role required');
+
+                  case 26:
+                     account = session.account;
+
+                  case 27:
                      $ = rquery.getContentType(req) === 'html' ? He : Hp;
                      messages = account ? [$.a({ href: '/keyspaces/' + account }, 'List the keyspaces on your account')] : [$.a({ href: '/about' }, 'About ' + rquery.config.serviceLabel), $.a({ href: '/create-ephemeral' }, 'Create an ephemeral keyspace via /create-ephemeral'), $.a({
                         target: '_blank',
@@ -145,7 +191,7 @@ module.exports = {
                         })
                      });
 
-                  case 13:
+                  case 30:
                   case 'end':
                      return _context2.stop();
                }

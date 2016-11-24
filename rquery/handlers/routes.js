@@ -48,6 +48,22 @@ module.exports = {
       } catch (err) {
          logger.error('cert', err);
       }
+      const {sessionId} = req.cookies;
+      if (!account && sessionId) {
+         const [[time], session] = await this.redis.multiExecAsync(multi => {
+            multi.time();
+            multi.hgetall(this.adminKey('session', sessionId));
+         });
+         if (!session) {
+            throw ValidationError('Session expired or invalid');
+         }
+         this.logger.debug('admin command', {account, time, session});
+         const {id, role} = session;
+         if (role !== 'admin') {
+            throw ValidationError('Admin role required');
+         }
+         account = session.account;
+      }
       const $ = rquery.getContentType(req) === 'html'? He : Hp;
       const messages = account
       ? [
