@@ -1953,7 +1953,7 @@ export default class rquery {
             const {sessionId} = req.cookies;
             if (sessionId) {
                const [session] = await this.redis.multiExecAsync(multi => {
-                  multi.time();
+                  multi.hgetall(this.adminKey('session', sessionId));
                });
                if (!session) {
                   throw ValidationError('Session expired or invalid');
