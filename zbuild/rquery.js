@@ -5310,7 +5310,7 @@ var rquery = function () {
                         }
                         this.expressApp.get([this.config.location].concat(_toConsumableArray(uri)).join('/'), function () {
                            var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee117(req, res) {
-                              var reqx, _ret2;
+                              var reqx, message, sessionId, _ret3;
 
                               return regeneratorRuntime.wrap(function _callee117$(_context117) {
                                  while (1) {
@@ -5318,60 +5318,69 @@ var rquery = function () {
                                        case 0:
                                           reqx = { command: command };
                                           _context117.prev = 1;
-                                          return _context117.delegateYield(regeneratorRuntime.mark(function _callee116() {
-                                             var message, sessionId, _ref68, _ref69, _ref69$, time, session, account, id, role, accountKey, clientId, clientRole, result, _ret3;
+                                          message = _this16.validatePath(req);
 
-                                             return regeneratorRuntime.wrap(function _callee116$(_context116) {
+                                          if (!message) {
+                                             _context117.next = 5;
+                                             break;
+                                          }
+
+                                          throw { message: message };
+
+                                       case 5:
+                                          sessionId = req.cookies.sessionId;
+
+                                          if (!sessionId) {
+                                             _context117.next = 10;
+                                             break;
+                                          }
+
+                                          return _context117.delegateYield(regeneratorRuntime.mark(function _callee115() {
+                                             var _ref68, _ref69, session, account, id, role, accountKey, _ref70, _ref71, _ref71$, time, admined, clientId, clientRole, result;
+
+                                             return regeneratorRuntime.wrap(function _callee115$(_context115) {
                                                 while (1) {
-                                                   switch (_context116.prev = _context116.next) {
+                                                   switch (_context115.prev = _context115.next) {
                                                       case 0:
-                                                         message = _this16.validatePath(req);
-
-                                                         if (!message) {
-                                                            _context116.next = 3;
-                                                            break;
-                                                         }
-
-                                                         throw { message: message };
-
-                                                      case 3:
-                                                         sessionId = req.cookies.sessionId;
-
-                                                         if (!sessionId) {
-                                                            _context116.next = 32;
-                                                            break;
-                                                         }
-
-                                                         _context116.next = 7;
+                                                         _context115.next = 2;
                                                          return _this16.redis.multiExecAsync(function (multi) {
                                                             multi.time();
-                                                            multi.hgetall(_this16.adminKey('session', sessionId));
                                                          });
 
-                                                      case 7:
-                                                         _ref68 = _context116.sent;
-                                                         _ref69 = _slicedToArray(_ref68, 2);
-                                                         _ref69$ = _slicedToArray(_ref69[0], 1);
-                                                         time = _ref69$[0];
-                                                         session = _ref69[1];
+                                                      case 2:
+                                                         _ref68 = _context115.sent;
+                                                         _ref69 = _slicedToArray(_ref68, 1);
+                                                         session = _ref69[0];
 
                                                          if (session) {
-                                                            _context116.next = 14;
+                                                            _context115.next = 7;
                                                             break;
                                                          }
 
                                                          throw ValidationError('Session expired or invalid');
 
-                                                      case 14:
+                                                      case 7:
                                                          account = session.account;
                                                          id = session.id;
                                                          role = session.role;
                                                          accountKey = _this16.accountKey(account);
+                                                         _context115.next = 13;
+                                                         return _this16.redis.multiExecAsync(function (multi) {
+                                                            multi.time();
+                                                            multi.hget(accountKey, 'admined');
+                                                         });
+
+                                                      case 13:
+                                                         _ref70 = _context115.sent;
+                                                         _ref71 = _slicedToArray(_ref70, 2);
+                                                         _ref71$ = _slicedToArray(_ref71[0], 1);
+                                                         time = _ref71$[0];
+                                                         admined = _ref71[1];
 
                                                          _this16.logger.debug('admin command', { account: account, time: time, session: session });
 
                                                          if (!(role !== 'admin')) {
-                                                            _context116.next = 21;
+                                                            _context115.next = 21;
                                                             break;
                                                          }
 
@@ -5382,144 +5391,132 @@ var rquery = function () {
                                                          clientRole = role;
 
                                                          Object.assign(reqx, { account: account, accountKey: accountKey, time: time, admined: admined, clientId: clientId, clientRole: clientRole });
-                                                         _context116.next = 26;
+                                                         _context115.next = 26;
                                                          return handleReq(req, res, reqx);
 
                                                       case 26:
-                                                         result = _context116.sent;
+                                                         result = _context115.sent;
 
                                                          if (!(result !== undefined)) {
-                                                            _context116.next = 30;
+                                                            _context115.next = 30;
                                                             break;
                                                          }
 
-                                                         _context116.next = 30;
+                                                         _context115.next = 30;
                                                          return Result.sendResult(command, req, res, reqx, result);
 
                                                       case 30:
-                                                         _context116.next = 36;
-                                                         break;
+                                                      case 'end':
+                                                         return _context115.stop();
+                                                   }
+                                                }
+                                             }, _callee115, _this16);
+                                          })(), 't0', 8);
 
-                                                      case 32:
-                                                         return _context116.delegateYield(regeneratorRuntime.mark(function _callee115() {
-                                                            var account, accountKey, _ref70, _ref71, _ref71$, time, admined, certs, duration, _validateCert2, clientId, clientRole, result;
+                                       case 8:
+                                          _context117.next = 14;
+                                          break;
 
-                                                            return regeneratorRuntime.wrap(function _callee115$(_context115) {
-                                                               while (1) {
-                                                                  switch (_context115.prev = _context115.next) {
-                                                                     case 0:
-                                                                        account = req.params.account;
-                                                                        accountKey = _this16.accountKey(account);
-                                                                        _context115.next = 4;
-                                                                        return _this16.redis.multiExecAsync(function (multi) {
-                                                                           multi.time();
-                                                                           multi.hget(accountKey, 'admined');
-                                                                           multi.smembers(_this16.adminKey('account', account, 'certs'));
-                                                                        });
+                                       case 10:
+                                          return _context117.delegateYield(regeneratorRuntime.mark(function _callee116() {
+                                             var account, accountKey, _ref72, _ref73, _ref73$, time, admined, certs, duration, _validateCert2, clientId, clientRole, result;
 
-                                                                     case 4:
-                                                                        _ref70 = _context115.sent;
-                                                                        _ref71 = _slicedToArray(_ref70, 3);
-                                                                        _ref71$ = _slicedToArray(_ref71[0], 1);
-                                                                        time = _ref71$[0];
-                                                                        admined = _ref71[1];
-                                                                        certs = _ref71[2];
+                                             return regeneratorRuntime.wrap(function _callee116$(_context116) {
+                                                while (1) {
+                                                   switch (_context116.prev = _context116.next) {
+                                                      case 0:
+                                                         account = req.params.account;
+                                                         accountKey = _this16.accountKey(account);
+                                                         _context116.next = 4;
+                                                         return _this16.redis.multiExecAsync(function (multi) {
+                                                            multi.time();
+                                                            multi.hget(accountKey, 'admined');
+                                                            multi.smembers(_this16.adminKey('account', account, 'certs'));
+                                                         });
 
-                                                                        _this16.logger.debug('admin command', { account: account, accountKey: accountKey, time: time, admined: admined, certs: certs });
+                                                      case 4:
+                                                         _ref72 = _context116.sent;
+                                                         _ref73 = _slicedToArray(_ref72, 3);
+                                                         _ref73$ = _slicedToArray(_ref73[0], 1);
+                                                         time = _ref73$[0];
+                                                         admined = _ref73[1];
+                                                         certs = _ref73[2];
 
-                                                                        if (!lodash.isEmpty(certs)) {
-                                                                           _context115.next = 13;
-                                                                           break;
-                                                                        }
+                                                         _this16.logger.debug('admin command', { account: account, accountKey: accountKey, time: time, admined: admined, certs: certs });
 
-                                                                        throw { message: 'No certs' };
-
-                                                                     case 13:
-                                                                        duration = time - admined;
-
-                                                                        if (!(duration < _this16.config.adminLimit)) {
-                                                                           _context115.next = 16;
-                                                                           break;
-                                                                        }
-
-                                                                        return _context115.abrupt('return', {
-                                                                           v: {
-                                                                              v: 'Admin command interval not elapsed: ' + _this16.config.adminLimit + 's'
-                                                                           }
-                                                                        });
-
-                                                                     case 16:
-                                                                        _validateCert2 = _this16.validateCert(req, reqx, certs, account, []);
-                                                                        clientId = _validateCert2.clientId;
-                                                                        clientRole = _validateCert2.clientRole;
-
-                                                                        Object.assign(reqx, { account: account, accountKey: accountKey, time: time, admined: admined, clientId: clientId, clientRole: clientRole });
-                                                                        _context115.next = 22;
-                                                                        return handleReq(req, res, reqx);
-
-                                                                     case 22:
-                                                                        result = _context115.sent;
-
-                                                                        if (!(result !== undefined)) {
-                                                                           _context115.next = 26;
-                                                                           break;
-                                                                        }
-
-                                                                        _context115.next = 26;
-                                                                        return Result.sendResult(command, req, res, reqx, result);
-
-                                                                     case 26:
-                                                                     case 'end':
-                                                                        return _context115.stop();
-                                                                  }
-                                                               }
-                                                            }, _callee115, _this16);
-                                                         })(), 't0', 33);
-
-                                                      case 33:
-                                                         _ret3 = _context116.t0;
-
-                                                         if (!((typeof _ret3 === 'undefined' ? 'undefined' : _typeof(_ret3)) === "object")) {
-                                                            _context116.next = 36;
+                                                         if (!lodash.isEmpty(certs)) {
+                                                            _context116.next = 13;
                                                             break;
                                                          }
 
-                                                         return _context116.abrupt('return', _ret3.v);
+                                                         throw { message: 'No certs' };
 
-                                                      case 36:
+                                                      case 13:
+                                                         duration = time - admined;
+
+                                                         if (!(duration < _this16.config.adminLimit)) {
+                                                            _context116.next = 16;
+                                                            break;
+                                                         }
+
+                                                         return _context116.abrupt('return', {
+                                                            v: 'Admin command interval not elapsed: ' + _this16.config.adminLimit + 's'
+                                                         });
+
+                                                      case 16:
+                                                         _validateCert2 = _this16.validateCert(req, reqx, certs, account, []);
+                                                         clientId = _validateCert2.clientId;
+                                                         clientRole = _validateCert2.clientRole;
+
+                                                         Object.assign(reqx, { account: account, accountKey: accountKey, time: time, admined: admined, clientId: clientId, clientRole: clientRole });
+                                                         _context116.next = 22;
+                                                         return handleReq(req, res, reqx);
+
+                                                      case 22:
+                                                         result = _context116.sent;
+
+                                                         if (!(result !== undefined)) {
+                                                            _context116.next = 26;
+                                                            break;
+                                                         }
+
+                                                         _context116.next = 26;
+                                                         return Result.sendResult(command, req, res, reqx, result);
+
+                                                      case 26:
                                                       case 'end':
                                                          return _context116.stop();
                                                    }
                                                 }
                                              }, _callee116, _this16);
-                                          })(), 't0', 3);
+                                          })(), 't1', 11);
 
-                                       case 3:
-                                          _ret2 = _context117.t0;
+                                       case 11:
+                                          _ret3 = _context117.t1;
 
-                                          if (!((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object")) {
-                                             _context117.next = 6;
+                                          if (!((typeof _ret3 === 'undefined' ? 'undefined' : _typeof(_ret3)) === "object")) {
+                                             _context117.next = 14;
                                              break;
                                           }
 
-                                          return _context117.abrupt('return', _ret2.v);
+                                          return _context117.abrupt('return', _ret3.v);
 
-                                       case 6:
-                                          _context117.next = 11;
+                                       case 14:
+                                          _context117.next = 19;
                                           break;
 
-                                       case 8:
-                                          _context117.prev = 8;
-                                          _context117.t1 = _context117['catch'](1);
+                                       case 16:
+                                          _context117.prev = 16;
+                                          _context117.t2 = _context117['catch'](1);
 
-                                          _this16.sendError(req, res, _context117.t1);
+                                          _this16.sendError(req, res, _context117.t2);
 
-                                       case 11:
+                                       case 19:
                                        case 'end':
                                           return _context117.stop();
                                     }
                                  }
-                              }, _callee117, _this16, [[1, 8]]);
+                              }, _callee117, _this16, [[1, 16]]);
                            }));
                            return function (_x298, _x299) {
                               return ref.apply(this, arguments);
@@ -5862,7 +5859,7 @@ var rquery = function () {
                         case 0:
                            _context122.prev = 0;
                            return _context122.delegateYield(regeneratorRuntime.mark(function _callee121() {
-                              var sessionId, _req$params12, account, keyspace, key, timeout, accountKey, accountKeyspace, helpPath, reqx, v, isSecureAccount, _ref72, _ref73, _ref73$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref74, _ref75, expire;
+                              var sessionId, _req$params12, account, keyspace, key, timeout, accountKey, accountKeyspace, helpPath, reqx, v, isSecureAccount, _ref74, _ref75, _ref75$, time, registered, admined, accessed, certs, hostname, hostHashes, multi, result, _expire, _ref76, _ref77, expire;
 
                               return regeneratorRuntime.wrap(function _callee121$(_context121) {
                                  while (1) {
@@ -5957,14 +5954,14 @@ var rquery = function () {
                                           });
 
                                        case 34:
-                                          _ref72 = _context121.sent;
-                                          _ref73 = _slicedToArray(_ref72, 5);
-                                          _ref73$ = _slicedToArray(_ref73[0], 1);
-                                          time = _ref73$[0];
-                                          registered = _ref73[1];
-                                          admined = _ref73[2];
-                                          accessed = _ref73[3];
-                                          certs = _ref73[4];
+                                          _ref74 = _context121.sent;
+                                          _ref75 = _slicedToArray(_ref74, 5);
+                                          _ref75$ = _slicedToArray(_ref75[0], 1);
+                                          time = _ref75$[0];
+                                          registered = _ref75[1];
+                                          admined = _ref75[2];
+                                          accessed = _ref75[3];
+                                          certs = _ref75[4];
 
                                           Objects.kvs({ time: time, registered: registered, admined: admined, accessed: accessed }).forEach(function (kv) {
                                              reqx[kv.key] = parseInt(kv.value);
@@ -6073,9 +6070,9 @@ var rquery = function () {
                                           return multi.execAsync();
 
                                        case 78:
-                                          _ref74 = _context121.sent;
-                                          _ref75 = _toArray(_ref74);
-                                          expire = _ref75;
+                                          _ref76 = _context121.sent;
+                                          _ref77 = _toArray(_ref76);
+                                          expire = _ref77;
 
                                           if (expire) {
                                              _context121.next = 83;
@@ -6136,11 +6133,11 @@ var rquery = function () {
    }, {
       key: 'migrateKeyspace',
       value: function () {
-         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee123(_ref76) {
-            var account = _ref76.account;
-            var keyspace = _ref76.keyspace;
+         var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee123(_ref78) {
+            var account = _ref78.account;
+            var keyspace = _ref78.keyspace;
 
-            var accountKey, _ref77, _ref78, accessToken, token, _ref79, _ref80, hsetnx, hdel;
+            var accountKey, _ref79, _ref80, accessToken, token, _ref81, _ref82, hsetnx, hdel;
 
             return regeneratorRuntime.wrap(function _callee123$(_context123) {
                while (1) {
@@ -6154,10 +6151,10 @@ var rquery = function () {
                         });
 
                      case 3:
-                        _ref77 = _context123.sent;
-                        _ref78 = _slicedToArray(_ref77, 2);
-                        accessToken = _ref78[0];
-                        token = _ref78[1];
+                        _ref79 = _context123.sent;
+                        _ref80 = _slicedToArray(_ref79, 2);
+                        accessToken = _ref80[0];
+                        token = _ref80[1];
 
                         if (!(!token && accessToken)) {
                            _context123.next = 20;
@@ -6171,10 +6168,10 @@ var rquery = function () {
                         });
 
                      case 10:
-                        _ref79 = _context123.sent;
-                        _ref80 = _slicedToArray(_ref79, 2);
-                        hsetnx = _ref80[0];
-                        hdel = _ref80[1];
+                        _ref81 = _context123.sent;
+                        _ref82 = _slicedToArray(_ref81, 2);
+                        hsetnx = _ref82[0];
+                        hdel = _ref82[1];
 
                         if (hsetnx) {
                            _context123.next = 18;
@@ -6270,8 +6267,8 @@ var rquery = function () {
       }
    }, {
       key: 'validateAccess',
-      value: function validateAccess(req, reqx, _ref81) {
-         var certs = _ref81.certs;
+      value: function validateAccess(req, reqx, _ref83) {
+         var certs = _ref83.certs;
          var command = reqx.command;
          var account = reqx.account;
          var keyspace = reqx.keyspace;
