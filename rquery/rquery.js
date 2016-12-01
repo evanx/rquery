@@ -1951,7 +1951,6 @@ export default class rquery {
             let message = this.validatePath(req);
             if (message) throw {message};
             const {sessionId} = req.cookies;
-            const {account} = req.params;
             if (sessionId) {
                const [[time], session] = await this.redis.multiExecAsync(multi => {
                   multi.time();
@@ -1960,8 +1959,9 @@ export default class rquery {
                if (!session) {
                   throw ValidationError('Session expired or invalid');
                }
+               const {account, id, role} = session;
+               const accountKey = this.accountKey(account);
                this.logger.debug('admin command', {account, time, session});
-               const {id, role} = session;
                if (role !== 'admin') {
                   throw ValidationError('Admin role required');
                }
@@ -1972,6 +1972,8 @@ export default class rquery {
                   await Result.sendResult(command, req, res, reqx, result);
                }
             } else {
+               const {account} = req.params;
+               const accountKey = this.accountKey(account);
                const [[time], admined, certs] = await this.redis.multiExecAsync(multi => {
                   multi.time();
                   multi.hget(accountKey, 'admined');
