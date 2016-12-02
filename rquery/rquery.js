@@ -2221,19 +2221,20 @@ export default class rquery {
                }
             }
             const isSecureAccount = !/^(pub|hub)$/.test(account);
-            const [[time], registered, admined, accessed, certs] = await this.redis.multiExecAsync(multi => {
+            const [[time], registered, admined, accessed, certs, session] = await this.redis.multiExecAsync(multi => {
                multi.time();
                multi.hget(accountKey, 'registered');
                multi.hget(accountKey, 'admined');
                multi.hget(accountKey, 'accessed');
-               if (isSecureAccount) {
-                  multi.smembers(this.adminKey('account', account, 'certs'));
+               multi.smembers(this.adminKey('account', account, 'certs'));
+               if (sessionId) {
+                  multi.hgetall(this.adminKey('session', sessionId));
                }
             });
             Objects.kvs({time, registered, admined, accessed}).forEach(kv => {
                reqx[kv.key] = parseInt(kv.value);
             });
-            this.validateAccess(req, reqx, {certs});
+            this.validateAccess(req, reqx, {certs, session});
             let hostname;
             if (req.hostname === this.config.hostDomain) {
             } else if (lodash.endsWith(req.hostname, this.config.keyspaceHostname)) {
@@ -2368,7 +2369,7 @@ export default class rquery {
       return false;
    }
 
-   validateAccess(req, reqx, {certs}) {
+   validateAccess(req, reqx, {certs, session}) {
       const {command, account, keyspace, time} = reqx;
       const scheme = req.get('X-Forwarded-Proto');
       this.logger.debug('validateAccess scheme', scheme, account, keyspace, command);
@@ -2378,7 +2379,20 @@ export default class rquery {
          }
       }
       if (account !== 'hub' && account !== 'pub') {
-         Object.assign(reqx, this.validateCert(req, reqx, certs, account, []));
+         if (session) {
+            if (session.account !== account) {
+               throw new ValidationError({
+                  message: 'Invalid session account'
+               });
+            }
+            if (session.role !== 'admin') {
+               throw new ValidationError({
+                  message: 'Invalid session role'
+               });
+            }
+         } else {
+            Object.assign(reqx, this.validateCert(req, reqx, certs, account, []));
+         }
       }
       if (false) {
          if (command.key === 'create-keyspace') {
