@@ -152,6 +152,10 @@ var rquery = function () {
                               message: 'Try "@' + this.config.adminBotName + ' /signup" on https://web.telegram.org',
                               url: 'https://telegram.me/' + this.config.adminBotName + '?start'
                            },
+                           login: {
+                              message: 'Try "@' + this.config.adminBotName + ' /login" on https://web.telegram.org',
+                              url: 'https://telegram.me/' + this.config.adminBotName + '?start'
+                           },
                            grantCert: {
                               message: 'Try "@' + this.config.adminBotName + ' /grant clientId" e.g. via https://web.telegram.org',
                               url: 'https://telegram.me/' + this.config.adminBotName + '?start'
@@ -5364,7 +5368,10 @@ var rquery = function () {
                                                                            break;
                                                                         }
 
-                                                                        throw new ValidationError('Session expired or invalid');
+                                                                        throw new ValidationError({
+                                                                           message: 'Session expired or invalid',
+                                                                           hint: _this16.hints.login
+                                                                        });
 
                                                                      case 7:
                                                                         account = session.account;

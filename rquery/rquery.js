@@ -41,6 +41,10 @@ export default class rquery {
             message: `Try "@${this.config.adminBotName} /signup" on https://web.telegram.org`,
             url: `https://telegram.me/${this.config.adminBotName}?start`
          },
+         login: {
+            message: `Try "@${this.config.adminBotName} /login" on https://web.telegram.org`,
+            url: `https://telegram.me/${this.config.adminBotName}?start`
+         },
          grantCert: {
             message: `Try "@${this.config.adminBotName} /grant clientId" e.g. via https://web.telegram.org`,
             url: `https://telegram.me/${this.config.adminBotName}?start`
@@ -1957,7 +1961,10 @@ export default class rquery {
                   multi.hgetall(this.adminKey('session', sessionId));
                });
                if (!session) {
-                  throw new ValidationError('Session expired or invalid');
+                  throw new ValidationError({
+                     message: 'Session expired or invalid',
+                     hint: this.hints.login
+                  });
                }
                const {account, id, role} = session;
                const accountKey = this.accountKey(account);

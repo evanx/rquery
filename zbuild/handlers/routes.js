@@ -122,7 +122,10 @@ module.exports = {
                         break;
                      }
 
-                     throw new ValidationError('Session expired or invalid');
+                     throw new ValidationError({
+                        message: 'Session expired or invalid',
+                        hint: undefined.hints.login
+                     });
 
                   case 21:
                      logger.debug('admin command', { account: account, time: time, session: session });
@@ -134,7 +137,10 @@ module.exports = {
                         break;
                      }
 
-                     throw new ValidationError('Admin role required');
+                     throw new ValidationError({
+                        message: 'Admin role required',
+                        hint: undefined.hints.login
+                     });
 
                   case 26:
                      account = session.account;
