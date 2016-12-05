@@ -398,7 +398,7 @@ export default class rquery {
          `You can use the following script create a client cert:`,
          `${this.config.openHostname}/cert-script/${account}.`,
          `We recommend you review, and read ${this.config.openHostname}/docs/register-cert.md.`,
-         `<p>But for starters, use the /login command here anytime to get a magic login link :)`
+         `But for starters, use the /login command here anytime to get a magic login link.`
       ]);
    }
 
