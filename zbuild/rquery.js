@@ -1033,7 +1033,7 @@ var rquery = function () {
                      case 19:
                         account = request.username;
                         _context12.next = 22;
-                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your ' + this.config.serviceLabel + ' account name is <b>' + account + '</b>, as per your Telegram user.', 'You can use the following script create a client cert:', this.config.openHostname + '/cert-script/' + account + '.', 'We recommend you review, and read ' + this.config.openHostname + '/docs/register-cert.md.', 'But for starters, use the /login command here anytime to get a magic login link.']);
+                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your ' + this.config.serviceLabel + ' account name is <b>' + account + '</b>, as per your Telegram user.', 'You can use the following script create a client cert:', this.config.openHostname + '/cert-script/' + account + '.', 'Use the /login command here anytime to get a magic login link.']);
 
                      case 22:
                      case 'end':
