@@ -1029,7 +1029,7 @@ var rquery = function () {
                      case 19:
                         account = request.username;
                         _context12.next = 22;
-                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your ' + this.config.serviceLabel + ' account name is <b>' + account + '</b>, as per your Telegram user.', 'Use the following script create a client cert:', this.config.openHostname + '/cert-script/' + account + '.', 'We recommend you review, and read ' + this.config.openHostname + '/docs/register-cert.md.']);
+                        return this.sendTelegram(request.chatId, 'html', ['Thanks, ' + request.greetName + '.', 'Your ' + this.config.serviceLabel + ' account name is <b>' + account + '</b>, as per your Telegram user.', 'Use the following script create a client cert:', this.config.openHostname + '/cert-script/' + account + '.', 'We recommend you review, and read ' + this.config.openHostname + '/docs/register-cert.md.', 'Even easier, use the /login command here anytime to get a magic login link :)']);
 
                      case 22:
                      case 'end':
@@ -2379,7 +2379,7 @@ var rquery = function () {
                               break;
                            }
 
-                           throw ValidationError({
+                           throw new ValidationError({
                               message: 'Failed to register keyspace'
                            });
 
@@ -5364,7 +5364,7 @@ var rquery = function () {
                                                                            break;
                                                                         }
 
-                                                                        throw ValidationError('Session expired or invalid');
+                                                                        throw new ValidationError('Session expired or invalid');
 
                                                                      case 7:
                                                                         account = session.account;
@@ -5391,7 +5391,7 @@ var rquery = function () {
                                                                            break;
                                                                         }
 
-                                                                        throw ValidationError('Admin role required');
+                                                                        throw new ValidationError('Admin role required');
 
                                                                      case 21:
                                                                         clientId = id;

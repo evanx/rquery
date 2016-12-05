@@ -394,6 +394,7 @@ export default class rquery {
          `Use the following script create a client cert:`,
          `${this.config.openHostname}/cert-script/${account}.`,
          `We recommend you review, and read ${this.config.openHostname}/docs/register-cert.md.`,
+         `Even easier, use the /login command here anytime to get a magic login link :)`
       ]);
    }
 
@@ -953,7 +954,7 @@ export default class rquery {
             });
          });
          if (hmset !== 'OK') {
-            throw ValidationError({
+            throw new ValidationError({
                message: 'Failed to register keyspace',
             });
          }
@@ -1956,7 +1957,7 @@ export default class rquery {
                   multi.hgetall(this.adminKey('session', sessionId));
                });
                if (!session) {
-                  throw ValidationError('Session expired or invalid');
+                  throw new ValidationError('Session expired or invalid');
                }
                const {account, id, role} = session;
                const accountKey = this.accountKey(account);
@@ -1966,7 +1967,7 @@ export default class rquery {
                });
                this.logger.debug('admin command', {account, time, session});
                if (role !== 'admin') {
-                  throw ValidationError('Admin role required');
+                  throw new ValidationError('Admin role required');
                }
                const [clientId, clientRole] = [id, role];
                Object.assign(reqx, {account, accountKey, time, admined, clientId, clientRole});
