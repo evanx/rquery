@@ -2274,7 +2274,7 @@ var rquery = function () {
 
                            throw new ValidationError({
                               status: 400,
-                              message: 'Cert Role (OU=' + clientRole + ') mismatch (' + role + ')'
+                              message: 'Cert role (OU=' + clientRole + ') mismatch (' + role + ')'
                            });
 
                         case 9:
@@ -6323,6 +6323,7 @@ var rquery = function () {
                      message: 'Invalid session role'
                   });
                }
+               Object.assign(reqx, { clientId: session.id, clientRole: session.role });
             } else {
                Object.assign(reqx, this.validateCert(req, reqx, certs, account, []));
             }

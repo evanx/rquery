@@ -902,7 +902,7 @@ export default class rquery {
          if (role !== clientRole) {
             throw new ValidationError({
                status: 400,
-               message: `Cert Role (OU=${clientRole}) mismatch (${role})`
+               message: `Cert role (OU=${clientRole}) mismatch (${role})`
             });
          }
          this.logger.debug('command', command.key, account, role);
@@ -2391,6 +2391,7 @@ export default class rquery {
                   message: 'Invalid session role'
                });
             }
+            Object.assign(reqx, {clientId: session.id, clientRole: session.role});
          } else {
             Object.assign(reqx, this.validateCert(req, reqx, certs, account, []));
          }
