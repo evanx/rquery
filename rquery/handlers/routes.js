@@ -55,12 +55,12 @@ module.exports = {
             multi.hgetall(rquery.adminKey('session', sessionId));
          });
          if (!session) {
-            throw ValidationError('Session expired or invalid');
+            throw new ValidationError('Session expired or invalid');
          }
          logger.debug('admin command', {account, time, session});
          const {id, role} = session;
          if (role !== 'admin') {
-            throw ValidationError('Admin role required');
+            throw new ValidationError('Admin role required');
          }
          account = session.account;
       }

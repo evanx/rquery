@@ -122,7 +122,7 @@ module.exports = {
                         break;
                      }
 
-                     throw ValidationError('Session expired or invalid');
+                     throw new ValidationError('Session expired or invalid');
 
                   case 21:
                      logger.debug('admin command', { account: account, time: time, session: session });
@@ -134,7 +134,7 @@ module.exports = {
                         break;
                      }
 
-                     throw ValidationError('Admin role required');
+                     throw new ValidationError('Admin role required');
 
                   case 26:
                      account = session.account;
