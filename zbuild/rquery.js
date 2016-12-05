@@ -6389,7 +6389,7 @@ var rquery = function () {
          if (!cert) {
             throw new ValidationError({
                status: 403,
-               message: 'No client cert sent',
+               message: 'No client cert sent (or login expired)',
                hint: this.hints.signup
             });
          }
