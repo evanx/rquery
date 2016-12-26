@@ -14,8 +14,8 @@ module.exports = {
          port: 8765,
          location: '',
          assetsUrl: '/assets',
-         aboutUrl: 'https://github.com/webserva/webserva/blob/master/README.md',
-         helpUrl: 'https://github.com/webserva/webserva/blob/master/README.md',
+         aboutUrl: 'https://github.com/evanx/webserva/blob/master/README.md',
+         helpUrl: 'https://github.com/evanx/webserva/blob/master/README.md',
          indexCommand: 'get-keyspace-info',
          enrollExpire: 300,
          keyspaceExpire: 604800, // 7 days

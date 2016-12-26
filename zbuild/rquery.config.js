@@ -26,7 +26,7 @@ module.exports = {
          defaultValue: '~/.webserva'
       },
       docUrl: {
-         defaultValue: 'https://raw.githubusercontent.com/webserva/webserva/master/docs'
+         defaultValue: 'https://raw.githubusercontent.com/evanx/webserva/master/docs'
       },
       certPrefix: {
          defaultValue: 'ws'

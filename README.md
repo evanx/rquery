@@ -3,7 +3,7 @@
 
 Node server for Redis multi-tenancy and access control, used for https://webserva.com.
 
-For more info, see: https://github.com/webserva/webserva/blob/master/README.md.
+For more info, see: https://github.com/evanx/webserva/blob/master/README.md.
 
 Notable features (June 2016):
 - Create adhoc ephemeral keyspaces
@@ -27,7 +27,7 @@ UNSTABLE, INCOMPLETE
 
 ### Live demo
 
-Try: https://demo.webserva.com
+Try: https://webserva.com
 
 However be sure to have a JSON Viewer extension installed in your browser.
 
@@ -36,7 +36,7 @@ It should report the available "routes" defined for the ExpressJS webserver:
 ![WebServa.com routes](https://evanx.github.io/images/rquery/ws040-routes.png)
 
 where besides this README, the following "help" is available:
-- https://demo.webserva.com/routes - shows all the routes/endpoints
+- https://webserva.com/routes - shows all the routes/endpoints
 
 Notes about this demo:
 - automatically expires keys after an idle duration of 3 minutes.
@@ -61,7 +61,7 @@ See Redis commands: https://redis.io/commands
 Let's try get the Redis `time.`
 
 ```shell
-curl -s https://demo.webserva.com/time
+curl -s https://webserva.com/time
 ```
 ```shell
 1460808868
@@ -71,13 +71,13 @@ where `time` returns the seconds and nanos since the Epoch.
 
 For convenience, we sometimes support additional variants of the standard Redis commands:
 ```shell
-$ curl -s https://demo.webserva.com/time/seconds
+$ curl -s https://webserva.com/time/seconds
 1462241590
 
-$ curl -s https://demo.webserva.com/time/milliseconds
+$ curl -s https://webserva.com/time/milliseconds
 1462241598375
 
-$ curl -s https://demo.webserva.com/time/nanoseconds
+$ curl -s https://webserva.com/time/nanoseconds
 1462241604365091
 ```
 where we can get the Epoch time in seconds, milliseconds or nanoseconds.
@@ -87,13 +87,13 @@ where we can get the Epoch time in seconds, milliseconds or nanoseconds.
 
 We can request an temporary keyspace that will expire after an idle period of 180s:
 ```shell
-wsdemo=`curl -s https://demo.webserva.com/create-ephemeral | grep ^ak`
-wsdemo="https://demo.webserva.com/$wsdemo"
+wsdemo=`curl -s https://webserva.com/create-ephemeral | grep ^ak`
+wsdemo="https://webserva.com/$wsdemo"
 echo $wsdemo
 ```
 where we set `wsdemo` environment variable with the keyspace URL:
 ```
-https://demo.webserva.com/ak/hub/63carsebfmrf
+https://webserva.com/ak/hub/63carsebfmrf
 ```
 where the keyspace name has been randomly generated, and `hub` is a publically shared account.
 
@@ -119,35 +119,35 @@ So visit https://web.telegram.org or install the mobile app, and message `@WebSe
 
 See the following instructions for creating a client cert:
 
-https://github.com/webserva/webserva/blob/master/docs/register-cert.md
+https://github.com/evanx/webserva/blob/master/docs/register-cert.md
 
-This utilitises a script generator endpoint for your account e.g. see: https://open.webserva.com/cert-script/ACCOUNT
+This utilitises a script generator endpoint for your account e.g. see: https://webserva.com/cert-script/ACCOUNT
 
 ![Cert script piped to bash](https://evanx.github.io/images/rquery/ws040-cert-script-ee895ce.png)
 
-This curls a versioned script: https://raw.githubusercontent.com/webserva/webserva/master/bin/cert-script.sh
+This curls a versioned script: https://raw.githubusercontent.com/evanx/webserva/master/bin/cert-script.sh
 
 It's SHA is compared to an alternative source, to give confidence in its integrity, i.e. multiple sites would have been hacked to ensure that a tampered version of this script is not detectable.
 
 ```shell
-curl -s https://raw.githubusercontent.com/webserva/webserva/master/bin/cert-script.sh | shasum
-curl -s https://open.webserva.com/assets/cert-script.sh.shasum
+curl -s https://raw.githubusercontent.com/evanx/webserva/master/bin/cert-script.sh | shasum
+curl -s https://webserva.com/assets/cert-script.sh.shasum
 ```
 where the script currently has the following hash:
 ```
 f6edc446466e228965e51bee120425b497605949
 ```
 
-It curls the following help endpoint: https://open.webserva.com/cert-script-help/ACCOUNT
+It curls the following help endpoint: https://webserva.com/cert-script-help/ACCOUNT
 
 Finally it curls the following static help:
 ```
-curl -s https://raw.githubusercontent.com/webserva/webserva/master/docs/install.wscurl.txt
+curl -s https://raw.githubusercontent.com/evanx/webserva/master/docs/install.wscurl.txt
 ```
 ```
 Try the following:
   cd
-  git clone https://github.com/webserva/webserva.git
+  git clone https://github.com/evanx/webserva.git
   alias ws='~/webserva/bin/wscurl.sh' # try add this line to ~/.bashrc
   ws help
 ```  
@@ -156,7 +156,7 @@ Try the following:
 
 We install `wscurl` via the following Github `webserva` repo:
 ```
-git clone https://github.com/webserva/webserva.git
+git clone https://github.com/evanx/webserva.git
 alias ws='~/webserva/bin/wscurl.sh
 ws help
 ```
@@ -372,6 +372,6 @@ We use a supervisor implementation for such components via the `lib` submodule:
 
 Related projects and further plans: https://github.com/evanx/mpush-redis/blob/master/related.md
 
-Webserva deployment: https://github.com/webserva/webserva
+Webserva deployment: https://github.com/evanx/webserva
 
 https://twitter.com/evanxsummers
