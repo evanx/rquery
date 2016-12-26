@@ -1145,61 +1145,74 @@ var rquery = function () {
                         now = Millis.now();
 
                         this.logger.info('handleTelegramGrant', request);
-                        match = request.text.match(/\/grant\s+(\S+)\s*$/);
 
-                        if (match) {
-                           _context14.next = 7;
+                        if (this.config.secureHostname) {
+                           _context14.next = 6;
                            break;
                         }
 
-                        _context14.next = 6;
-                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/grant &lt;ID&gt;</code>', 'where the <code>ID</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', 'Read ' + this.config.openHostname + '/docs/register-cert.md for further info.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + request.username + '?id=' + request.username]);
+                        _context14.next = 5;
+                        return this.sendTelegram(request.chatId, 'html', ['Sorry ' + request.greetName + ', the demo doesn\'t support certs.', 'Try production: https://webserva.com']);
 
-                     case 6:
+                     case 5:
                         return _context14.abrupt('return');
 
-                     case 7:
+                     case 6:
+                        match = request.text.match(/\/grant\s+(\S+)\s*$/);
+
+                        if (match) {
+                           _context14.next = 11;
+                           break;
+                        }
+
+                        _context14.next = 10;
+                        return this.sendTelegram(request.chatId, 'html', ['Try <code>/grant &lt;ID&gt;</code>', 'where the <code>ID</code> is returned by ' + this.config.secureHostname + '/register-cert', 'performed with the cert to be enrolled.', 'Read ' + this.config.openHostname + '/docs/register-cert.md for further info.', 'Use the following link to create a client cert:', this.config.openHostname + '/cert-script/' + request.username + '?id=' + request.username]);
+
+                     case 10:
+                        return _context14.abrupt('return');
+
+                     case 11:
                         clientId = match[1];
                         grantKey = this.adminKey('telegram', 'user', request.username, 'grant');
 
                         this.logger.info('handleTelegramGrant', grantKey, request, clientId);
-                        _context14.next = 12;
+                        _context14.next = 16;
                         return this.redis.multiExecAsync(function (multi) {
                            multi.exists(grantKey);
                         });
 
-                     case 12:
+                     case 16:
                         _ref17 = _context14.sent;
                         _ref18 = _slicedToArray(_ref17, 1);
                         exists = _ref18[0];
-                        _context14.next = 17;
+                        _context14.next = 21;
                         return this.redis.multiExecAsync(function (multi) {
                            _this5.logger.info('handleTelegramGrant setex', grantKey, clientId, _this5.config.enrollExpire);
                            multi.setex(grantKey, _this5.config.enrollExpire, clientId);
                         });
 
-                     case 17:
+                     case 21:
                         _ref19 = _context14.sent;
                         _ref20 = _slicedToArray(_ref19, 1);
                         setex = _ref20[0];
 
                         if (!setex) {
-                           _context14.next = 25;
+                           _context14.next = 29;
                            break;
                         }
 
-                        _context14.next = 23;
+                        _context14.next = 27;
                         return this.sendTelegramReply(request, 'html', ['You have approved enrollment of the cert <b>' + clientId + '</b>.', 'That identity can now enroll via ' + this.config.secureHostname + '/register-cert.', 'This must be done in the next ' + Millis.formatVerboseDuration(1000 * this.config.enrollExpire), 'otherwise you need to repeat this request, after it expires.', 'See ' + this.config.openHostname + '/docs/register-cert.md for further info.']);
 
-                     case 23:
-                        _context14.next = 27;
+                     case 27:
+                        _context14.next = 31;
                         break;
 
-                     case 25:
-                        _context14.next = 27;
+                     case 29:
+                        _context14.next = 31;
                         return this.sendTelegramReply(request, 'html', ['Apologies, the grant command failed.']);
 
-                     case 27:
+                     case 31:
                      case 'end':
                         return _context14.stop();
                   }

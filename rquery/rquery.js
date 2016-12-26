@@ -397,7 +397,7 @@ export default class rquery {
          `Your ${this.config.serviceLabel} account name is <b>${account}</b>, as per your Telegram user.`,
          `Use the /login command here anytime to get a magic web login link.`,
          `Also, you can use the following script create a client cert:`,
-         `${this.config.openHostname}/cert-script/${account}.` 
+         `${this.config.openHostname}/cert-script/${account}.`
       ]);
    }
 
@@ -442,6 +442,13 @@ export default class rquery {
    async handleTelegramGrant(request) {
       const now = Millis.now();
       this.logger.info('handleTelegramGrant', request);
+      if (!this.config.secureHostname) {
+          await this.sendTelegram(request.chatId, 'html', [
+              `Sorry ${request.greetName}, the demo doesn't support certs.`,
+              `Try production: https://webserva.com`
+          ]);
+          return;
+      }
       const match = request.text.match(/\/grant\s+(\S+)\s*$/);
       if (!match) {
          await this.sendTelegram(request.chatId, 'html', [
