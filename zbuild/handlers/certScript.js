@@ -105,7 +105,7 @@ var handleCertScript = exports.handleCertScript = function () {
                   OU = role;
                   O = account;
                   curlAccount = 'curl -s -E ${dir}/privcert.pem ${serviceUrl}/ak/${account}';
-                  result = ['Please read and review: https://webserva.com/docs/register-cert.md.', 'Curl this script and pipe it into bash for execution, as per the following line:', 'curl -s \'https://' + config.openHostname + '/' + commandKey + '/' + account + '\' | bash', ''].map(function (line) {
+                  result = ['Please read and review: https://webserva.com/docs/register-cert.md', 'Curl this script and pipe it into bash for execution, as per the following line:', 'curl -s \'https://' + config.openHostname + '/' + commandKey + '/' + account + '\' | bash', ''].map(function (line) {
                      return '# ' + line;
                   });
 

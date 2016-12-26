@@ -395,9 +395,9 @@ export default class rquery {
       await this.sendTelegram(request.chatId, 'html', [
          `Thanks, ${request.greetName}.`,
          `Your ${this.config.serviceLabel} account name is <b>${account}</b>, as per your Telegram user.`,
-         `You can use the following script create a client cert:`,
-         `${this.config.openHostname}/cert-script/${account}.`,
-         `Use the /login command here anytime to get a magic login link.`
+         `Use the /login command here anytime to get a magic web login link.`
+         `Also, you can use the following script create a client cert:`,
+         `${this.config.openHostname}/cert-script/${account}.` ,
       ]);
    }
 
