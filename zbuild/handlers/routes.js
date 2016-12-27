@@ -124,7 +124,7 @@ module.exports = {
 
                      throw new ValidationError({
                         message: 'Session expired or invalid',
-                        hint: undefined.hints.login
+                        hint: rquery.hints.login
                      });
 
                   case 21:
@@ -139,7 +139,7 @@ module.exports = {
 
                      throw new ValidationError({
                         message: 'Admin role required',
-                        hint: undefined.hints.login
+                        hint: rquery.hints.login
                      });
 
                   case 26:

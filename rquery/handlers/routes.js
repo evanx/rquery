@@ -57,7 +57,7 @@ module.exports = {
          if (!session) {
             throw new ValidationError({
                message: 'Session expired or invalid',
-               hint: this.hints.login
+               hint: rquery.hints.login
             });
          }
          logger.debug('admin command', {account, time, session});
@@ -65,7 +65,7 @@ module.exports = {
          if (role !== 'admin') {
             throw new ValidationError({
                message: 'Admin role required',
-               hint: this.hints.login
+               hint: rquery.hints.login
             });
          }
          account = session.account;
