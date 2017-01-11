@@ -73,7 +73,7 @@ module.exports = {
       const $ = rquery.getContentType(req) === 'html'? He : Hp;
       const messages = account? [
          $.a({href: `/keyspaces/${account}`}, `List the keyspaces on your account`),
-         $.a({href: `/ak/${account}/mykeyspace/create-keyspace`}, `Create 'mykeyspace'`)
+         $.a({href: `/ak/${account}/mykeyspace/create-keyspace`}, `Create <tt>mykeyspace</tt>`)
       ]: [
          $.a({href: '/about'}, `About ${rquery.config.serviceLabel}`),
          $.a({href: '/create-ephemeral'}, `Create an ephemeral keyspace via /create-ephemeral`),
