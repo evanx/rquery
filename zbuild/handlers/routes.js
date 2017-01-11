@@ -148,7 +148,7 @@ module.exports = {
                   case 27:
                      $ = rquery.getContentType(req) === 'html' ? He : Hp;
                      number = Math.floor(Math.random() * 10);
-                     messages = account ? [$.a({ href: '/keyspaces/' + account }, 'List the keyspaces on your account'), $.a({ href: '/ak/' + account + '/mykeyspace/create-keyspace' }, 'Create \'mykeyspace' + number + '\'')] : [$.a({ href: '/about' }, 'About ' + rquery.config.serviceLabel), $.a({ href: '/create-ephemeral' }, 'Create an ephemeral keyspace via /create-ephemeral'), $.a({
+                     messages = account ? [$.a({ href: '/keyspaces/' + account }, 'List the keyspaces on your account'), $.a({ href: '/ak/' + account + '/mykeyspace' + number + '/create-keyspace' }, 'Create \'mykeyspace' + number + '\'')] : [$.a({ href: '/about' }, 'About ' + rquery.config.serviceLabel), $.a({ href: '/create-ephemeral' }, 'Create an ephemeral keyspace via /create-ephemeral'), $.a({
                         target: '_blank',
                         href: 'https://telegram.me/' + rquery.config.adminBotName + '?start'
                      }, 'Try "@' + rquery.config.adminBotName + ' /signup"')];

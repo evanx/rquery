@@ -74,7 +74,7 @@ module.exports = {
       const number = Math.floor(Math.random()*10);
       const messages = account? [
          $.a({href: `/keyspaces/${account}`}, `List the keyspaces on your account`),
-         $.a({href: `/ak/${account}/mykeyspace/create-keyspace`}, `Create 'mykeyspace${number}'`)
+         $.a({href: `/ak/${account}/mykeyspace${number}/create-keyspace`}, `Create 'mykeyspace${number}'`)
       ]: [
          $.a({href: '/about'}, `About ${rquery.config.serviceLabel}`),
          $.a({href: '/create-ephemeral'}, `Create an ephemeral keyspace via /create-ephemeral`),
