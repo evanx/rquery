@@ -71,9 +71,10 @@ module.exports = {
          account = session.account;
       }
       const $ = rquery.getContentType(req) === 'html'? He : Hp;
+      const number = Math.floor(Math.random()*10);
       const messages = account? [
          $.a({href: `/keyspaces/${account}`}, `List the keyspaces on your account`),
-         $.a({href: `/ak/${account}/mykeyspace/create-keyspace`}, `Create <tt>mykeyspace</tt>`)
+         $.a({href: `/ak/${account}/mykeyspace/create-keyspace`}, `Create 'mykeyspace${number}'`)
       ]: [
          $.a({href: '/about'}, `About ${rquery.config.serviceLabel}`),
          $.a({href: '/create-ephemeral'}, `Create an ephemeral keyspace via /create-ephemeral`),

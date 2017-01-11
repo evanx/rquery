@@ -58,7 +58,7 @@ module.exports = {
    }(),
    handleReq: function () {
       var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee2(req, res, reqx) {
-         var hostUrl, routes, accountOnlyRoutes, account, dn, names, sessionId, _ref, _ref2, _ref2$, time, session, id, role, $, messages;
+         var hostUrl, routes, accountOnlyRoutes, account, dn, names, sessionId, _ref, _ref2, _ref2$, time, session, id, role, $, number, messages;
 
          return regeneratorRuntime.wrap(function _callee2$(_context2) {
             while (1) {
@@ -147,7 +147,8 @@ module.exports = {
 
                   case 27:
                      $ = rquery.getContentType(req) === 'html' ? He : Hp;
-                     messages = account ? [$.a({ href: '/keyspaces/' + account }, 'List the keyspaces on your account'), $.a({ href: '/ak/' + account + '/mykeyspace/create-keyspace' }, 'Create <tt>mykeyspace</tt>')] : [$.a({ href: '/about' }, 'About ' + rquery.config.serviceLabel), $.a({ href: '/create-ephemeral' }, 'Create an ephemeral keyspace via /create-ephemeral'), $.a({
+                     number = Math.floor(Math.random() * 10);
+                     messages = account ? [$.a({ href: '/keyspaces/' + account }, 'List the keyspaces on your account'), $.a({ href: '/ak/' + account + '/mykeyspace/create-keyspace' }, 'Create \'mykeyspace' + number + '\'')] : [$.a({ href: '/about' }, 'About ' + rquery.config.serviceLabel), $.a({ href: '/create-ephemeral' }, 'Create an ephemeral keyspace via /create-ephemeral'), $.a({
                         target: '_blank',
                         href: 'https://telegram.me/' + rquery.config.adminBotName + '?start'
                      }, 'Try "@' + rquery.config.adminBotName + ' /signup"')];
@@ -197,7 +198,7 @@ module.exports = {
                         })
                      });
 
-                  case 30:
+                  case 31:
                   case 'end':
                      return _context2.stop();
                }
