@@ -81,7 +81,7 @@ module.exports = {
          $.a({
             target: '_blank',
             href: `https://telegram.me/${rquery.config.adminBotName}?start`
-         }, `Try "@${rquery.config.adminBotName} /signup"`)
+        }, `Try "@${rquery.config.adminBotName} /start"`)
       ];
       return {
          messages

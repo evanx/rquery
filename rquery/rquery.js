@@ -1175,7 +1175,7 @@ export default class rquery {
             throw new ValidationError({
                status: 403,
                message: 'No client cert',
-               hint: this.hints.signup
+               hint: this.hints.login
             });
          }
          cert = cert.replace(/\t/g, '\n');
@@ -1913,7 +1913,7 @@ export default class rquery {
          const clientId = [this.parseDn(dn).cn, '#', certFingerprint.slice(0, 6), ':', certFingerprint.slice(-6)].join('');
          this.logger.info('createAccount dn', dn);
          if (!cert) {
-            throw new ValidationError({message: 'No client cert', hint: this.hints.signup});
+            throw new ValidationError({message: 'No client cert', hint: this.hints.login});
          }
          const otpSecret = this.generateTokenKey();
          const accountKey = this.adminKey('account', account);
@@ -2466,7 +2466,7 @@ export default class rquery {
          throw new ValidationError({
             status: 403,
             message: 'No granted certs',
-            hint: this.hints.signup
+            hint: this.hints.login
          });
       }
       const cert = req.get('ssl_client_cert');
@@ -2474,7 +2474,7 @@ export default class rquery {
          throw new ValidationError({
             status: 403,
             message: 'No client cert sent (or login expired)',
-            hint: this.hints.signup
+            hint: this.hints.login
          });
       }
       const dn = req.get('ssl_client_s_dn');
@@ -2594,6 +2594,17 @@ export default class rquery {
       }
    }
 
+   getBotUrl(req) {
+      return /(Mobile)/.test(req.get('user-agent'))
+      ? `tg://${this.config.adminBotName}`
+      : `https://web.telegram.org/#/im?p=@${this.config.adminBotName}`;
+   }
+
+   getHref(req, url) {
+      this.logger.info('getHref', url, this.getBotUrl(req));
+      return url;
+   }
+
    sendStatusMessage(req, res, statusCode, err) {
       const reqx = req.rquery || {};
       const command = reqx.command || {};
@@ -2691,7 +2702,7 @@ export default class rquery {
                   this.logger.debug('hint', hint);
                   const attributes = {
                      style: styles.error.hintContainer,
-                     href: hint.url
+                     href: this.getHref(req, hint.url)
                   };
                   if (hint.url[0] !== '/') {
                      attributes.target = '_blank';

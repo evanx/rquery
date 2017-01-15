@@ -2958,7 +2958,7 @@ var rquery = function () {
                            throw new ValidationError({
                               status: 403,
                               message: 'No client cert',
-                              hint: _this9.hints.signup
+                              hint: _this9.hints.login
                            });
 
                         case 6:
@@ -5199,7 +5199,7 @@ var rquery = function () {
                                           break;
                                        }
 
-                                       throw new ValidationError({ message: 'No client cert', hint: _this15.hints.signup });
+                                       throw new ValidationError({ message: 'No client cert', hint: _this15.hints.login });
 
                                     case 15:
                                        otpSecret = _this15.generateTokenKey();
@@ -6403,7 +6403,7 @@ var rquery = function () {
             throw new ValidationError({
                status: 403,
                message: 'No granted certs',
-               hint: this.hints.signup
+               hint: this.hints.login
             });
          }
          var cert = req.get('ssl_client_cert');
@@ -6411,7 +6411,7 @@ var rquery = function () {
             throw new ValidationError({
                status: 403,
                message: 'No client cert sent (or login expired)',
-               hint: this.hints.signup
+               hint: this.hints.login
             });
          }
          var dn = req.get('ssl_client_s_dn');
@@ -6589,6 +6589,18 @@ var rquery = function () {
          }
       }
    }, {
+      key: 'getBotUrl',
+      value: function getBotUrl(req) {
+         return (/(Mobile)/.test(req.get('user-agent')) ? 'tg://' + this.config.adminBotName : 'https://web.telegram.org/#/im?p=@' + this.config.adminBotName
+         );
+      }
+   }, {
+      key: 'getHref',
+      value: function getHref(req, url) {
+         this.logger.info('getHref', url, this.getBotUrl(req));
+         return url;
+      }
+   }, {
       key: 'sendStatusMessage',
       value: function sendStatusMessage(req, res, statusCode, err) {
          var _this19 = this;
@@ -6688,7 +6700,7 @@ var rquery = function () {
                   _this19.logger.debug('hint', hint);
                   var attributes = {
                      style: _styles2.default.error.hintContainer,
-                     href: hint.url
+                     href: _this19.getHref(req, hint.url)
                   };
                   if (hint.url[0] !== '/') {
                      attributes.target = '_blank';
