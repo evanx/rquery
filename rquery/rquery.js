@@ -2602,6 +2602,9 @@ export default class rquery {
 
    getHref(req, url) {
       this.logger.info('getHref', url, this.getBotUrl(req));
+      if (url === `https://telegram.me/${this.config.adminBotName}?start`) {
+          return getBotUrl(req);
+      }
       return url;
    }
 
