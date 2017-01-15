@@ -6685,7 +6685,11 @@ var rquery = function () {
          }
          var heading = [Hc.b('Status'), Hc.tt(statusCode)].join(' ');
          if (this.isBrowser(req)) {
-            this.logger.debug('hints', hints);
+            this.logger.debug('hints X', hints, hints.filter(function (hint) {
+               return hint.url;
+            }).map(function (hint) {
+               return _this19.getHref(req, hint.url);
+            }));
             res.set('Content-Type', 'text/html');
             res.status(statusCode).send((0, _Page2.default)({
                backPath: '/routes',

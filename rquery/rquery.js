@@ -2685,7 +2685,7 @@ export default class rquery {
       }
       const heading = [Hc.b('Status'), Hc.tt(statusCode)].join(' ');
       if (this.isBrowser(req)) {
-         this.logger.debug('hints', hints);
+         this.logger.debug('hints X', hints, hints.filter(hint => hint.url).map(hint => this.getHref(req, hint.url)));
          res.set('Content-Type', 'text/html');
          res.status(statusCode).send(renderPage({
             backPath: '/routes',
