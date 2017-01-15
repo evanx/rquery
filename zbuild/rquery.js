@@ -6597,7 +6597,7 @@ var rquery = function () {
    }, {
       key: 'getHref',
       value: function getHref(req, url) {
-         this.logger.info('getHref', url, this.getBotUrl(req));
+         this.logger.debug('getHref', url, this.getBotUrl(req));
          if (url === 'https://telegram.me/' + this.config.adminBotName + '?start') {
             return this.getBotUrl(req);
          }
